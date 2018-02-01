@@ -1,0 +1,232 @@
+object FrameMain: TFrameMain
+  Left = 0
+  Top = 0
+  Width = 857
+  Height = 668
+  TabOrder = 0
+  OnResize = FrameResize
+  object dxTileControl1: TdxTileControl
+    Left = 0
+    Top = 0
+    Width = 857
+    Height = 668
+    LookAndFeel.Kind = lfUltraFlat
+    LookAndFeel.NativeStyle = False
+    LookAndFeel.SkinName = 'HybridApp'
+    OptionsView.CenterContentHorz = True
+    OptionsView.CenterContentVert = True
+    OptionsView.FixedIndentHorz = True
+    OptionsView.GroupIndent = 30
+    OptionsView.GroupMaxRowCount = 3
+    OptionsView.IndentHorz = 50
+    OptionsView.IndentVert = 50
+    OptionsView.ItemHeight = 170
+    OptionsView.ItemWidth = 170
+    TabOrder = 0
+    Transparent = True
+    object dxTileControl1Group1: TdxTileControlGroup
+      Index = 0
+    end
+    object dxTileControl1Group2: TdxTileControlGroup
+      Index = 1
+    end
+    object dxTileControl1Group3: TdxTileControlGroup
+      Index = 2
+    end
+    object tiMap: TdxTileControlItem
+      Tag = 1
+      Glyph.Mode = ifmFit
+      GroupIndex = 0
+      IndexInGroup = 0
+      RowCount = 2
+      Size = tcisExtraLarge
+      Style.BorderColor = clWhite
+      Style.GradientBeginColor = clWhite
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+      OnClick = TitleClick
+    end
+    object tiStat: TdxTileControlItem
+      Tag = 2
+      Glyph.ImageIndex = 0
+      Glyph.Mode = ifmFit
+      GroupIndex = 0
+      IndexInGroup = 1
+      Size = tcisLarge
+      Style.BorderColor = clWhite
+      Style.GradientBeginColor = clWhite
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+      OnClick = TitleClick
+    end
+    object ti2: TdxTileControlItem
+      Tag = 4
+      Glyph.Mode = ifmFit
+      GroupIndex = 1
+      IndexInGroup = 1
+      Size = tcisLarge
+      Style.BorderColor = clWhite
+      Style.GradientBeginColor = clWhite
+      Text1.AssignedValues = []
+      Text1.Value = 'aaaaa'
+      Text2.AssignedValues = []
+      Text2.Value = 'sfsdfsd'
+      Text3.AssignedValues = []
+      Text3.Value = 'sdfsdfsd'
+      Text4.AssignedValues = []
+      Text4.Value = 'dhfhfgh'
+      OnClick = TitleClick
+    end
+    object ti1: TdxTileControlItem
+      Tag = 3
+      Glyph.Mode = ifmFit
+      GroupIndex = 1
+      IndexInGroup = 0
+      Size = tcisLarge
+      Style.BorderColor = clWhite
+      Style.GradientBeginColor = clWhite
+      Text1.Align = oaMiddleCenter
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+      OnClick = TitleClick
+    end
+    object ti3: TdxTileControlItem
+      Tag = 5
+      Glyph.Mode = ifmFit
+      GroupIndex = 1
+      IndexInGroup = 2
+      Size = tcisLarge
+      Style.BorderColor = clWhite
+      Style.GradientBeginColor = clWhite
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+      OnClick = TitleClick
+    end
+    object tiPwd: TdxTileControlItem
+      Tag = 7
+      Glyph.Mode = ifmFit
+      GroupIndex = 2
+      IndexInGroup = 1
+      Style.BorderColor = clWhite
+      Style.GradientBeginColor = clWhite
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+      OnClick = tiPwdClick
+    end
+    object tiAbout: TdxTileControlItem
+      Tag = 8
+      Glyph.Mode = ifmFit
+      GroupIndex = 2
+      IndexInGroup = 2
+      Style.BorderColor = clWhite
+      Style.GradientBeginColor = clWhite
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+      OnClick = TitleClick
+    end
+    object tiAlarm: TdxTileControlItem
+      Tag = 6
+      AnimationMode = amScrollLeft
+      Glyph.Mode = ifmFit
+      GroupIndex = 2
+      IndexInGroup = 0
+      RowCount = 2
+      Size = tcisExtraLarge
+      Style.BorderColor = clWhite
+      Style.GradientBeginColor = clWhite
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+      OnClick = tiAlarmClick
+    end
+    object dxTileControl1Item1: TdxTileControlItem
+      GroupIndex = -1
+      IndexInGroup = -1
+      Size = tcisSmall
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+    end
+    object dxTileControl1Item2: TdxTileControlItem
+      GroupIndex = -1
+      IndexInGroup = -1
+      Size = tcisLarge
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+    end
+    object dxTileControl1Item3: TdxTileControlItem
+      GroupIndex = -1
+      IndexInGroup = -1
+      RowCount = 2
+      Size = tcisExtraLarge
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+    end
+    object dxTileControl1Item4: TdxTileControlItem
+      GroupIndex = -1
+      IndexInGroup = -1
+      RowCount = 2
+      Size = tcisExtraLarge
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+    end
+    object dxTileControl1Item5: TdxTileControlItem
+      GroupIndex = -1
+      IndexInGroup = -1
+      RowCount = 2
+      Size = tcisExtraLarge
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+    end
+    object dxTileControl1Item6: TdxTileControlItem
+      GroupIndex = -1
+      IndexInGroup = -1
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+    end
+    object dxTileControl1Item8: TdxTileControlItem
+      GroupIndex = -1
+      IndexInGroup = -1
+      Size = tcisSmall
+      Text1.AssignedValues = []
+      Text2.AssignedValues = []
+      Text3.AssignedValues = []
+      Text4.AssignedValues = []
+    end
+  end
+  object FDMemTable1: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 712
+    Top = 280
+  end
+end

@@ -1,0 +1,2 @@
+//ÒÔWEBXONEÄ£Ê½
+{$DEFINE WEBXONE}
