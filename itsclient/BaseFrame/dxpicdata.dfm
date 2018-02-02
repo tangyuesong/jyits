@@ -1,10 +1,10 @@
 inherited dxFramePicData: TdxFramePicData
-  ExplicitWidth = 833
-  ExplicitHeight = 627
+  ExplicitWidth = 847
+  ExplicitHeight = 498
   inherited dxLayoutControl2: TdxLayoutControl
     OptionsImage.Images = DM.ilBarSmall
-    ExplicitWidth = 833
-    ExplicitHeight = 627
+    ExplicitWidth = 847
+    ExplicitHeight = 498
     object cxgrd1: TcxGrid [0]
       Left = 95
       Top = 36
@@ -233,13 +233,11 @@ inherited dxFramePicData: TdxFramePicData
       object cxTabSheet1: TcxTabSheet
         Caption = 'cxTabSheet1'
         ImageIndex = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object imgviopic: TImageEnVect
           Left = 0
           Top = 0
-          Width = 352
-          Height = 601
+          Width = 366
+          Height = 472
           Background = clWhite
           Ctl3D = False
           ParentCtl3D = False
@@ -259,6 +257,8 @@ inherited dxFramePicData: TdxFramePicData
       object cxTabSheet2: TcxTabSheet
         Caption = 'cxTabSheet2'
         ImageIndex = 1
+        ExplicitWidth = 366
+        ExplicitHeight = 472
         object Chromium1: TChromium
           Left = 0
           Top = 0
@@ -269,6 +269,8 @@ inherited dxFramePicData: TdxFramePicData
           Options.AcceleratedPaintingDisabled = False
           Options.AcceleratedFiltersDisabled = False
           Options.AcceleratedPluginsDisabled = False
+          ExplicitWidth = 366
+          ExplicitHeight = 472
         end
       end
     end

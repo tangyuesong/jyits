@@ -27,13 +27,15 @@ uses
   dxAnimation, System.ImageList, Vcl.ImgList, uDM, Generics.Collections,
   dxLayoutcxEditAdapters, cxContainer, cxEdit, cxTextEdit, cxLabel, uEntity,
   cxMemo, uFrameSelectDev, uFrameFeedback, uFrameSign, dxpicdata,
-  System.Win.ComObj, System.Contnrs,  cxGroupBox, uFrameInput,
+  System.Win.ComObj, System.Contnrs, cxGroupBox, uFrameInput,
   dxGDIPlusClasses, cxCheckBox, dxViodata, cxMaskEdit, cxDropDownEdit,
-  Vcl.ComCtrls, dxCore, cxDateUtils, cxCalendar, cxCheckComboBox, cxCheckListBox,
+  Vcl.ComCtrls, dxCore, cxDateUtils, cxCalendar, cxCheckComboBox,
+  cxCheckListBox,
   cxRadioGroup, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient;
 
 type
   TBack = procedure of Object;
+
   TFrameJianYi = class(TFrame)
     dxLayoutControl1Group_Root: TdxLayoutGroup;
     dxLayoutControl1: TdxLayoutControl;
@@ -174,7 +176,7 @@ type
     procedure ShowItem(item: TViolationWrite);
     function CheckInput(entity: TViolationWrite): boolean;
     function Submit(entity: TViolationWrite): boolean;
-    procedure SetCboValue(cbo: TcxCombobox; subValue: string);
+    procedure SetCboValue(cbo: TcxComboBox; subValue: string);
     procedure ClearInputs;
     procedure SetVehCheckItem(const Value: TViolationWrite);
     function GetEntity: TViolationWrite;
@@ -182,7 +184,8 @@ type
   public
     procedure BeforeDestruction; override;
     procedure AfterConstruction; override;
-    property ViolationWriteItem: TViolationWrite read FItem write SetVehCheckItem;
+    property ViolationWriteItem: TViolationWrite read FItem
+      write SetVehCheckItem;
     property OnBack: TBack read FOnBack write FOnBack;
   end;
 
@@ -198,13 +201,13 @@ var
   jdsbh: string;
 begin
   inherited;
-  TLZDictionary.BindCombobox(cbohpzl, TLZDictionary.gDicMain['HPZL'], True);
+  TLZDictionary.BindCombobox(cboHPZL, TLZDictionary.gDicMain['HPZL'], True);
   cboHPZL.ItemIndex := 1;
   TLZDictionary.BindCombobox(cboCLLX, TLZDictionary.gDicMain['CLLX'], True);
   cboCLLX.ItemIndex := 196;
   TLZDictionary.BindCombobox(cboSYXZ, TLZDictionary.gDicMain['SYXZ'], False);
   cboCLLX.ItemIndex := 0;
-  //DONE: BindZQMJ 执勤民警
+  // DONE: BindZQMJ 执勤民警
   for u in TLZDictionary.gDicUser.Values do
   begin
     if u.DWDM = gUser.DWDM then
@@ -219,7 +222,8 @@ end;
 
 procedure TFrameJianYi.BeforeDestruction;
 begin
-  TRequestItf.RmQuery('ROLLBACKWSBH', 'wsbh=' + txtJDSBH1.Text + txtJDSBH2.Text);
+  TRequestItf.RmQuery('ROLLBACKWSBH', 'wsbh=' + txtJDSBH1.Text +
+    txtJDSBH2.Text);
   inherited;
 end;
 
@@ -228,14 +232,15 @@ begin
   if cbJG.Checked then
   begin
     lblFKJE.Caption := '0';
-    rbBFK.Checked := true;
+    rbBFK.Checked := True;
   end
-  else begin
+  else
+  begin
     if TLZDictionary.gDicWfxw.ContainsKey(txtWFDM.Text) then
     begin
       lblFKJE.Caption := TLZDictionary.gDicWfxw[txtWFDM.Text].JE;
     end;
-    rbYHJK.Checked := true;
+    rbYHJK.Checked := True;
   end;
 end;
 
@@ -243,9 +248,10 @@ procedure TFrameJianYi.cboHPZLPropertiesCloseUp(Sender: TObject);
 var
   veh: TVehInfo;
 begin
-  if (txtHPHM.Text <> '')and(cboHPZL.Text <> '') then
+  if (txtHPHM.Text <> '') and (cboHPZL.Text <> '') then
   begin
-    veh := TCommon.GetVehinfo(txtHPHM.Text, Copy(cboHPZL.Text, 1, 2), '');
+    veh := TCommon.GetVehinfo(txtHPHM.Text, Copy(cboHPZL.Text, 1, 2),
+      '', False);
     cboCLLX.Text := TLZDictionary.gDicMain['CLLX'][veh.cllx];
     cboSYXZ.Text := TLZDictionary.gDicMain['SYXZ'][veh.syxz];
     txtSYR.Text := veh.syr;
@@ -267,7 +273,8 @@ begin
   result.hpzl := Copy(cboHPZL.Text, 1, 2);
   result.hphm := txtHPHM.Text;
   result.jtfs := 'C01'; // 乘车
-  result.wfsj := FormatDateTime('yyyy-mm-dd hh:nn', txtWFSJ.Date);     // YYYY-MM-DD hh24:MI精确到分
+  result.wfsj := FormatDateTime('yyyy-mm-dd hh:nn', txtWFSJ.Date);
+  // YYYY-MM-DD hh24:MI精确到分
   result.xzqh := Copy(cboXZQH.Text, 1, 6);
   result.wfdd := txtDLDM1.Text;
   result.lddm := txtLK1.Text;
@@ -281,8 +288,8 @@ begin
   else
     result.cfzl := '';
   result.fkje := lblFKJE.Caption;
-  result.zqmj := copy(cboZQMJ.Text, 1, 6);
-  result.jkbj := '0';   // 未缴款
+  result.zqmj := Copy(cboZQMJ.Text, 1, 6);
+  result.jkbj := '0'; // 未缴款
   if rbBFK.Checked then
   begin
     result.jkfs := '0';
@@ -300,25 +307,13 @@ end;
 
 function TFrameJianYi.CheckInput(entity: TViolationWrite): boolean;
 begin
-  result := (entity.jdsbh <> '')
-    and (entity.ZQMJ <> '')
-    and (entity.jszh <> '')
-    and (entity.DABH <> '')
-    and (entity.FZJG <> '')
-    and (entity.ZJCX <> '')
-    and (entity.DSR <> '')
-    and (entity.CLFL <> '')
-    and (entity.HPZL <> '')
-    and (entity.HPHM <> '')
-    and (entity.WFSJ <> '')
-    and (entity.XZQH <> '')
-    and (entity.wfdd <> '')
-    and (entity.lddm <> '')
-    and (entity.WFDZ <> '')
-    and (entity.wfxw <> '')
-    and (entity.cfzl <> '')
-    and (entity.jsjqbj <> '')
-    and (entity.fxjg <> '');
+  result := (entity.jdsbh <> '') and (entity.zqmj <> '') and (entity.jszh <> '')
+    and (entity.dabh <> '') and (entity.fzjg <> '') and (entity.zjcx <> '') and
+    (entity.dsr <> '') and (entity.clfl <> '') and (entity.hpzl <> '') and
+    (entity.hphm <> '') and (entity.wfsj <> '') and (entity.xzqh <> '') and
+    (entity.wfdd <> '') and (entity.lddm <> '') and (entity.wfdz <> '') and
+    (entity.wfxw <> '') and (entity.cfzl <> '') and (entity.jsjqbj <> '') and
+    (entity.fxjg <> '');
   if not result then
     Application.MessageBox('信息输入不完整', '提示');
 end;
@@ -371,16 +366,17 @@ begin
   end
   else
     Application.MessageBox(PWideChar('保存失败！' + msg.msg), '提示');
-    //btnBack(nil);
+  // btnBack(nil);
 end;
 
 procedure TFrameJianYi.txtHPHMKeyPress(Sender: TObject; var Key: Char);
 var
   veh: TVehInfo;
 begin
-  if key = #13 then
+  if Key = #13 then
   begin
-    veh := TCommon.GetVehinfo(txtHPHM.Text, Copy(cboHPZL.Text, 1, 2), '');
+    veh := TCommon.GetVehinfo(txtHPHM.Text, Copy(cboHPZL.Text, 1, 2),
+      '', False);
     cboCLLX.Text := veh.cllx;
     cboSYXZ.Text := veh.syxz;
     txtSYR.Text := veh.syr;
@@ -389,7 +385,7 @@ end;
 
 procedure TFrameJianYi.txtWFDMKeyPress(Sender: TObject; var Key: Char);
 begin
-  if key = #13 then
+  if Key = #13 then
   begin
     if TLZDictionary.gDicWfxw.ContainsKey(txtWFDM.Text) then
     begin
@@ -404,7 +400,7 @@ procedure TFrameJianYi.txtZJHMKeyPress(Sender: TObject; var Key: Char);
 var
   veh: TDrvInfo;
 begin
-  if key = #13 then
+  if Key = #13 then
   begin
     veh := TCommon.GetDrvInfo(txtZJHM.Text);
     txtFZJG.Text := veh.fzjg;
@@ -448,7 +444,7 @@ begin
     OnBack;
 end;
 
-procedure TFrameJianYi.SetCboValue(cbo: TcxCombobox; subValue: string);
+procedure TFrameJianYi.SetCboValue(cbo: TcxComboBox; subValue: string);
 var
   i: Integer;
 begin
@@ -477,10 +473,11 @@ procedure TFrameJianYi.GetJDSBH;
 var
   jdsbh: string;
 begin
-  jdsbh := TRequestItf.RmQuery('APPLYWSBH','yhbh=' + gUser.yhbh + '&wslb=1&num=1');
+  jdsbh := TRequestItf.RmQuery('APPLYWSBH', 'yhbh=' + gUser.yhbh +
+    '&wslb=1&num=1');
   if jdsbh <> '' then
   begin
-    txtJDSBH1.text := Copy(jdsbh, 1, 6);
+    txtJDSBH1.Text := Copy(jdsbh, 1, 6);
     txtJDSBH2.Text := Copy(jdsbh, 7, 9);
     txtJYW.Text := TCommon.GetJYW(jdsbh);
   end;

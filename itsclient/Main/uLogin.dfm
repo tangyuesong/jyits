@@ -12098,11 +12098,11 @@ object FrmLogin: TFrmLogin
       end
     end
     inherited btnLogin: TcxButton
-      Top = 214
+      Left = 214
       LookAndFeel.SkinName = 'Blueprint'
       TabOrder = 3
       OnClick = sbtbtnLoginClick
-      ExplicitTop = 214
+      ExplicitLeft = 214
     end
     inherited btnPIK: TcxButton
       Top = 214

@@ -37,6 +37,7 @@ object frmMain: TfrmMain
     StyleDisabled.LookAndFeel.SkinName = 'Blueprint'
     StyleDisabled.TextStyle = []
     TabOrder = 0
+    ExplicitTop = -5
     Height = 60
     Width = 1127
     object cxLabel1: TcxLabel
@@ -1596,6 +1597,40 @@ object frmMain: TfrmMain
       Transparent = True
       Height = 58
       Width = 58
+    end
+    object btnPwd: TcxButton
+      Left = 952
+      Top = 1
+      Width = 58
+      Height = 58
+      Align = alRight
+      OptionsImage.ImageIndex = 3
+      OptionsImage.Images = DM.ilBarLarge
+      SpeedButtonOptions.CanBeFocused = False
+      SpeedButtonOptions.Flat = True
+      SpeedButtonOptions.Transparent = True
+      TabOrder = 4
+      OnClick = btnPwdClick
+      ExplicitTop = -4
+    end
+    object lbUser: TcxLabel
+      Left = 880
+      Top = 1
+      Align = alRight
+      Caption = #13#10#13#10#13#10#29992#25143':admin'
+      ParentFont = False
+      Style.Font.Charset = ANSI_CHARSET
+      Style.Font.Color = clWindow
+      Style.Font.Height = -12
+      Style.Font.Name = #23435#20307
+      Style.Font.Style = [fsBold]
+      Style.LookAndFeel.NativeStyle = True
+      Style.IsFontAssigned = True
+      StyleDisabled.LookAndFeel.NativeStyle = True
+      StyleFocused.LookAndFeel.NativeStyle = True
+      StyleHot.LookAndFeel.NativeStyle = True
+      Transparent = True
+      ExplicitLeft = 870
     end
   end
   object mbMain: TdxNavBar

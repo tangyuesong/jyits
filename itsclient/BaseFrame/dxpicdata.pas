@@ -215,8 +215,8 @@ procedure TdxFramePicData.BindControls(tb: TFDMemTable);
 var
   veh: TVehinfo;
 begin
-  veh := TCommon.GetLocalVeh(tb.FieldByName('HPHM').AsString,
-    tb.FieldByName('HPZL').AsString);
+  veh := TCommon.GetVehinfo(tb.FieldByName('HPHM').AsString,
+    tb.FieldByName('HPZL').AsString,'');
   edtkdbh.Text := tb.FieldByName('KDBH').AsString;
   if TLZDictionary.gDicDev[2].ContainsKey(edtkdbh.Text) then
     edtkdbh.Text := TLZDictionary.gDicDev[2][edtkdbh.Text].SBDDMC;
@@ -485,19 +485,10 @@ begin
     exit;
   picFile := gSetup.DirSave + FormatDateTime('yyyymmddhhnnsszzz', now) + '.jpg';
   if not TFile.Exists(picFile) then
-  begin
     TCommon.GetPic(URL, '', picFile);
-  end;
-  if TFile.Exists(picFile) then
-  begin
-    try
-      FPicFile := picFile;
-      // self.cxImage1.Picture.LoadFromFile(picFile);
-      ShowVioPicture(imgviopic, FPicFile);
-    except
-
-    end;
-  end;
+  FPicFile := picFile;
+  // self.cxImage1.Picture.LoadFromFile(picFile);
+  ShowVioPicture(imgviopic, FPicFile);
 end;
 
 procedure TdxFramePicData.ShowVioPicture(Sender: TObject; var picFile: string);
@@ -511,18 +502,24 @@ begin
     exit;
   end;
 
-  with TImageEnVect(Sender) do
-  begin
-    IO.NativePixelFormat := True;
-    if not IO.LoadFromFile(picFile) then
+  try
+    with TImageEnVect(Sender) do
     begin
-      picFile := '';
-      exit;
+      IO.NativePixelFormat := True;
+      if not IO.LoadFromFile(picFile) then
+      begin
+        picFile := '';
+        exit;
+      end;
+      // AutoFit := False;
+      Select(0, 0, 0, 0, iespReplace);
+      MouseInteract := [miSelect];
+      SelectionOptions := [iesoMoveable, iesoCanScroll];
     end;
-    // AutoFit := False;
-    Select(0, 0, 0, 0, iespReplace);
-    MouseInteract := [miSelect];
-    SelectionOptions := [iesoMoveable, iesoCanScroll];
+  except
+    TImageEnVect(Sender).IO.LoadFromFile(ExtractFilePath(ParamStr(0)) +
+      'image\ZWTP.png');
+    picFile := '';
   end;
 end;
 
@@ -536,5 +533,3 @@ begin
 end;
 
 end.
-
-

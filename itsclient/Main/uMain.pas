@@ -35,7 +35,7 @@ uses
   Vcl.ExtCtrls, FireDAC.Comp.Client, uFrameQDZView,
   cefvcl, dxSkinsdxStatusBarPainter, dxStatusBar, uDictionary,
   uCommon, uFrameIndexGCTJ, UFrameTJJKCJ, cxTextEdit, cxMemo,
-  dxSkinsdxBarPainter, dxBar;
+  dxSkinsdxBarPainter, dxBar, uModifyPwd;
 
 type
   TfrmMain = class(TForm)
@@ -70,6 +70,8 @@ type
     dxBarSubItem2: TdxBarSubItem;
     dxBarButton1: TdxBarButton;
     dxBarButton2: TdxBarButton;
+    btnPwd: TcxButton;
+    lbUser: TcxLabel;
     procedure FormCreate(Sender: TObject);
     procedure cxButton1Click(Sender: TObject);
     procedure cxButton3Click(Sender: TObject);
@@ -85,6 +87,7 @@ type
     procedure N1Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure btnPwdClick(Sender: TObject);
   private
     FFrameUpdating: Boolean;
     procedure mbMainItemClick(Sender: TObject);
@@ -112,6 +115,17 @@ implementation
 procedure TfrmMain.btnMsgCloseClick(Sender: TObject);
 begin
   gbMsg.Hide;
+end;
+
+procedure TfrmMain.btnPwdClick(Sender: TObject);
+begin
+  if not Assigned(frmModifyPwd) then
+    Application.CreateForm(TfrmModifyPwd, frmModifyPwd);
+{$IFDEF WEBXONE}
+  wxoShowModal(frmModifyPwd, frmMain);
+{$ELSE}
+  frmModifyPwd.ShowModal;
+{$ENDIF}
 end;
 
 procedure TfrmMain.CreateMainFrame;
@@ -239,6 +253,8 @@ begin
 {$ELSE}
   self.WindowState := wsMaximized;
 {$ENDIF}
+  lbUser.Caption := StringReplace(lbUser.Caption, 'admin', gUser.yhbh,
+    [rfReplaceAll]);
   self.Caption := gSetup.AppTitle;
   self.cxLabel1.Caption := gSetup.AppTitle;
 

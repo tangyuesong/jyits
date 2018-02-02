@@ -20,7 +20,8 @@ type
     class procedure AppFinalization();
     class procedure InitSetup();
     class function GetDrvInfo(sfzhm: String): TDrvInfo;
-    class function GetVehinfo(hphm, hpzl, dabh: String): TVehInfo;
+    class function GetVehinfo(hphm, hpzl, dabh: String; IsLocal: boolean = True)
+      : TVehInfo;
     class function GetClientAddr: string;
     class procedure ExportGridtoData(SExt, sPath: string; CxGrid: Tcxgrid);
     class procedure showVideo(input: string; idx, w, h: Integer;
@@ -454,8 +455,8 @@ begin
         ms.Position := 0;
         idhttp := TIdHTTP.Create(nil);
         idhttp.HandleRedirects := True; // 必须支持重定向否则可能出错
-        idhttp.ConnectTimeout := 3000; // 超过这个时间则不再访问
-        idhttp.ReadTimeout := 3000; //
+        idhttp.ConnectTimeout := 30000; // 超过这个时间则不再访问
+        idhttp.ReadTimeout := 30000; //
         urlcn := idhttp.url.URLEncode(url);
         idhttp.Get(urlcn, ms);
         if ms.Size > 0 then
@@ -664,9 +665,14 @@ begin
   else
     json := TRequestItf.DbQuery('GetT_VIO_VEHICLE', 'hphm=' + hphm);
   Result := TJsonUtils.JsonToRecord<TVehInfo>(json);
+  if Trim(Result.zsxxdz) = '' then
+    Result.zsxxdz := '空';
+  if Trim(Result.zzxxdz) = '' then
+    Result.zzxxdz := '空';
 end;
 
-class function TCommon.GetVehinfo(hphm, hpzl, dabh: String): TVehInfo;
+class function TCommon.GetVehinfo(hphm, hpzl, dabh: String;
+  IsLocal: boolean = True): TVehInfo;
 var
   veh: TVehInfo;
   s, code, rownum: string;
@@ -676,47 +682,39 @@ begin
   if (Length(hphm) < 6) or (Length(hpzl) < 2) then
     exit;
 
-  s := TRequestItf.RmQuery('GetVehInfo', 'HPHM=' + hphm + '&HPZL=' + hpzl +
-    '&DABH=' + dabh);
-  TJsonUtils.DecodeRmResultHead(s, code, rownum);
+  veh := GetLocalVeh(hphm, hpzl);
 
-  if (code <> '1') or (rownum = '0') then
+  if (veh.hphm = '') or not IsLocal then
   begin
+    s := TRequestItf.RmQuery('GetVehInfo', 'HPHM=' + hphm + '&HPZL=' + hpzl +
+      '&DABH=' + dabh);
+    TJsonUtils.DecodeRmResultHead(s, code, rownum);
 
-    exit;
-  end;
+    if (code <> '1') or (rownum = '0') then
+      exit;
 
-  if pos('"body":{', s) > 0 then
-  begin
-    s := copy(s, pos('"body":{', s) + 8, Length(s));
-    s := copy(s, pos('{', s), Length(s));
-    s := copy(s, 1, pos('}', s));
+    if pos('"body":{', s) > 0 then
+    begin
+      s := copy(s, pos('"body":{', s) + 8, Length(s));
+      s := copy(s, pos('{', s), Length(s));
+      s := copy(s, 1, pos('}', s));
+    end
+    else
+      exit;
+
+    s := '[' + s + ']';
+
+    Result := TJsonUtils.JsonToRecord<TVehInfo>(s);
+    Result.code := code;
+    Result.rownum := rownum;
+
+    if Trim(Result.zsxxdz) = '' then
+      Result.zsxxdz := veh.zsxxdz;
+    if Trim(Result.zzxxdz) = '' then
+      Result.zzxxdz := veh.zzxxdz;
   end
   else
-    exit;
-
-  s := '[' + s + ']';
-
-  Result := TJsonUtils.JsonToRecord<TVehInfo>(s);
-  Result.code := code;
-  Result.rownum := rownum;
-
-  if Trim(Result.zsxxdz) = '' then
-    Result.zsxxdz := '空';
-  if Trim(Result.zzxxdz) = '' then
-    Result.zzxxdz := '空';
-
-  if (Result.zsxxdz = '空') or (Result.zzxxdz = '空') then
-  begin
-    veh := TJsonUtils.JsonToRecord<TVehInfo>
-      (TRequestItf.DbQuery('GetT_VIO_VEHICLE',
-      'hphm=' + hphm + '&hpzl=' + hpzl));
-    if Length(veh.zsxxdz) > 0 then
-    begin
-      Result.zsxxdz := veh.zsxxdz;
-      Result.zzxxdz := veh.zsxxdz;
-    end;
-  end;
+    Result := veh;
 end;
 
 class function TCommon.GetHPYS(hpzl: string): TColor;

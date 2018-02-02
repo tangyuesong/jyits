@@ -8,11 +8,11 @@ inherited FToolVioJFGL: TFToolVioJFGL
     inherited cxGrid1: TcxGrid
       Top = 45
       Width = 950
-      Height = 202
+      Height = 174
       TabOrder = 8
       ExplicitTop = 45
       ExplicitWidth = 950
-      ExplicitHeight = 202
+      ExplicitHeight = 174
     end
     object DtKSSJ: TcxDateEdit [1]
       Left = 67
@@ -94,34 +94,34 @@ inherited FToolVioJFGL: TFToolVioJFGL
       OnClick = BtnAddClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 254
+      Top = 226
       TabOrder = 9
-      ExplicitTop = 254
+      ExplicitTop = 226
     end
     inherited btnFirstPage: TcxButton
-      Top = 254
+      Top = 226
       TabOrder = 10
-      ExplicitTop = 254
+      ExplicitTop = 226
     end
     inherited btnPriorPage: TcxButton
-      Top = 254
+      Top = 226
       TabOrder = 11
-      ExplicitTop = 254
+      ExplicitTop = 226
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 254
+      Top = 226
       TabOrder = 12
-      ExplicitTop = 254
+      ExplicitTop = 226
     end
     inherited btnnextPage: TcxButton
-      Top = 254
+      Top = 226
       TabOrder = 13
-      ExplicitTop = 254
+      ExplicitTop = 226
     end
     inherited btnLastPage: TcxButton
-      Top = 254
+      Top = 226
       TabOrder = 14
-      ExplicitTop = 254
+      ExplicitTop = 226
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal

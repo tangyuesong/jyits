@@ -7,11 +7,11 @@ inherited FrameFeedbackResult: TFrameFeedbackResult
     inherited cxGrid1: TcxGrid
       Top = 45
       Width = 577
-      Height = 174
+      Height = 202
       TabOrder = 5
       ExplicitTop = 45
       ExplicitWidth = 577
-      ExplicitHeight = 174
+      ExplicitHeight = 202
     end
     object dtBegin: TcxDateEdit [1]
       Left = 67
@@ -65,34 +65,34 @@ inherited FrameFeedbackResult: TFrameFeedbackResult
       OnClick = btnSearchClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 226
+      Top = 254
       TabOrder = 6
-      ExplicitTop = 226
+      ExplicitTop = 254
     end
     inherited btnFirstPage: TcxButton
-      Top = 226
+      Top = 254
       TabOrder = 7
-      ExplicitTop = 226
+      ExplicitTop = 254
     end
     inherited btnPriorPage: TcxButton
-      Top = 226
+      Top = 254
       TabOrder = 8
-      ExplicitTop = 226
+      ExplicitTop = 254
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 226
+      Top = 254
       TabOrder = 9
-      ExplicitTop = 226
+      ExplicitTop = 254
     end
     inherited btnnextPage: TcxButton
-      Top = 226
+      Top = 254
       TabOrder = 10
-      ExplicitTop = 226
+      ExplicitTop = 254
     end
     inherited btnLastPage: TcxButton
-      Top = 226
+      Top = 254
       TabOrder = 11
-      ExplicitTop = 226
+      ExplicitTop = 254
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
