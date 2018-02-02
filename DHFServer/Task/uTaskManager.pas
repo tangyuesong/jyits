@@ -101,7 +101,7 @@ var
   config: TKKThreadConfig;
   thread: TKKThread;
 begin
-  vio1344Thread := TVio1344Thread.Create;
+  //vio1344Thread := TVio1344Thread.Create;
   list := LoadKKThreadConfig('1');
   for config in list do
   begin
@@ -223,8 +223,8 @@ begin
   begin
     item.Free;
   end;
-  vio1344Thread.Stop;
-  vio1344Thread.Terminate;
+  //vio1344Thread.Stop;
+  //vio1344Thread.Terminate;
   FThreadList.Clear;
 end;
 
