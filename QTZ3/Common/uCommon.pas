@@ -983,11 +983,16 @@ begin
     begin
       token := gTokenManager.NewToken(yhbh, ip);
       token.User := User;
-      result := '{"token":"' + token.key + '","dwdm":"' + token.User.dwdm +
-        '","yhbh":"' + token.User.yhbh + '","yhxm":"' + token.User.yhxm +
-        '","zw":"' + token.User.ZW + '","sjhm":"' + token.User.SJHM + '","sh":"'
-        + token.User.SH + '","fh":"' + token.User.FH + '","manager":"' +
-        token.User.Manager + '","role":"' + token.User.role + '"}';
+      result := '{"token":"' + token.key + '","dwdm":"' + token.User.dwdm + '"';
+      if Depts.ContainsKey(token.User.dwdm) then
+        result := result + ',"dwmc":"' + Depts[token.User.dwdm].dwmc + '"'
+      else
+        result := result + ',"dwmc":""';
+      result := result + ',"yhbh":"' + token.User.yhbh + '","yhxm":"' +
+        token.User.yhxm + '","zw":"' + token.User.ZW + '","sjhm":"' +
+        token.User.SJHM + '","sh":"' + token.User.SH + '","fh":"' +
+        token.User.FH + '","manager":"' + token.User.Manager + '","role":"' +
+        token.User.role + '"}';
     end;
   end;
 end;

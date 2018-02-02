@@ -34,7 +34,11 @@ type
       AResponseInfo: TIdHTTPResponseInfo);
     class procedure SaveSimpleVio(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
+    class procedure SaveDutySimple(token: TToken; params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo);
     class procedure SaveForceVio(token: TToken; params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo);
+    class procedure WriteSG(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
   public
     class function GetVehinfo(token: TToken; hphm, hpzl: String): String;
@@ -241,7 +245,6 @@ begin
   gLogger.Info(json);
   json := TTmri.Write(tmriParam, json);
   result := json;
-  gLogger.Info(json);
 end;
 
 class procedure TRmService.GetVioPic(token: TToken; params: TStrings;
@@ -443,6 +446,14 @@ begin
   begin
     SaveSimpleVio(token, params, AResponseInfo);
   end
+  else if action = 'SAVEDUTYSIMPLE' then
+  begin
+    SaveDutySimple(token, params, AResponseInfo);
+  end
+  else if action = 'WRITESG' then
+  begin
+    WriteSG(token, params, AResponseInfo);
+  end
   else if action = 'SAVEFORCEVIO' then
   begin
     SaveForceVio(token, params, AResponseInfo);
@@ -567,6 +578,74 @@ begin
     code := TCommon.GetJsonNode('msg', json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
   end;
+end;
+
+class procedure TRmService.WriteSG(token: TToken; params: TStrings;
+  AResponseInfo: TIdHTTPResponseInfo);
+var
+  ryInfo: String;
+begin
+  // ryInfo := '$$445101$$1$$胡舒敏$$1$$342921198309063411$$35$$广州$$13570969818$$15$$1$$9009$$$$$$$$$$$$$$F1$$342921$$$$$$$$C1$$$$'
+  // + '$$粤A$$5$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$11$$';
+
+  ryInfo := '$$445101$$1$$李四$$1$$342921198309063551$$35$$$$$$15$$1$$9009$$$$$$$$$$$$$$X9$$342921$$$$$$$$$$$$'
+    + '$$$$5$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$00$$' + '~~' +
+    '$$445101$$2$$张三$$1$$445121198111054555$$37$$$$$$14$$1$$$$$$$$$$$$$$$$X9$$445102$$$$$$$$$$$$'
+    + '$$$$5$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$00$$';
+  params.Clear;
+  params.Add('xzqh=445101');
+  params.Add('sgfssj=2018-02-01 19:05');
+  params.Add('lh=60546');
+  params.Add('lm=市区奎元路口');
+  params.Add('gls=1001');
+  params.Add('ms=0');
+  params.Add('sgdd=市区奎元路口');
+  params.Add('ssrs=0');
+  params.Add('zjccss=0');
+  params.Add('sgrdyy=9009');
+  params.Add('tq=2');
+  params.Add('dllx=22');
+  params.Add('sgxt=36');
+  params.Add('dcsg=21');
+  params.Add('tjr=陈焕林');
+  params.Add('cclrsj=2018-02-01 19:32:11');
+  params.Add('sszd=445101000000');
+  params.Add('glbm=445100000000');
+  params.Add('sgss=测试数据');
+  params.Add('zrtjjg=经双方共同请求调解达成一致：赔偿元，就是结案。');
+  params.Add('jar1=陈焕林');
+  params.Add('jar2=林广铭');
+  params.Add('jbr=陈焕林');
+  params.Add('gxsj=2018-02-01 19:32:11');
+  params.Add('jafs=1');
+  params.Add('tjfs=1');
+  params.Add('ryxx=' + ryInfo);
+  params.Add('rylen=2');
+  SaveDutySimple(token, params, AResponseInfo);
+end;
+
+class procedure TRmService.SaveDutySimple(token: TToken; params: TStrings;
+  AResponseInfo: TIdHTTPResponseInfo);
+var
+  json, code: String;
+  tmriParam: TTmriParam;
+begin
+  params.Add('JKID=03C52');
+  json := DoWrite(token, params);
+  code := TCommon.GetJsonNode('code', json);
+  if code = '1' then
+  begin
+    TCommon.WriteSimpleVio(params.Values['dsr'], params.Values['wfsj'],
+      params.Values['jdsbh'], token.User.YHXM);
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
+  end
+  else
+  begin
+    gLogger.Info(json);
+    code := TCommon.GetJsonNode('message', json);
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+  end;
+
 end;
 
 end.
