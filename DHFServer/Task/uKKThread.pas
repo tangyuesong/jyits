@@ -141,7 +141,7 @@ begin
     SQLHelper.ExecuteSql('update T_KK_DBCONFIG set KKLASTTIME=''' + lastGCXH +
         ''' where kksource=' + FConfig.KKSOURCE.QuotedString);
   end
-  else
+  else if FQuery.RecordCount < 100 then
     sleep(10000);
 end;
 

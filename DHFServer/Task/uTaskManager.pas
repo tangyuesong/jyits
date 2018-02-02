@@ -41,8 +41,13 @@ end;
 
 destructor TTaskManager.Destroy;
 begin
+try
   ClearThreads;
   FThreadList.Free;
+except
+  on e: exception do
+    logger.Error(e.Message);
+end;
   inherited;
 end;
 
@@ -207,7 +212,6 @@ begin
   begin
     item.Terminate;
   end;
-
   allFinished := false;
   while not allFinished do
   begin
@@ -218,7 +222,6 @@ begin
       allFinished := allFinished and item.Finished;
     end;
   end;
-
   for item in FThreadList do
   begin
     item.Free;

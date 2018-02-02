@@ -66,9 +66,9 @@ begin
     end;
     Free;
   end;
-  if gOldAlarm <> nil then
+  if gOldAlarm <> nil then   // 释放旧的
     gOldAlarm.Free;
-  gOldAlarm := gDicAlarm;
+  gOldAlarm := gDicAlarm;  // gDicAlarm可能还在被使用，所以不能马上Free
   gDicAlarm := tmp;
 end;
 
@@ -336,6 +336,9 @@ begin
     gHeartbeatUrl := gHeartbeatUrl + '/';
 
   ini.Free;
+  gDicDevice := nil;
+  gDicHBC := nil;
+  gDicAlarm := nil;
 
   gOldDevice := nil;
   gOldHBC := nil;
@@ -363,16 +366,6 @@ begin
   gOpenedDevice.Free;
   ClearDevice(gDicDevice);
   gDicDevice.Free;
-
-  if gOldAlarm <> nil then gOldAlarm.Free;
-  if gOldHBC <> nil then gOldHBC.Free;
-  if gOpenedDevice <> nil then gOpenedDevice.Free;
-  if gOldDevice <> nil then
-  begin
-    ClearDevice(gOldDevice);
-    gOldDevice.Free;
-  end;
-
   gDicHPZL.Free;
   sqlHelper.Free;
   gUnknowDevice.Free;
