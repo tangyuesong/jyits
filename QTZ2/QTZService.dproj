@@ -153,6 +153,10 @@
         <DCCReference Include="rm\impl\uJKDefine.pas"/>
         <DCCReference Include="uWSManager.pas"/>
         <DCCReference Include="rm\intf\TmriOutNewAccess.pas"/>
+        <DCCReference Include="qjson.pas"/>
+        <DCCReference Include="qrbtree.pas"/>
+        <DCCReference Include="QString.pas"/>
+        <DCCReference Include="rm\intf\TmriOutAccess.pas"/>
         <DCCReference Include="rm\intf\TmriOutAccess1.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

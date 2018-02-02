@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, uGlobal, Rtti, uSQLHelper, uLogger, ADODB,
   System.JSON, FireDAC.Comp.Client, uTokenManager, uJKDefine, uWSManager,
-  Data.DB, uEntity, System.Generics.Collections;
+  Data.DB, uEntity, System.Generics.Collections, QJSON, StrUtils;
 
 type
 
@@ -33,6 +33,10 @@ type
     Class function JSONToDataSet(AJSON: String; ATable: TFDMemTable;
       AIndexField: String = ''; AIsCreateCol: Boolean = True;
       Options: TIndexOptions = [ixDescending]): Boolean;
+    class procedure SaveVehInfo(AJSON: String);
+    class function GetJsonNode(ANode, AJSON: String): String;
+    class function FindJson(AItemName: String; AJSON: TQJson): TQJson;
+    class function GetLocalVehInfo(hphm, hpzl: String): String;
   end;
 
 procedure SQLError(const SQL, Description: string);
@@ -300,6 +304,47 @@ begin
   end;
 end;
 
+class function TCommon.FindJson(AItemName: String; AJSON: TQJson): TQJson;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to AJSON.Count - 1 do
+  begin
+    if UpperCase(AJSON.Items[i].Name) = UpperCase(AItemName) then
+      Result := AJSON.Items[i]
+    else
+      Result := FindJson(AItemName, AJSON.Items[i]);
+    if Result <> nil then
+      break;
+  end;
+end;
+
+class function TCommon.GetJsonNode(ANode, AJSON: String): String;
+var
+  item, JSON: TQJson;
+begin
+  Result := '';
+  JSON := TQJson.Create;
+  try
+    JSON.Parse(AJSON);
+    item := FindJson(ANode, JSON);
+    if item <> nil then
+      Result := item.ToString;
+  finally
+    JSON.Free;
+  end;
+end;
+
+class function TCommon.GetLocalVehInfo(hphm, hpzl: String): String;
+var
+  s: String;
+begin
+  s := ' select * from T_VIO_VEHICLE where hphm=' + hphm.QuotedString +
+    ' and hpzl=' + hpzl.QuotedString;
+  Result := QueryToJsonString(s);
+end;
+
 class procedure TCommon.InitAction();
 var
   action: TAction;
@@ -326,7 +371,7 @@ var
   jk: TJK;
 begin
   JKDic := TDictionary<String, TJK>.Create;
-  JKCounterDic := TDictionary<String, integer>.Create;
+  JKCounterDic := TDictionary<String, Integer>.Create;
   with gSQLHelper.Query('select * from S_JKGL where QYZT = 1') do
   begin
     while not Eof do
@@ -443,6 +488,60 @@ begin
       Result := Result + ',"' + Field.Name + '":"' + s + '"';
   end;
   Result := '{' + Result.Substring(1) + '}';
+end;
+
+class procedure TCommon.SaveVehInfo(AJSON: String);
+var
+  qj: TQJson;
+  s, hphm, hpzl, fzjg, gxsj: String;
+  ts: TStrings;
+begin
+  AJSON := TCommon.GetJsonNode('veh', AJSON);
+  if AJSON = '' then
+    exit;
+
+  ts := TStringList.Create;
+  qj := TQJson.Create;
+  try
+    qj.Parse(AJSON);
+    hphm := qj.ItemByName('hphm').value;
+    hpzl := qj.ItemByName('hpzl').value;
+    fzjg := qj.ItemByName('fzjg').value;
+    if (hphm <> '') and (hpzl <> '') then
+    begin
+      hphm := LeftStr(fzjg, 1) + hphm;
+      gxsj := gSQLHelper.GetSinge('select max(gxsj) from T_VIO_VEHICLE');
+      if gxsj = '' then
+        gxsj := Formatdatetime('yyyy-MM-dd hh:nn:ss', now() - 2);
+      // 复制库更新是根据gxsj，防止影响复制库更新
+      ts.Add('delete from T_VIO_VEHICLE where hphm=' + hphm.QuotedString +
+        ' and hpzl=' + hpzl.QuotedString);
+
+      s := 'insert into T_VIO_VEHICLE(hpzl ,hphm ,clpp1 ,clxh ,gcjk ,zzg ,zzcmc ,clsbdh ,fdjh ,cllx ,csys ,syxz ,sfzmhm ,sfzmmc ,syr '
+        + ',ccdjrq ,djrq ,yxqz ,qzbfqz ,fzjg  ,bxzzrq ,dabh ,zt  ,hbdbqk, gxsj) values ('''
+        + hpzl + ''',''' + hphm + ''',''' + qj.ItemByName('clpp1').value +
+        ''',''' + qj.ItemByName('clxh').value + ''',''' + qj.ItemByName('gcjk')
+        .value + ''',''' + qj.ItemByName('zzg').value + ''',''' +
+        qj.ItemByName('zzcmc').value + ''',''' + qj.ItemByName('clsbdh').value +
+        ''',''' + qj.ItemByName('fdjh').value + ''',''' + qj.ItemByName('cllx')
+        .value + ''',''' + qj.ItemByName('csys').value + ''',''' +
+        qj.ItemByName('syxz').value + ''',''' + qj.ItemByName('sfzmhm').value +
+        ''',''' + qj.ItemByName('sfzmmc').value + ''',''' + qj.ItemByName('syr')
+        .value + ''',''' + qj.ItemByName('ccdjrq').value + ''',''' +
+        qj.ItemByName('djrq').value + ''',''' + qj.ItemByName('yxqz').value +
+        ''',''' + qj.ItemByName('qzbfqz').value + ''',''' +
+        qj.ItemByName('fzjg').value + ''',''' + qj.ItemByName('bxzzrq').value +
+        ''',''' + qj.ItemByName('dabh').value + ''',''' + qj.ItemByName('zt')
+        .value + ''',''' + qj.ItemByName('hbdbqk').value + ''',' +
+        gxsj.QuotedString + ')';
+      ts.Add(s);
+      gSQLHelper.ExecuteSqlTran(ts);
+    end;
+  except
+  end;
+  qj.Free;
+  ts.Free;
+
 end;
 
 procedure SQLError(const SQL, Description: string);

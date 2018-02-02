@@ -8,7 +8,7 @@ uses
   IdBaseComponent, IdComponent, IdCustomTCPServer, IdCustomHTTPServer,
   IdHTTPServer, IniFiles, IdContext, uLogger, HTTPApp, uTmri, uRmweb,
   uRminf, uTrans, ActiveX, itfUploadVioTo61, Soap.EncdDecd, IdURI, IdHttp,
-  IdSSLOpenSSL, uTokenManager, uGlobal, uSpecialItf;
+  IdSSLOpenSSL, uTokenManager, uGlobal, uSpecialItf, uCommon;
 
 type
 
@@ -19,15 +19,18 @@ type
       ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     procedure DoGetVehInfo(token: TToken; Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
-    procedure DoWriteVio(token: TToken; Params: TStrings; AResponseInfo: TIdHTTPResponseInfo);
+    procedure DoWriteVio(token: TToken; Params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo);
     procedure DoRminf(action: String; Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
     procedure DoRmweb(action: String; Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
     procedure DoWriteVehicleInfo(Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
-    procedure DoQeury(token: TToken; Params: TStrings; AResponseInfo: TIdHTTPResponseInfo);
-    procedure DoWrite(token: TToken; Params: TStrings; AResponseInfo: TIdHTTPResponseInfo);
+    function DoQeury(token: TToken; Params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo): String;
+    procedure DoWrite(token: TToken; Params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo);
     function ParamsToJson(UnparsedParams: string;
       exceptName: string = ''): string;
     function GetTmriParam(jkid: string; token: TToken): TTmriParam;
@@ -108,21 +111,23 @@ end;
 procedure TRmService.DoGetVehInfo(token: TToken; Params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  sf, hphm: string;
+  sf, hphm, json: string;
 begin
   try
     hphm := Params.Values['HPHM'];
     sf := copy(hphm, 1, 1);
-    Params[Params.IndexOfName('HPHM')] :=  'hphm=' + copy(hphm, 2, 100);
+    Params[Params.IndexOfName('HPHM')] := 'hphm=' + copy(hphm, 2, 100);
     if sf = '粤' then
     begin
       Params.Add('JKID=01C21');
     end
-    else begin
+    else
+    begin
       Params.Add('sf=' + sf);
       Params.Add('JKID=01C49');
     end;
-    DoQeury(token, Params, AResponseInfo);
+    json := DoQeury(token, Params, AResponseInfo);
+    TCommon.SaveVehInfo(json);
   except
     on e: Exception do
       logger.Error(Params.DelimitedText + ': ' + e.Message);
@@ -271,8 +276,8 @@ begin
   AResponseInfo.ContentText := json;
 end;
 
-procedure TRmService.DoQeury(token: TToken; Params: TStrings;
-  AResponseInfo: TIdHTTPResponseInfo);
+function TRmService.DoQeury(token: TToken; Params: TStrings;
+  AResponseInfo: TIdHTTPResponseInfo): String;
 var
   json: string;
   tmriParam: TTmriParam;
@@ -281,6 +286,7 @@ begin
   json := ParamsToJson(Params.DelimitedText, ',JKID,');
   json := TTmri.Query(tmriParam, json);
   AResponseInfo.ContentText := json;
+  result := json;
 end;
 
 procedure TRmService.DoWrite(token: TToken; Params: TStrings;
@@ -315,7 +321,7 @@ const
   rminf = ',SURSCREEN,SUREXAMINE,FLOWEQUIP,WEATHER,INCIDENT,INDUCEMENT,CAR,POLICE,PARK,';
 var
   Params: TStrings;
-  action, tokenStr, ip: string;
+  action, tokenStr, IP: string;
   wsbh, wslb, num: string;
   tmriParam: TTmriParam;
   token: TToken;
@@ -323,12 +329,12 @@ var
 begin
   ActiveX.CoInitialize(nil);
   action := UpperCase(ARequestInfo.Document.Substring(1));
-  ip := Trim(AContext.Connection.Socket.Binding.PeerIP);
+  IP := Trim(AContext.Connection.Socket.Binding.PeerIP);
   tokenStr := '';
 
   if action <> UpperCase('WriteVehicleInfo') then // 太多无意义的日志
   begin
-    logger.logging('[' + ip + ']' + action + '/' + ARequestInfo.Params.Text, 2);
+    logger.logging('[' + IP + ']' + action + '/' + ARequestInfo.Params.Text, 2);
   end;
   AResponseInfo.ContentType := 'text/html';
   AResponseInfo.CharSet := 'utf-8';
@@ -348,12 +354,12 @@ begin
   end;
 
   if UpperCase(action) = UpperCase('Login') then
-    AResponseInfo.ContentText := TSpecialItf.Login(ip, Params)
+    AResponseInfo.ContentText := TSpecialItf.Login(IP, Params)
   else
   begin
-    if not gTokenManager.CheckToken(tokenStr, ip) then
+    if not gTokenManager.CheckToken(tokenStr, IP) then
     begin
-      logger.logging('[' + ip + ']' + action + ' invalid token,' + tokenStr, 4);
+      logger.logging('[' + IP + ']' + action + ' invalid token,' + tokenStr, 4);
       AResponseInfo.ContentText := 'invalid token';
       exit;
     end;
@@ -417,7 +423,8 @@ begin
     begin
       wslb := ARequestInfo.Params.Values['wslb'];
       num := ARequestInfo.Params.Values['num'];
-      AResponseInfo.ContentText := gWSManager.Apply(token.Login, wslb, StrToIntDef(num, 0));
+      AResponseInfo.ContentText := gWSManager.Apply(token.Login, wslb,
+        strtointdef(num, 0));
     end
     else if action = 'SUBMITWSBH' then
     begin
@@ -438,11 +445,12 @@ begin
     // 文书管理 end
     else
       AResponseInfo.ContentText := 'Hello Word!';
-    TSpecialItf.SaveQtzLog(tokenStr, token.Login, ip, action, Params.DelimitedText);
+    TSpecialItf.SaveQtzLog(tokenStr, token.Login, IP, action,
+      Params.DelimitedText);
   end;
   if action <> UpperCase('WriteVehicleInfo') then // 太多无意义的日志
   begin
-    logger.logging('[' + ip + ']' + action + ' OK', 2);
+    logger.logging('[' + IP + ']' + action + ' OK', 2);
   end;
   Params.Free;
 end;

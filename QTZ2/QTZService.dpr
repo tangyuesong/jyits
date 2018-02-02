@@ -30,6 +30,10 @@ uses
   uJKDefine in 'rm\impl\uJKDefine.pas',
   uWSManager in 'uWSManager.pas',
   TmriOutNewAccess in 'rm\intf\TmriOutNewAccess.pas',
+  qjson in 'qjson.pas',
+  qrbtree in 'qrbtree.pas',
+  QString in 'QString.pas',
+  TmriOutAccess in 'rm\intf\TmriOutAccess.pas',
   TmriOutAccess1 in 'rm\intf\TmriOutAccess1.pas';
 
 {$R *.RES}
