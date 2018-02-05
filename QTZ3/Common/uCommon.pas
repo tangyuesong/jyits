@@ -118,7 +118,7 @@ begin
     end;
     tsList.add(s.Substring(1));
 
-    qy.first;
+    //qy.first;
     While Not qy.Eof do
     begin
       s := '';
@@ -176,81 +176,84 @@ begin
   JSON := TDictionary<String, TStrings>.Create;
   with gSQLHelper.Query(ASql) do
   begin
-    ATotal := RecordCount;
-    while not Eof do
+    if not Eof then
     begin
-      key := '';
-      obj := '';
-      for i := 0 to FieldCount - 1 do
+      ATotal := RecordCount;
+      while not Eof do
       begin
-        col := LowerCase(Fields[i].FieldName);
-        if Fields[i].DataType = TFieldType.ftDatetime then
-          value := Formatdatetime('yyyy/mm/dd hh:mm:ss', Fields[i].AsDateTime)
-        else if Fields[i].DataType = TFieldType.ftBoolean then
+        key := '';
+        obj := '';
+        for i := 0 to FieldCount - 1 do
         begin
-          if Fields[i].AsBoolean then
-            value := '1'
+          col := LowerCase(Fields[i].FieldName);
+          if Fields[i].DataType = TFieldType.ftDatetime then
+            value := Formatdatetime('yyyy/mm/dd hh:mm:ss', Fields[i].AsDateTime)
+          else if Fields[i].DataType = TFieldType.ftBoolean then
+          begin
+            if Fields[i].AsBoolean then
+              value := '1'
+            else
+              value := '0';
+          end
           else
-            value := '0';
-        end
-        else
-          value := Fields[i].AsString.Replace(char(9), ' ')
-            .Replace(char(10), ' ').Replace(char(13), ' ');
-        s := '"' + col + '":"' + value + '"';
+            value := Fields[i].AsString.Replace(char(9), ' ')
+              .Replace(char(10), ' ').Replace(char(13), ' ');
+          s := '"' + col + '":"' + value + '"';
 
-        if (AGroups <> nil) and (AGroups.IndexOf(UpperCase(col)) >= 0) then
-          key := key + s + ','
-        else
-          obj := obj + s + ',';
+          if (AGroups <> nil) and (AGroups.IndexOf(UpperCase(col)) >= 0) then
+            key := key + s + ','
+          else
+            obj := obj + s + ',';
 
-        if UpperCase(col) = 'HPZL' then
-        begin
-          if DicHpzlMC.ContainsKey(value) then
-            s := '"hpzlmc":"' + DicHpzlMC[value] + '"'
-          else
-            s := '"hpzlmc":""';
-          if (AGroups <> nil) and (AGroups.IndexOf('HPZL') >= 0) then
-            key := key + s + ','
-          else
-            obj := obj + s + ',';
-        end
-        else if (UpperCase(col) = 'SBBH') or (UpperCase(col) = 'KDBH') or
-          (UpperCase(col) = 'WFDD') then
-        begin
-          if DicDevice.ContainsKey(value) then
-            s := '"sbddmc":"' + DicDevice[value].SBDDMC + '"'
-          else
-            s := '"sbddmc":""';
-          if (AGroups <> nil) and ((AGroups.IndexOf('SBBH') >= 0) or
-            (AGroups.IndexOf('KDBH') >= 0) or (AGroups.IndexOf('WFDD') >= 0))
-          then
-            key := key + s + ','
-          else
-            obj := obj + s + ',';
-        end
-        else if (UpperCase(col) = 'CZDW') or (UpperCase(col) = 'DWDM') or
-          (UpperCase(col) = 'CJJG') then
-        begin
-          if Depts.ContainsKey(value) then
-            s := '"dwmc":"' + Depts[value].dwmc + '"'
-          else
-            s := '"dwmc":""';
-          if (AGroups <> nil) and ((AGroups.IndexOf('CZDW') >= 0) or
-            (AGroups.IndexOf('DWDM') >= 0) or (AGroups.IndexOf('CJJG') >= 0))
-          then
-            key := key + s + ','
-          else
-            obj := obj + s + ',';
-        end
+          if UpperCase(col) = 'HPZL' then
+          begin
+            if DicHpzlMC.ContainsKey(value) then
+              s := '"hpzlmc":"' + DicHpzlMC[value] + '"'
+            else
+              s := '"hpzlmc":""';
+            if (AGroups <> nil) and (AGroups.IndexOf('HPZL') >= 0) then
+              key := key + s + ','
+            else
+              obj := obj + s + ',';
+          end
+          else if (UpperCase(col) = 'SBBH') or (UpperCase(col) = 'KDBH') or
+            (UpperCase(col) = 'WFDD') then
+          begin
+            if DicDevice.ContainsKey(value) then
+              s := '"sbddmc":"' + DicDevice[value].SBDDMC + '"'
+            else
+              s := '"sbddmc":""';
+            if (AGroups <> nil) and ((AGroups.IndexOf('SBBH') >= 0) or
+              (AGroups.IndexOf('KDBH') >= 0) or (AGroups.IndexOf('WFDD') >= 0))
+            then
+              key := key + s + ','
+            else
+              obj := obj + s + ',';
+          end
+          else if (UpperCase(col) = 'CZDW') or (UpperCase(col) = 'DWDM') or
+            (UpperCase(col) = 'CJJG') then
+          begin
+            if Depts.ContainsKey(value) then
+              s := '"dwmc":"' + Depts[value].dwmc + '"'
+            else
+              s := '"dwmc":""';
+            if (AGroups <> nil) and ((AGroups.IndexOf('CZDW') >= 0) or
+              (AGroups.IndexOf('DWDM') >= 0) or (AGroups.IndexOf('CJJG') >= 0))
+            then
+              key := key + s + ','
+            else
+              obj := obj + s + ',';
+          end
+        end;
+        if key = '' then
+          key := 'ALL,';
+        key := copy(key, 1, length(key) - 1);
+        obj := copy(obj, 1, length(obj) - 1);
+        if not JSON.ContainsKey(key) then
+          JSON.add(key, TStringList.Create);
+        JSON[key].add(obj);
+        Next;
       end;
-      if key = '' then
-        key := 'ALL,';
-      key := copy(key, 1, length(key) - 1);
-      obj := copy(obj, 1, length(obj) - 1);
-      if not JSON.ContainsKey(key) then
-        JSON.add(key, TStringList.Create);
-      JSON[key].add(obj);
-      Next;
     end;
     Free;
   end;
@@ -349,7 +352,7 @@ begin
   with gSQLHelper.Query('select * from ' + cDBName + '.dbo.S_USER where YHBH = '
     + userid.QuotedString + ' and mm = ' + pwd.QuotedString) do
   begin
-    if RecordCount > 0 then
+    if not EOF then
     begin
       result.SystemID := FieldByName('SystemID').AsString;
       result.dwdm := FieldByName('DWDM').AsString;
