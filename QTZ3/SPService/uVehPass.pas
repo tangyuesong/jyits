@@ -72,9 +72,11 @@ class function TVehPass.GetDBPassList(kssj, jssj: Double;
   var totalNum, currentNum: Integer; var minGCSJ: Double): string;
 var
   where, s, pass: String;
-  start: Integer;
+  start, iTotal: Integer;
 begin
   Result := '';
+  totalNum := 0;
+  currentNum := 0;
   start := currentpage * pagesize;
 
   where := ' where GCSJ >' + FormatDateTime('yyyy-mm-dd hh:nn:ss', kssj)
@@ -90,10 +92,12 @@ begin
   if hpzl <> '' then
     where := where + ' and HPZL=' + hpzl.QuotedString;
   s := ' select count(1) from ' + cDBName + '.dbo.T_KK_VEH_PASSREC ' + where;
-  totalNum := StrToIntDef(gSQLHelper.GetSinge(s), 0);
+  iTotal := StrToIntDef(gSQLHelper.GetSinge(s), 0);
   minGCSJ := now;
-  if totalNum > 0 then
+
+  if iTotal > start then
   begin
+    totalNum := iTotal - start;
     s := ' select CJJG, GCXH, KDBH, CDBH, HPZL, GCSJ, CLSD, HPHM,CSYS,CLPP,FWQDZ,TP1,TP2,TP3 '
       + ' from ' + cDBName + '.dbo.T_KK_VEH_PASSREC ' + where +
       ' order by GCSJ desc ' + ' offset ' + IntToStr(start) + ' row fetch next '
@@ -101,7 +105,8 @@ begin
 
     with gSQLHelper.Query(s) do
     begin
-      currentNum := RecordCount;
+      if not Eof then
+        currentNum := RecordCount;
       while not Eof do
       begin
         pass := '"cjjg":"' + Fields[0].AsString + '"';
@@ -175,7 +180,7 @@ begin
   rownum := dbTotal;
   if currentNum < pagesize then
   begin
-    lines := TSolr.GetPassContent(kssj, jssj, kdbh, hphm, hpzl, 0, pagesize,
+    lines := TSolr.GetPassContent(kssj, jssj, kdbh, hphm, hpzl, currentpage, pagesize,
       solrTotal);
     for s in lines do
     begin

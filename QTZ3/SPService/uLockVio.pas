@@ -106,7 +106,7 @@ begin
     ', '',''+sbbh+'','') > 0';
   with gSQLHelper.Query(s) do
   begin
-    Result := RecordCount > 0;
+    Result := not EOF;
     Free;
   end;
 end;
