@@ -15,6 +15,7 @@ var
   gHeartbeatInterval: Integer;
   gStartTime: String;
   gCJJG: String;
+  gTaskMi: string;
   gTaskRunning: Boolean;
 
 implementation

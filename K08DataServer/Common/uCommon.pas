@@ -87,6 +87,7 @@ begin
     gStartTime := ReadString('Task', 'StartTime', FormatDateTime('yyyymmddhh',
       Now() - 1 / 24));
     gCJJG := ReadString('Task', 'CJJG', '4451');
+    gTaskMi := ReadString('Task', 'Mi', '50');
 
     gHeartbeatUrl := ReadString('Heartbeat', 'Url', 'http://127.0.0.1:20090/');
     gHeartbeatInterval := ReadInteger('Heartbeat', 'Interval', 3);

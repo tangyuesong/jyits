@@ -82,7 +82,7 @@ end;
 
 procedure TItsK08DataService.Timer2Timer(Sender: TObject);
 begin
-  if FormatDateTime('NN', Now()) = '50' then
+  if FormatDateTime('NN', Now()) = gTaskMi then
     TSaveK08Thread.Create(False);
 end;
 

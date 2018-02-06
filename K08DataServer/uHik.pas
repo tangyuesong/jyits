@@ -173,8 +173,12 @@ begin
       AResult := Utf8ToAnsi(http.Post(AUrl, stream));
       Result := True;
     except
-      AResult := http.ResponseText;
-      inc(i);
+      on e: exception do
+      begin
+        gLogger.Error('[HttpPost]' + e.Message);
+        AResult := http.ResponseText;
+        inc(i);
+      end;
     end;
     stream.Free;
     http.Disconnect;
