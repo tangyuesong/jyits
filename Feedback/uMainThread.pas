@@ -822,8 +822,7 @@ procedure TMainThread.DownloadZFZDriver;
 
     s := ss.Text;
     s := copy(s, 1, length(s) - 3); // »Ø³µ»»ÐÐ
-    s := 'delete from SERV_VEH_CHECK_Driver '
-      + 'insert into SERV_VEH_CHECK_Driver'
+    s := 'insert into SERV_VEH_CHECK_Driver'
       + '(JCXH,JSYLX,XM,JSZH,DABH,FZJG,CCSLRQ,ZT,ZTMC,LJJF,YXQZ,SYYXQZ,LXDZ,'
       + 'LXDH,SFCF,SFZJBF,SFYQWHZ,SFYQWSY,QTMS,CSBJ,BJCSBJ,ZJCX)values' + s;
     FSQLHelper.ExecuteSql(s);
@@ -834,6 +833,7 @@ var
   ss: TStrings;
   s: string;
 begin
+  FSQLHelper.ExecuteSql('delete from SERV_VEH_CHECK_Driver');
   ss := TStringList.Create;
   with FOraQuery do
   begin
