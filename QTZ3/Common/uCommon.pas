@@ -645,9 +645,14 @@ begin
     item := FindJson(ANode, JSON);
     if item <> nil then
       result := item.ToString;
-  finally
-    JSON.Free;
+  except
+    on e: exception do
+    begin
+      result := AJSON;
+      glogger.Error('[TCommon.GetJsonNode]' + e.Message +  AJSON);
+    end;
   end;
+  JSON.Free;
 end;
 
 class function TCommon.FindJson(AItemName: String; AJSON: TQJson): TQJson;

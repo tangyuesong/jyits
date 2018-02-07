@@ -242,7 +242,7 @@ var
 begin
   tmriParam := TCommon.GetTmriParam(params.Values['JKID'], token);
   json := ParamsToJson(params, ',JKID,');
-  gLogger.Info(json);
+  gLogger.Info('[DoWrite]' + json);
   json := TTmri.Write(tmriParam, json);
   result := json;
 end;
@@ -551,7 +551,6 @@ begin
   end
   else
   begin
-    gLogger.Info(json);
     code := TCommon.GetJsonNode('msg', json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
   end;
