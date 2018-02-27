@@ -35,6 +35,7 @@ var
   gKKALARM: Boolean; // 套牌车二次识别
   gJQ: boolean; // 警情
   gHBC: boolean; // 黄标车
+  gWNJ: boolean; // 未年检
   gZBDX: Boolean; // 值班短信
   gZBDXTime: String;
   gHpzlList: TDictionary<string, String>;

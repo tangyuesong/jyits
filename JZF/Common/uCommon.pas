@@ -73,6 +73,7 @@ begin
     gJZF := ReadInteger('PROJECT', 'JZF', 0) = 1;
     gJQ := ReadInteger('PROJECT', 'JQ', 0) = 1;
     gHBC := ReadInteger('PROJECT', 'HBC', 0) = 1;
+    gWNJ := ReadInteger('PROJECT', 'WNJ', 0) = 1;
     gKKALARM := ReadInteger('PROJECT', 'KKALARM', 0) = 1;
 
     gZBDX := ReadInteger('PROJECT', 'ZBDX', 0) = 1;

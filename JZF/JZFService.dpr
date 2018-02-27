@@ -27,7 +27,8 @@ uses
   uDeviceMonitorThread in 'DeviceMonitor\uDeviceMonitorThread.pas',
   uFirstEnterTaskThread in 'JZF\uFirstEnterTaskThread.pas',
   uDelExpiredVioThread in 'DelExpiredVio\uDelExpiredVioThread.pas',
-  uHBCVioThread in 'HBCVio\uHBCVioThread.pas';
+  uHBCVioThread in 'HBCVio\uHBCVioThread.pas',
+  uWNJVioThread in 'HBCVio\uWNJVioThread.pas';
 
 {$R *.RES}
 
