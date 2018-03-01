@@ -59,13 +59,16 @@ begin
 end;
 
 procedure TITSDHFSvc.Timer1Timer(Sender: TObject);
+var
+  nn: integer;
 begin
   if gHeartbeatUrl<> '' then
     DoHeartbeat;
   LoadOpenedDevice;
   //TaskManager.CheckDeadThread;
   //CheckDeviceStatus;
-  if FormatDateTime('nn', now) = '00' then  // 每小时更新
+  nn := strtoint(FormatDateTime('nn', now));
+  if nn = 0 then  // 每小时更新
   begin
     logger.Info('reload data');
     if reload then
@@ -74,11 +77,12 @@ begin
       LoadDevice;
       TaskManager.ResumeThreads;
     end;
-    LoadAlarm;
     loadHBC;
     //LoadVeh;
     logger.Info('reload OK');
   end;
+  if nn div 5 = 0 then
+    LoadAlarm;
 end;
 
 procedure TITSDHFSvc.DoHeartbeat;
