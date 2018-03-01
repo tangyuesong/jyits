@@ -294,6 +294,12 @@ begin
       vio.VioRecord.hpzl := tbVio.FieldByName('HPZL').AsString;
       vio.VioRecord.WFXW := tbVio.FieldByName('BKLX').AsString;
       vio.VioRecord.bj := tbVio.FieldByName('BKZL').AsString;
+      if vio.VioRecord.wfxw = '03' then
+      begin
+        vio.VehInfo.clpp1 := tbVio.FieldByName('CLPP').AsString;
+        vio.VehInfo.csys := tbVio.FieldByName('CSYS').AsString;
+        vio.DoneVehInfo := true;
+      end;
       url := tbVio.FieldByName('VioUrl').AsString;
       while pos('/', url) > 0 do
         url := copy(url, pos('/', url) + 1, length(url));
