@@ -58,6 +58,7 @@ type
     procedure UpdateDeviceStauts;
     procedure VehCheck;
     procedure DoVehCheck(item: TVehCheck);
+    procedure DownloadAlarmVehicle;
   protected
     procedure Execute; override;
   public
@@ -109,6 +110,7 @@ begin
       DownloadYiFanKui;
       DownloadZFZAlarms;
       DownloadZFZDriver;
+      DownloadAlarmVehicle;
       DoWQCZ;
       //UpdateDeviceStauts;    作废
       VehCheck;
@@ -614,6 +616,84 @@ begin
       on e: exception do
       begin
         logger.Error('[DownloadAlarms]:' + e.Message + ' ' + SQL.Text);
+      end;
+    end;
+  end;
+
+  if ss.Count > 0 then
+  begin
+    Save(ss);
+  end;
+  ss.Free;
+end;
+
+procedure TMainThread.DownloadAlarmVehicle;
+  procedure Save(ss: TStrings);
+  var
+    s, tmpTable: string;
+  begin
+    logger.Info('DownloadAlarmVehicle: ' + ss.Count.ToString);
+    tmpTable := 'tmp_vehicle' + formatdatetime('yymmddhhmmsszzz', now);
+    s := 'create table ' + tmpTable
+      + '(HPHM varchar(20),HPZL varchar(2),GCXH varchar(50),XYLX varchar(2),'
+      + 'CLPPXH varchar(255),CLLX varchar(3),CSYS varchar(1),URL varchar(255))';
+    FSQLHelper.ExecuteSql(s);
+
+    s := ss.Text;
+    s := copy(s, 1, length(s) - 3); // 回车换行
+    s := 'insert into ' + tmpTable + '(HPHM,HPZL,GCXH,XYLX,CLPPXH,CLLX,CSYS,URL)values' + s;
+    FSQLHelper.ExecuteSql(s);
+
+    s := 'insert into T_KK_ALARM(BKXH,BKJG,BKR,CJJG,HPHM,HPZL,ZT,VIOURL,BKLX,BKZL,CLPP,CLLX,CSYS) ';
+    s := s + 'select a.GCXH,''445200000000'',''Service'',''445200000000'',a.HPHM,a.HPZL,0,a.URL,';
+    s := s + 'case when XYLX=''01'' then ''03'' else ''02'' end as BKLX,''自动同步'',CLPPXH,a.CLLX,a.CSYS ';
+    s := s + 'from ' + tmpTable + ' as a ';
+    s := s + 'left join T_KK_ALARM b on a.HPHM=b.HPHM and a.HPZL=b.HPZL ';
+    s := s + 'where b.HPHM is null ';
+    s := s + 'drop table ' + tmpTable;
+    FSQLHelper.ExecuteSql(s);
+
+    logger.Info('DownloadAlarmVehicle OK');
+  end;
+var
+  ss: TStrings;
+begin
+  ss := TStringList.Create;
+  with FOraQuery do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select HPHM,HPZL,GCXH,XYLX,CLPPXH,CLLX,CSYS,TPLJ||TP1 as URL ');
+    SQL.Add('from RECG_SUSP_RESULT where (XYLX=''01'' or XYLX=''02'') and QRBJ<>0');
+    try
+      if not FOraConn.Connected then
+        FOraConn.Open;
+      Open;
+      DisableControls;
+      while not Eof do
+      begin
+        ss.Add('(' +FieldByName('HPHM').AsString.QuotedString + ',' +
+                    FieldByName('HPZL').AsString.QuotedString + ',' +
+                    FieldByName('GCXH').AsString.QuotedString + ',' +
+                    FieldByName('XYLX').AsString.QuotedString + ',' +
+                    FieldByName('CLPPXH').AsString.QuotedString + ',' +
+                    FieldByName('CLLX').AsString.QuotedString + ',' +
+                    FieldByName('CSYS').AsString.QuotedString + ',' +
+                    FieldByName('URL').AsString.QuotedString + '),'
+        );
+        if ss.Count = 999 then
+        begin
+          Save(ss);
+          ss.Clear;
+        end;
+
+        Next;
+      end;
+      Close;
+    except
+      on e: exception do
+      begin
+        logger.Error('[DownloadAlarmVehicle]:' + e.Message + ' ' + SQL.Text);
       end;
     end;
   end;
