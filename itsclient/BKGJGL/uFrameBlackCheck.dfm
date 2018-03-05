@@ -14,7 +14,7 @@ object FrameBlackCheck: TFrameBlackCheck
     LayoutLookAndFeel = DM.dxLayoutSkinLookAndFeel1
     object btnDelete: TcxButton
       Left = 842
-      Top = 737
+      Top = 598
       Width = 75
       Height = 30
       Caption = #21024#38500'(&D)'
@@ -25,7 +25,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object btnSave: TcxButton
       Left = 923
-      Top = 737
+      Top = 598
       Width = 75
       Height = 30
       Caption = #24067#25511'(&S)'
@@ -36,7 +36,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edthphm: TcxTextEdit
       Left = 892
-      Top = 455
+      Top = 316
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
@@ -50,7 +50,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object cbbsf: TcxComboBox
       Left = 811
-      Top = 455
+      Top = 316
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -60,7 +60,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object cbbhpzl: TcxComboBox
       Left = 968
-      Top = 455
+      Top = 316
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -70,7 +70,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtsyr: TcxTextEdit
       Left = 811
-      Top = 482
+      Top = 343
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -80,7 +80,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtclpp1: TcxTextEdit
       Left = 811
-      Top = 509
+      Top = 370
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -90,7 +90,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtclpp2: TcxTextEdit
       Left = 986
-      Top = 509
+      Top = 370
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -100,7 +100,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtclxh: TcxTextEdit
       Left = 811
-      Top = 536
+      Top = 397
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -110,7 +110,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtccdjrq: TcxTextEdit
       Left = 986
-      Top = 563
+      Top = 424
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -120,7 +120,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtyxqz: TcxTextEdit
       Left = 811
-      Top = 590
+      Top = 451
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -131,7 +131,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtqzbfqz: TcxTextEdit
       Left = 986
-      Top = 590
+      Top = 451
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
@@ -143,7 +143,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object mmozsxxdz: TcxMemo
       Left = 811
-      Top = 617
+      Top = 478
       ParentFont = False
       Style.HotTrack = False
       TabOrder = 17
@@ -152,7 +152,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtsyxz: TcxTextEdit
       Left = 811
-      Top = 644
+      Top = 505
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -162,7 +162,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtfdjh: TcxTextEdit
       Left = 941
-      Top = 644
+      Top = 505
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
@@ -174,7 +174,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edthbbj: TcxTextEdit
       Left = 811
-      Top = 671
+      Top = 532
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
@@ -186,7 +186,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtclsbdh: TcxTextEdit
       Left = 941
-      Top = 671
+      Top = 532
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
@@ -198,7 +198,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtbxzzrq: TcxTextEdit
       Left = 811
-      Top = 698
+      Top = 559
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -208,7 +208,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtfzjg: TcxTextEdit
       Left = 941
-      Top = 698
+      Top = 559
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -218,7 +218,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object cxGrid1: TcxGrid
       Left = 752
-      Top = 10
+      Top = -129
       Width = 337
       Height = 133
       TabOrder = 1
@@ -274,7 +274,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object imgviopic: TImageEnVect
       Left = 11
-      Top = 11
+      Top = -128
       Width = 727
       Height = 755
       Background = clWhite
@@ -291,7 +291,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object img1: TImageEnView
       Left = 753
-      Top = 150
+      Top = 11
       Width = 335
       Height = 260
       Background = clBtnFace
@@ -307,7 +307,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object edtBkzl: TcxTextEdit
       Left = 1022
-      Top = 428
+      Top = 289
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 4
@@ -316,7 +316,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object cbbBklx: TcxComboBox
       Left = 811
-      Top = 428
+      Top = 289
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 3
@@ -325,7 +325,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object cbbCllx: TcxComboBox
       Left = 986
-      Top = 536
+      Top = 397
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 14
@@ -334,7 +334,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object cbbCsys: TcxComboBox
       Left = 811
-      Top = 563
+      Top = 424
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 11
