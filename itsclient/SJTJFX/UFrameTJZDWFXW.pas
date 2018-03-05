@@ -34,18 +34,19 @@ uses
   cxGrid, cxDropDownEdit, Vcl.StdCtrls, cxButtons, cxTextEdit, cxMaskEdit,
   cxCalendar, cxRadioGroup, dxLayoutControl, System.Actions, Vcl.ActnList,
   DateUtils,
-  uRequestItf, uJsonUtils, uCommon;
+  uRequestItf, uJsonUtils, uCommon, uFrameZDTotal;
 
 type
   TFrameTJZDWFXW = class(TFrameStat)
     ChartViewSeries13: TcxGridDBChartSeries;
     CBBTjlx: TcxComboBox;
     dxLayoutItem5: TdxLayoutItem;
-    cmbDeptType: TcxComboBox;
-    dxLayoutItem6: TdxLayoutItem;
     procedure BtnSearchClick(Sender: TObject);
+    procedure GridViewCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
   private
-    { Private declarations }
+    fZdTotal: TFrameZDTotal;
   public
     { Public declarations }
     procedure AfterConstruction; override;
@@ -77,20 +78,41 @@ begin
     Jkid := 'getwfxwtj_v';
   CreateCol := True;
   Param := '&zddm=' + LeftStr(gUser.DWDM, 4);
-  if cmbDeptType.ItemIndex = 0 then
-    Param := Param + '&dwjb=4'
-  else
-    Param := Param + '&dwjb=5';
+  Param := Param + '&DWJB=4';
   inherited;
   cols := '';
   for i := 0 to FDMemTable1.FieldDefs.Count - 1 do
     cols := cols + FDMemTable1.FieldDefs[i].Name + ',';
-  dxLayoutItem3.AlignHorz := ahCenter;
-  dxLayoutItem3.ControlOptions.OriginalWidth :=
-    FDMemTable1.FieldDefs.Count * 80;
-  if dxLayoutItem3.ControlOptions.OriginalWidth < self.Width then
-    dxLayoutItem3.AlignHorz := ahClient;
   GridColumns := copy(cols, 1, Length(cols) - 1);
+  GridView.OptionsView.ColumnAutoWidth := False;
+end;
+
+procedure TFrameTJZDWFXW.GridViewCellDblClick(Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+var
+  params: String;
+begin
+  inherited;
+  if not FDMemTable1.Active or FDMemTable1.Eof then
+    exit;
+  if FDMemTable1.FieldDefs.IndexOf('XZQH') < 0 then
+    exit;
+
+  if not Assigned(fZdTotal) then
+  begin
+    fZdTotal := TFrameZDTotal.Create(self);
+    fZdTotal.Parent := self;
+    fZdTotal.Align := TAlign.alClient;
+  end;
+  params := Param.Replace('DWJB=4', 'DWJB=5');
+  params := params + '&XZQH=' + FDMemTable1.FieldByName('XZQH').AsString;
+  fZdTotal.ColumnStrs := GridColumns;
+  fZdTotal.Show;
+  Application.ProcessMessages;
+  sleep(50);
+  fZdTotal.Query(Jkid, params);
+  fZdTotal.GridView.OptionsView.ColumnAutoWidth := False;
 end;
 
 end.

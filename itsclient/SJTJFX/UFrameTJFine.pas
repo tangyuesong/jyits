@@ -33,7 +33,7 @@ uses
   cxGridLevel, cxClasses, cxGridCustomView, cxGridChartView, cxGridDBChartView,
   cxGrid, cxDropDownEdit, Vcl.StdCtrls, cxButtons, cxTextEdit, cxMaskEdit,
   cxCalendar, cxRadioGroup, dxLayoutControl, Udictionary, uEntity,
-  System.Actions, Vcl.ActnList;
+  System.Actions, Vcl.ActnList, uFrameZDTotal;
 
 type
   TFrameTJFine = class(TFrameStat)
@@ -42,12 +42,12 @@ type
     dxLayoutItem5: TdxLayoutItem;
     dxLayoutItem6: TdxLayoutItem;
     ChartViewSeries1: TcxGridDBChartSeries;
-    cmbDeptType: TcxComboBox;
-    dxDeptType: TdxLayoutItem;
     procedure BtnSearchClick(Sender: TObject);
-    procedure cbbCXFLPropertiesChange(Sender: TObject);
+    procedure GridViewCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
   private
-    { Private declarations }
+    fZdTotal: TFrameZDTotal;
   public
     { Public declarations }
     procedure AfterConstruction; override;
@@ -73,17 +73,13 @@ end;
 
 procedure TFrameTJFine.BtnSearchClick(Sender: TObject);
 var
-  period, CXFL, CXLX, DWJB: string;
+  period, CXFL, CXLX: string;
 begin
   Jkid := 'getFine';
   CXFL := TLZDictionary.StrtoDicInfo(cbbCXFL.Text).dm;
   CXLX := TLZDictionary.StrtoDicInfo(CbbCXLX.Text).dm;
-  if cmbDeptType.ItemIndex = 0 then
-    DWJB := '4'
-  else
-    DWJB := '5';
   Param := '&CXZL=' + CXFL + '&CXLX=' + CXLX + '&ZDDM=' + LeftStr(gUser.DWDM, 4)
-    + '&DWJB=' + DWJB;
+    + '&DWJB=4';
   FDMemTable1.FieldDefs.Clear;
   if CXFL = 'C' then
   begin
@@ -108,10 +104,38 @@ begin
   inherited;
 end;
 
-procedure TFrameTJFine.cbbCXFLPropertiesChange(Sender: TObject);
+procedure TFrameTJFine.GridViewCellDblClick(Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+var
+  params: String;
 begin
   inherited;
-  dxDeptType.Visible := cbbCXFL.ItemIndex = 0;
+  if not FDMemTable1.Active or FDMemTable1.Eof then
+    exit;
+  if FDMemTable1.FieldDefs.IndexOf('XZQH') < 0 then
+    exit;
+  if not Assigned(fZdTotal) then
+  begin
+    fZdTotal := TFrameZDTotal.Create(self);
+    fZdTotal.Parent := self;
+    fZdTotal.Align := TAlign.alClient;
+  end;
+  {
+    f.FDMemTable1.FieldDefs.Clear;
+    f.FDMemTable1.FieldDefs.Add('XZQH', ftString, 20, false);
+    f.FDMemTable1.FieldDefs.Add('MC', ftString, 50, false);
+    f.FDMemTable1.FieldDefs.Add('JKRQ', ftString, 50, false);
+    f.FDMemTable1.FieldDefs.Add('FKJE', ftFloat, 0, false);
+    f.FDMemTable1.FieldDefs.Add('ZS', ftInteger, 0, false);
+  }
+  params := Param.Replace('DWJB=4', 'DWJB=5');
+  params := params + '&XZQH=' + FDMemTable1.FieldByName('XZQH').AsString;
+  fZdTotal.ColumnStrs := 'XZQH,MC,FKJE,ZS';
+  fZdTotal.Show;
+  Application.ProcessMessages;
+  sleep(50);
+  fZdTotal.Query(Jkid, params);
 end;
 
 end.

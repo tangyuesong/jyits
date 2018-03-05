@@ -174,7 +174,8 @@ uses
   uFrameJianYi in 'XCWFGL\uFrameJianYi.pas' {FrameJianYi: TFrame},
   uVideoSearch in 'ZHXXCX\uVideoSearch.pas' {FrameVideoSearch: TFrame},
   uFrameMainMap in 'Main\uFrameMainMap.pas' {FrameMainMap: TFrame},
-  uFrameAlarmVehImport in 'BKGJGL\uFrameAlarmVehImport.pas';
+  uFrameAlarmVehImport in 'BKGJGL\uFrameAlarmVehImport.pas',
+  uFrameZDTotal in 'SJTJFX\uFrameZDTotal.pas' {FrameZDTotal: TFrame};
 
 {$R *.res}
 

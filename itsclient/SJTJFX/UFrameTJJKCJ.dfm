@@ -1,22 +1,21 @@
 inherited FrameTJJCCJ: TFrameTJJCCJ
-  Width = 717
-  Height = 423
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 717
-    Height = 423
     inherited cxGrid1: TcxGrid
-      Left = 0
+      Left = -327
       Top = 45
-      Width = 959
-      Height = 295
-      TabOrder = 10
-      ExplicitLeft = 0
+      Width = 805
+      Height = 177
+      TabOrder = 9
+      ExplicitLeft = -327
       ExplicitTop = 45
-      ExplicitWidth = 959
-      ExplicitHeight = 295
+      ExplicitWidth = 805
+      ExplicitHeight = 177
+      inherited GridView: TcxGridDBTableView
+        OnCellDblClick = GridViewCellDblClick
+      end
     end
     object rbYear: TcxRadioButton [1]
-      Left = 0
+      Left = -327
       Top = 13
       Width = 50
       Height = 17
@@ -26,7 +25,7 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       Transparent = True
     end
     object RBmonth: TcxRadioButton [2]
-      Left = 57
+      Left = -270
       Top = 13
       Width = 50
       Height = 17
@@ -38,7 +37,7 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       Transparent = True
     end
     object RBDate: TcxRadioButton [3]
-      Left = 114
+      Left = -213
       Top = 13
       Width = 50
       Height = 17
@@ -48,49 +47,49 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       Transparent = True
     end
     inherited cbbPagesize: TcxComboBox
-      Left = 0
-      Top = 347
-      TabOrder = 11
-      ExplicitLeft = 0
-      ExplicitTop = 347
+      Left = -327
+      Top = 229
+      TabOrder = 10
+      ExplicitLeft = -327
+      ExplicitTop = 229
     end
     inherited btnFirstPage: TcxButton
-      Left = 77
-      Top = 347
-      TabOrder = 12
-      ExplicitLeft = 77
-      ExplicitTop = 347
+      Left = -250
+      Top = 229
+      TabOrder = 11
+      ExplicitLeft = -250
+      ExplicitTop = 229
     end
     inherited btnPriorPage: TcxButton
-      Left = 114
-      Top = 347
-      TabOrder = 13
-      ExplicitLeft = 114
-      ExplicitTop = 347
+      Left = -213
+      Top = 229
+      TabOrder = 12
+      ExplicitLeft = -213
+      ExplicitTop = 229
     end
     inherited edtPageIndex: TcxTextEdit
-      Left = 169
-      Top = 347
-      TabOrder = 14
-      ExplicitLeft = 169
-      ExplicitTop = 347
+      Left = -158
+      Top = 229
+      TabOrder = 13
+      ExplicitLeft = -158
+      ExplicitTop = 229
     end
     inherited btnnextPage: TcxButton
-      Left = 246
-      Top = 347
-      TabOrder = 15
-      ExplicitLeft = 246
-      ExplicitTop = 347
+      Left = -81
+      Top = 229
+      TabOrder = 14
+      ExplicitLeft = -81
+      ExplicitTop = 229
     end
     inherited btnLastPage: TcxButton
-      Left = 283
-      Top = 347
-      TabOrder = 16
-      ExplicitLeft = 283
-      ExplicitTop = 347
+      Left = -44
+      Top = 229
+      TabOrder = 15
+      ExplicitLeft = -44
+      ExplicitTop = 229
     end
     object CbbYear: TcxComboBox [10]
-      Left = 171
+      Left = -156
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -99,7 +98,7 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       Width = 78
     end
     object CbbMonth: TcxComboBox [11]
-      Left = 256
+      Left = -71
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -108,7 +107,7 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       Width = 89
     end
     object DTKSSJ: TcxDateEdit [12]
-      Left = 406
+      Left = 79
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -118,7 +117,7 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       Width = 107
     end
     object DTJSSJ: TcxDateEdit [13]
-      Left = 538
+      Left = 211
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -127,40 +126,26 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       Height = 21
       Width = 103
     end
-    object cmbDeptType: TcxComboBox [14]
-      Left = 702
-      Top = 13
-      AutoSize = False
-      Properties.DropDownListStyle = lsEditFixedList
-      Properties.Items.Strings = (
-        #22823#38431
-        #20013#38431)
-      Style.HotTrack = False
-      TabOrder = 7
-      Text = #22823#38431
-      Height = 21
-      Width = 93
-    end
-    object BtnSearch: TcxButton [15]
-      Left = 802
+    object BtnSearch: TcxButton [14]
+      Left = 321
       Top = 13
       Width = 75
       Height = 25
       Caption = #26597#35810
       OptionsImage.ImageIndex = 901
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 8
+      TabOrder = 7
       OnClick = BtnSearchClick
     end
-    object BtnExport: TcxButton [16]
-      Left = 884
+    object BtnExport: TcxButton [15]
+      Left = 403
       Top = 13
       Width = 75
       Height = 25
       Caption = #23548#20986
       OptionsImage.ImageIndex = 66
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 9
+      TabOrder = 8
       OnClick = BtnExportClick
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
@@ -245,15 +230,6 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       ControlOptions.ShowBorder = False
       Index = 6
     end
-    object dxLayoutItem6: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #21333#20301#32423#21035
-      Control = cmbDeptType
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 93
-      ControlOptions.ShowBorder = False
-      Index = 7
-    end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxLayoutGroup2
       CaptionOptions.Text = 'New Item'
@@ -262,7 +238,7 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 8
+      Index = 7
     end
     object dxLayoutItem8: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -272,7 +248,7 @@ inherited FrameTJJCCJ: TFrameTJJCCJ
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 9
+      Index = 8
     end
   end
 end

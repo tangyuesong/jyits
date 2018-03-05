@@ -33,7 +33,7 @@ uses
   uRequestItf, uCommon, Vcl.ExtCtrls, dxLayoutControlAdapters, Vcl.StdCtrls,
   cxRadioGroup, cxContainer, Vcl.Menus, dxLayoutcxEditAdapters, cxTextEdit,
   cxButtons, cxMaskEdit, cxDropDownEdit, Vcl.ComCtrls, dxCore, cxDateUtils,
-  cxCalendar;
+  cxCalendar, uFrameZDTotal;
 
 type
   TFrameTJJCCJ = class(TdxGridFrame)
@@ -44,8 +44,6 @@ type
     RBDate: TcxRadioButton;
     dxLayoutItem4: TdxLayoutItem;
     dxLayoutItem5: TdxLayoutItem;
-    cmbDeptType: TcxComboBox;
-    dxLayoutItem6: TdxLayoutItem;
     CbbYear: TcxComboBox;
     CbbMonth: TcxComboBox;
     DTKSSJ: TcxDateEdit;
@@ -61,8 +59,12 @@ type
     procedure BtnSearchClick(Sender: TObject);
     procedure rbYearClick(Sender: TObject);
     procedure BtnExportClick(Sender: TObject);
+    procedure GridViewCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
   private
-    { Private declarations }
+    FParams: String;
+    fZdTotal: TFrameZDTotal;
   public
     { Public declarations }
     procedure AfterConstruction; override;
@@ -119,7 +121,7 @@ end;
 
 procedure TFrameTJJCCJ.BtnSearchClick(Sender: TObject);
 var
-  y, m, kssj, jssj, zddm, dwjb, json: string;
+  y, m, kssj, jssj, zddm, json: string;
 begin
   inherited;
   if (rbYear.Checked) and (CbbYear.Text = '') then
@@ -152,15 +154,40 @@ begin
   end;
 
   zddm := LeftStr(gUser.Dwdm, 4);
-  if cmbDeptType.ItemIndex = 0 then
-    dwjb := '4'
-  else
-    dwjb := '5';
   ShowFrameWait;
-  json := TRequestItf.DbQuery('FeedbackStat', 'kssj=' + kssj + '&jssj=' + jssj +
-    '&zddm=' + zddm + '&dwjb=' + dwjb);
+  FParams := 'kssj=' + kssj + '&jssj=' + jssj + '&zddm=' + zddm + '&DWJB=4';
+  json := TRequestItf.DbQuery('FeedbackStat', FParams);
   TJSONUtils.JSONToDataSet(json, FDMemTable1);
   FreeFrameWait;
+end;
+
+procedure TFrameTJJCCJ.GridViewCellDblClick(Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+var
+  action, params: String;
+begin
+  inherited;
+  if not FDMemTable1.Active or FDMemTable1.Eof then
+    Exit;
+  if FDMemTable1.FieldDefs.IndexOf('DWDM') < 0 then
+    Exit;
+
+  if not Assigned(fZdTotal) then
+  begin
+    fZdTotal := TFrameZDTotal.Create(self);
+    fZdTotal.Parent := self;
+    fZdTotal.Align := TAlign.alClient;
+  end;
+  action := 'FeedbackStat';
+  params := FParams.Replace('DWJB=4', 'DWJB=5');
+  params := params + '&XZQH=' + LeftStr(FDMemTable1.FieldByName('DWDM')
+    .AsString, 6);
+  fZdTotal.ColumnStrs := '排名,DWDM,预警数量,已处罚,现场开具文书,接受处理,教育后放行,得分';
+  fZdTotal.Show;
+  Application.ProcessMessages;
+  sleep(50);
+  fZdTotal.Query(action, params);
 end;
 
 procedure TFrameTJJCCJ.rbYearClick(Sender: TObject);
@@ -169,21 +196,21 @@ begin
   if rbYear.Checked then
   begin
     dxYEAR.Visible := True;
-    dxMonth.Visible := False;
-    dxDTKSSJ.Visible := False;
-    dxDTJSSJ.Visible := False;
+    dxMonth.Visible := false;
+    dxDTKSSJ.Visible := false;
+    dxDTJSSJ.Visible := false;
   end
   else if RBmonth.Checked then
   begin
     dxYEAR.Visible := True;
     dxMonth.Visible := True;
-    dxDTKSSJ.Visible := False;
-    dxDTJSSJ.Visible := False;
+    dxDTKSSJ.Visible := false;
+    dxDTJSSJ.Visible := false;
   end
   else if RBDate.Checked then
   begin
-    dxYEAR.Visible := False;
-    dxMonth.Visible := False;
+    dxYEAR.Visible := false;
+    dxMonth.Visible := false;
     dxDTKSSJ.Visible := True;
     dxDTJSSJ.Visible := True;
   end;

@@ -1,51 +1,57 @@
 inherited FrameTJZDWFXW: TFrameTJZDWFXW
-  Width = 762
+  Width = 666
+  Height = 581
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 762
+    Width = 666
+    Height = 581
     inherited RDYear: TcxRadioButton
-      Left = -328
-      ExplicitLeft = -328
+      Left = -270
+      ExplicitLeft = -270
     end
     inherited RDMonth: TcxRadioButton
-      Left = -283
-      ExplicitLeft = -283
+      Left = -225
+      ExplicitLeft = -225
     end
     inherited RDDate: TcxRadioButton
-      Left = -238
-      ExplicitLeft = -238
+      Left = -180
+      ExplicitLeft = -180
     end
     inherited DTKSSJ: TcxDateEdit
-      Left = 42
-      ExplicitLeft = 42
+      Left = 100
+      ExplicitLeft = 100
     end
     inherited DTJSSJ: TcxDateEdit
-      Left = 174
-      ExplicitLeft = 174
+      Left = 232
+      ExplicitLeft = 232
     end
     inherited BtnSearch: TcxButton
-      Left = 592
-      TabOrder = 9
-      ExplicitLeft = 592
+      Left = 496
+      TabOrder = 8
+      ExplicitLeft = 496
     end
     inherited BtnExport: TcxButton
-      Left = 674
-      TabOrder = 10
-      ExplicitLeft = 674
+      Left = 578
+      TabOrder = 9
+      ExplicitLeft = 578
     end
     inherited CbbYear: TcxComboBox
-      Left = -193
-      ExplicitLeft = -193
+      Left = -135
+      ExplicitLeft = -135
     end
     inherited CbbMonth: TcxComboBox
-      Left = -108
-      ExplicitLeft = -108
+      Left = -50
+      ExplicitLeft = -50
     end
     inherited cxGrid2: TcxGrid
-      Left = -328
-      Width = 1077
-      TabOrder = 12
-      ExplicitLeft = -328
-      ExplicitWidth = 1077
+      Left = -270
+      Top = 336
+      Width = 923
+      Height = 187
+      TabOrder = 11
+      ExplicitLeft = -270
+      ExplicitTop = 336
+      ExplicitWidth = 923
+      ExplicitHeight = 187
       inherited ChartView: TcxGridDBChartView
         Categories.DataBinding.FieldName = #36758#21306#22823#38431
         DataController.DataSource = DataSource1
@@ -61,69 +67,69 @@ inherited FrameTJZDWFXW: TFrameTJZDWFXW
       end
     end
     inherited cxGrid1: TcxGrid
-      Left = -328
-      Width = 1077
-      TabOrder = 11
-      ExplicitLeft = -328
-      ExplicitWidth = 1077
+      Left = -270
+      Width = 923
+      Height = 284
+      TabOrder = 10
+      ExplicitLeft = -270
+      ExplicitWidth = 923
+      ExplicitHeight = 284
       inherited GridView: TcxGridDBTableView
-        OptionsView.ColumnAutoWidth = True
+        OnCellDblClick = GridViewCellDblClick
         OptionsView.FooterAutoHeight = False
       end
     end
     inherited cbbPagesize: TcxComboBox
-      Left = -328
-      TabOrder = 13
-      ExplicitLeft = -328
+      Left = -270
+      Top = 530
+      TabOrder = 12
+      ExplicitLeft = -270
+      ExplicitTop = 530
     end
     inherited btnFirstPage: TcxButton
-      Left = -251
-      TabOrder = 14
-      ExplicitLeft = -251
+      Left = -193
+      Top = 530
+      TabOrder = 13
+      ExplicitLeft = -193
+      ExplicitTop = 530
     end
     inherited btnPriorPage: TcxButton
-      Left = -214
-      TabOrder = 15
-      ExplicitLeft = -214
+      Left = -156
+      Top = 530
+      TabOrder = 14
+      ExplicitLeft = -156
+      ExplicitTop = 530
     end
     inherited edtPageIndex: TcxTextEdit
-      Left = -159
-      TabOrder = 16
-      ExplicitLeft = -159
+      Left = -101
+      Top = 530
+      TabOrder = 15
+      ExplicitLeft = -101
+      ExplicitTop = 530
     end
     inherited btnnextPage: TcxButton
-      Left = -82
-      TabOrder = 17
-      ExplicitLeft = -82
+      Left = -24
+      Top = 530
+      TabOrder = 16
+      ExplicitLeft = -24
+      ExplicitTop = 530
     end
     inherited btnLastPage: TcxButton
-      Left = -45
-      TabOrder = 18
-      ExplicitLeft = -45
+      Left = 13
+      Top = 530
+      TabOrder = 17
+      ExplicitLeft = 13
+      ExplicitTop = 530
     end
-    object cmbDeptType: TcxComboBox [17]
-      Left = 338
-      Top = 13
-      AutoSize = False
-      Properties.DropDownListStyle = lsEditFixedList
-      Properties.Items.Strings = (
-        #22823#38431
-        #20013#38431)
-      Style.HotTrack = False
-      TabOrder = 7
-      Text = #22823#38431
-      Height = 21
-      Width = 93
-    end
-    object CBBTjlx: TcxComboBox [18]
-      Left = 492
+    object CBBTjlx: TcxComboBox [17]
+      Left = 396
       Top = 13
       AutoSize = False
       Properties.Items.Strings = (
         #29616#22330
         #38750#29616#22330)
       Style.HotTrack = False
-      TabOrder = 8
+      TabOrder = 7
       Height = 21
       Width = 93
     end
@@ -131,19 +137,10 @@ inherited FrameTJZDWFXW: TFrameTJZDWFXW
       ControlOptions.OriginalWidth = 1500
     end
     inherited dxLayoutItem7: TdxLayoutItem
-      Index = 9
+      Index = 8
     end
     inherited dxLayoutItem8: TdxLayoutItem
-      Index = 10
-    end
-    object dxLayoutItem6: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #21333#20301#32423#21035
-      Control = cmbDeptType
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 93
-      ControlOptions.ShowBorder = False
-      Index = 7
+      Index = 9
     end
     object dxLayoutItem5: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -152,7 +149,7 @@ inherited FrameTJZDWFXW: TFrameTJZDWFXW
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 93
       ControlOptions.ShowBorder = False
-      Index = 8
+      Index = 7
     end
   end
 end

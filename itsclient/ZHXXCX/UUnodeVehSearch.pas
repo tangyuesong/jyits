@@ -35,10 +35,6 @@ uses
 
 type
   TUnodeVehSearch = class(TdxGridFrame)
-    DtKssj: TcxDateEdit;
-    dxLayoutItem1: TdxLayoutItem;
-    DtJssj: TcxDateEdit;
-    dxLayoutItem2: TdxLayoutItem;
     cbbZDCLLX: TcxComboBox;
     dxLayoutItem4: TdxLayoutItem;
     cbbZT: TcxComboBox;
@@ -67,13 +63,11 @@ implementation
 procedure TUnodeVehSearch.AfterConstruction;
 begin
   inherited;
-  DtKssj.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', now - 30));
-  DtJssj.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', now + 1));
   TLZDictionary.BindCombobox(cbbZT, TLZDictionary.gDicMain['CLZT'], True);
   cbbZT.ItemIndex := 5;
   TLZDictionary.BindCombobox(cbbZDCLLX, TLZDictionary.gDicMain['ZDCL'], True);
   cbbZDCLLX.ItemIndex := 1;
-  GridColumns := 'hphm, hpzl,clpp,clxh,syr,yxqz,zsxxdz,sjhm,ZT';
+  GridColumns := 'hphm, hpzl,clpp,clxh,syr,yxqz,gxsj,zsxxdz,sjhm,ZT';
 end;
 
 procedure TUnodeVehSearch.BtnExportClick(Sender: TObject);
@@ -97,8 +91,7 @@ begin
   inherited;
   cllx := TLZDictionary.StrtoDicInfo(cbbZDCLLX.Text).dm;
   zt := TLZDictionary.StrtoDicInfo(cbbZT.Text).dm;
-  Param := Format('kssj=%s&jssj=%s&syxz=%s&zt=%s', [DtKssj.Text, DtJssj.Text,
-    cllx, zt]);
+  Param := Format('syxz=%s&zt=%s', [cllx, zt]);
   s := TRequestItf.pDbQuery('GETUnodeVehSearch', Param);
   ShowFrameWait;
   TJSONUtils.JSONToDataSet(s, FDMemTable1, '', True);

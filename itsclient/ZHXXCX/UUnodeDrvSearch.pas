@@ -36,10 +36,6 @@ uses
 
 type
   TUnodeDrvSearch = class(TdxGridFrame)
-    DTKssj: TcxDateEdit;
-    dxLayoutItem1: TdxLayoutItem;
-    DtJssj: TcxDateEdit;
-    dxLayoutItem2: TdxLayoutItem;
     cbbZT: TcxComboBox;
     dxLayoutItem4: TdxLayoutItem;
     btnSearch: TcxButton;
@@ -67,11 +63,10 @@ implementation
 procedure TUnodeDrvSearch.AfterConstruction;
 begin
   inherited;
-  DTKssj.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', now - 30));
-  DtJssj.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', now + 1));
   TLZDictionary.BindCombobox(cbbZT, TLZDictionary.gDicMain['JSRZT'], True);
   cbbZT.ItemIndex := 7;
-  GridColumns := 'SFZMHM, ZJCX, FZRQ, XM, CSRQ, DJZSXXDZ, SJHM, YXQS, YXQZ,ZT';
+  GridColumns :=
+    'SFZMHM, ZJCX, FZRQ, XM, CSRQ, DJZSXXDZ, SJHM, YXQS, YXQZ, GXSJ, ZT';
 end;
 
 procedure TUnodeDrvSearch.btnSearchClick(Sender: TObject);
@@ -81,7 +76,7 @@ var
 begin
   inherited;
   zt := TLZDictionary.StrtoDicInfo(cbbZT.Text).dm;
-  Param := Format('kssj=%s&jssj=%s&zt=%s', [DTKssj.Text, DtJssj.Text, zt]);
+  Param := Format('zt=%s', [zt]);
   s := TRequestItf.pDbQuery('getUnodeDevSearch', Param);
   ShowFrameWait;
   TJSONUtils.JSONToDataSet(s, FDMemTable1, '', True);
@@ -94,8 +89,8 @@ begin
   if dlgSave.Execute then
   begin
     ShowFrameWait;
-    Tcommon.ExportGridtoData(ExtractFileExt(dlgSave.FileName), dlgSave.FileName,
-      cxGrid1);
+    Tcommon.ExportGridtoData(ExtractFileExt(dlgSave.FileName),
+      dlgSave.FileName, cxGrid1);
     FreeFrameWait;
     Application.MessageBox('数据导出成功', '提示', MB_OK + MB_ICONINFORMATION);
   end;
