@@ -68,7 +68,7 @@ type
     FLockVio: TLockVioClass;
     function IsCZWhite(hphm, hpzl, wfsj: String): Boolean;
     function BitmapToString(lj: string): WideString;
-    function CheakTzcp1(hphm, hpzl, wfsj, wfdz: String): Boolean;
+    function CheckTzcp1(hphm, hpzl, wfsj, wfdz: String): Boolean;
     function GetPic(picServer, picfile, sfilename: string): Boolean;
     function DownloadPic(): Boolean;
     function GetFlag(): String;
@@ -76,6 +76,7 @@ type
     property VioFlag: String read GetFlag;
     function InitVio(vio: String): String;
     function GetVioUploadStr: String;
+    function GetJCPTVioUploadStr: String;
     destructor Destroy; override;
   end;
 
@@ -106,7 +107,7 @@ begin
   qy.Free;
 end;
 
-function TDealLockVioClass.CheakTzcp1(hphm, hpzl, wfsj, wfdz: String): Boolean;
+function TDealLockVioClass.CheckTzcp1(hphm, hpzl, wfsj, wfdz: String): Boolean;
 var
   // qy: TADOQuery;
   s: String;
@@ -364,10 +365,40 @@ begin
   end;
   Result := Result + '"wfxw":"' + FLockVio.wfxw + '",' + '"scz":"' +
     FLockVio.scz + '",' + '"bzz":"' + FLockVio.bzz + '",' + '"zqmj":"' +
-    FLockVio.zqmj + '",' + '"sbbh":"' + FLockVio.sbbh + '",'
-    + '"zpstr1":"' + FLockVio.zpstr1 + '",' +
-    '"zpstr2":"' + FLockVio.zpstr2 + '",' + '"zpstr3":"' +
-    FLockVio.zpstr3 + '"}';
+    FLockVio.zqmj + '",' + '"sbbh":"' + FLockVio.sbbh + '",' + '"zpstr1":"' +
+    FLockVio.zpstr1 + '",' + '"zpstr2":"' + FLockVio.zpstr2 + '",' +
+    '"zpstr3":"' + FLockVio.zpstr3 + '"}';
+end;
+
+function TDealLockVioClass.GetJCPTVioUploadStr: String;
+var
+  zpsl: string;
+begin
+  Result := '{"sbbh":"' + FLockVio.sbbh + '","zqmj":"' + FLockVio.zqmj +
+    '","clfl":"' + FLockVio.clfl + '","hpzl":"' + FLockVio.hpzl + '","hphm":"' +
+    FLockVio.hphm + '","xzqh":"' + FLockVio.xzqh + '","wfdd":"' + FLockVio.wfdd
+    + '","lddm":"' + FLockVio.lddm + '","ddms":"' + FLockVio.ddms + '","wfdz":"'
+    + FLockVio.wfdz + '","wfsj":"' + FLockVio.wfsj + '","wfxw":"' +
+    FLockVio.wfxw + '","scz":"' + FLockVio.scz + '","bzz":"' +
+    FLockVio.bzz + '",';
+  if FLockVio.cjfs = '7' then
+    Result := Result + '"wfsj1":"' + FLockVio.wfsj + '",';
+
+  zpsl := '1';
+  if FLockVio.zpstr1 <> '' then
+    Result := Result + '"zpstr1":"' + FLockVio.zpstr1 + '",';
+  if FLockVio.zpstr2 <> '' then
+  begin
+    Result := Result + '"zpstr2":"' + FLockVio.zpstr2 + '",';
+    zpsl := '2';
+  end;
+  if (zpsl = '2') and (FLockVio.zpstr3 <> '') then
+  begin
+    Result := Result + '"zpstr3:"' + FLockVio.zpstr3 + '",';
+    zpsl := '3';
+  end;
+
+  Result := Result + '"zpsl":"' + zpsl + '"}';
 end;
 
 function TDealLockVioClass.InitVio(vio: String): String;
@@ -389,7 +420,7 @@ begin
     if (not((ct >= '1100') and (ct < '1230'))) and
       (not((ct >= '0730') and (ct < '0900'))) and
       (not((ct >= '1700') and (ct < '1900'))) then
-      if CheakTzcp1(FLockVio.hphm, FLockVio.hpzl, FLockVio.wfsj, FLockVio.wfdz)
+      if CheckTzcp1(FLockVio.hphm, FLockVio.hpzl, FLockVio.wfsj, FLockVio.wfdz)
       then
       begin
         Result := '{"head":{"code":"1", "msg1":"上传成功B"}}';
@@ -398,11 +429,13 @@ begin
   end;
 
   try
-    if IsCZWhite(FLockVio.hphm, FLockVio.hpzl, FLockVio.wfsj) then
-    begin
-      Result := '{"head":{"code":"1", "msg1":"上传成功B"}}';
-      exit;
-    end;
+
+    // 用于潮州
+    // if IsCZWhite(FLockVio.hphm, FLockVio.hpzl, FLockVio.wfsj) then
+    // begin
+    // Result := '{"head":{"code":"1", "msg1":"上传成功B" } } ';
+    // exit;
+    // end;
 
     if not DownloadPic then
     begin

@@ -147,6 +147,11 @@ begin
   r := vio.InitVio(s);
   if r <> '' then
     AResponseInfo.ContentText := r
+  else if gIsUploadJCPT then
+  begin
+    param := vio.GetJCPTVioUploadStr;
+    AResponseInfo.ContentText := TRminf.surscreen(param);
+  end
   else
   begin
     param := vio.GetVioUploadStr;

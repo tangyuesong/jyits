@@ -434,6 +434,8 @@ begin
     gHeartbeatUrl := ReadString('Heartbeat', 'Url', 'http://127.0.0.1:20090/');
     gHeartbeatInterval := ReadInteger('Heartbeat', 'Interval', 3);
 
+    gIsUploadJCPT := ReadString('VIO', 'UploadJCPT', '0') = '1';
+
     if Copy(gHeartbeatUrl, Length(gHeartbeatUrl), 1) <> '/' then
       gHeartbeatUrl := gHeartbeatUrl + '/';
 

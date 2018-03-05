@@ -7,7 +7,7 @@ uses
   uTokenManager, uWSManager;
 
 const
-  //cSaUser = 'sa';
+  // cSaUser = 'sa';
   cSaPwd = 'EB8E560662808ED4FAEA1C8AF016055947C4EF17CFD7AFC5390AA126AB25E2A2';
 
 var
@@ -29,6 +29,7 @@ var
   gTokenManager: TTokenManager;
   gSaUsers: TStrings;
   gWSManager: TWSManager;
+  gIsUploadJCPT: Boolean;
 
 implementation
 
