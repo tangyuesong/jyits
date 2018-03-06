@@ -1,13 +1,17 @@
 inherited FrameVehSearch: TFrameVehSearch
+  Width = 732
+  Height = 542
   inherited dxLayoutControl2: TdxLayoutControl
+    Width = 732
+    Height = 542
     inherited cxGrid1: TcxGrid
       Top = 405
-      Width = 667
-      Height = 20
+      Width = 706
+      Height = 124
       TabOrder = 30
       ExplicitTop = 405
-      ExplicitWidth = 667
-      ExplicitHeight = 20
+      ExplicitWidth = 706
+      ExplicitHeight = 124
     end
     object ImageVeh: TcxImage [1]
       Left = 28
@@ -6972,17 +6976,17 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 5
       Height = 21
-      Width = 44
+      Width = 57
     end
     object edtcsys: TcxTextEdit [7]
-      Left = 554
+      Left = 573
       Top = 175
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 13
       Height = 21
-      Width = 96
+      Width = 116
     end
     object edtccdjrq: TcxTextEdit [8]
       Left = 396
@@ -6992,27 +6996,27 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 14
       Height = 21
-      Width = 97
+      Width = 116
     end
     object edthpzl: TcxTextEdit [9]
-      Left = 501
+      Left = 514
       Top = 91
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 6
       Height = 21
-      Width = 44
+      Width = 57
     end
     object edtclpp: TcxTextEdit [10]
-      Left = 606
+      Left = 632
       Top = 91
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 7
       Height = 21
-      Width = 44
+      Width = 57
     end
     object edtsyxz: TcxTextEdit [11]
       Left = 396
@@ -7022,7 +7026,7 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 12
       Height = 21
-      Width = 97
+      Width = 116
     end
     object edtcjh: TcxTextEdit [12]
       Left = 396
@@ -7032,7 +7036,7 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 16
       Height = 21
-      Width = 97
+      Width = 116
     end
     object edtczdz: TcxTextEdit [13]
       Left = 396
@@ -7042,17 +7046,17 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 18
       Height = 21
-      Width = 97
+      Width = 116
     end
     object edtfdjh: TcxTextEdit [14]
-      Left = 554
+      Left = 573
       Top = 231
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 17
       Height = 21
-      Width = 96
+      Width = 116
     end
     object edtyxqx: TcxTextEdit [15]
       Left = 396
@@ -7062,27 +7066,27 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 20
       Height = 21
-      Width = 97
+      Width = 116
     end
     object edtsjhm: TcxTextEdit [16]
-      Left = 554
+      Left = 573
       Top = 259
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 19
       Height = 21
-      Width = 96
+      Width = 116
     end
     object edtqzbfqx: TcxTextEdit [17]
-      Left = 554
+      Left = 573
       Top = 287
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 21
       Height = 21
-      Width = 96
+      Width = 116
     end
     object edtjdcsyr: TcxTextEdit [18]
       Left = 396
@@ -7092,10 +7096,10 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 8
       Height = 21
-      Width = 20
+      Width = 59
     end
     object edtsfzhm: TcxTextEdit [19]
-      Left = 465
+      Left = 504
       Top = 119
       AutoSize = False
       Properties.ReadOnly = True
@@ -7112,30 +7116,30 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 10
       Height = 21
-      Width = 97
+      Width = 116
     end
     object edtcllx: TcxTextEdit [21]
-      Left = 554
+      Left = 573
       Top = 147
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 11
       Height = 21
-      Width = 96
+      Width = 116
     end
     object edtzt: TcxTextEdit [22]
-      Left = 554
+      Left = 573
       Top = 203
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 15
       Height = 21
-      Width = 96
+      Width = 116
     end
     object cxButton1: TcxButton [23]
-      Left = 605
+      Left = 644
       Top = 373
       Width = 75
       Height = 25
@@ -7147,7 +7151,7 @@ inherited FrameVehSearch: TFrameVehSearch
       OnClick = cxButton1Click
     end
     object cxButton2: TcxButton [24]
-      Left = 523
+      Left = 562
       Top = 373
       Width = 75
       Height = 25

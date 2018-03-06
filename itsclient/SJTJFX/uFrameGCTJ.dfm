@@ -1,7 +1,9 @@
 inherited FrameGCTJ: TFrameGCTJ
-  Width = 867
+  Width = 697
+  Height = 436
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 867
+    Width = 697
+    Height = 436
     object deBegin: TcxDateEdit [0]
       Left = 82
       Top = 36
@@ -23,7 +25,7 @@ inherited FrameGCTJ: TFrameGCTJ
       Width = 100
     end
     object btnSearch: TcxButton [2]
-      Left = 672
+      Left = 665
       Top = 36
       Width = 75
       Height = 25
@@ -32,7 +34,7 @@ inherited FrameGCTJ: TFrameGCTJ
       OnClick = btnSearchClick
     end
     object btnExport: TcxButton [3]
-      Left = 754
+      Left = 747
       Top = 36
       Width = 75
       Height = 25
@@ -40,21 +42,8 @@ inherited FrameGCTJ: TFrameGCTJ
       TabOrder = 5
       OnClick = btnExportClick
     end
-    object cbbWfdd: TcxComboBoxExt [4]
-      Left = 374
-      Top = 36
-      AutoSize = False
-      Properties.DropDownListStyle = lsEditList
-      Properties.IncrementalFiltering = False
-      Properties.KeyFieldNames = 'Name'
-      Properties.Revertable = True
-      Style.HotTrack = False
-      TabOrder = 2
-      Height = 21
-      Width = 176
-    end
-    object cbbDateType: TcxComboBox [5]
-      Left = 611
+    object cbbDateType: TcxComboBox [4]
+      Left = 604
       Top = 36
       AutoSize = False
       Properties.DropDownListStyle = lsFixedList
@@ -69,11 +58,11 @@ inherited FrameGCTJ: TFrameGCTJ
       Height = 21
       Width = 54
     end
-    object cxGrid2: TcxGrid [6]
-      Left = 289
+    object cxGrid2: TcxGrid [5]
+      Left = 283
       Top = 83
-      Width = 565
-      Height = 209
+      Width = 554
+      Height = 323
       TabOrder = 7
       LockedStateImageOptions.ShowText = True
       LookAndFeel.NativeStyle = False
@@ -93,11 +82,11 @@ inherited FrameGCTJ: TFrameGCTJ
         GridView = cxGrid2DBChartView1
       end
     end
-    object cxGrid1: TcxGrid [7]
+    object cxGrid1: TcxGrid [6]
       Left = 13
       Top = 83
-      Width = 261
-      Height = 209
+      Width = 255
+      Height = 323
       TabOrder = 6
       LockedStateImageOptions.ShowText = True
       LookAndFeel.NativeStyle = False
@@ -130,6 +119,16 @@ inherited FrameGCTJ: TFrameGCTJ
       object cxGridLevel1: TcxGridLevel
         GridView = cxgrid3
       end
+    end
+    object cbbwfdd: TcxComboBox [7]
+      Left = 374
+      Top = 36
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 2
+      OnMouseUp = cbbWfddMouseUp
+      Height = 21
+      Width = 169
     end
     object dxLayoutGroup2: TdxLayoutGroup
       Parent = dxLayoutControl2Group_Root
@@ -215,15 +214,6 @@ inherited FrameGCTJ: TFrameGCTJ
       ControlOptions.ShowBorder = False
       Index = 5
     end
-    object dxLayoutItem12: TdxLayoutItem
-      Parent = dxLayoutGroup1
-      CaptionOptions.Text = #36807#36710#22320#28857
-      Control = cbbWfdd
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 176
-      ControlOptions.ShowBorder = False
-      Index = 2
-    end
     object dxLayoutItem3: TdxLayoutItem
       Parent = dxLayoutGroup1
       CaptionOptions.Text = #32479#35745#21608#26399
@@ -232,6 +222,15 @@ inherited FrameGCTJ: TFrameGCTJ
       ControlOptions.OriginalWidth = 54
       ControlOptions.ShowBorder = False
       Index = 3
+    end
+    object dxLayoutItem4: TdxLayoutItem
+      Parent = dxLayoutGroup1
+      CaptionOptions.Text = #36807#36710#22320#28857
+      Control = cbbwfdd
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 169
+      ControlOptions.ShowBorder = False
+      Index = 2
     end
   end
   object dstemp2: TDataSource
