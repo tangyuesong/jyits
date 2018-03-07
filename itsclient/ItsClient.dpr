@@ -175,7 +175,10 @@ uses
   uVideoSearch in 'ZHXXCX\uVideoSearch.pas' {FrameVideoSearch: TFrame},
   uFrameMainMap in 'Main\uFrameMainMap.pas' {FrameMainMap: TFrame},
   uFrameAlarmVehImport in 'BKGJGL\uFrameAlarmVehImport.pas',
-  uFrameZDTotal in 'SJTJFX\uFrameZDTotal.pas' {FrameZDTotal: TFrame};
+  uFrameZDTotal in 'SJTJFX\uFrameZDTotal.pas' {FrameZDTotal: TFrame},
+  uFrameJTPCheck in 'BKGJGL\uFrameJTPCheck.pas' {FrameJTPCheck: TFrame},
+  UFrameJTPAdd in 'DataAnalyse\UFrameJTPAdd.pas' {FrameJTPAdd: TFrame},
+  uFrameJTPList in 'DataAnalyse\uFrameJTPList.pas' {FFrameJTPList: TFrame};
 
 {$R *.res}
 

@@ -16,7 +16,7 @@ implementation
 
 uses
   uFrameVioInput, uLock, dxFrames, dxFrame, uFrameVioFH, uFrameVioSH,
-  uframeSPDR, uVioTZCLGL,
+  uframeSPDR, uVioTZCLGL, uFrameJTPList, uFrameJTPCheck,
   uToolVioSearch, uToolVioGZGL, UToolVioTXGL, uFrameHBCList, uToolVioJFGL,
   uUnodeVehSearch, UUnodeDrvSearch, UDrvSearch, uVehSearch, uSearchLJ,
   uFrameBlackCheck, uToolbkcj, uFrameJCBK, uSearchYJCLKJ,
@@ -38,12 +38,12 @@ begin
     TFtoolVioJFGL, TUnodeVehSearch, TUnodeDrvSearch, TFrameDevSearch,
     TFrameVehSearch, TFrameSearchLJ, TFrameBlackCheck, Tftoolbkcj, TFrameJCBK,
     TFrameTJJCCJ, TSearchYJCLKJ, TFrameTJFine, TFrameFollowManager,
-    TFrameJianYi, TFrameCrashManager, TFrameBetweenManager,
+    TFrameJianYi, TFrameCrashManager, TFrameBetweenManager, TFrameJTPList,
     TFrameFirstEnterManager, TtoolNocturnal, TFrameGCTJ, TFrameVIOLRRYTJ,
     TFDeviceList, TToolUserManage, TToolRoleManage, TFrameWFCSJETJ,
     TFrameDCWFFeedback, TFrameDept, TToolYJQSFK, TFrameWFXWGL, TFramePassSearch,
     TToolDataRoleManage, TFrameTJZDWFXW, TFrameTJJF, TFrameTJNewDrv, TFrameTJWF,
-    TFrameTJNewVeh, TFrameNewWF, TFrameZFZ, TFrameForceFeedback,
+    TFrameTJNewVeh, TFrameNewWF, TFrameZFZ, TFrameForceFeedback, TFrameJTPCheck,
     TFrameIndexGCSJ, TFrameYXQZFeedback, TFrameZFZList, TFrameJianYiFeedback,
     TDcwfSearch, TFrameFeedbackResult, TFrameYJLKPH, TFrameDrvLog,
     TFramePicSearch, TFToolJSRYQZ, TFrameFineFeedback, TFrameQDZ, TFrameSendSms,
