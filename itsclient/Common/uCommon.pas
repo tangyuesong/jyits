@@ -197,6 +197,8 @@ begin
     s := '[{' + s + '}]';
     Result.Add(TJsonUtils.JsonToRecord<TVioClass>(s));
   end;
+  Result := TJsonUtils.RecordListSort<TVioClass>(Result, 'wfsj',
+    [ixDescending]);
 end;
 
 class function TCommon.GetVioByVeh(hphm, hpzl, clbj, xh: String)
@@ -241,6 +243,8 @@ begin
     vio := TJsonUtils.JsonToRecord<TVioInfoSrl>(viostr);
     Result.Add(vio);
   end;
+  Result := TJsonUtils.RecordListSort<TVioInfoSrl>(Result, 'wfsj',
+    [ixDescending]);
 end;
 
 class function TCommon.GetXZQH(dwdm: String): string;

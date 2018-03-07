@@ -1,15 +1,15 @@
 inherited FrameIndexGCSJ: TFrameIndexGCSJ
-  Width = 762
-  Height = 545
+  Width = 784
+  Height = 502
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 762
-    Height = 410
+    Width = 784
+    Height = 367
     ExplicitHeight = 170
     object cxGrid1: TcxGrid [0]
       Left = 28
       Top = 67
-      Width = 706
-      Height = 171
+      Width = 728
+      Height = 144
       TabOrder = 3
       object cxGrid1ChartView1: TcxGridChartView
         DiagramLine.Active = True
@@ -22,9 +22,9 @@ inherited FrameIndexGCSJ: TFrameIndexGCSJ
     end
     object cxGrid2: TcxGrid [1]
       Left = 13
-      Top = 260
-      Width = 736
-      Height = 137
+      Top = 233
+      Width = 758
+      Height = 121
       TabOrder = 4
       object ChartView: TcxGridDBChartView
         Categories.DataBinding.FieldName = 'DWMC'
@@ -164,8 +164,8 @@ inherited FrameIndexGCSJ: TFrameIndexGCSJ
   end
   object cxDBPivotGrid1: TcxDBPivotGrid
     Left = 0
-    Top = 410
-    Width = 762
+    Top = 367
+    Width = 784
     Height = 135
     Align = alBottom
     DataSource = DataSource1

@@ -561,6 +561,7 @@ begin
     for rec in list do
       AppendRecordToTable<T>(@rec, ATable);
   end;
+  ATable.First;
   ATable.EnableControls;
   Result := True;
 end;

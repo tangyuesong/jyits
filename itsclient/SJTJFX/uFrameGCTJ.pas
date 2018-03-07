@@ -32,7 +32,7 @@ uses
   cxGridTableView, cxGridDBTableView, cxGridLevel, cxGridChartView,
   cxGridDBChartView, cxGridCustomView, cxGrid, sDialogs, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uJsonUtils, uRequestItf, uGlobal, uCommon, Udictionary,
-  cxLookupEdit, cxDBLookupEdit, cxDBExtLookupComboBox;
+  cxLookupEdit, cxDBLookupEdit, cxDBExtLookupComboBox, uFrameSelectDev, uEntity;
 
 type
   TFrameGCTJ = class(TdxFrame)
@@ -49,8 +49,6 @@ type
     dxLayoutItem10: TdxLayoutItem;
     btnExport: TcxButton;
     dxLayoutItem11: TdxLayoutItem;
-    cbbWfdd: TcxComboboxExt;
-    dxLayoutItem12: TdxLayoutItem;
     cbbDateType: TcxComboBox;
     dxLayoutItem3: TdxLayoutItem;
     dstemp2: TDataSource;
@@ -65,11 +63,18 @@ type
     cxgridnumcxgrid3Column2: TcxGridDBColumn;
     cxGridLevel1: TcxGridLevel;
     FDqryclient: TFDMemTable;
+    dxLayoutItem4: TdxLayoutItem;
+    cbbwfdd: TcxComboBox;
     procedure btnSearchClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
+    procedure cbbWfddMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     Floginfo: String;
+    FDev: TFrameSelectDev;
     procedure AfterConstruction; override;
+    procedure DevSaveClick(Sender: TObject);
+    procedure DevExitClick(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -88,7 +93,7 @@ begin
   deBegin.Text := FormatDateTime('yyyy/mm/dd', Now() - 1);
   deEnd.Text := FormatDateTime('yyyy/mm/dd', Now());
   cbbDateType.ItemIndex := 3;
-  TLZDictionary.BindComboboxDEV(cbbWfdd, True);
+  // TLZDictionary.BindComboboxDEV(cbbWfdd, True);
   FDqryclient.FieldDefs.Add('gcsj', ftString, 50, false);
   FDqryclient.FieldDefs.Add('gccs', ftInteger, 0, false);
 end;
@@ -123,8 +128,11 @@ begin
   else if cbbDateType.ItemIndex = 3 then
     Param := Param + '&datetype=H';
   Param := Param + '&tjlx=1';
-  if cbbWfdd.ItemIndex >= 0 then
-    Param := Param + '&kdbh=' + TLZDictionary.StrtoDicInfo(cbbWfdd.Text).dm;
+  // if cbbWfdd.ItemIndex >= 0 then
+  // Param := Param + '&kdbh=' + TLZDictionary.StrtoDicInfo(cbbWfdd.Text).dm;
+
+  Param := Param + '&kdbh=' + cbbwfdd.Text;
+
   { todo 要增加统计类型 1 卡口单点 2 以路为单位 3 管辖区域 }
 
   Floginfo := Param;
@@ -132,6 +140,90 @@ begin
   TJsonUtils.JSONToDataSet(TRequestItf.DbQuery('GetGCTJ', Param), FDqryclient,
     '', false);
   FreeFrameWait;
+end;
+
+procedure TFrameGCTJ.cbbWfddMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  key: string;
+  dev: TDevice;
+begin
+  inherited;
+  if Button <> mbLeft then
+    exit;
+
+  if not Assigned(FDev) then
+  begin
+    FDev := TFrameSelectDev.Create(self);
+    FDev.Parent := self;
+    FDev.tvDevColumn2.Caption := '设备编号';
+    FDev.tvDevColumn3.Caption := '设备地点名称';
+    FDev.tvDevColumn4.Visible := false;
+    // FDev.Top := (self.Height - FDev.Height) div 2;
+    FDev.Top := 20;
+    FDev.Left := (self.Width - FDev.Width) div 2;
+    FDev.btnSave.OnClick := self.DevSaveClick;
+    FDev.btnExit.OnClick := self.DevExitClick;
+  end;
+
+  FDev.tb.Close;
+  FDev.tb.FieldDefs.Clear;
+  FDev.tb.IndexDefs.Clear;
+  FDev.tb.FieldDefs.Add('bj', ftBoolean);
+  FDev.tb.FieldDefs.Add('WFDD', ftString, 100);
+  FDev.tb.FieldDefs.Add('SBDDMC', ftString, 100);
+  FDev.tb.FieldDefs.Add('C1', ftInteger);
+  FDev.tb.IndexDefs.Add('index', 'WFDD', [ixPrimary]);
+  FDev.tb.IndexName := 'index';
+  FDev.tb.CreateDataSet();
+
+  FDev.tb.DisableControls;
+  FDev.tb.Edit;
+  for key in TLZDictionary.gDicDev[1].Keys do
+  begin
+    dev := TLZDictionary.gDicDev[1][key];
+    FDev.tb.Append;
+    FDev.tb.FieldByName('WFDD').AsString := dev.SBBH;
+    FDev.tb.FieldByName('SBDDMC').AsString := dev.SBDDMC;
+    FDev.tb.FieldByName('bj').AsBoolean := false;
+  end;
+  FDev.tb.Post;
+  FDev.tb.First;
+  FDev.tb.EnableControls;
+  dxLayoutControl2Group_Root.Visible := false;
+  FDev.Visible := True;
+end;
+
+procedure TFrameGCTJ.DevExitClick(Sender: TObject);
+begin
+  if Assigned(FDev) then
+    FDev.Visible := false;
+  dxLayoutControl2Group_Root.Visible := True;
+end;
+
+procedure TFrameGCTJ.DevSaveClick(Sender: TObject);
+var
+  recNo: Integer;
+  ss: string;
+begin
+  DevExitClick(nil);
+  ss := '';
+  if not FDev.tb.Active then
+    exit;
+  FDev.tb.DisableControls;
+  recNo := FDev.tb.recNo;
+  FDev.tb.First;
+  while not FDev.tb.eof do
+  begin
+    if FDev.tb.FieldByName('bj').AsBoolean then
+      ss := ss + ',' + FDev.tb.FieldByName('WFDD').AsString;
+    FDev.tb.Next;
+  end;
+  FDev.tb.recNo := recNo;
+  FDev.tb.EnableControls;
+  if ss <> '' then
+    ss := ss.Substring(1);
+  cbbwfdd.Text := ss;
 end;
 
 end.

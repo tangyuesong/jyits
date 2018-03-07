@@ -57,12 +57,16 @@ type
     dxLayoutItem9: TdxLayoutItem;
     cboYJLX: TcxCheckComboBox;
     dxLayoutItem7: TdxLayoutItem;
+    btnExportAll: TcxButton;
+    dxLayoutItem10: TdxLayoutItem;
     procedure acteditExecute(Sender: TObject);
     procedure actViewExecute(Sender: TObject);
     procedure edtHPHMKeyPress(Sender: TObject; var Key: Char);
     procedure btnSearchClick(Sender: TObject);
     procedure BtnExportClick(Sender: TObject);
+    procedure btnExportAllClick(Sender: TObject);
   private
+    FExportAllParam: String;
     FFrameFeedback: TFrameFeedbackBase;
     FFrameSign: TFrameSignBase;
     FDetail: TdxFramePicData;
@@ -165,6 +169,7 @@ var
   bklxs: TStrings;
 begin
   inherited;
+  FExportAllParam := '';
   dtBegin.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', now - 1));
   dtEnd.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', now + 1));
   if TLZDictionary.gDicMain.ContainsKey('JC') then
@@ -186,6 +191,74 @@ begin
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[0].Hint := '签收';
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[1].Hint := '反馈';
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[2].Hint := '详细';
+end;
+
+procedure TToolYJQSFK.btnExportAllClick(Sender: TObject);
+var
+  table: TFDMemTable;
+  ts: TStrings;
+  s: String;
+begin
+  inherited;
+  if FExportAllParam = '' then
+    exit;
+  if dlgSave.Execute then
+  begin
+    ShowFrameWait;
+    table := TFDMemTable.Create(nil);
+    s := TRequestItf.DbQuery('GetAlarmResult', FExportAllParam);
+    TJSONUtils.JSONToDataSet(s, table);
+    if table.Active then
+    begin
+      ts := TStringList.Create;
+      s := '布控类型'#9'号牌种类'#9'号牌号码'#9'单位代码'#9'地点名称'#9'车道'#9'过车时间'#9'预警来源'#9'反馈';
+      ts.Add(s);
+      table.First;
+      while not table.Eof do
+      begin
+        if TLZDictionary.gDicMain['BKLX'].ContainsKey(table.FieldByName('BKLX')
+          .AsString) then
+          s := TLZDictionary.gDicMain['BKLX']
+            [table.FieldByName('BKLX').AsString] + #9
+        else
+          s := table.FieldByName('BKLX').AsString + #9;
+        if TLZDictionary.gDicMain['HPZL'].ContainsKey(table.FieldByName('HPZL')
+          .AsString) then
+          s := s + TLZDictionary.gDicMain['HPZL']
+            [table.FieldByName('HPZL').AsString] + #9
+        else
+          s := s + table.FieldByName('HPZL').AsString + #9;
+        s := s + table.FieldByName('HPHM').AsString + #9;
+        if TLZDictionary.gDicDept.ContainsKey(table.FieldByName('DWDM').AsString)
+        then
+          s := s + TLZDictionary.gDicDept
+            [table.FieldByName('DWDM').AsString].DWMC + #9
+        else
+          s := s + table.FieldByName('DWDM').AsString + #9;
+        if TLZDictionary.gDicDev[2].ContainsKey(table.FieldByName('KDBH')
+          .AsString) then
+          s := s + TLZDictionary.gDicDev[2][table.FieldByName('KDBH').AsString]
+            .SBDDMC + #9
+        else
+          s := s + table.FieldByName('KDBH').AsString + #9;
+        s := s + table.FieldByName('CD').AsString + #9 +
+          table.FieldByName('GCSJ').AsString + #9 + table.FieldByName('Local')
+          .AsString + #9 + table.FieldByName('FEEDBACK').AsString;
+        ts.Add(s);
+        table.Next;
+      end;
+      ts.SaveToFile(dlgSave.FileName);
+      ts.Free;
+      FreeFrameWait;
+      Application.MessageBox('导出成功', '提示', MB_OK + MB_ICONINFORMATION);
+    end
+    else
+    begin
+      FreeFrameWait;
+      Application.MessageBox('导出失败', '提示', MB_OK + MB_ICONERROR);
+    end;
+    table.Free;
+  end;
 end;
 
 procedure TToolYJQSFK.BtnExportClick(Sender: TObject);
@@ -234,6 +307,7 @@ begin
   Param := Param + '&Source=' + cmbSource.Text;
   pageSize := StrToIntDef(cbbPagesize.Text, 30);
   pageIndex := StrToIntDef(edtPageIndex.Text, 0);
+  FExportAllParam := Param;
   Param := Param + Format('&rows=%s&start=%s',
     [pageSize.ToString, pageIndex.ToString]);
   ShowFrameWait;
