@@ -78,10 +78,12 @@ var
   s, sjhm: string;
   tmp: TDictionary<string, string>;
 begin
-  s := 'select distinct hphm+hpzl as dickey, b.sjhm from T_KK_ALARM a '
+  s := 'select distinct a.hphm+a.hpzl as dickey, b.sjhm from T_KK_ALARM a '
      + 'inner join T_KK_ALARM_JTP b '
      + 'on a.CLPP like ''%'' + b.CLPP + ''%'' and a.CSYS like  ''%'' + b.CSYS + ''%'' '
-     + 'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'')';
+     + 'left join T_KK_ALARM_JTP_Except c '
+     + 'on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
+     + 'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'') and c.HPHM is null';
   tmp := TDictionary<string, string>.Create;
   with SQLHelper.Query(s) do
   begin
