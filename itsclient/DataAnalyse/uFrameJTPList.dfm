@@ -10,7 +10,7 @@ inherited FrameJTPList: TFrameJTPList
       Top = 45
       Width = 1060
       Height = 191
-      TabOrder = 5
+      TabOrder = 4
       ExplicitTop = 45
       ExplicitWidth = 1060
       ExplicitHeight = 191
@@ -35,21 +35,8 @@ inherited FrameJTPList: TFrameJTPList
       Height = 21
       Width = 99
     end
-    object cbbZT: TcxComboBox [3]
-      Left = 331
-      Top = 13
-      AutoSize = False
-      Properties.Items.Strings = (
-        #24453#23457#26680
-        #21516#24847
-        #19981#21516#24847)
-      Style.HotTrack = False
-      TabOrder = 2
-      Height = 21
-      Width = 78
-    end
-    object btnSearch: TcxButton [4]
-      Left = 416
+    object btnSearch: TcxButton [3]
+      Left = 301
       Top = 13
       Width = 75
       Height = 25
@@ -60,10 +47,10 @@ inherited FrameJTPList: TFrameJTPList
       ParentShowHint = False
       ShowHint = False
       SpeedButtonOptions.Transparent = True
-      TabOrder = 3
+      TabOrder = 2
       OnClick = btnSearchClick
     end
-    object btnAdd: TcxButton [5]
+    object btnAdd: TcxButton [4]
       Left = 1040
       Top = 13
       Width = 33
@@ -72,37 +59,37 @@ inherited FrameJTPList: TFrameJTPList
       OptionsImage.Images = DM.ilBarSmall
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Transparent = True
-      TabOrder = 4
+      TabOrder = 3
       OnClick = btnAddClick
     end
     inherited cbbPagesize: TcxComboBox
       Top = 243
-      TabOrder = 6
+      TabOrder = 5
       ExplicitTop = 243
     end
     inherited btnFirstPage: TcxButton
       Top = 243
-      TabOrder = 7
+      TabOrder = 6
       ExplicitTop = 243
     end
     inherited btnPriorPage: TcxButton
       Top = 243
-      TabOrder = 8
+      TabOrder = 7
       ExplicitTop = 243
     end
     inherited edtPageIndex: TcxTextEdit
       Top = 243
-      TabOrder = 9
+      TabOrder = 8
       ExplicitTop = 243
     end
     inherited btnnextPage: TcxButton
       Top = 243
-      TabOrder = 10
+      TabOrder = 9
       ExplicitTop = 243
     end
     inherited btnLastPage: TcxButton
       Top = 243
-      TabOrder = 11
+      TabOrder = 10
       ExplicitTop = 243
     end
     inherited lbCount: TcxLabel
@@ -130,15 +117,6 @@ inherited FrameJTPList: TFrameJTPList
       ControlOptions.ShowBorder = False
       Index = 1
     end
-    object dxLayoutItem8: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #29366#24577
-      Control = cbbZT
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 78
-      ControlOptions.ShowBorder = False
-      Index = 2
-    end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxLayoutGroup2
       AlignHorz = ahRight
@@ -148,7 +126,7 @@ inherited FrameJTPList: TFrameJTPList
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 33
       ControlOptions.ShowBorder = False
-      Index = 4
+      Index = 3
     end
     object dxLayoutItem10: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -158,7 +136,7 @@ inherited FrameJTPList: TFrameJTPList
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 3
+      Index = 2
     end
   end
   inherited cxdtrpstry1: TcxEditRepository

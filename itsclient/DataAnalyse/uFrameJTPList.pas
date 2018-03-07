@@ -44,8 +44,6 @@ type
     dxLayoutItem1: TdxLayoutItem;
     DTJSSJ: TcxDateEdit;
     dxLayoutItem2: TdxLayoutItem;
-    cbbZT: TcxComboBox;
-    dxLayoutItem8: TdxLayoutItem;
     btnSearch: TcxButton;
     btnDel: TdxBarLargeButton;
     btnAdd: TcxButton;
@@ -79,7 +77,6 @@ begin
   inherited;
   if not FDMemTable1.Eof then
   begin
-    // TODO: Delete
     if Application.MessageBox('确定要删除此纪录?', '删除确认',MB_YESNOCANCEL) = mrOK then
     begin
       TRequestItf.DbQuery('DelT_KK_Alarm_JTP', 'SYSTEMID='+FDMemTable1.FieldByName('SYSTEMID').AsString);
@@ -93,7 +90,6 @@ begin
   inherited;
   DTKSSJ.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', Now - 30));
   DTJSSJ.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', Now + 1));
-  cbbZT.ItemIndex := 0;
   GridColumns := 'CLPP,CSYS,SJHM,BKR,GXSJ,操作';
   GridView.Columns[5].RepositoryItem := cxdtrpstry1ButtonItem1;
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[0].Visible := false;
@@ -139,11 +135,6 @@ begin
   vdt := DTKSSJ.Text;
   vdt2 := FormatDateTime('yyyy/mm/dd', DTJSSJ.Date + 1);
   Param := Format('begin_gxsj=%s&end_gxsj=%s', [vdt, vdt2]);
-  zt := IntToStr(cbbZT.ItemIndex);
-  if zt <> '' then
-  begin
-    Param := Param + Format('&zt=%s', [zt]);
-  end;
   s := TRequestItf.DbQuery('GetT_KK_Alarm_JTP', Param);
   TJSONUtils.JSONToDataSet(s, FDMemTable1, 'GXSJ');
   FreeFrameWait;

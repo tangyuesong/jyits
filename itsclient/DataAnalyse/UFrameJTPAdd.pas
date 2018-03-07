@@ -72,7 +72,6 @@ end;
 
 procedure TFrameJTPAdd.btnSaveClick(Sender: TObject);
 var
-  tmpBKCJ: TBKCJResult;
   s: string;
 begin
   inherited;
@@ -82,7 +81,10 @@ begin
     exit;
   end;
 
-  s := TJSONUtils.RecordToString<TBKCJResult>(@tmpBKCJ);
+  s := 'BKR=' + gUser.yhbh + '&SJHM=' + edtSJ.Text + '&ZT=1&CLPP='
+    + edtCLPP1.Text + '&CSYS=' + TLZDictionary.StrtoDicInfo(cbbCsys.Text).dm
+    + '&smsTimeBegin=' + FormatDatetime('hhmm', tmBegin.Time)
+    + '&smsTimeEnd=' + FormatDatetime('hhmm', tmEnd.Time);
 
   TRequestItf.DbQuery('AddT_KK_Alarm_JTP', s);
   Application.MessageBox('新增成功', '提示', MB_OK + MB_ICONINFORMATION);
