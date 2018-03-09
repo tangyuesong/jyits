@@ -84,6 +84,7 @@ Type
     class function DecodeK08SearchResult(Xml: String; var totalPage: Integer;
       var currentPage: Integer): TList<TK08VehInfo>;
     class function DecodeDFAnalysisOnePicResult(Xml: String): TList<TDFVehInfo>;
+    class function DecodeDFSubJobResult(Xml: String): String;
   end;
 
 implementation
@@ -154,6 +155,20 @@ begin
   XMLDoc := nil;
   DocIntf := nil;
   rrt := nil;
+end;
+
+class function TDecodeHikResult.DecodeDFSubJobResult(Xml: String): String;
+begin
+  Result := '';
+  if pos('<errorCode>0</errorCode>', Xml) > 0 then
+  begin
+    if pos('<jobId>', Xml) > 0 then
+      Result := Xml.Substring(pos('<jobId>', Xml) + 6);
+    if (Result <> '') and (pos('</jobId>', Result) > 0) then
+      Result := copy(Result, 1, pos('</jobId>', Result) - 1)
+    else
+      Result := '';
+  end;
 end;
 
 class function TDecodeHikResult.DecodeK08SearchResult(Xml: String;

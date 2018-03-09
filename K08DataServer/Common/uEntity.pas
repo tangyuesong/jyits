@@ -82,6 +82,15 @@ type
     TP1: string;
   end;
 
+  TImageInfo = Class
+  public
+    GCXH: String;
+    KDBH: String;
+    CDBH: String;
+    Url: String;
+    PassTime: String;
+  End;
+
 implementation
 
 end.

@@ -28,11 +28,4 @@ object ItsK08DataService: TItsK08DataService
     Left = 64
     Top = 16
   end
-  object Timer2: TTimer
-    Enabled = False
-    Interval = 60000
-    OnTimer = Timer2Timer
-    Left = 112
-    Top = 16
-  end
 end

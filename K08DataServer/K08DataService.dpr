@@ -10,7 +10,9 @@ uses
   uSaveK08Thread in 'uSaveK08Thread.pas',
   uDecodeHikResult in 'uDecodeHikResult.pas',
   uEntity in 'Common\uEntity.pas',
-  uHik in 'uHik.pas';
+  uHik in 'uHik.pas',
+  uPassReader in 'uPassReader.pas',
+  uDfWsdl in 'uDfWsdl.pas';
 
 {$R *.RES}
 

@@ -3,7 +3,8 @@ unit uGlobal;
 interface
 
 uses
-  uLogger, uSQLHelper, System.Generics.Collections, Classes, uEntity;
+  uLogger, uSQLHelper, System.Generics.Collections, Classes, uEntity,
+  uPassReader;
 
 var
   gSQLHelper: TSQLHelper;
@@ -14,9 +15,8 @@ var
   gHeartbeatUrl: String;
   gHeartbeatInterval: Integer;
   gStartTime: String;
-  gCJJG: String;
-  gTaskMi: string;
-  gTaskRunning: Boolean;
+  gJobNum: Integer;
+  gPassReader: TPassReader;
 
 implementation
 
