@@ -178,7 +178,9 @@ uses
   uFrameZDTotal in 'SJTJFX\uFrameZDTotal.pas' {FrameZDTotal: TFrame},
   uFrameJTPCheck in 'BKGJGL\uFrameJTPCheck.pas' {FrameJTPCheck: TFrame},
   UFrameJTPAdd in 'DataAnalyse\UFrameJTPAdd.pas' {FrameJTPAdd: TFrame},
-  uFrameJTPList in 'DataAnalyse\uFrameJTPList.pas' {FrameJTPList: TFrame};
+  uFrameJTPList in 'DataAnalyse\uFrameJTPList.pas' {FrameJTPList: TFrame},
+  UFrameSDCLAdd in 'DataAnalyse\UFrameSDCLAdd.pas' {FrameSDCLAdd: TFrame},
+  uFrameSDCLList in 'DataAnalyse\uFrameSDCLList.pas' {FrameSDCLList: TFrame};
 
 {$R *.res}
 
