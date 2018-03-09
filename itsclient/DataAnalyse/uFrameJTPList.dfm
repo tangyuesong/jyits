@@ -1,18 +1,14 @@
 inherited FrameJTPList: TFrameJTPList
-  Width = 1086
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 1086
     Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 1060
       Height = 191
       TabOrder = 4
       ExplicitTop = 45
-      ExplicitWidth = 1060
       ExplicitHeight = 191
     end
     object DTKSSJ: TcxDateEdit [1]
@@ -51,7 +47,7 @@ inherited FrameJTPList: TFrameJTPList
       OnClick = btnSearchClick
     end
     object btnAdd: TcxButton [4]
-      Left = 1040
+      Left = 405
       Top = 13
       Width = 33
       Height = 25

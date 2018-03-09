@@ -9,6 +9,7 @@ uses
 procedure LoadDevice;
 procedure LoadAlarm;
 procedure LoadAlarmJTP;
+procedure LoadAlarmSDCL;
 procedure LoadHBC;
 procedure LoadMainDic;
 procedure LoadVeh;
@@ -76,26 +77,31 @@ end;
 procedure LoadAlarmJTP;
 var
   s, sjhm: string;
-  tmp: TDictionary<string, string>;
+  tmp: TDictionary<string, TAlarm>;
+  item: TAlarm;
 begin
-  s := 'select distinct a.hphm+a.hpzl as dickey, b.sjhm from T_KK_ALARM a '
+  s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsBeginTime,b.smsEndTime from T_KK_ALARM a '
      + 'inner join T_KK_ALARM_JTP b '
      + 'on a.CLPP like ''%'' + b.CLPP + ''%'' and a.CSYS like  ''%'' + b.CSYS + ''%'' '
      + 'left join T_KK_ALARM_JTP_Except c '
      + 'on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
      + 'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'') and c.HPHM is null';
-  tmp := TDictionary<string, string>.Create;
+  tmp := TDictionary<string, TAlarm>.Create;
   with SQLHelper.Query(s) do
   begin
     while not EOF do
     begin
-      s := Fields[0].AsString;
-      sjhm := Fields[1].AsString;
+      item.HPHM := FieldByName('HPHM').AsString;
+      item.HPZL := FieldByName('HPZL').AsString;
+      item.SJHM := FieldByName('SJHM').AsString;
+      item.smsBeginTime := FieldByName('smsBeginTime').AsString;
+      item.smsEndTime := FieldByName('smsEndTime').AsString;
+      s := item.HPHM + item.HPZL;
       if not tmp.ContainsKey(s) then
-        tmp.Add(s, sjhm)
+        tmp.Add(s, item)
       else begin
-        sjhm := tmp[s] + ';' + sjhm;
-        tmp.AddOrSetValue(s, sjhm);
+        item.SJHM := tmp[s].SJHM + ';' + item.SJHM;
+        tmp.AddOrSetValue(s, item);
       end;
       Next;
     end;
@@ -105,6 +111,35 @@ begin
     gOldAlarmJTP.Free;
   gOldAlarmJTP := gDicAlarmJTP;  // gDicAlarmJTP可能还在被使用，所以不能马上Free
   gDicAlarmJTP := tmp;
+end;
+
+procedure LoadAlarmSDCL;
+var
+  s, sjhm: string;
+  tmp: TList<TSDCL>;
+  item: TSDCL;
+begin
+  s := 'select * from T_KK_ALARM_SDCL';
+  tmp := TList<TSDCL>.Create;
+  with SQLHelper.Query(s) do
+  begin
+    while not EOF do
+    begin
+      item.FZJG := FieldByName('FZJG').AsString;
+      item.KDBH := FieldByName('KDBH').AsString;
+      item.SJHM := FieldByName('SJHM').AsString;
+      item.smsBeginTime := FieldByName('smsBeginTime').AsString;
+      item.smsEndTime := FieldByName('smsEndTime').AsString;
+      tmp.Add(item);
+
+      Next;
+    end;
+    Free;
+  end;
+  if gOldAlarmSDCL <> nil then   // 释放旧的
+    gOldAlarmSDCL.Free;
+  gOldAlarmSDCL := gListAlarmSDCL;  // gDicAlarmJTP可能还在被使用，所以不能马上Free
+  gListAlarmSDCL := tmp;
 end;
 
 procedure LoadOpenedDevice;

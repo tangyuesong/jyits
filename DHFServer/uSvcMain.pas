@@ -86,6 +86,7 @@ begin
     logger.Info('LoadAlarm');
     LoadAlarm;
     LoadAlarmJTP;
+    LoadAlarmSDCL;
     logger.Info('LoadAlarm OK');
   end;
 end;

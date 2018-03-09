@@ -105,70 +105,110 @@ begin
 end;
 
 class procedure Tmypint.DoAlarm(pass: TPass);
-var
-  SQL, hpzlmc, bz, sj, bkzl, wfcs, bklx, address: string;
-begin
-  if gDicAlarmJTP.ContainsKey(pass.HPHM + pass.HPZL) then
+  procedure DoJTP;
+  var
+    alarm: TAlarm;
+    s, hhmm: string;
   begin
-    bz := '¡¾¼ÙÌ×ÅÆ¡¿' + pass.hphm + hpzlmc
-            + #13#10 + pass.gcsj + #13#10
-            + gDicDevice[pass.kdbh].SBDDMC;
-    if SMSUrl = '' then
-      uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', gDicAlarmJTP[pass.HPHM + pass.HPZL], bz)
-    else
-      Tmypint.SendSMS(gDicAlarmJTP[pass.HPHM + pass.HPZL], bz);
-  end;
-
-  if gDicAlarm.ContainsKey(pass.hphm + pass.hpzl) then
-  begin
-    address := gDicDevice[pass.kdbh].SBDDMC;
-
-    hpzlmc := gDicHPZL[pass.hpzl];
-    SQL := 'select * from T_KK_ALARM where zt=1 and hphm=''' + pass.hphm +
-      ''' and hpzl=''' + pass.hpzl + '''';
-    with SQLHelper.Query(SQL) do
+    if gDicAlarmJTP.ContainsKey(pass.HPHM + pass.HPZL) then
     begin
-      while not Eof do
+      alarm := gDicAlarmJTP[pass.HPHM + pass.HPZL];
+      hhmm := FormatDatetime('hhmm', now);
+      if (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm) then
       begin
-        bkzl := FieldByName('bkzl').AsString;
-        wfcs := FieldByName('wfcs').AsString;
-        bklx := FieldByName('bklx').AsString;
-
-        if (FieldByName('smsTimeBegin').AsString < FormatDatetime('hhmm', now))
-          and (FieldByName('smsTimeEnd').AsString > FormatDatetime('hhmm', now)) then
-        begin
-          sj := FieldByName('sjhm').AsString;
-          if (sj<>'') and (now - vartodatetime(pass.gcsj) < OneMinute * 3)then
-          begin
-            bz := #13#10'ºÅÅÆºÅÂë' + pass.hphm + hpzlmc
-              + #13#10 + pass.gcsj + #13#10 + address
-              + #13#10 + FieldByName('bz').AsString;
-            if SMSUrl = '' then
-              uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', sj, BZ)
-            else
-              Tmypint.SendSMS(sj, bz);
-          end;
-        end;
-        Next;
+        s := '¡¾¼ÙÌ×ÅÆ¡¿' + pass.hphm + gDicHPZL[pass.hpzl]
+                + #13#10 + pass.gcsj + #13#10
+                + gDicDevice[pass.kdbh].SBDDMC;
+        if SMSUrl = '' then
+          uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', alarm.SJHM, s)
+        else
+          Tmypint.SendSMS(alarm.SJHM, s);
       end;
-      Free;
     end;
-
-    sql := 'insert into T_KK_ALARMRESULT(bz,bkzl,wfcs,gcxh,gcsj,hphm,hpzl,cd,clsd,viourl,kdbh,bklx)values('
-      + BZ.QuotedString + ','
-      + bkzl.QuotedString + ','
-      + wfcs.QuotedString + ','
-      + pass.GCXH.QuotedString + ','
-      + pass.GCSJ.QuotedString + ','
-      + pass.hphm.QuotedString+ ','
-      + pass.hpzl.QuotedString + ','
-      + pass.cdbh + ','
-      + pass.CLSD.QuotedString + ','
-      + (pass.FWQDZ + pass.tp1).QuotedString + ','
-      + pass.kdbh.QuotedString  + ','
-      + bklx.QuotedString + ')';
-    sqlhelper.ExecuteSql(SQL);
   end;
+  procedure DoSDCL;
+  var
+    sdcl: TSDCL;
+    s, hhmm: string;
+  begin
+    for sdcl in gListAlarmSDCL do
+    begin
+      if pass.HPHM.Contains(sdcl.FZJG) and sdcl.KDBH.Contains(pass.kdbh) then
+      begin
+        hhmm := FormatDatetime('hhmm', now);
+        if (sdcl.smsBeginTime < hhmm) and (sdcl.smsEndTime > hhmm) then
+        begin
+          s := '¡¾Éæ¶¾³µÁ¾¡¿' + pass.hphm + gDicHPZL[pass.hpzl]
+                  + #13#10 + pass.gcsj + #13#10
+                  + gDicDevice[pass.kdbh].SBDDMC;
+          if SMSUrl = '' then
+            uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', sdcl.SJHM, s)
+          else
+            Tmypint.SendSMS(sdcl.SJHM, s);
+        end;
+      end;
+    end;
+  end;
+  procedure DoAlarm;
+  var
+    SQL, hpzlmc, bz, sj, bkzl, wfcs, bklx, address,hhmm: string;
+  begin
+    hhmm := FormatDatetime('hhmm', now);
+    if gDicAlarm.ContainsKey(pass.hphm + pass.hpzl) then
+    begin
+      address := gDicDevice[pass.kdbh].SBDDMC;
+
+      hpzlmc := gDicHPZL[pass.hpzl];
+      SQL := 'select * from T_KK_ALARM where zt=1 and hphm=''' + pass.hphm +
+        ''' and hpzl=''' + pass.hpzl + '''';
+      with SQLHelper.Query(SQL) do
+      begin
+        while not Eof do
+        begin
+          bkzl := FieldByName('bkzl').AsString;
+          wfcs := FieldByName('wfcs').AsString;
+          bklx := FieldByName('bklx').AsString;
+
+          if (FieldByName('smsTimeBegin').AsString < hhmm)
+            and (FieldByName('smsTimeEnd').AsString > hhmm) then
+          begin
+            sj := FieldByName('sjhm').AsString;
+            if (sj<>'') and (now - vartodatetime(pass.gcsj) < OneMinute * 3)then
+            begin
+              bz := #13#10'ºÅÅÆºÅÂë' + pass.hphm + hpzlmc
+                + #13#10 + pass.gcsj + #13#10 + address
+                + #13#10 + FieldByName('bz').AsString;
+              if SMSUrl = '' then
+                uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', sj, BZ)
+              else
+                Tmypint.SendSMS(sj, bz);
+            end;
+          end;
+          Next;
+        end;
+        Free;
+      end;
+
+      sql := 'insert into T_KK_ALARMRESULT(bz,bkzl,wfcs,gcxh,gcsj,hphm,hpzl,cd,clsd,viourl,kdbh,bklx)values('
+        + BZ.QuotedString + ','
+        + bkzl.QuotedString + ','
+        + wfcs.QuotedString + ','
+        + pass.GCXH.QuotedString + ','
+        + pass.GCSJ.QuotedString + ','
+        + pass.hphm.QuotedString+ ','
+        + pass.hpzl.QuotedString + ','
+        + pass.cdbh + ','
+        + pass.CLSD.QuotedString + ','
+        + (pass.FWQDZ + pass.tp1).QuotedString + ','
+        + pass.kdbh.QuotedString  + ','
+        + bklx.QuotedString + ')';
+      sqlhelper.ExecuteSql(SQL);
+    end;
+  end;
+begin
+  DoJTP;
+  DoSDCL;
+  DoAlarm;
 end;
 
 class function Tmypint.getPasstoJSON(list: Tlist<TPass>): string;

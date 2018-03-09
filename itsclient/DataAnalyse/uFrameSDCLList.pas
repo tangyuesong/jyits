@@ -77,7 +77,7 @@ begin
   inherited;
   if not FDMemTable1.Eof then
   begin
-    if Application.MessageBox('确定要删除此纪录?', '删除确认',MB_YESNOCANCEL) = mrOK then
+    if Application.MessageBox('确定要删除此纪录?', '删除确认',MB_YESNOCANCEL) = mrYES then
     begin
       TRequestItf.DbQuery('DelT_KK_Alarm_SDCL', 'SYSTEMID='+FDMemTable1.FieldByName('SYSTEMID').AsString);
       LoadData;
@@ -118,7 +118,6 @@ begin
       FrameSDCLAdd.OnOK := LoadData;
     end;
   end;
-  FrameSDCLAdd.ClearControls(FrameSDCLAdd);
   FrameSDCLAdd.OnClose := Self.CloseFrame;
   FrameSDCLAdd.Show;
   Self.EnableControls(False);
