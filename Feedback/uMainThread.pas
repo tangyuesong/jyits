@@ -636,19 +636,24 @@ procedure TMainThread.DownloadAlarmVehicle;
     tmpTable := 'tmp_vehicle' + formatdatetime('yymmddhhmmsszzz', now);
     s := 'create table ' + tmpTable
       + '(HPHM varchar(20),HPZL varchar(2),GCXH varchar(50),XYLX varchar(2),'
-      + 'CLPPXH varchar(255),CLLX varchar(3),CSYS varchar(1),URL varchar(255))';
+      + 'CLPPXH varchar(255),CLLX varchar(3),CSYS varchar(1),'
+      + 'KKBH varchar(50),GCSJ varchar(50),'
+      + 'URL varchar(255))';
     FSQLHelper.ExecuteSql(s);
 
     s := ss.Text;
     s := copy(s, 1, length(s) - 3); // 回车换行
-    s := 'insert into ' + tmpTable + '(HPHM,HPZL,GCXH,XYLX,CLPPXH,CLLX,CSYS,URL)values' + s;
+    s := 'insert into ' + tmpTable + '(HPHM,HPZL,GCXH,XYLX,CLPPXH,CLLX,CSYS,KKBH,GCSJ,URL)values' + s;
     FSQLHelper.ExecuteSql(s);
 
-    s := 'insert into T_KK_ALARM(BKXH,BKJG,BKR,CJJG,HPHM,HPZL,ZT,VIOURL,BKLX,BKZL,CLPP,CLLX,CSYS) ';
-    s := s + 'select a.GCXH,''445200000000'',''Service'',''445200000000'',a.HPHM,a.HPZL,0,a.URL,';
-    s := s + 'case when XYLX=''01'' then ''03'' else ''02'' end as BKLX,''自动同步'',CLPPXH,a.CLLX,a.CSYS ';
+    s := 'insert into T_KK_ALARM(BKXH,BKJG,BKR,CJJG,HPHM,HPZL,ZT,VIOURL,BKLX,BKZL,CLPP,CLLX,CSYS,KDBH,GXSJ,UploadStatus) ';
+    s := s + 'select a.GCXH,''445200000000'',''Service'',''445200000000'',a.HPHM,a.HPZL,1,a.URL,';
+    s := s + 'case when XYLX=''01'' then ''03'' else ''02'' end as BKLX,''自动同步'',CLPPXH,a.CLLX,a.CSYS,c.SBBH,a.GCSJ,2 ';
     s := s + 'from ' + tmpTable + ' as a ';
     s := s + 'left join T_KK_ALARM b on a.HPHM=b.HPHM and a.HPZL=b.HPZL ';
+    s := s + 'left join (select JCPTBABH, max(SBBH) as SBBH from S_DEVICE group by JCPTBABH) C on c.JCPTBABH=a.KKBH ';
+    s := s + 'inner join (select HPHM,HPZL,max(GCXH) as GCXH from ' + tmpTable + ' group by HPHM,HPZL) as d ';
+    s := s + 'on a.hphm=d.hphm and a.hpzl=d.hpzl and a.gcxh=d.gcxh ';
     s := s + 'where b.HPHM is null ';
     s := s + 'drop table ' + tmpTable;
     FSQLHelper.ExecuteSql(s);
@@ -663,7 +668,7 @@ begin
   begin
     Close;
     SQL.Clear;
-    SQL.Add('select HPHM,HPZL,GCXH,XYLX,CLPPXH,CLLX,CSYS,TPLJ||TP1 as URL ');
+    SQL.Add('select HPHM,HPZL,GCXH,XYLX,CLPPXH,CLLX,CSYS,KKBH,GCSJ,TPLJ||TP1 as URL ');
     SQL.Add('from RECG_SUSP_RESULT where (XYLX=''01'' or XYLX=''02'') and QRBJ<>0');
     try
       if not FOraConn.Connected then
@@ -679,6 +684,8 @@ begin
                     FieldByName('CLPPXH').AsString.QuotedString + ',' +
                     FieldByName('CLLX').AsString.QuotedString + ',' +
                     FieldByName('CSYS').AsString.QuotedString + ',' +
+                    FieldByName('KKBH').AsString.QuotedString + ',' +
+                    FieldByName('GCSJ').AsString.QuotedString + ',' +
                     FieldByName('URL').AsString.QuotedString + '),'
         );
         if ss.Count = 999 then

@@ -82,7 +82,12 @@ begin
     logger.Info('reload OK');
   end;
   if nn div 5 = 0 then
+  begin
+    logger.Info('LoadAlarm');
     LoadAlarm;
+    LoadAlarmJTP;
+    logger.Info('LoadAlarm OK');
+  end;
 end;
 
 procedure TITSDHFSvc.DoHeartbeat;

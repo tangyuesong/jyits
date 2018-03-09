@@ -8,6 +8,7 @@ uses
 
 procedure LoadDevice;
 procedure LoadAlarm;
+procedure LoadAlarmJTP;
 procedure LoadHBC;
 procedure LoadMainDic;
 procedure LoadVeh;
@@ -70,6 +71,40 @@ begin
     gOldAlarm.Free;
   gOldAlarm := gDicAlarm;  // gDicAlarm可能还在被使用，所以不能马上Free
   gDicAlarm := tmp;
+end;
+
+procedure LoadAlarmJTP;
+var
+  s, sjhm: string;
+  tmp: TDictionary<string, string>;
+begin
+  s := 'select distinct a.hphm+a.hpzl as dickey, b.sjhm from T_KK_ALARM a '
+     + 'inner join T_KK_ALARM_JTP b '
+     + 'on a.CLPP like ''%'' + b.CLPP + ''%'' and a.CSYS like  ''%'' + b.CSYS + ''%'' '
+     + 'left join T_KK_ALARM_JTP_Except c '
+     + 'on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
+     + 'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'') and c.HPHM is null';
+  tmp := TDictionary<string, string>.Create;
+  with SQLHelper.Query(s) do
+  begin
+    while not EOF do
+    begin
+      s := Fields[0].AsString;
+      sjhm := Fields[1].AsString;
+      if not tmp.ContainsKey(s) then
+        tmp.Add(s, sjhm)
+      else begin
+        sjhm := tmp[s] + ';' + sjhm;
+        tmp.AddOrSetValue(s, sjhm);
+      end;
+      Next;
+    end;
+    Free;
+  end;
+  if gOldAlarmJTP <> nil then   // 释放旧的
+    gOldAlarmJTP.Free;
+  gOldAlarmJTP := gDicAlarmJTP;  // gDicAlarmJTP可能还在被使用，所以不能马上Free
+  gDicAlarmJTP := tmp;
 end;
 
 procedure LoadOpenedDevice;
@@ -339,10 +374,12 @@ begin
   gDicDevice := nil;
   gDicHBC := nil;
   gDicAlarm := nil;
+  gDicAlarmJTP := nil;
 
   gOldDevice := nil;
   gOldHBC := nil;
   gOldALARM := nil;
+  gOldALARMJTP := nil;
   gOldOpenedDevice := nil;
 
   gUnknowDevice := TDictionary<string, boolean>.Create;
@@ -352,6 +389,7 @@ begin
   LoadDevice;
   LoadMainDic;
   LoadAlarm;
+  LoadAlarmJTP;
   loadHBC;
   LoadOpenedDevice;
   //LoadVeh;
@@ -362,6 +400,7 @@ begin
   PassList.Free;
 
   gDicALARM.Free;
+  gDicALARMJTP.Free;
   gDicHBC.Free;
   gOpenedDevice.Free;
   ClearDevice(gDicDevice);

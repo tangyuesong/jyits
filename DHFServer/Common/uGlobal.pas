@@ -12,11 +12,13 @@ var
   gDicDevice: TDictionary<string, TDevice>;
   gDicHBC: TDictionary<string, boolean>;
   gDicAlarm: TDictionary<string, boolean>;
+  gDicAlarmJTP: TDictionary<string, string>;
   gOpenedDevice: TDictionary<string, boolean>;
 
   gOldDevice: TDictionary<string, TDevice>;
   gOldHBC: TDictionary<string, boolean>;
   gOldAlarm: TDictionary<string, boolean>;
+  gOldAlarmJTP: TDictionary<string, string>;
   gOldOpenedDevice: TDictionary<string, boolean>;
 
   gUnknowDevice: TDictionary<string, boolean>;

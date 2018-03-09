@@ -108,9 +108,21 @@ class procedure Tmypint.DoAlarm(pass: TPass);
 var
   SQL, hpzlmc, bz, sj, bkzl, wfcs, bklx, address: string;
 begin
+  if gDicAlarmJTP.ContainsKey(pass.HPHM + pass.HPZL) then
+  begin
+    bz := '¡¾¼ÙÌ×ÅÆ¡¿' + pass.hphm + hpzlmc
+            + #13#10 + pass.gcsj + #13#10
+            + gDicDevice[pass.kdbh].SBDDMC;
+    if SMSUrl = '' then
+      uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', gDicAlarmJTP[pass.HPHM + pass.HPZL], bz)
+    else
+      Tmypint.SendSMS(gDicAlarmJTP[pass.HPHM + pass.HPZL], bz);
+  end;
+
   if gDicAlarm.ContainsKey(pass.hphm + pass.hpzl) then
   begin
     address := gDicDevice[pass.kdbh].SBDDMC;
+
     hpzlmc := gDicHPZL[pass.hpzl];
     SQL := 'select * from T_KK_ALARM where zt=1 and hphm=''' + pass.hphm +
       ''' and hpzl=''' + pass.hpzl + '''';
