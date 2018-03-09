@@ -185,24 +185,24 @@ begin
   inherited;
   if not Assigned(FrameBKCJ) then
   begin
-    FrameBKCJ := TFrameBKCJ.Create(Self);
+    FrameBKCJ := TFrameBKCJ.Create(self);
     with FrameBKCJ do
     begin
-      Parent := Self;
-      top := 120;
-      Left := (Self.Width - Width) div 2;
+      Parent := self;
+      Top := 120;
+      Left := (self.Width - Width) div 2;
       FrameBKCJ.OnOK := InsertTable;
     end;
   end;
   FrameBKCJ.ClearControls(FrameBKCJ);
   FrameBKCJ.BKXH := FormatDateTime('yyyymmddhhmmsszzz', Now);
   FrameBKCJ.EditID := TEditStatus.esNew;
-  FrameBKCJ.OnClose := Self.CloseFrame;
-  FrameBKCJ.dxLayoutGroup6.Visible := False;
-  FrameBKCJ.dxLayoutGroup7.Visible := False;
+  FrameBKCJ.OnClose := self.CloseFrame;
+  FrameBKCJ.dxLayoutGroup6.Visible := false;
+  FrameBKCJ.dxLayoutGroup7.Visible := false;
   FrameBKCJ.dxLayoutItem15.Visible := true;
   FrameBKCJ.Show;
-  Self.EnableControls(False);
+  self.EnableControls(false);
 end;
 
 procedure TFToolBKCJ.btnUpdateClick(Sender: TObject);
@@ -220,24 +220,24 @@ begin
   end;
   if not Assigned(FrameBKCJ) then
   begin
-    FrameBKCJ := TFrameBKCJ.Create(Self);
+    FrameBKCJ := TFrameBKCJ.Create(self);
     with FrameBKCJ do
     begin
-      Parent := Self;
-      top := 120;
-      Left := (Self.Width - Width) div 2;
+      Parent := self;
+      Top := 120;
+      Left := (self.Width - Width) div 2;
       FrameBKCJ.OnOK := InsertTable;
     end;
   end;
   FrameBKCJ.EditID := TEditStatus.esModify;
   FrameBKCJ.BKCJ := TJSONUtils.TableToRecord<TBKCJResult>(FDMemTable1);
   FrameBKCJ.BKXH := FDMemTable1.FieldByName('bkxh').AsString;
-  FrameBKCJ.OnClose := Self.CloseFrame;
-  FrameBKCJ.dxLayoutGroup6.Visible := False;
-  FrameBKCJ.dxLayoutGroup7.Visible := False;
-  FrameBKCJ.dxLayoutItem15.Visible := False;
+  FrameBKCJ.OnClose := self.CloseFrame;
+  FrameBKCJ.dxLayoutGroup6.Visible := false;
+  FrameBKCJ.dxLayoutGroup7.Visible := false;
+  FrameBKCJ.dxLayoutItem15.Visible := false;
   FrameBKCJ.Show;
-  Self.EnableControls(False);
+  self.EnableControls(false);
 end;
 
 procedure TFToolBKCJ.cxButton1Click(Sender: TObject);
@@ -269,12 +269,12 @@ begin
   end;
   if not Assigned(FrameBKCJ) then
   begin
-    FrameBKCJ := TFrameBKCJ.Create(Self);
+    FrameBKCJ := TFrameBKCJ.Create(self);
     with FrameBKCJ do
     begin
-      Parent := Self;
-      top := 120;
-      Left := (Self.Width - Width) div 2;
+      Parent := self;
+      Top := 120;
+      Left := (self.Width - Width) div 2;
       FrameBKCJ.OnOK := InsertTable;
 
     end;
@@ -282,12 +282,12 @@ begin
   FrameBKCJ.EditID := TEditStatus.esApprove;
   FrameBKCJ.BKXH := FDMemTable1.FieldByName('bkxh').AsString;
   FrameBKCJ.BKCJ := TJSONUtils.TableToRecord<TBKCJResult>(FDMemTable1);
-  FrameBKCJ.OnClose := Self.CloseFrame;
+  FrameBKCJ.OnClose := self.CloseFrame;
   FrameBKCJ.dxLayoutGroup7.Visible := true;
-  FrameBKCJ.dxLayoutGroup6.Visible := False;
-  FrameBKCJ.dxLayoutItem15.Visible := False;
+  FrameBKCJ.dxLayoutGroup6.Visible := false;
+  FrameBKCJ.dxLayoutItem15.Visible := false;
   FrameBKCJ.Show;
-  Self.EnableControls(False);
+  self.EnableControls(false);
 end;
 
 procedure TFToolBKCJ.btnDelClick(Sender: TObject);
@@ -300,12 +300,12 @@ begin
   end;
   if not Assigned(FrameBKCJ) then
   begin
-    FrameBKCJ := TFrameBKCJ.Create(Self);
+    FrameBKCJ := TFrameBKCJ.Create(self);
     with FrameBKCJ do
     begin
-      Parent := Self;
-      top := 120;
-      Left := (Self.Width - Width) div 2;
+      Parent := self;
+      Top := 120;
+      Left := (self.Width - Width) div 2;
       FrameBKCJ.OnOK := InsertTable;
 
     end;
@@ -313,12 +313,12 @@ begin
   FrameBKCJ.EditID := TEditStatus.escancel;
   FrameBKCJ.BKXH := FDMemTable1.FieldByName('bkxh').AsString;
   FrameBKCJ.BKCJ := TJSONUtils.TableToRecord<TBKCJResult>(FDMemTable1);
-  FrameBKCJ.OnClose := Self.CloseFrame;
-  FrameBKCJ.dxLayoutGroup7.Visible := False;
+  FrameBKCJ.OnClose := self.CloseFrame;
+  FrameBKCJ.dxLayoutGroup7.Visible := false;
   FrameBKCJ.dxLayoutGroup6.Visible := true;
-  FrameBKCJ.dxLayoutItem15.Visible := False;
+  FrameBKCJ.dxLayoutItem15.Visible := false;
   FrameBKCJ.Show;
-  Self.EnableControls(False);
+  self.EnableControls(false);
 end;
 
 procedure TFToolBKCJ.btnExportClick(Sender: TObject);
@@ -327,9 +327,10 @@ var
 begin
   inherited;
   if not dlgSave.Execute then
-    exit;
+    Exit;
   tmp := TdxGridFrame.Create(self);
-  TColumnGenerator.Instance.GenerateField('HPHM,HPZL,CLPP,CLLX,CSYS,BKLX,SJHM,LOCAL,BZ', tmp.GridView);
+  TColumnGenerator.Instance.GenerateField
+    ('HPHM,HPZL,CLPP,CLLX,CSYS,BKLX,SJHM,LOCAL,BZ', tmp.GridView);
   tmp.FDMemTable1.FieldDefs.Add('HPHM', ftString, 10, false);
   tmp.FDMemTable1.FieldDefs.Add('HPZL', ftString, 10, false);
   tmp.FDMemTable1.FieldDefs.Add('CLPP', ftString, 10, false);
@@ -349,7 +350,7 @@ begin
   tmp.FDMemTable1.FieldByName('CSYS').Value := 'H';
   tmp.FDMemTable1.FieldByName('BKLX').Value := '06';
   tmp.FDMemTable1.FieldByName('SJHM').Value := '';
-  tmp.FDMemTable1.FieldByName('LOCAL').Value := '1';
+  tmp.FDMemTable1.FieldByName('LOCAL').Value := '0';
   tmp.FDMemTable1.FieldByName('BZ').Value := '';
   tmp.FDMemTable1.Post;
   tmp.FDMemTable1.EnableControls;
@@ -392,7 +393,7 @@ begin
   end;
   if cboBKLX.Text <> '' then
   begin
-    Param := Param + Format('&BKLX=%s', [Copy(CboBKLX.Text, 1, 2)]);
+    Param := Param + Format('&BKLX=%s', [Copy(cboBKLX.Text, 1, 2)]);
   end;
   if edthphm.Text <> '' then
   begin
@@ -414,7 +415,7 @@ end;
 procedure TFToolBKCJ.Timer1Timer(Sender: TObject);
 begin
   inherited;
-  Timer1.Enabled := False;
+  Timer1.Enabled := false;
   LoadData;
 end;
 

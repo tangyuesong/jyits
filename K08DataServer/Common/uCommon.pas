@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, uGlobal, Rtti, uSQLHelper, uLogger, ADODB,
-  System.JSON, DateUtils, syncobjs, uEntity,
+  System.JSON, DateUtils, syncobjs, uEntity, uPassReader, IdHttp,
   Data.DB, System.Generics.Collections;
 
 type
@@ -14,6 +14,8 @@ type
     class var cs: TCriticalSection;
     class function ReadConfig(): Boolean;
     class procedure LoadDevices();
+    class function HttpPost(AUrl: String; AParams: TStrings;
+      var AResult: String; AEncoding: TEncoding = nil): Boolean;
   public
     class procedure ProgramInit;
     class procedure ProgramDestroy;
@@ -21,6 +23,7 @@ type
     class function RecordListToJSON<T>(list: TList<T>): string; static;
     class function RecordToJSON<T>(rec: Pointer): string; static;
     class function StringToDT(s: String): TDatetime;
+
   end;
 
 procedure SQLError(const SQL, Description: string);
@@ -86,8 +89,7 @@ begin
 
     gStartTime := ReadString('Task', 'StartTime', FormatDateTime('yyyymmddhh',
       Now() - 1 / 24));
-    gCJJG := ReadString('Task', 'CJJG', '4451');
-    gTaskMi := ReadString('Task', 'Mi', '50');
+    gJobNum := ReadInteger('Task', 'JobNum', 2);
 
     gHeartbeatUrl := ReadString('Heartbeat', 'Url', 'http://127.0.0.1:20090/');
     gHeartbeatInterval := ReadInteger('Heartbeat', 'Interval', 3);
@@ -166,6 +168,7 @@ begin
   if not DirectoryExists(ExtractFilePath(Paramstr(0)) + 'log') then
     ForceDirectories(ExtractFilePath(Paramstr(0)) + 'log');
   gLogger := TLogger.Create(ExtractFilePath(Paramstr(0)) + 'log\K08Data.log');
+  gPassReader := TPassReader.Create;
 end;
 
 class procedure TCommon.LoadDevices;
@@ -174,7 +177,6 @@ var
   dev: TDevice;
 begin
   s := 'select * from s_device where qyzt=1 ';
-  // and Left(CJJG,' + Length(gCJJG).ToString + ')=' + gCJJG.QuotedString;
   with gSQLHelper.Query(s) do
   begin
     while not Eof do
@@ -248,6 +250,44 @@ begin
   gLogger.Free;
   gDicDevice.Free;
   cs.Free;
+  gPassReader.Free;
+end;
+
+class function TCommon.HttpPost(AUrl: String; AParams: TStrings;
+  var AResult: String; AEncoding: TEncoding = nil): Boolean;
+var
+  http: TIdHTTP;
+  stream: TMemoryStream;
+  i: Integer;
+begin
+  cs.Enter;
+  AResult := '';
+  Result := false;
+  i := 0;
+  while (i < 2) and not Result do
+  begin
+    http := TIdHTTP.Create(nil);
+    try
+      stream := TMemoryStream.Create;
+      if AEncoding = nil then
+        AParams.SaveToStream(stream)
+      else
+        AParams.SaveToStream(stream, AEncoding);
+      AResult := Utf8ToAnsi(http.Post(AUrl, stream));
+      Result := True;
+    except
+      on e: exception do
+      begin
+        gLogger.Error('[HttpPost]' + e.Message);
+        AResult := http.ResponseText;
+        inc(i);
+      end;
+    end;
+    stream.Free;
+    http.Disconnect;
+    http.Free;
+  end;
+  cs.Leave;
 end;
 
 end.

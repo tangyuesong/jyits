@@ -5,18 +5,18 @@ inherited FToolBKCJ: TFToolBKCJ
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
-      Left = -688
+      Left = -696
       Top = 45
       Width = 1134
       Height = 174
       TabOrder = 11
-      ExplicitLeft = -688
+      ExplicitLeft = -696
       ExplicitTop = 45
       ExplicitWidth = 1134
       ExplicitHeight = 174
     end
     object DTKSSJ: TcxDateEdit [1]
-      Left = -634
+      Left = -642
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -26,7 +26,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 103
     end
     object DTJSSJ: TcxDateEdit [2]
-      Left = -506
+      Left = -514
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -36,7 +36,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 99
     end
     object cbbJC: TcxComboBox [3]
-      Left = -346
+      Left = -354
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -45,7 +45,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 67
     end
     object edthphm: TcxTextEdit [4]
-      Left = -272
+      Left = -280
       Top = 13
       AutoSize = False
       Properties.CharCase = ecUpperCase
@@ -56,7 +56,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 65
     end
     object cbbHPZL: TcxComboBox [5]
-      Left = -200
+      Left = -208
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -65,7 +65,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 113
     end
     object cbbZT: TcxComboBox [6]
-      Left = 169
+      Left = 161
       Top = 13
       AutoSize = False
       Properties.Items.Strings = (
@@ -78,7 +78,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 78
     end
     object btnSearch: TcxButton [7]
-      Left = 254
+      Left = 246
       Top = 13
       Width = 75
       Height = 25
@@ -93,7 +93,7 @@ inherited FToolBKCJ: TFToolBKCJ
       OnClick = btnSearchClick
     end
     object cxButton1: TcxButton [8]
-      Left = 413
+      Left = 405
       Top = 13
       Width = 33
       Height = 25
@@ -105,55 +105,55 @@ inherited FToolBKCJ: TFToolBKCJ
       OnClick = cxButton1Click
     end
     inherited cbbPagesize: TcxComboBox
-      Left = -688
+      Left = -696
       Top = 226
       TabOrder = 12
-      ExplicitLeft = -688
+      ExplicitLeft = -696
       ExplicitTop = 226
     end
     inherited btnFirstPage: TcxButton
-      Left = -611
+      Left = -619
       Top = 226
       TabOrder = 13
-      ExplicitLeft = -611
+      ExplicitLeft = -619
       ExplicitTop = 226
     end
     inherited btnPriorPage: TcxButton
-      Left = -574
+      Left = -582
       Top = 226
       TabOrder = 14
-      ExplicitLeft = -574
+      ExplicitLeft = -582
       ExplicitTop = 226
     end
     inherited edtPageIndex: TcxTextEdit
-      Left = -519
+      Left = -527
       Top = 226
       TabOrder = 15
-      ExplicitLeft = -519
+      ExplicitLeft = -527
       ExplicitTop = 226
     end
     inherited btnnextPage: TcxButton
-      Left = -442
+      Left = -450
       Top = 226
       TabOrder = 16
-      ExplicitLeft = -442
+      ExplicitLeft = -450
       ExplicitTop = 226
     end
     inherited btnLastPage: TcxButton
-      Left = -405
+      Left = -413
       Top = 226
       TabOrder = 17
-      ExplicitLeft = -405
+      ExplicitLeft = -413
       ExplicitTop = 226
     end
     inherited lbCount: TcxLabel
-      Left = -688
+      Left = -696
       Top = 254
-      ExplicitLeft = -688
+      ExplicitLeft = -696
       ExplicitTop = 254
     end
     object cboBKLX: TcxComboBox [16]
-      Left = -26
+      Left = -34
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -162,7 +162,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 158
     end
     object btnImport: TcxButton [17]
-      Left = 374
+      Left = 366
       Top = 13
       Width = 32
       Height = 25
@@ -212,7 +212,7 @@ inherited FToolBKCJ: TFToolBKCJ
       OnClick = btnImportClick
     end
     object btnExport: TcxButton [18]
-      Left = 336
+      Left = 328
       Top = 13
       Width = 31
       Height = 25
