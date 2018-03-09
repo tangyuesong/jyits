@@ -1,8 +1,8 @@
-inherited FrameJTPAdd: TFrameJTPAdd
-  Width = 547
+inherited FrameSDCLAdd: TFrameSDCLAdd
+  Width = 542
   Height = 261
   AutoSize = False
-  ExplicitWidth = 547
+  ExplicitWidth = 542
   ExplicitHeight = 261
   inherited dxLayoutControl2: TdxLayoutControl
     Width = 750
@@ -13,7 +13,7 @@ inherited FrameJTPAdd: TFrameJTPAdd
     inherited btnSave: TcxButton
       Left = 193
       Top = 212
-      TabOrder = 6
+      TabOrder = 7
       OnClick = btnSaveClick
       ExplicitLeft = 193
       ExplicitTop = 212
@@ -21,7 +21,7 @@ inherited FrameJTPAdd: TFrameJTPAdd
     inherited btnExit: TcxButton
       Left = 281
       Top = 212
-      TabOrder = 7
+      TabOrder = 8
       ExplicitLeft = 281
       ExplicitTop = 212
     end
@@ -30,17 +30,17 @@ inherited FrameJTPAdd: TFrameJTPAdd
       Top = 64
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 2
+      TabOrder = 3
       Height = 21
       Width = 86
     end
     object tmEnd: TcxTimeEdit [3]
-      Left = 186
+      Left = 187
       Top = 64
       AutoSize = False
       EditValue = 0.999988425925926d
       Style.HotTrack = False
-      TabOrder = 3
+      TabOrder = 4
       Height = 21
       Width = 86
     end
@@ -48,39 +48,50 @@ inherited FrameJTPAdd: TFrameJTPAdd
       Left = 82
       Top = 92
       Style.HotTrack = False
-      TabOrder = 5
+      TabOrder = 6
       Height = 100
       Width = 439
     end
-    object edtclpp1: TcxTextEdit [5]
+    object edtFZJG: TcxTextEdit [5]
       Left = 82
       Top = 36
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 0
       Height = 21
-      Width = 190
+      Width = 86
     end
-    object cbbCsys: TcxComboBox [6]
-      Left = 333
+    object edtKDBH: TcxTextEdit [6]
+      Left = 229
       Top = 36
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 1
+      OnKeyPress = edtKDBHKeyPress
       Height = 21
-      Width = 188
+      Width = 260
     end
     object edtSJ: TcxTextEdit [7]
-      Left = 333
+      Left = 334
       Top = 64
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 4
+      TabOrder = 5
       Height = 21
       Width = 188
     end
+    object btnKDBH: TcxButton [8]
+      Left = 496
+      Top = 36
+      Width = 21
+      Height = 21
+      Caption = '...'
+      OptionsImage.ImageIndex = 56
+      TabOrder = 2
+      OnClick = btnKDBHClick
+    end
     inherited dxLayoutControl2Group_Root: TdxLayoutGroup
-      AlignHorz = ahLeft
+      AlignHorz = ahCenter
       AlignVert = avParentManaged
     end
     inherited dxLayoutGroup1: TdxLayoutGroup
@@ -109,6 +120,7 @@ inherited FrameJTPAdd: TFrameJTPAdd
     object dxLayoutItem8: TdxLayoutItem
       Parent = dxLayoutGroup8
       CaptionOptions.Text = '-'
+      Offsets.Left = 1
       Control = tmEnd
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 86
@@ -135,19 +147,19 @@ inherited FrameJTPAdd: TFrameJTPAdd
     end
     object dxLayoutItem16: TdxLayoutItem
       Parent = dxLayoutGroup5
-      CaptionOptions.Text = #21697#29260#22411#21495
-      Control = edtclpp1
+      CaptionOptions.Text = #21457#35777#26426#20851
+      Control = edtFZJG
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 190
+      ControlOptions.OriginalWidth = 86
       ControlOptions.ShowBorder = False
       Index = 0
     end
     object dxLayoutItem18: TdxLayoutItem
       Parent = dxLayoutGroup5
-      CaptionOptions.Text = #36710#36523#39068#33394
-      Control = cbbCsys
+      CaptionOptions.Text = #36807#36710#22320#28857
+      Control = edtKDBH
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 188
+      ControlOptions.OriginalWidth = 260
       ControlOptions.ShowBorder = False
       Index = 1
     end
@@ -157,6 +169,16 @@ inherited FrameJTPAdd: TFrameJTPAdd
       Control = edtSJ
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 188
+      ControlOptions.ShowBorder = False
+      Index = 2
+    end
+    object dxLayoutItem1: TdxLayoutItem
+      Parent = dxLayoutGroup5
+      AlignVert = avClient
+      CaptionOptions.Visible = False
+      Control = btnKDBH
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 21
       ControlOptions.ShowBorder = False
       Index = 2
     end
