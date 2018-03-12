@@ -81,7 +81,7 @@ begin
     //LoadVeh;
     logger.Info('reload OK');
   end;
-  if nn div 5 = 0 then
+  if nn mod 5 = 0 then
   begin
     logger.Info('LoadAlarm');
     LoadAlarm;
