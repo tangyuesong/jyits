@@ -25,11 +25,11 @@ implementation
 
 procedure UpdateDeviceGXSJ(sbbh: string; gxsj: double);
 var
-  sql: string;
+  SQL: string;
 begin
-  sql := 'update s_device set gxsj=''' + datetimetostr(gxsj) +
+  SQL := 'update s_device set gxsj=''' + datetimetostr(gxsj) +
     ''' where sbbh=''' + sbbh + '''';
-  SQLHelper.ExecuteSql(sql);
+  SQLHelper.ExecuteSql(SQL);
 
   gDicDevice[sbbh].gxsj := gxsj;
 end;
@@ -59,7 +59,8 @@ var
   tmp: TDictionary<string, boolean>;
 begin
   tmp := TDictionary<string, boolean>.Create;
-  with SQLHelper.Query('select distinct hphm+hpzl as dickey from T_KK_ALARM where zt=1') do
+  with SQLHelper.Query
+    ('select distinct hphm+hpzl as dickey from T_KK_ALARM where zt=1') do
   begin
     while not EOF do
     begin
@@ -68,9 +69,9 @@ begin
     end;
     Free;
   end;
-  if gOldAlarm <> nil then   // 释放旧的
+  if gOldAlarm <> nil then // 释放旧的
     gOldAlarm.Free;
-  gOldAlarm := gDicAlarm;  // gDicAlarm可能还在被使用，所以不能马上Free
+  gOldAlarm := gDicAlarm; // gDicAlarm可能还在被使用，所以不能马上Free
   gDicAlarm := tmp;
 end;
 
@@ -80,12 +81,12 @@ var
   tmp: TDictionary<string, TAlarm>;
   item: TAlarm;
 begin
-  s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsBeginTime,b.smsEndTime from T_KK_ALARM a '
-     + 'inner join T_KK_ALARM_JTP b '
-     + 'on a.CLPP like ''%'' + b.CLPP + ''%'' and a.CSYS like  ''%'' + b.CSYS + ''%'' '
-     + 'left join T_KK_ALARM_JTP_Except c '
-     + 'on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
-     + 'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'') and c.HPHM is null';
+  s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsTimeBegin,b.smsTimeEnd from T_KK_ALARM a '
+    + 'inner join T_KK_ALARM_JTP b ' +
+    'on a.CLPP like ''%'' + b.CLPP + ''%'' and a.CSYS like  ''%'' + b.CSYS + ''%'' '
+    + 'left join T_KK_ALARM_JTP_Except c ' +
+    'on a.HPHM=c.HPHM and a.HPZL=c.HPZL ' +
+    'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'') and c.HPHM is null';
   tmp := TDictionary<string, TAlarm>.Create;
   with SQLHelper.Query(s) do
   begin
@@ -93,23 +94,24 @@ begin
     begin
       item.HPHM := FieldByName('HPHM').AsString;
       item.HPZL := FieldByName('HPZL').AsString;
-      item.SJHM := FieldByName('SJHM').AsString;
-      item.smsBeginTime := FieldByName('smsBeginTime').AsString;
-      item.smsEndTime := FieldByName('smsEndTime').AsString;
+      item.sjhm := FieldByName('SJHM').AsString;
+      item.smsBeginTime := FieldByName('smsTimeBegin').AsString;
+      item.smsEndTime := FieldByName('smsTimeEnd').AsString;
       s := item.HPHM + item.HPZL;
       if not tmp.ContainsKey(s) then
         tmp.Add(s, item)
-      else begin
-        item.SJHM := tmp[s].SJHM + ';' + item.SJHM;
+      else
+      begin
+        item.sjhm := tmp[s].sjhm + ';' + item.sjhm;
         tmp.AddOrSetValue(s, item);
       end;
       Next;
     end;
     Free;
   end;
-  if gOldAlarmJTP <> nil then   // 释放旧的
+  if gOldAlarmJTP <> nil then // 释放旧的
     gOldAlarmJTP.Free;
-  gOldAlarmJTP := gDicAlarmJTP;  // gDicAlarmJTP可能还在被使用，所以不能马上Free
+  gOldAlarmJTP := gDicAlarmJTP; // gDicAlarmJTP可能还在被使用，所以不能马上Free
   gDicAlarmJTP := tmp;
 end;
 
@@ -127,18 +129,18 @@ begin
     begin
       item.FZJG := FieldByName('FZJG').AsString;
       item.KDBH := FieldByName('KDBH').AsString;
-      item.SJHM := FieldByName('SJHM').AsString;
-      item.smsBeginTime := FieldByName('smsBeginTime').AsString;
-      item.smsEndTime := FieldByName('smsEndTime').AsString;
+      item.sjhm := FieldByName('SJHM').AsString;
+      item.smsBeginTime := FieldByName('smsTimeBegin').AsString;
+      item.smsEndTime := FieldByName('smsTimeEnd').AsString;
       tmp.Add(item);
 
       Next;
     end;
     Free;
   end;
-  if gOldAlarmSDCL <> nil then   // 释放旧的
+  if gOldAlarmSDCL <> nil then // 释放旧的
     gOldAlarmSDCL.Free;
-  gOldAlarmSDCL := gListAlarmSDCL;  // gDicAlarmJTP可能还在被使用，所以不能马上Free
+  gOldAlarmSDCL := gListAlarmSDCL; // gDicAlarmJTP可能还在被使用，所以不能马上Free
   gListAlarmSDCL := tmp;
 end;
 
@@ -149,7 +151,9 @@ var
   local: boolean;
 begin
   tmp := TDictionary<string, boolean>.Create;
-  with SQLHelper.Query('select distinct sbbh,local from s_jcbk_device where closeTime is null ') do
+  with SQLHelper.Query
+    ('select distinct sbbh,local from s_jcbk_device where closeTime is null ')
+    do
   begin
     while not EOF do
     begin
@@ -186,15 +190,15 @@ end;
 
 procedure LoadDevice;
 var
-  sql: string;
-  dev: TDevice;  
+  SQL: string;
+  dev: TDevice;
   tmpDic: TDictionary<string, TDevice>;
 begin
   tmpDic := TDictionary<string, TDevice>.Create;
-  sql := 'select * from s_device where qyzt=1';
-  with SQLHelper.Query(sql) do
+  SQL := 'select * from s_device where qyzt=1';
+  with SQLHelper.Query(SQL) do
   begin
-    while not eof do
+    while not EOF do
     begin
       dev := TDevice.Create;
       dev.sbbh := FieldByName('SBBH').AsString;
@@ -250,7 +254,7 @@ begin
       dev.ID := FieldByName('ID').AsString;
       dev.Changed := false;
       tmpDic.Add(dev.sbbh, dev);
-      next;
+      Next;
     end;
     Free;
   end;
@@ -268,11 +272,12 @@ end;
 
 procedure LoadVeh;
 var
-  sql: string;
+  SQL: string;
 begin
   gVehDic.Clear;
-  sql := 'select distinct hpzl,hphm from T_VIO_VEHICLE where fzjg=''' + FZJG + '''';
-  with SQLHelper.Query(sql) do
+  SQL := 'select distinct hpzl,hphm from T_VIO_VEHICLE where fzjg=''' +
+    FZJG + '''';
+  with SQLHelper.Query(SQL) do
   begin
     while not EOF do
     begin
@@ -326,7 +331,8 @@ begin
   if borderDBHelper <> nil then
   begin
     logger.Info('SMS' + sj + msg);
-    borderDBHelper.ExecuteSql('insert into [borderdb].[dbo].[T_OUT] (sn,body,msg) values (' +
+    borderDBHelper.ExecuteSql
+      ('insert into [borderdb].[dbo].[T_OUT] (sn,body,msg) values (' +
       sn.QuotedString + ',' + sj.QuotedString + ',' + msg.QuotedString + ')');
   end;
 end;
@@ -335,7 +341,7 @@ procedure Initialize;
 var
   appPath, logPath: string;
   ini: TIniFile;
-  host, db, user, pwd: string;
+  host, DB, user, pwd: string;
 begin
   appPath := TPath.GetDirectoryName(ParamStr(0));
   logPath := TPath.Combine(appPath, 'log');
@@ -346,22 +352,22 @@ begin
   logger.MaxBackupIndex := 99;
   logger.Info('Application Initialize');
 
-  ini:= TIniFile.Create(TPath.Combine(appPath, 'Config.ini'));
-  host:= ini.ReadString('DB', 'server', '');
-  db:= ini.ReadString('DB', 'dbname', 'yjitsdb');
-  user:= ini.ReadString('DB', 'user', 'vioadmin');
-  pwd:= ini.ReadString('DB', 'pwd', 'lgm1224,./');
-  sqlhelper := TSQLHelper.Create(host, db, user, pwd);
-  sqlhelper.OnError := SqlError;
+  ini := TIniFile.Create(TPath.Combine(appPath, 'Config.ini'));
+  host := ini.ReadString('DB', 'server', '');
+  DB := ini.ReadString('DB', 'dbname', 'yjitsdb');
+  user := ini.ReadString('DB', 'user', 'vioadmin');
+  pwd := ini.ReadString('DB', 'pwd', 'lgm1224,./');
+  SQLHelper := TSQLHelper.Create(host, DB, user, pwd);
+  SQLHelper.OnError := SQLError;
 
-  host:= ini.ReadString('BorderDB', 'server', ''); // 10.43.235.222,1133
+  host := ini.ReadString('BorderDB', 'server', ''); // 10.43.235.222,1133
   if host <> '' then
   begin
-    db:= ini.ReadString('BorderDB', 'dbname', 'borderdb');
-    user:= ini.ReadString('BorderDB', 'user', 'zasms');
-    pwd:= ini.ReadString('BorderDB', 'pwd', 'zasms');
-    borderDBHelper := TSQLHelper.Create(host, db, user, pwd);
-    borderDBHelper.OnError := SqlError;
+    DB := ini.ReadString('BorderDB', 'dbname', 'borderdb');
+    user := ini.ReadString('BorderDB', 'user', 'zasms');
+    pwd := ini.ReadString('BorderDB', 'pwd', 'zasms');
+    borderDBHelper := TSQLHelper.Create(host, DB, user, pwd);
+    borderDBHelper.OnError := SQLError;
   end;
 
   solrFtp.host := ini.ReadString('solr', 'host', '');
@@ -382,9 +388,10 @@ begin
   TmriXLH := ini.ReadString('tmri', 'xlh', '');
   TmriWSDL := ini.ReadString('tmri', 'wsdl', '');
 
-  DFSHost := ini.ReadString('sys', 'DFSHost', '');  //仓库 localhost:8089
-  FZJG := ini.ReadString('sys', 'fzjg', '无');      // 发证机关，用于识别假套牌
-  SMSUrl := ini.ReadString('sys', 'SMSUrl', '');    //'http://10.46.137.83:8081/SMS/Send?token=%s&mobiles=%s&content=%s'
+  DFSHost := ini.ReadString('sys', 'DFSHost', ''); // 仓库 localhost:8089
+  FZJG := ini.ReadString('sys', 'fzjg', '无'); // 发证机关，用于识别假套牌
+  SMSUrl := ini.ReadString('sys', 'SMSUrl', '');
+  // 'http://10.46.137.83:8081/SMS/Send?token=%s&mobiles=%s&content=%s'
   kk := ini.ReadInteger('sys', 'kk', 0) = 1;
   dj := ini.ReadInteger('sys', 'dj', 0) = 1;
   idchina := ini.ReadInteger('sys', 'idchina', 0) = 1;
@@ -394,13 +401,13 @@ begin
   reload := ini.ReadInteger('sys', 'reload', 0) = 1;
   gHeartbeatUrl := ini.ReadString('sys', 'Heartbeat', '');
   DCXXZP := ini.ReadString('sys', 'DCXXZP', ''); // 大车限行抓拍设备编号
-  //gDeviceStatusMobile := ini.ReadString('sys', 'DeviceStatusMobile', '');
-  //gCJJG := ini.ReadString('sys', 'CJJG', '');
+  // gDeviceStatusMobile := ini.ReadString('sys', 'DeviceStatusMobile', '');
+  // gCJJG := ini.ReadString('sys', 'CJJG', '');
 
-  //K08Url := ini.ReadString('K08', 'K08Url', '');    //http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl
-  //DFUrl := ini.ReadString('K08', 'DFUrl', '');      //刀锋 http://10.43.255.20:18010
-  //DFUser := ini.ReadString('K08', 'DFUser', 'admin');
-  //DFPwd := ini.ReadString('K08', 'DFPwd', 'Hik12345');
+  // K08Url := ini.ReadString('K08', 'K08Url', '');    //http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl
+  // DFUrl := ini.ReadString('K08', 'DFUrl', '');      //刀锋 http://10.43.255.20:18010
+  // DFUser := ini.ReadString('K08', 'DFUser', 'admin');
+  // DFPwd := ini.ReadString('K08', 'DFPwd', 'Hik12345');
 
   if not gHeartbeatUrl.EndsWith('/') then
     gHeartbeatUrl := gHeartbeatUrl + '/';
@@ -413,8 +420,8 @@ begin
 
   gOldDevice := nil;
   gOldHBC := nil;
-  gOldALARM := nil;
-  gOldALARMJTP := nil;
+  gOldAlarm := nil;
+  gOldAlarmJTP := nil;
   gOldOpenedDevice := nil;
 
   gUnknowDevice := TDictionary<string, boolean>.Create;
@@ -425,23 +432,23 @@ begin
   LoadMainDic;
   LoadAlarm;
   LoadAlarmJTP;
-  loadHBC;
+  LoadHBC;
   LoadOpenedDevice;
-  //LoadVeh;
+  // LoadVeh;
 end;
 
 procedure Finalizat;
 begin
   PassList.Free;
 
-  gDicALARM.Free;
-  gDicALARMJTP.Free;
+  gDicAlarm.Free;
+  gDicAlarmJTP.Free;
   gDicHBC.Free;
   gOpenedDevice.Free;
   ClearDevice(gDicDevice);
   gDicDevice.Free;
   gDicHPZL.Free;
-  sqlHelper.Free;
+  SQLHelper.Free;
   gUnknowDevice.Free;
   if borderDBHelper <> nil then
     borderDBHelper.Free;
@@ -450,4 +457,3 @@ begin
 end;
 
 end.
-
