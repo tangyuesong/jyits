@@ -86,7 +86,7 @@ begin
   edtFile.Enabled := false;
   if DoImport then
   begin
-    ShowMessage('导入成功！');
+    Application.MessageBox('导入成功', '提示');
     self.Hide;
   end;
 end;
