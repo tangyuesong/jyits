@@ -93,7 +93,10 @@ begin
       TCommon.SaveConfig('Task', 'StartTime', gStartTime);
   except
     on e: exception do
+    begin
       gLogger.Error('Get Pass Record error ' + e.Message);
+      FreeAndNil(FQy);
+    end;
   end;
   cs.Leave;
 end;
