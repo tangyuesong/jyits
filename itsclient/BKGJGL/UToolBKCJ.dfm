@@ -1,22 +1,23 @@
 inherited FToolBKCJ: TFToolBKCJ
+  Width = 1161
+  Height = 470
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Height = 305
+    Width = 1161
+    Height = 470
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
-      Left = -696
       Top = 45
-      Width = 1134
-      Height = 174
+      Width = 1135
+      Height = 356
       TabOrder = 11
-      ExplicitLeft = -696
       ExplicitTop = 45
-      ExplicitWidth = 1134
-      ExplicitHeight = 174
+      ExplicitWidth = 1135
+      ExplicitHeight = 356
     end
     object DTKSSJ: TcxDateEdit [1]
-      Left = -642
+      Left = 67
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -26,7 +27,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 103
     end
     object DTJSSJ: TcxDateEdit [2]
-      Left = -514
+      Left = 195
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -36,7 +37,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 99
     end
     object cbbJC: TcxComboBox [3]
-      Left = -354
+      Left = 355
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -45,7 +46,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 67
     end
     object edthphm: TcxTextEdit [4]
-      Left = -280
+      Left = 429
       Top = 13
       AutoSize = False
       Properties.CharCase = ecUpperCase
@@ -56,7 +57,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 65
     end
     object cbbHPZL: TcxComboBox [5]
-      Left = -208
+      Left = 501
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -65,7 +66,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 113
     end
     object cbbZT: TcxComboBox [6]
-      Left = 161
+      Left = 870
       Top = 13
       AutoSize = False
       Properties.Items.Strings = (
@@ -78,7 +79,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 78
     end
     object btnSearch: TcxButton [7]
-      Left = 246
+      Left = 955
       Top = 13
       Width = 75
       Height = 25
@@ -93,7 +94,7 @@ inherited FToolBKCJ: TFToolBKCJ
       OnClick = btnSearchClick
     end
     object cxButton1: TcxButton [8]
-      Left = 405
+      Left = 1115
       Top = 13
       Width = 33
       Height = 25
@@ -105,55 +106,41 @@ inherited FToolBKCJ: TFToolBKCJ
       OnClick = cxButton1Click
     end
     inherited cbbPagesize: TcxComboBox
-      Left = -696
-      Top = 226
+      Top = 408
       TabOrder = 12
-      ExplicitLeft = -696
-      ExplicitTop = 226
+      ExplicitTop = 408
     end
     inherited btnFirstPage: TcxButton
-      Left = -619
-      Top = 226
+      Top = 408
       TabOrder = 13
-      ExplicitLeft = -619
-      ExplicitTop = 226
+      ExplicitTop = 408
     end
     inherited btnPriorPage: TcxButton
-      Left = -582
-      Top = 226
+      Top = 408
       TabOrder = 14
-      ExplicitLeft = -582
-      ExplicitTop = 226
+      ExplicitTop = 408
     end
     inherited edtPageIndex: TcxTextEdit
-      Left = -527
-      Top = 226
+      Top = 408
       TabOrder = 15
-      ExplicitLeft = -527
-      ExplicitTop = 226
+      ExplicitTop = 408
     end
     inherited btnnextPage: TcxButton
-      Left = -450
-      Top = 226
+      Top = 408
       TabOrder = 16
-      ExplicitLeft = -450
-      ExplicitTop = 226
+      ExplicitTop = 408
     end
     inherited btnLastPage: TcxButton
-      Left = -413
-      Top = 226
+      Top = 408
       TabOrder = 17
-      ExplicitLeft = -413
-      ExplicitTop = 226
+      ExplicitTop = 408
     end
     inherited lbCount: TcxLabel
-      Left = -696
-      Top = 254
-      ExplicitLeft = -696
-      ExplicitTop = 254
+      Top = 436
+      ExplicitTop = 436
     end
     object cboBKLX: TcxComboBox [16]
-      Left = -34
+      Left = 675
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -162,7 +149,7 @@ inherited FToolBKCJ: TFToolBKCJ
       Width = 158
     end
     object btnImport: TcxButton [17]
-      Left = 366
+      Left = 1076
       Top = 13
       Width = 32
       Height = 25
@@ -212,7 +199,7 @@ inherited FToolBKCJ: TFToolBKCJ
       OnClick = btnImportClick
     end
     object btnExport: TcxButton [18]
-      Left = 328
+      Left = 1038
       Top = 13
       Width = 31
       Height = 25

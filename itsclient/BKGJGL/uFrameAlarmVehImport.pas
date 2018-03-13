@@ -55,12 +55,12 @@ function TFrameAlarmVehImport.CheckData: boolean;
 begin
   result := false;
   if not FDMemTable1.Active then exit;
-  if (FDMemTable1.FieldByName('HPHM') = nil)
-   or (FDMemTable1.FieldByName('HPZL') = nil)
-   or (FDMemTable1.FieldByName('CLPP') = nil)
-   or (FDMemTable1.FieldByName('CLLX') = nil)
-   or (FDMemTable1.FieldByName('CSYS') = nil)
-   or (FDMemTable1.FieldByName('BKLX') = nil) then
+  if (FDMemTable1.FindField('HPHM') = nil)
+   or (FDMemTable1.FindField('HPZL') = nil)
+   or (FDMemTable1.FindField('CLPP') = nil)
+   or (FDMemTable1.FindField('CLLX') = nil)
+   or (FDMemTable1.FindField('CSYS') = nil)
+   or (FDMemTable1.FindField('BKLX') = nil) then
   begin
     Application.MessageBox('导入格式有误, 必须包含列：HPHM,HPZL,CLPP,CLLX,CSYS,BKLX', '提示');
     exit;
@@ -74,6 +74,7 @@ var
   json: string;
   haveError: boolean;
 begin
+  result := false;
   if not CheckData then
     exit;
   btnBrower.Enabled := false;
@@ -84,6 +85,7 @@ begin
     FDMemTable1.First;
     while not FDMemTable1.Eof do
     begin
+      item.BKXH := FormatDateTime('yyyymmddhhmmsszzz', Now);
       item.HPHM := FDMemTable1.FieldByName('HPHM').AsString;
       item.HPZL := FDMemTable1.FieldByName('HPZL').AsString;
       if item.hpzl.Length = 1 then
@@ -92,6 +94,8 @@ begin
       item.CLLX := FDMemTable1.FieldByName('CLLX').AsString;
       item.CSYS := FDMemTable1.FieldByName('CSYS').AsString;
       item.BKLX := FDMemTable1.FieldByName('BKLX').AsString;
+      if item.BKLX.Length = 1 then
+        item.BKLX := '0' + item.BKLX;
       item.BKZL := '1';
       item.CJJG := gUser.DWDM;
       item.BKR := gUser.YHBH;
@@ -129,7 +133,7 @@ begin
     if haveError then
       Application.MessageBox('导入完成，错误信息请查看状态列', '提示')
     else
-      Application.MessageBox('导入成功', '提示')
+      result := true;
   finally
     btnBrower.Enabled := true;
     btnSave.Enabled := true;

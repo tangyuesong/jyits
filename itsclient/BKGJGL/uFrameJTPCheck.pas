@@ -130,7 +130,6 @@ type
     procedure LoadVehInfo(veh: TVehInfo);
     procedure UpdateColor(veh: TVehInfo);
     procedure ClearVioList;
-    function SaveVio(): Boolean;
     procedure ShowVioPicture(picFile: string);
     procedure ObjDoned();
     procedure ClearQueue;
@@ -222,7 +221,7 @@ begin
   FObj := nil;
   ClearVioList;
   Param := 'count=30&lockip=' + gClientIP + '&cjjg=' + gUser.DWDM
-    + '&clpp=' + edtCLPP.Text + '&csys=' + cboCSYS.Text;
+    + '&clpp=' + edtCLPP.Text + '&csys=' + cboCSYS.Text + '&zt=1';
   s := TRequestItf.DbQuery('GetKKAlarmCheck', Param);
   if s <> '' then
   begin
@@ -424,31 +423,6 @@ begin
   end;
 end;
 
-function TFrameJTPCheck.SaveVio(): Boolean;
-var
-  Param, sjhm: String;
-  cmd: PCmd;
-begin
-  Result := False;
-  if FObj = nil then
-    exit;
-  sjhm := edtSJHM.Text;
-  sjhm := sjhm.Replace(',', ';');
-  Param := 'SYSTEMID=' + FObj.VioRecord.SystemID + '&BKLX=' +
-    TLZDictionary.StrtoDicInfo(cbbBklx.Text).DM + '&ZT=1&SPR=' + gUser.YHBH +
-    '&SPSJ=' + FormatDatetime('yyyy/mm/dd hh:nn:ss', now()) + '&SPYJ=同意' +
-    '&CLPP=' + Trim(edtclpp1.Text) + '&CLLX=' + TLZDictionary.StrtoDicInfo
-    (cbbCllx.Text).DM + '&CSYS=' + TLZDictionary.StrtoDicInfo(cbbCsys.Text).DM +
-    '&SJHM=' + sjhm +
-    '&GXSJ=' + FormatDatetime('yyyy-mm-dd hh:nn:ss', now());
-
-  //TRequestItf.DbQuery('ModifyT_KK_ALARM', Param);
-  New(cmd);
-  cmd^.Action := 'ModifyT_KK_ALARM';
-  cmd^.Param := Param;
-  FcmdQueue.Push(cmd);
-end;
-
 procedure TFrameJTPCheck.btnDeleteClick(Sender: TObject);
 var
   cmd: PCmd;
@@ -456,8 +430,8 @@ begin
   if FObj = nil then
     exit;
   New(cmd);
-  cmd^.Action := 'DelT_KK_ALARM';
-  cmd^.Param := 'systemid=' + FObj.VioRecord.SystemID;
+  cmd^.Action := 'ModifyT_KK_ALARM';
+  cmd^.Param := 'systemid=' + FObj.VioRecord.SystemID + '&zt=2&IsCheck=1';
   FcmdQueue.Push(cmd);
   ObjDoned;
 end;
@@ -468,35 +442,16 @@ begin
 end;
 
 procedure TFrameJTPCheck.cxButton2Click(Sender: TObject);
+var
+  cmd: PCmd;
 begin
   if FObj = nil then
     exit;
-
-  if Trim(edtclpp1.Text) = '' then
-  begin
-    Application.MessageBox('品牌型号不能为空', '提示', MB_OK + MB_ICONINFORMATION);
-    exit;
-  end;
-  if Trim(cbbCllx.Text) = '' then
-  begin
-    Application.MessageBox('车辆类型不能为空', '提示', MB_OK + MB_ICONINFORMATION);
-    exit;
-  end;
-  if Trim(cbbCsys.Text) = '' then
-  begin
-    Application.MessageBox('车辆颜色不能为空', '提示', MB_OK + MB_ICONINFORMATION);
-    exit;
-  end;
-
-  try
-    SaveVio();
-  except
-    on e: exception do
-    begin
-      Application.MessageBox(pchar(e.Message + #13 + FObj.VioRecord.SystemID),
-        'updatedata');
-    end;
-  end;
+  New(cmd);
+  cmd^.Action := 'ModifyT_KK_ALARM';
+  cmd^.Param := 'systemid=' + FObj.VioRecord.SystemID + '&IsCheck=1';
+  FcmdQueue.Push(cmd);
+  ObjDoned;
   ObjDoned;
 end;
 

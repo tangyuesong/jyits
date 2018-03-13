@@ -324,38 +324,16 @@ end;
 procedure TFToolBKCJ.btnExportClick(Sender: TObject);
 var
   tmp: TdxGridFrame;
+  sl: TStringList;
 begin
   inherited;
   if not dlgSave.Execute then
     Exit;
-  tmp := TdxGridFrame.Create(self);
-  TColumnGenerator.Instance.GenerateField
-    ('HPHM,HPZL,CLPP,CLLX,CSYS,BKLX,SJHM,LOCAL,BZ', tmp.GridView);
-  tmp.FDMemTable1.FieldDefs.Add('HPHM', ftString, 10, false);
-  tmp.FDMemTable1.FieldDefs.Add('HPZL', ftString, 10, false);
-  tmp.FDMemTable1.FieldDefs.Add('CLPP', ftString, 10, false);
-  tmp.FDMemTable1.FieldDefs.Add('CLLX', ftString, 10, false);
-  tmp.FDMemTable1.FieldDefs.Add('CSYS', ftString, 10, false);
-  tmp.FDMemTable1.FieldDefs.Add('BKLX', ftString, 10, false);
-  tmp.FDMemTable1.FieldDefs.Add('SJHM', ftString, 10, false);
-  tmp.FDMemTable1.FieldDefs.Add('LOCAL', ftString, 10, false);
-  tmp.FDMemTable1.FieldDefs.Add('BZ', ftString, 10, false);
-  tmp.FDMemTable1.Open;
-  tmp.FDMemTable1.Append;
-  tmp.FDMemTable1.Edit;
-  tmp.FDMemTable1.FieldByName('HPHM').Value := 'ÔÁX88888';
-  tmp.FDMemTable1.FieldByName('HPZL').Value := '02';
-  tmp.FDMemTable1.FieldByName('CLPP').Value := '±¦Âí';
-  tmp.FDMemTable1.FieldByName('CLLX').Value := 'K33';
-  tmp.FDMemTable1.FieldByName('CSYS').Value := 'H';
-  tmp.FDMemTable1.FieldByName('BKLX').Value := '06';
-  tmp.FDMemTable1.FieldByName('SJHM').Value := '';
-  tmp.FDMemTable1.FieldByName('LOCAL').Value := '0';
-  tmp.FDMemTable1.FieldByName('BZ').Value := '';
-  tmp.FDMemTable1.Post;
-  tmp.FDMemTable1.EnableControls;
-  TCommon.ExportGridtoData('.xls', dlgSave.FileName, tmp.CxGrid1);
-  tmp.Free;
+  sl := TStringList.Create;
+  sl.Add('HPHM'#9'HPZL'#9'CLPP'#9'CLLX'#9'CSYS'#9'BKLX'#9'SJHM'#9'LOCAL'#9'BZ');
+  sl.Add('ÔÁX88888'#9'02'#9'±¦Âí'#9'K33'#9'H'#9'06'#9#9'0'#9);
+  sl.SaveToFile(dlgSave.FileName);
+  sl.Free;
 end;
 
 procedure TFToolBKCJ.InsertTable(obj: TBKCJResult);

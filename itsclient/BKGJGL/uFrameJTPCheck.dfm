@@ -1,20 +1,23 @@
 object FrameJTPCheck: TFrameJTPCheck
   Left = 0
   Top = 0
-  Width = 1116
-  Height = 638
+  Width = 1031
+  Height = 636
   TabOrder = 0
   object dxLayoutControl1: TdxLayoutControl
     Left = 0
     Top = 0
-    Width = 1116
-    Height = 638
+    Width = 1031
+    Height = 636
     Align = alClient
     TabOrder = 0
     LayoutLookAndFeel = DM.dxLayoutSkinLookAndFeel1
+    CustomizeFormTabbedView = True
+    ExplicitWidth = 1116
+    ExplicitHeight = 638
     object btnDelete: TcxButton
-      Left = 775
-      Top = 749
+      Left = 707
+      Top = 596
       Width = 75
       Height = 30
       Caption = #21024#38500'(&D)'
@@ -24,19 +27,19 @@ object FrameJTPCheck: TFrameJTPCheck
       OnClick = btnDeleteClick
     end
     object btnSave: TcxButton
-      Left = 856
-      Top = 749
+      Left = 788
+      Top = 596
       Width = 75
       Height = 30
-      Caption = #24067#25511'(&S)'
+      Caption = #19979#19968#26465'(&N)'
       OptionsImage.ImageIndex = 0
       OptionsImage.Images = cxImageList1
       TabOrder = 14
       OnClick = cxButton2Click
     end
     object edtclpp1: TcxTextEdit
-      Left = 677
-      Top = 656
+      Left = 609
+      Top = 503
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -47,8 +50,8 @@ object FrameJTPCheck: TFrameJTPCheck
     object imgviopic: TImageEnVect
       Left = 11
       Top = 11
-      Width = 593
-      Height = 767
+      Width = 525
+      Height = 614
       Background = clWhite
       Ctl3D = False
       ParentCtl3D = False
@@ -62,8 +65,8 @@ object FrameJTPCheck: TFrameJTPCheck
       OnMouseUp = imgviopicMouseUp
     end
     object cbbCllx: TcxComboBox
-      Left = 882
-      Top = 656
+      Left = 814
+      Top = 503
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 11
@@ -71,8 +74,8 @@ object FrameJTPCheck: TFrameJTPCheck
       Width = 207
     end
     object cbbCsys: TcxComboBox
-      Left = 677
-      Top = 683
+      Left = 609
+      Top = 530
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 8
@@ -80,8 +83,8 @@ object FrameJTPCheck: TFrameJTPCheck
       Width = 140
     end
     object cbbBklx: TcxComboBox
-      Left = 882
-      Top = 683
+      Left = 814
+      Top = 530
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 10
@@ -89,8 +92,8 @@ object FrameJTPCheck: TFrameJTPCheck
       Width = 207
     end
     object edthphm: TcxTextEdit
-      Left = 677
-      Top = 629
+      Left = 609
+      Top = 476
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
@@ -103,8 +106,8 @@ object FrameJTPCheck: TFrameJTPCheck
       Width = 140
     end
     object cbbhpzl: TcxComboBox
-      Left = 882
-      Top = 629
+      Left = 814
+      Top = 476
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -113,8 +116,8 @@ object FrameJTPCheck: TFrameJTPCheck
       Width = 207
     end
     object img1: TImageEnView
-      Left = 619
-      Top = 362
+      Left = 551
+      Top = 209
       Width = 469
       Height = 260
       Background = clBtnFace
@@ -128,9 +131,38 @@ object FrameJTPCheck: TFrameJTPCheck
       EnableInteractionHints = True
       TabOrder = 5
     end
+    object edtCLPP: TcxTextEdit
+      Left = 609
+      Top = 10
+      AutoSize = False
+      Properties.CharCase = ecUpperCase
+      Style.HotTrack = False
+      TabOrder = 1
+      OnKeyPress = edthphmKeyPress
+      Height = 21
+      Width = 151
+    end
+    object cboCSYS: TcxComboBox
+      Left = 819
+      Top = 10
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 2
+      Height = 21
+      Width = 121
+    end
+    object cxButton1: TcxButton
+      Left = 946
+      Top = 10
+      Width = 75
+      Height = 25
+      Caption = #26597#35810
+      TabOrder = 3
+      OnClick = cxButton1Click
+    end
     object edtSJHM: TcxTextEdit
-      Left = 677
-      Top = 710
+      Left = 609
+      Top = 557
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -139,10 +171,10 @@ object FrameJTPCheck: TFrameJTPCheck
       Width = 412
     end
     object cxGrid1: TcxGrid
-      Left = 618
+      Left = 550
       Top = 41
       Width = 471
-      Height = 314
+      Height = 161
       TabOrder = 4
       object tvDev: TcxGridDBTableView
         Navigator.Buttons.CustomButtons = <>
@@ -220,35 +252,6 @@ object FrameJTPCheck: TFrameJTPCheck
         GridView = tvDev
       end
     end
-    object edtCLPP: TcxTextEdit
-      Left = 677
-      Top = 10
-      AutoSize = False
-      Properties.CharCase = ecUpperCase
-      Style.HotTrack = False
-      TabOrder = 1
-      OnKeyPress = edthphmKeyPress
-      Height = 21
-      Width = 151
-    end
-    object cboCSYS: TcxComboBox
-      Left = 887
-      Top = 10
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 2
-      Height = 21
-      Width = 121
-    end
-    object cxButton1: TcxButton
-      Left = 1014
-      Top = 10
-      Width = 75
-      Height = 25
-      Caption = #26597#35810
-      TabOrder = 3
-      OnClick = cxButton1Click
-    end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       AlignHorz = ahClient
       AlignVert = avClient
@@ -308,7 +311,7 @@ object FrameJTPCheck: TFrameJTPCheck
       ButtonOptions.Buttons = <>
       LayoutDirection = ldHorizontal
       ShowBorder = False
-      Index = 3
+      Index = 2
     end
     object dxLayoutItem3: TdxLayoutItem
       Parent = liButton
@@ -332,6 +335,7 @@ object FrameJTPCheck: TFrameJTPCheck
     end
     object dxLayoutGroup5: TdxLayoutGroup
       Parent = lgInfo
+      AlignVert = avBottom
       CaptionOptions.Text = 'New Group'
       CaptionOptions.Visible = False
       ButtonOptions.Buttons = <>
@@ -375,7 +379,7 @@ object FrameJTPCheck: TFrameJTPCheck
       AlignHorz = ahClient
       AlignVert = avClient
       Control = imgviopic
-      ControlOptions.OriginalHeight = 767
+      ControlOptions.OriginalHeight = 614
       ControlOptions.OriginalWidth = 678
       Index = 0
     end
@@ -383,7 +387,7 @@ object FrameJTPCheck: TFrameJTPCheck
       Parent = lgRight
       AlignVert = avBottom
       CaptionOptions.Text = 'Separator'
-      Index = 2
+      Index = 1
     end
     object dxLayoutItem6: TdxLayoutItem
       Parent = dxLayoutGroup7
@@ -437,23 +441,16 @@ object FrameJTPCheck: TFrameJTPCheck
     end
     object dxLayoutItem38: TdxLayoutItem
       Parent = lgInfo
+      AlignVert = avBottom
       Control = img1
       ControlOptions.OriginalHeight = 260
       ControlOptions.OriginalWidth = 255
       Index = 2
     end
-    object dxLayoutItem2: TdxLayoutItem
-      Parent = lgRight
-      AlignVert = avBottom
-      CaptionOptions.Text = #25163#26426#21495#30721
-      Control = edtSJHM
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 103
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
     object dxLayoutAutoCreatedGroup1: TdxLayoutAutoCreatedGroup
       Parent = dxLayoutControl1Group_Root
+      AlignHorz = ahClient
+      AlignVert = avClient
       LayoutDirection = ldHorizontal
       Index = 0
       AutoCreated = True
@@ -461,14 +458,17 @@ object FrameJTPCheck: TFrameJTPCheck
     object liVioTb: TdxLayoutItem
       Parent = lgInfo
       AlignVert = avClient
+      CaptionOptions.Text = 'cxGrid1'
+      CaptionOptions.Visible = False
       Control = cxGrid1
-      ControlOptions.OriginalHeight = 133
-      ControlOptions.OriginalWidth = 330
+      ControlOptions.OriginalHeight = 100
+      ControlOptions.OriginalWidth = 471
       ControlOptions.ShowBorder = False
       Index = 1
     end
     object dxLayoutGroup1: TdxLayoutGroup
       Parent = lgInfo
+      AlignVert = avTop
       CaptionOptions.Text = 'New Group'
       CaptionOptions.Visible = False
       ButtonOptions.Buttons = <>
@@ -502,6 +502,16 @@ object FrameJTPCheck: TFrameJTPCheck
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
       Index = 2
+    end
+    object dxLayoutItem2: TdxLayoutItem
+      Parent = lgInfo
+      AlignVert = avBottom
+      CaptionOptions.Text = #25163#26426#21495#30721
+      Control = edtSJHM
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 103
+      ControlOptions.ShowBorder = False
+      Index = 4
     end
   end
   object cxImageList1: TcxImageList
