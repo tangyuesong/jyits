@@ -29,7 +29,8 @@ uses
   uFrameDCWFFeedback, UToolJSRYQZ, uFrameFineFeedback, uFrameSendSms,
   uFrameYXQZFeedback, uFrameJianYiFeedback, UDcwfSearch, uFrameWFCSJETJ,
   uFramZBGL, uFrameFeedbackResult, uFrameYJLKPH, uFrameDrvLog, uPicSearch,
-  UdxGridQDZ, uFrameNtzlist, uFrameGCPD, uFrameFirstEnterManager, uVideoSearch;
+  UdxGridQDZ, uFrameNtzlist, uFrameGCPD, uFrameFirstEnterManager, uVideoSearch,
+  uFrameTjWfcl,UFrameSDCLList;
 
 class procedure TRegisterFrame.RegisterFrames();
 begin
@@ -47,7 +48,8 @@ begin
     TFrameIndexGCSJ, TFrameYXQZFeedback, TFrameZFZList, TFrameJianYiFeedback,
     TDcwfSearch, TFrameFeedbackResult, TFrameYJLKPH, TFrameDrvLog,
     TFramePicSearch, TFToolJSRYQZ, TFrameFineFeedback, TFrameQDZ, TFrameSendSms,
-    TFrameZBGL, TFrameNtzlist, TFrameGCPD, TFrameWFTJ, TFrameVideoSearch]);
+    TFrameZBGL, TFrameNtzlist, TFrameGCPD, TFrameWFTJ, TFrameVideoSearch,
+    TFrameTjWfcl,TFrameSDCLList]);
 end;
 
 end.

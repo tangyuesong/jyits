@@ -1,28 +1,29 @@
 inherited FrameSDCLAdd: TFrameSDCLAdd
-  Width = 542
-  Height = 261
+  Width = 558
+  Height = 275
   AutoSize = False
-  ExplicitWidth = 542
-  ExplicitHeight = 261
+  ExplicitWidth = 558
+  ExplicitHeight = 275
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 750
-    Height = 425
+    Width = 558
+    Height = 275
+    Align = alClient
     AutoSize = True
     ExplicitWidth = 750
     ExplicitHeight = 425
     inherited btnSave: TcxButton
-      Left = 193
+      Left = 197
       Top = 212
       TabOrder = 7
       OnClick = btnSaveClick
-      ExplicitLeft = 193
+      ExplicitLeft = 197
       ExplicitTop = 212
     end
     inherited btnExit: TcxButton
-      Left = 281
+      Left = 285
       Top = 212
       TabOrder = 8
-      ExplicitLeft = 281
+      ExplicitLeft = 285
       ExplicitTop = 212
     end
     object tmBegin: TcxTimeEdit [2]
@@ -89,10 +90,6 @@ inherited FrameSDCLAdd: TFrameSDCLAdd
       OptionsImage.ImageIndex = 56
       TabOrder = 2
       OnClick = btnKDBHClick
-    end
-    inherited dxLayoutControl2Group_Root: TdxLayoutGroup
-      AlignHorz = ahCenter
-      AlignVert = avParentManaged
     end
     inherited dxLayoutGroup1: TdxLayoutGroup
       CaptionOptions.Text = #36861#36394#20449#24687#37319#38598

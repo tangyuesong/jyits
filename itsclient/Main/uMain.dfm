@@ -37,7 +37,6 @@ object frmMain: TfrmMain
     StyleDisabled.LookAndFeel.SkinName = 'Blueprint'
     StyleDisabled.TextStyle = []
     TabOrder = 0
-    ExplicitTop = -5
     Height = 60
     Width = 1127
     object cxLabel1: TcxLabel
@@ -1611,7 +1610,6 @@ object frmMain: TfrmMain
       SpeedButtonOptions.Transparent = True
       TabOrder = 4
       OnClick = btnPwdClick
-      ExplicitTop = -4
     end
     object lbUser: TcxLabel
       Left = 880
@@ -1630,7 +1628,6 @@ object frmMain: TfrmMain
       StyleFocused.LookAndFeel.NativeStyle = True
       StyleHot.LookAndFeel.NativeStyle = True
       Transparent = True
-      ExplicitLeft = 870
     end
   end
   object mbMain: TdxNavBar

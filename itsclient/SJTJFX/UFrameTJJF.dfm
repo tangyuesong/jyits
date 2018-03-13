@@ -1,7 +1,7 @@
 inherited FrameTJJF: TFrameTJJF
-  Width = 877
+  Width = 875
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 877
+    Width = 875
     inherited BtnSearch: TcxButton
       Left = 767
       TabOrder = 8
@@ -13,9 +13,13 @@ inherited FrameTJJF: TFrameTJJF
       ExplicitLeft = 849
     end
     inherited cxGrid2: TcxGrid
+      Top = 324
       Width = 911
+      Height = 178
       TabOrder = 11
+      ExplicitTop = 324
       ExplicitWidth = 911
+      ExplicitHeight = 178
       inherited ChartView: TcxGridDBChartView
         DataController.DataSource = DataSource1
         DiagramColumn.Active = False
@@ -34,8 +38,10 @@ inherited FrameTJJF: TFrameTJJF
     end
     inherited cxGrid1: TcxGrid
       Width = 911
+      Height = 272
       TabOrder = 10
       ExplicitWidth = 911
+      ExplicitHeight = 272
     end
     object CbbCXFL: TcxComboBox [11]
       Left = 679
@@ -47,22 +53,34 @@ inherited FrameTJJF: TFrameTJJF
       Width = 81
     end
     inherited cbbPagesize: TcxComboBox
+      Top = 509
       TabOrder = 12
+      ExplicitTop = 509
     end
     inherited btnFirstPage: TcxButton
+      Top = 509
       TabOrder = 13
+      ExplicitTop = 509
     end
     inherited btnPriorPage: TcxButton
+      Top = 509
       TabOrder = 14
+      ExplicitTop = 509
     end
     inherited edtPageIndex: TcxTextEdit
+      Top = 509
       TabOrder = 15
+      ExplicitTop = 509
     end
     inherited btnnextPage: TcxButton
+      Top = 509
       TabOrder = 16
+      ExplicitTop = 509
     end
     inherited btnLastPage: TcxButton
+      Top = 509
       TabOrder = 17
+      ExplicitTop = 509
     end
     inherited dxLayoutItem7: TdxLayoutItem
       Index = 8

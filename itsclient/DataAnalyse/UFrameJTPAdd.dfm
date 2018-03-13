@@ -1,15 +1,15 @@
 inherited FrameJTPAdd: TFrameJTPAdd
-  Width = 547
-  Height = 261
+  Width = 550
+  Height = 280
   AutoSize = False
-  ExplicitWidth = 547
-  ExplicitHeight = 261
+  ExplicitWidth = 550
+  ExplicitHeight = 280
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 750
-    Height = 425
-    AutoSize = True
-    ExplicitWidth = 750
-    ExplicitHeight = 425
+    Width = 550
+    Height = 280
+    Align = alClient
+    ExplicitWidth = 561
+    ExplicitHeight = 265
     inherited btnSave: TcxButton
       Left = 193
       Top = 212
@@ -50,7 +50,7 @@ inherited FrameJTPAdd: TFrameJTPAdd
       Style.HotTrack = False
       TabOrder = 5
       Height = 100
-      Width = 439
+      Width = 440
     end
     object edtclpp1: TcxTextEdit [5]
       Left = 82
@@ -78,10 +78,6 @@ inherited FrameJTPAdd: TFrameJTPAdd
       TabOrder = 4
       Height = 21
       Width = 188
-    end
-    inherited dxLayoutControl2Group_Root: TdxLayoutGroup
-      AlignHorz = ahLeft
-      AlignVert = avParentManaged
     end
     inherited dxLayoutGroup1: TdxLayoutGroup
       CaptionOptions.Text = #36861#36394#20449#24687#37319#38598
@@ -117,11 +113,10 @@ inherited FrameJTPAdd: TFrameJTPAdd
     end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxLayoutGroup3
-      AlignHorz = ahLeft
       CaptionOptions.Text = #36861#36394#35828#26126
       Control = edtBZ
       ControlOptions.OriginalHeight = 100
-      ControlOptions.OriginalWidth = 439
+      ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
       Index = 2
     end

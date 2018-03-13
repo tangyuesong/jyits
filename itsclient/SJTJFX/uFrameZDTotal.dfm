@@ -26,25 +26,25 @@ inherited FrameZDTotal: TFrameZDTotal
       TabOrder = 8
     end
     object BtnExport: TcxButton [7]
-      Left = 13
+      Left = 95
       Top = 13
       Width = 75
       Height = 25
       Caption = #23548#20986
       OptionsImage.ImageIndex = 66
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 0
+      TabOrder = 1
       OnClick = BtnExportClick
     end
     object btnBack: TcxButton [8]
-      Left = 95
+      Left = 13
       Top = 13
       Width = 75
       Height = 25
       Caption = #36820#22238
       OptionsImage.ImageIndex = 66
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 1
+      TabOrder = 0
       OnClick = btnBackClick
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
@@ -61,7 +61,7 @@ inherited FrameZDTotal: TFrameZDTotal
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 0
+      Index = 1
     end
     object dxLayoutItem2: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -71,7 +71,7 @@ inherited FrameZDTotal: TFrameZDTotal
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 1
+      Index = 0
     end
   end
 end

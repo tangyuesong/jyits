@@ -88,6 +88,7 @@ begin
   begin
     Application.MessageBox('导入成功', '提示');
     self.Hide;
+  end;
 end;
 
 end.

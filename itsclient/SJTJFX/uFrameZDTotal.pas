@@ -42,9 +42,12 @@ type
     procedure btnBackClick(Sender: TObject);
   private
     FColumnStrs: String;
+    FNoLookupColumns: String;
     procedure SetColumns(const Value: string);
+    procedure SetNoLookColumns(const Value: string);
   public
     property ColumnStrs: string read FColumnStrs write SetColumns;
+    property NoColumns: String read FNoLookupColumns write SetNoLookColumns;
     procedure Query(Action, Param: String);
   end;
 
@@ -86,6 +89,11 @@ procedure TFrameZDTotal.SetColumns(const Value: string);
 begin
   FColumnStrs := Value;
   GridColumns := Value;
+end;
+
+procedure TFrameZDTotal.SetNoLookColumns(const Value: string);
+begin
+  NoLookupColumns := Value;
 end;
 
 end.

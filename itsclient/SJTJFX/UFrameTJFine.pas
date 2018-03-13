@@ -121,14 +121,7 @@ begin
     fZdTotal.Parent := self;
     fZdTotal.Align := TAlign.alClient;
   end;
-  {
-    f.FDMemTable1.FieldDefs.Clear;
-    f.FDMemTable1.FieldDefs.Add('XZQH', ftString, 20, false);
-    f.FDMemTable1.FieldDefs.Add('MC', ftString, 50, false);
-    f.FDMemTable1.FieldDefs.Add('JKRQ', ftString, 50, false);
-    f.FDMemTable1.FieldDefs.Add('FKJE', ftFloat, 0, false);
-    f.FDMemTable1.FieldDefs.Add('ZS', ftInteger, 0, false);
-  }
+
   params := Param.Replace('DWJB=4', 'DWJB=5');
   params := params + '&XZQH=' + FDMemTable1.FieldByName('XZQH').AsString;
   fZdTotal.ColumnStrs := 'XZQH,MC,FKJE,ZS';
