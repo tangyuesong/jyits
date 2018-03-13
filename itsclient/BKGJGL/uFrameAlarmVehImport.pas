@@ -3,7 +3,8 @@ unit uFrameAlarmVehImport;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, dxImport, cxGraphics, cxControls,
   cxLookAndFeels, cxLookAndFeelPainters, dxSkinsCore, dxSkinBlack, dxSkinBlue,
   dxSkinBlueprint, dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide,
@@ -45,22 +46,23 @@ var
   FrameAlarmVehImport: TFrameAlarmVehImport;
 
 implementation
+
 uses
   uCommon, uEntity, uGlobal, uJSONUtils, uRequestItf, uColumnGenerator;
 {$R *.dfm}
-
 { TFrameAlarmVehImport }
 
 function TFrameAlarmVehImport.CheckData: boolean;
 begin
   result := false;
-  if not FDMemTable1.Active then exit;
-  if (FDMemTable1.FieldByName('HPHM') = nil)
-   or (FDMemTable1.FieldByName('HPZL') = nil)
-   or (FDMemTable1.FieldByName('CLPP') = nil)
-   or (FDMemTable1.FieldByName('CLLX') = nil)
-   or (FDMemTable1.FieldByName('CSYS') = nil)
-   or (FDMemTable1.FieldByName('BKLX') = nil) then
+  if not FDMemTable1.Active then
+    exit;
+  if (FDMemTable1.FieldByName('HPHM') = nil) or
+    (FDMemTable1.FieldByName('HPZL') = nil) or
+    (FDMemTable1.FieldByName('CLPP') = nil) or
+    (FDMemTable1.FieldByName('CLLX') = nil) or
+    (FDMemTable1.FieldByName('CSYS') = nil) or
+    (FDMemTable1.FieldByName('BKLX') = nil) then
   begin
     Application.MessageBox('导入格式有误, 必须包含列：HPHM,HPZL,CLPP,CLLX,CSYS,BKLX', '提示');
     exit;
@@ -74,6 +76,7 @@ var
   json: string;
   haveError: boolean;
 begin
+  result := false;
   if not CheckData then
     exit;
   btnBrower.Enabled := false;
@@ -81,13 +84,15 @@ begin
   btnExit.Enabled := false;
   haveError := false;
   try
+    FDMemTable1.DisableControls;
     FDMemTable1.First;
     while not FDMemTable1.Eof do
     begin
+      item.BKXH := FormatDateTime('yyyymmddhhmmsszzz', Now);
       item.HPHM := FDMemTable1.FieldByName('HPHM').AsString;
       item.HPZL := FDMemTable1.FieldByName('HPZL').AsString;
-      if item.hpzl.Length = 1 then
-        item.hpzl := '0' + item.hpzl;
+      if item.HPZL.Length = 1 then
+        item.HPZL := '0' + item.HPZL;
       item.CLPP := FDMemTable1.FieldByName('CLPP').AsString;
       item.CLLX := FDMemTable1.FieldByName('CLLX').AsString;
       item.CSYS := FDMemTable1.FieldByName('CSYS').AsString;
@@ -126,14 +131,18 @@ begin
       FDMemTable1.Next;
       Application.ProcessMessages;
     end;
-    if haveError then
-      Application.MessageBox('导入完成，错误信息请查看状态列', '提示')
-    else
-      Application.MessageBox('导入成功', '提示')
+    FDMemTable1.EnableControls;
   finally
     btnBrower.Enabled := true;
     btnSave.Enabled := true;
     btnExit.Enabled := true;
+  end;
+  if haveError then
+    Application.MessageBox('导入完成，错误信息请查看状态列', '提示')
+  else
+  begin
+    result := true;
+    Application.MessageBox('导入成功', '提示');
   end;
 end;
 

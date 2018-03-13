@@ -5,22 +5,21 @@ inherited dxImportDialog: TdxImportDialog
     Height = 400
     ExplicitHeight = 400
     inherited btnSave: TcxButton
-      Top = 351
+      Top = 347
       TabOrder = 3
       OnClick = btnSaveClick
-      ExplicitTop = 351
+      ExplicitTop = 347
     end
     inherited btnExit: TcxButton
-      Top = 351
+      Top = 347
       TabOrder = 4
-      OnClick = btnExitClick
-      ExplicitTop = 351
+      ExplicitTop = 347
     end
     object cxGrid1: TcxGrid [2]
-      Left = 20
-      Top = 56
-      Width = 570
-      Height = 275
+      Left = 28
+      Top = 68
+      Width = 554
+      Height = 259
       TabOrder = 2
       object GridView: TcxGridDBTableView
         Navigator.Buttons.CustomButtons = <>
@@ -59,8 +58,8 @@ inherited dxImportDialog: TdxImportDialog
       end
     end
     object btnBrower: TcxButton [3]
-      Left = 515
-      Top = 24
+      Left = 507
+      Top = 36
       Width = 75
       Height = 25
       Caption = #27983#35272
@@ -68,13 +67,13 @@ inherited dxImportDialog: TdxImportDialog
       OnClick = btnBrowerClick
     end
     object edtFile: TcxTextEdit [4]
-      Left = 74
-      Top = 24
+      Left = 82
+      Top = 36
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 0
       Height = 21
-      Width = 434
+      Width = 418
     end
     inherited dxLayoutGroup1: TdxLayoutGroup
       CaptionOptions.Visible = False

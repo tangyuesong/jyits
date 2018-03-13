@@ -85,10 +85,7 @@ begin
   btnBrower.Enabled := false;
   edtFile.Enabled := false;
   if DoImport then
-  begin
-    ShowMessage('导入成功！');
     self.Hide;
-  end;
 end;
 
 end.
