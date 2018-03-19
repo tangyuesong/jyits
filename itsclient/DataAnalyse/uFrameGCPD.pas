@@ -32,7 +32,7 @@ uses
   Vcl.Menus, Vcl.ActnList, cxCheckBox, cxCheckComboBox,
   Vcl.StdCtrls, cxButtons, cxTextEdit, cxDropDownEdit, cxMaskEdit, cxCalendar,
   Udictionary, uRequestItf, uJsonUtils, cxEditRepositoryItems, sDialogs,
-  System.Actions, uGlobal, uCommon;
+  System.Actions, uGlobal, uCommon, uFrameSelectDev, uEntity, uFramePictureCompare;
 
 type
   TFrameGCPD = class(TdxGridFrame)
@@ -48,8 +48,23 @@ type
     dxLayoutItem4: TdxLayoutItem;
     dxLayoutItem5: TdxLayoutItem;
     cboHPZL: TcxComboBox;
+    edtKDBH: TcxTextEdit;
+    btnKK: TcxButton;
+    dxLayoutItem6: TdxLayoutItem;
+    dxLayoutItem8: TdxLayoutItem;
     procedure cxButton1Click(Sender: TObject);
+    procedure btnKKClick(Sender: TObject);
+    procedure edtKDBHKeyPress(Sender: TObject; var Key: Char);
+    procedure GridViewCellDblClick(Sender: TcxCustomGridTableView;
+      ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+      AShift: TShiftState; var AHandled: Boolean);
   private
+    FDev: TFrameSelectDev;
+    KDBH: string;
+    FramePictureCompare: TFramePictureCompare;
+    procedure DevExitClick(Sender: TObject);
+    procedure DevSaveClick(Sender: TObject);
+    procedure FramePictureCompareClose;
     { Private declarations }
   protected
     procedure LoadData; override;
@@ -75,6 +90,124 @@ begin
   GridColumns := 'HPHM,HPZL,KDBH,GCSJ1,GCSJ2';
 end;
 
+procedure TFrameGCPD.btnKKClick(Sender: TObject);
+var
+  key: string;
+  dev: TDevice;
+begin
+  inherited;
+  if not Assigned(FDev) then
+  begin
+    FDev := TFrameSelectDev.Create(self);
+    FDev.Parent := self;
+    FDev.tvDevColumn4.Visible := false;
+    // FDev.Top := (self.Height - FDev.Height) div 2;
+    FDev.Top := 20;
+    FDev.Left := (self.Parent.Width - FDev.Width) div 2;
+    FDev.btnSave.OnClick := self.DevSaveClick;
+    FDev.btnExit.OnClick := self.DevExitClick;
+  end;
+
+  FDev.tb.Close;
+  FDev.tb.FieldDefs.Clear;
+  FDev.tb.IndexDefs.Clear;
+  FDev.tb.FieldDefs.Add('bj', ftBoolean);
+  FDev.tb.FieldDefs.Add('WFDD', ftString, 100);
+  FDev.tb.FieldDefs.Add('SBDDMC', ftString, 100);
+  FDev.tb.FieldDefs.Add('C1', ftInteger);
+  FDev.tb.IndexDefs.Add('index', 'WFDD', [ixPrimary]);
+  FDev.tb.IndexName := 'index';
+  FDev.tb.CreateDataSet();
+
+  FDev.tb.DisableControls;
+  FDev.tb.Edit;
+  for key in TLZDictionary.gDicDev[1].Keys do
+  begin
+    dev := TLZDictionary.gDicDev[1][key];
+    FDev.tb.Append;
+    FDev.tb.FieldByName('WFDD').AsString := dev.SBBH;
+    FDev.tb.FieldByName('SBDDMC').AsString := dev.SBDDMC;
+    FDev.tb.FieldByName('bj').AsBoolean := false;
+  end;
+  FDev.tb.Post;
+  FDev.tb.First;
+  FDev.tb.EnableControls;
+  dxLayoutControl2Group_Root.Visible := false;
+  FDev.Visible := true;
+end;
+
+procedure TFrameGCPD.DevSaveClick(Sender: TObject);
+var
+  recNo: Integer;
+  ss, ss1: string;
+begin
+  ss := '';
+  ss1 := '';
+  if not FDev.tb.Active then
+    exit;
+  FDev.tb.DisableControls;
+  recNo := FDev.tb.recNo;
+  FDev.tb.First;
+  while not FDev.tb.eof do
+  begin
+    if FDev.tb.FieldByName('bj').AsBoolean then
+    begin
+      ss := ss + ',' + FDev.tb.FieldByName('WFDD').AsString;
+      ss1 := ss1 + ',' + FDev.tb.FieldByName('SBDDMC').AsString;
+    end;
+    FDev.tb.Next;
+  end;
+  FDev.tb.recNo := recNo;
+  FDev.tb.EnableControls;
+
+  KDBH := ss;
+  edtKDBH.Text := ss1;
+  DevExitClick(nil);
+end;
+
+procedure TFrameGCPD.edtKDBHKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  Key := #0;
+end;
+
+procedure TFrameGCPD.GridViewCellDblClick(Sender: TcxCustomGridTableView;
+  ACellViewInfo: TcxGridTableDataCellViewInfo; AButton: TMouseButton;
+  AShift: TShiftState; var AHandled: Boolean);
+var
+  url1, url2: string;
+begin
+  inherited;
+  if not FDMemTable1.Active or FDMemTable1.Eof then
+    Exit;
+  url1 := FDMemTable1.FieldByName('URL1').AsString;
+  url2 := FDMemTable1.FieldByName('URL2').AsString;
+  if not Assigned(FramePictureCompare) then
+  begin
+    FramePictureCompare := TFramePictureCompare.Create(self);
+    FramePictureCompare.Parent := self;
+    FramePictureCompare.OnClose := FramePictureCompareClose;
+  end;
+  dxLayoutControl2Group_Root.Visible := false;
+  FramePictureCompare.Visible := true;
+  FramePictureCompare.LoadPicture(url1, url2);
+end;
+
+procedure TFrameGCPD.FramePictureCompareClose;
+begin
+  FramePictureCompare.Visible := false;
+  dxLayoutControl2Group_Root.Visible := true;
+end;
+
+procedure TFrameGCPD.DevExitClick(Sender: TObject);
+begin
+  if Assigned(FDev) then
+  begin
+    FDev.Visible := false;
+    dxLayoutControl2Group_Root.Visible := true;
+  end;
+end;
+
 procedure TFrameGCPD.cxButton1Click(Sender: TObject);
 begin
   inherited;
@@ -96,7 +229,7 @@ begin
   vdt2 := formatdatetime('yyyy/mm/dd hh:nn:ss', DTJSSJ.Date);
   num := edtNum.Text;
   hpzl := Copy(cboHPZL.Text, 0, 2);
-  Param := Format('beginTime=%s&endTime=%s&hpzl=%s&num=%s', [vdt, vdt2, hpzl, num]);
+  Param := Format('beginTime=%s&endTime=%s&hpzl=%s&num=%s&kdbh=%s', [vdt, vdt2, hpzl, num, kdbh]);
   ShowFrameWait;
   s := TRequestItf.DbQuery('getGCPD', Param);
   TJSONUtils.JSONToDataSet(s, FDMemTable1);

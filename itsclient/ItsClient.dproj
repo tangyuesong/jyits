@@ -749,6 +749,10 @@
         </DCCReference>
         <DCCReference Include="SJTJFX\uFrameTjWfcl.pas">
             <Form>FrameTjWfcl</Form>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="DataAnalyse\uFramePictureCompare.pas">
+            <Form>FramePictureCompare</Form>
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>

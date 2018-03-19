@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes,
+  System.Classes, Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, dxDialogBase, cxGraphics,
   cxControls, cxLookAndFeels, cxLookAndFeelPainters, dxSkinsCore, dxSkinBlack,
   dxSkinBlue, dxSkinBlueprint, dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom,
@@ -25,7 +25,7 @@ uses
   dxLayoutContainer, cxClasses, Vcl.StdCtrls, cxButtons, dxLayoutControl,
   dxLayoutcxEditAdapters, cxContainer, cxEdit, cxMemo, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxImage, uEntity, Udictionary, uGlobal, uCommon, uJsonUtils,
-  uRequestItf, cxSpinEdit, cxTimeEdit, cxCheckBox;
+  uRequestItf, cxSpinEdit, cxTimeEdit, cxCheckBox, uFrameSelectDev;
 
 type
   TOK = procedure of object;
@@ -46,9 +46,20 @@ type
     dxLayoutItem16: TdxLayoutItem;
     cbbCsys: TcxComboBox;
     dxLayoutItem18: TdxLayoutItem;
+    edtKDBH: TcxTextEdit;
+    btnKDBH: TcxButton;
+    dxLayoutItem1: TdxLayoutItem;
+    dxLayoutGroup6: TdxLayoutGroup;
+    dxLayoutItem2: TdxLayoutItem;
     procedure btnSaveClick(Sender: TObject);
+    procedure btnKDBHClick(Sender: TObject);
+    procedure edtKDBHKeyPress(Sender: TObject; var Key: Char);
   private
     Fok: TOK;
+    KDBH: string;
+    FDev: TFrameSelectDev;
+    procedure DevExitClick(Sender: TObject);
+    procedure DevSaveClick(Sender: TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -70,6 +81,96 @@ begin
   TLZDictionary.BindCombobox(cbbCsys, TLZDictionary.gDicMain['CSYS'], True);
 end;
 
+procedure TFrameJTPAdd.btnKDBHClick(Sender: TObject);
+var
+  key: string;
+  dev: TDevice;
+begin
+  inherited;
+  if not Assigned(FDev) then
+  begin
+    FDev := TFrameSelectDev.Create(self.Parent);
+    FDev.Parent := self.Parent;
+    FDev.tvDevColumn4.Visible := false;
+    // FDev.Top := (self.Height - FDev.Height) div 2;
+    FDev.Top := 20;
+    FDev.Left := (self.Parent.Width - FDev.Width) div 2;
+    FDev.btnSave.OnClick := self.DevSaveClick;
+    FDev.btnExit.OnClick := self.DevExitClick;
+  end;
+
+  FDev.tb.Close;
+  FDev.tb.FieldDefs.Clear;
+  FDev.tb.IndexDefs.Clear;
+  FDev.tb.FieldDefs.Add('bj', ftBoolean);
+  FDev.tb.FieldDefs.Add('WFDD', ftString, 100);
+  FDev.tb.FieldDefs.Add('SBDDMC', ftString, 100);
+  FDev.tb.FieldDefs.Add('C1', ftInteger);
+  FDev.tb.IndexDefs.Add('index', 'WFDD', [ixPrimary]);
+  FDev.tb.IndexName := 'index';
+  FDev.tb.CreateDataSet();
+
+  FDev.tb.DisableControls;
+  FDev.tb.Edit;
+  for key in TLZDictionary.gDicDev[1].Keys do
+  begin
+    dev := TLZDictionary.gDicDev[1][key];
+    FDev.tb.Append;
+    FDev.tb.FieldByName('WFDD').AsString := dev.SBBH;
+    FDev.tb.FieldByName('SBDDMC').AsString := dev.SBDDMC;
+    FDev.tb.FieldByName('bj').AsBoolean := false;
+  end;
+  FDev.tb.Post;
+  FDev.tb.First;
+  FDev.tb.EnableControls;
+  dxLayoutControl2Group_Root.Visible := false;
+  FDev.Visible := true;
+end;
+
+procedure TFrameJTPAdd.DevSaveClick(Sender: TObject);
+var
+  recNo: Integer;
+  ss, ss1: string;
+begin
+  ss := '';
+  ss1 := '';
+  if not FDev.tb.Active then
+    exit;
+  FDev.tb.DisableControls;
+  recNo := FDev.tb.recNo;
+  FDev.tb.First;
+  while not FDev.tb.eof do
+  begin
+    if FDev.tb.FieldByName('bj').AsBoolean then
+    begin
+      ss := ss + ',' + FDev.tb.FieldByName('WFDD').AsString;
+      ss1 := ss1 + ',' + FDev.tb.FieldByName('SBDDMC').AsString;
+    end;
+    FDev.tb.Next;
+  end;
+  FDev.tb.recNo := recNo;
+  FDev.tb.EnableControls;
+
+  KDBH := ss;
+  edtKDBH.Text := ss1;
+  DevExitClick(nil);
+end;
+
+procedure TFrameJTPAdd.edtKDBHKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  Key := #0;
+end;
+
+procedure TFrameJTPAdd.DevExitClick(Sender: TObject);
+begin
+  if Assigned(FDev) then
+  begin
+    FDev.Visible := false;
+    dxLayoutControl2Group_Root.Visible := true;
+  end;
+end;
+
 procedure TFrameJTPAdd.btnSaveClick(Sender: TObject);
 var
   s: string;
@@ -83,6 +184,7 @@ begin
 
   s := 'BKR=' + gUser.yhbh + '&SJHM=' + edtSJ.Text + '&ZT=1&CLPP='
     + edtCLPP1.Text + '&CSYS=' + TLZDictionary.StrtoDicInfo(cbbCsys.Text).dm
+    + '&KDBH=' + edtKDBH.Text + '&BZ=' + edtBZ.Text
     + '&smsTimeBegin=' + FormatDatetime('hhmm', tmBegin.Time)
     + '&smsTimeEnd=' + FormatDatetime('hhmm', tmEnd.Time);
 

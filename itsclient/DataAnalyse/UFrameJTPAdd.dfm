@@ -8,22 +8,22 @@ inherited FrameJTPAdd: TFrameJTPAdd
     Width = 550
     Height = 280
     Align = alClient
-    ExplicitWidth = 561
-    ExplicitHeight = 265
+    ExplicitWidth = 550
+    ExplicitHeight = 280
     inherited btnSave: TcxButton
       Left = 193
-      Top = 212
-      TabOrder = 6
+      Top = 227
+      TabOrder = 8
       OnClick = btnSaveClick
       ExplicitLeft = 193
-      ExplicitTop = 212
+      ExplicitTop = 227
     end
     inherited btnExit: TcxButton
       Left = 281
-      Top = 212
-      TabOrder = 7
+      Top = 227
+      TabOrder = 9
       ExplicitLeft = 281
-      ExplicitTop = 212
+      ExplicitTop = 227
     end
     object tmBegin: TcxTimeEdit [2]
       Left = 82
@@ -46,10 +46,10 @@ inherited FrameJTPAdd: TFrameJTPAdd
     end
     object edtBZ: TcxMemo [4]
       Left = 82
-      Top = 92
+      Top = 120
       Style.HotTrack = False
-      TabOrder = 5
-      Height = 100
+      TabOrder = 7
+      Height = 81
       Width = 440
     end
     object edtclpp1: TcxTextEdit [5]
@@ -78,6 +78,26 @@ inherited FrameJTPAdd: TFrameJTPAdd
       TabOrder = 4
       Height = 21
       Width = 188
+    end
+    object edtKDBH: TcxTextEdit [8]
+      Left = 82
+      Top = 92
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 5
+      OnKeyPress = edtKDBHKeyPress
+      Height = 21
+      Width = 407
+    end
+    object btnKDBH: TcxButton [9]
+      Left = 496
+      Top = 92
+      Width = 21
+      Height = 21
+      Caption = '...'
+      OptionsImage.ImageIndex = 56
+      TabOrder = 6
+      OnClick = btnKDBHClick
     end
     inherited dxLayoutGroup1: TdxLayoutGroup
       CaptionOptions.Text = #36861#36394#20449#24687#37319#38598
@@ -115,10 +135,10 @@ inherited FrameJTPAdd: TFrameJTPAdd
       Parent = dxLayoutGroup3
       CaptionOptions.Text = #36861#36394#35828#26126
       Control = edtBZ
-      ControlOptions.OriginalHeight = 100
+      ControlOptions.OriginalHeight = 81
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 2
+      Index = 3
     end
     object dxLayoutGroup5: TdxLayoutGroup
       Parent = dxLayoutGroup3
@@ -154,6 +174,33 @@ inherited FrameJTPAdd: TFrameJTPAdd
       ControlOptions.OriginalWidth = 188
       ControlOptions.ShowBorder = False
       Index = 2
+    end
+    object dxLayoutItem1: TdxLayoutItem
+      Parent = dxLayoutGroup6
+      CaptionOptions.Text = #36861#36394#21345#21475
+      Control = edtKDBH
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 407
+      ControlOptions.ShowBorder = False
+      Index = 0
+    end
+    object dxLayoutGroup6: TdxLayoutGroup
+      Parent = dxLayoutGroup3
+      CaptionOptions.Text = 'New Group'
+      ButtonOptions.Buttons = <>
+      LayoutDirection = ldHorizontal
+      ShowBorder = False
+      Index = 2
+    end
+    object dxLayoutItem2: TdxLayoutItem
+      Parent = dxLayoutGroup6
+      CaptionOptions.Text = 'New Item'
+      CaptionOptions.Visible = False
+      Control = btnKDBH
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 21
+      ControlOptions.ShowBorder = False
+      Index = 1
     end
   end
 end

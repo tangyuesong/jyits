@@ -94,12 +94,13 @@ type
     dxLayoutItem9: TdxLayoutItem;
     dxLayoutItem10: TdxLayoutItem;
     cboCSYS: TcxComboBox;
-    dxLayoutAutoCreatedGroup1: TdxLayoutAutoCreatedGroup;
     dxLayoutGroup1: TdxLayoutGroup;
     tvDevColumn1: TcxGridDBColumn;
     tvDevColumn4: TcxGridDBColumn;
     tvDevColumn5: TcxGridDBColumn;
     tvDevColumn6: TcxGridDBColumn;
+    dxLayoutItem11: TdxLayoutItem;
+    txtHPHM: TcxTextEdit;
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
     procedure btnDeleteClick(Sender: TObject);
@@ -159,6 +160,12 @@ begin
   if TLookUpDataSource.DataSource.ContainsKey('HPZL') then
     TColumnGenerator.LookupColumn(tvDev.Columns[1],
       TLookUpDataSource.DataSource['HPZL']);
+  if TLookUpDataSource.DataSource.ContainsKey('CSYS') then
+    TColumnGenerator.LookupColumn(tvDev.Columns[3],
+      TLookUpDataSource.DataSource['CSYS']);
+  if TLookUpDataSource.DataSource.ContainsKey('KDBH') then
+    TColumnGenerator.LookupColumn(tvDev.Columns[5],
+      TLookUpDataSource.DataSource['KDBH']);
   FcmdQueue := TsfQueue.Create;
   Timer1.Enabled := True;
 end;
@@ -221,7 +228,8 @@ begin
   FObj := nil;
   ClearVioList;
   Param := 'count=30&lockip=' + gClientIP + '&cjjg=' + gUser.DWDM
-    + '&clpp=' + edtCLPP.Text + '&csys=' + cboCSYS.Text + '&zt=1';
+    + '&hphm=' + txtHPHM.Text + '&clpp=' + edtCLPP.Text
+    + '&csys=' + cboCSYS.Text + '&zt=1';
   s := TRequestItf.DbQuery('GetKKAlarmCheck', Param);
   if s <> '' then
   begin

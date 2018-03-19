@@ -48,6 +48,11 @@ type
     dxLayoutItem18: TdxLayoutItem;
     dxLayoutItem1: TdxLayoutItem;
     btnKDBH: TcxButton;
+    dxLayoutItem2: TdxLayoutItem;
+    cbbHPZL: TcxComboBox;
+    dxLayoutGroup6: TdxLayoutGroup;
+    dxLayoutItem5: TdxLayoutItem;
+    cbbSource: TcxComboBox;
     procedure btnSaveClick(Sender: TObject);
     procedure btnKDBHClick(Sender: TObject);
     procedure edtKDBHKeyPress(Sender: TObject; var Key: Char);
@@ -74,7 +79,7 @@ implementation
 procedure TFrameSDCLAdd.AfterConstruction;
 begin
   inherited;
-
+  TLZDictionary.BindCombobox(cbbHPZL, TLZDictionary.gDicMain['HPZL'], True);
 end;
 
 procedure TFrameSDCLAdd.btnKDBHClick(Sender: TObject);
@@ -86,11 +91,11 @@ begin
   if not Assigned(FDev) then
   begin
     FDev := TFrameSelectDev.Create(self.Parent);
-    FDev.Parent := self;
+    FDev.Parent := self.Parent;
     FDev.tvDevColumn4.Visible := false;
     // FDev.Top := (self.Height - FDev.Height) div 2;
     FDev.Top := 20;
-    FDev.Left := (self.Width - FDev.Width) div 2;
+    FDev.Left := (self.Parent.Width - FDev.Width) div 2;
     FDev.btnSave.OnClick := self.DevSaveClick;
     FDev.btnExit.OnClick := self.DevExitClick;
   end;
@@ -188,7 +193,8 @@ begin
   end;
 
   s := 'BKR=' + gUser.yhbh + '&SJHM=' + edtSJ.Text + '&ZT=1&FZJG='
-    + edtFZJG.Text + '&KDBH=' + KDBH
+    + edtFZJG.Text + '&HPZL=' + TLZDictionary.StrtoDicInfo(cbbHPZL.Text).dm
+    + '&KDBH=' + KDBH + '&Source=' + cbbSource.Text + '&BZ=' + edtBZ.Text
     + '&smsTimeBegin=' + FormatDatetime('hhmm', tmBegin.Time)
     + '&smsTimeEnd=' + FormatDatetime('hhmm', tmEnd.Time);
 
