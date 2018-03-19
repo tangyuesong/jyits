@@ -1,5 +1,5 @@
 program ItsClient;
-{$I ItsClient.inc }
+{//$I ItsClient.inc }
 
 uses
   Vcl.Forms,

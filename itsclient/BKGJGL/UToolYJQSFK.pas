@@ -34,7 +34,7 @@ uses
   Vcl.StdCtrls, cxButtons, cxTextEdit, cxDropDownEdit, cxMaskEdit, cxCalendar,
   cxEditRepositoryItems, sDialogs, uFrameSignBase, uEntity, dxPicData,
   uFrameFeedbackBase, System.Actions, Vcl.ActnList, cxLabel, cxCheckBox,
-  cxCheckComboBox;
+  cxCheckComboBox, uFrameSelectDev;
 
 type
   TToolYJQSFK = class(TToolGridFrame)
@@ -59,13 +59,20 @@ type
     dxLayoutItem7: TdxLayoutItem;
     btnExportAll: TcxButton;
     dxLayoutItem10: TdxLayoutItem;
+    dxLayoutGroup1: TdxLayoutGroup;
+    dxLayoutGroup3: TdxLayoutGroup;
+    cbbwfdd: TcxComboBox;
+    dxLayoutItem11: TdxLayoutItem;
     procedure acteditExecute(Sender: TObject);
     procedure actViewExecute(Sender: TObject);
     procedure edtHPHMKeyPress(Sender: TObject; var Key: Char);
     procedure btnSearchClick(Sender: TObject);
     procedure BtnExportClick(Sender: TObject);
     procedure btnExportAllClick(Sender: TObject);
+    procedure cbbwfddMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
+    FDev: TFrameSelectDev;
     FExportAllParam: String;
     FFrameFeedback: TFrameFeedbackBase;
     FFrameSign: TFrameSignBase;
@@ -73,6 +80,8 @@ type
     function Feedbacked(yjxh: string): boolean;
     function GetYJLX: string;
     function GetBKLXList(): TStrings;
+    procedure DevSaveClick(Sender: TObject);
+    procedure DevExitClick(Sender: TObject);
   protected
     procedure LoadData; override;
   public
@@ -305,6 +314,7 @@ begin
   if edtHPHM.Text <> '' then
     Param := Param + TLZDictionary.StrtoDicInfo(cboJC.Text).mc + edtHPHM.Text;
   Param := Param + '&Source=' + cmbSource.Text;
+  Param := Param + '&kdbh=' + cbbwfdd.Text;
   pageSize := StrToIntDef(cbbPagesize.Text, 30);
   pageIndex := StrToIntDef(edtPageIndex.Text, 0);
   FExportAllParam := Param;
@@ -325,6 +335,91 @@ begin
   inherited;
   edtPageIndex.Text := '0';
   LoadData;
+end;
+
+procedure TToolYJQSFK.cbbwfddMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  Key: string;
+  dev: TDevice;
+begin
+  inherited;
+  if Button <> mbLeft then
+    exit;
+
+  if not Assigned(FDev) then
+  begin
+    FDev := TFrameSelectDev.Create(self);
+    FDev.Parent := self;
+    FDev.tvDevColumn2.Caption := '设备编号';
+    FDev.tvDevColumn3.Caption := '设备地点名称';
+    FDev.tvDevColumn4.Visible := false;
+    // FDev.Top := (self.Height - FDev.Height) div 2;
+    FDev.Top := 20;
+    FDev.Left := (self.Width - FDev.Width) div 2;
+    FDev.btnSave.OnClick := self.DevSaveClick;
+    FDev.btnExit.OnClick := self.DevExitClick;
+  end;
+
+  FDev.tb.Close;
+  FDev.tb.FieldDefs.Clear;
+  FDev.tb.IndexDefs.Clear;
+  FDev.tb.FieldDefs.Add('bj', ftBoolean);
+  FDev.tb.FieldDefs.Add('WFDD', ftString, 100);
+  FDev.tb.FieldDefs.Add('SBDDMC', ftString, 100);
+  FDev.tb.FieldDefs.Add('C1', ftInteger);
+  FDev.tb.IndexDefs.Add('index', 'WFDD', [ixPrimary]);
+  FDev.tb.IndexName := 'index';
+  FDev.tb.CreateDataSet();
+
+  FDev.tb.DisableControls;
+  FDev.tb.Edit;
+  for Key in TLZDictionary.gDicDev[1].Keys do
+  begin
+    dev := TLZDictionary.gDicDev[1][Key];
+    FDev.tb.Append;
+    FDev.tb.FieldByName('WFDD').AsString := dev.SBBH;
+    FDev.tb.FieldByName('SBDDMC').AsString := dev.SBDDMC;
+    FDev.tb.FieldByName('bj').AsBoolean := false;
+  end;
+  FDev.tb.Post;
+  FDev.tb.First;
+  FDev.tb.EnableControls;
+  dxLayoutControl2Group_Root.Visible := false;
+  FDev.Visible := True;
+
+end;
+
+procedure TToolYJQSFK.DevExitClick(Sender: TObject);
+begin
+  if Assigned(FDev) then
+    FDev.Visible := false;
+  dxLayoutControl2Group_Root.Visible := True;
+end;
+
+procedure TToolYJQSFK.DevSaveClick(Sender: TObject);
+var
+  recNo: Integer;
+  ss: string;
+begin
+  DevExitClick(nil);
+  ss := '';
+  if not FDev.tb.Active then
+    exit;
+  FDev.tb.DisableControls;
+  recNo := FDev.tb.recNo;
+  FDev.tb.First;
+  while not FDev.tb.Eof do
+  begin
+    if FDev.tb.FieldByName('bj').AsBoolean then
+      ss := ss + ',' + FDev.tb.FieldByName('WFDD').AsString;
+    FDev.tb.Next;
+  end;
+  FDev.tb.recNo := recNo;
+  FDev.tb.EnableControls;
+  if ss <> '' then
+    ss := ss.Substring(1);
+  cbbwfdd.Text := ss;
 end;
 
 procedure TToolYJQSFK.edtHPHMKeyPress(Sender: TObject; var Key: Char);

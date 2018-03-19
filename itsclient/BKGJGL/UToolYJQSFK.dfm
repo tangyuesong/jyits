@@ -1,25 +1,57 @@
 inherited ToolYJQSFK: TToolYJQSFK
-  Width = 874
-  Height = 442
+  Width = 885
+  Height = 422
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 874
-    Height = 442
+    Width = 885
+    Height = 422
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
-      Left = -244
-      Top = 45
-      Width = 1105
-      Height = 311
-      TabOrder = 9
-      ExplicitLeft = -244
-      ExplicitTop = 45
-      ExplicitWidth = 1105
-      ExplicitHeight = 311
+      Top = 77
+      Width = 909
+      Height = 259
+      TabOrder = 10
+      ExplicitTop = 77
+      ExplicitWidth = 909
+      ExplicitHeight = 259
     end
-    object dtBegin: TcxDateEdit [1]
-      Left = -190
+    inherited cbbPagesize: TcxComboBox
+      Top = 343
+      TabOrder = 11
+      ExplicitTop = 343
+    end
+    inherited btnFirstPage: TcxButton
+      Top = 343
+      TabOrder = 12
+      ExplicitTop = 343
+    end
+    inherited btnPriorPage: TcxButton
+      Top = 343
+      TabOrder = 13
+      ExplicitTop = 343
+    end
+    inherited edtPageIndex: TcxTextEdit
+      Top = 343
+      TabOrder = 14
+      ExplicitTop = 343
+    end
+    inherited btnnextPage: TcxButton
+      Top = 343
+      TabOrder = 15
+      ExplicitTop = 343
+    end
+    inherited btnLastPage: TcxButton
+      Top = 343
+      TabOrder = 16
+      ExplicitTop = 343
+    end
+    inherited lbCount: TcxLabel
+      Top = 371
+      ExplicitTop = 371
+    end
+    object dtBegin: TcxDateEdit [8]
+      Left = 67
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -28,8 +60,8 @@ inherited ToolYJQSFK: TToolYJQSFK
       Height = 21
       Width = 100
     end
-    object dtEnd: TcxDateEdit [2]
-      Left = -65
+    object dtEnd: TcxDateEdit [9]
+      Left = 192
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -38,98 +70,28 @@ inherited ToolYJQSFK: TToolYJQSFK
       Height = 21
       Width = 100
     end
-    object cboJC: TcxComboBox [3]
-      Left = 292
+    object cboJC: TcxComboBox [10]
+      Left = 353
       Top = 13
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 3
+      TabOrder = 2
       Height = 21
       Width = 71
     end
-    object edtHPHM: TcxTextEdit [4]
-      Left = 370
+    object edtHPHM: TcxTextEdit [11]
+      Left = 431
       Top = 13
       AutoSize = False
       Properties.CharCase = ecUpperCase
       Style.HotTrack = False
-      TabOrder = 4
+      TabOrder = 3
       OnKeyPress = edtHPHMKeyPress
       Height = 21
       Width = 77
     end
-    object btnSearch: TcxButton [5]
-      Left = 622
-      Top = 13
-      Width = 75
-      Height = 25
-      Caption = #26597#35810
-      OptionsImage.ImageIndex = 901
-      OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 6
-      OnClick = btnSearchClick
-    end
-    inherited cbbPagesize: TcxComboBox
-      Left = -244
-      Top = 363
-      TabOrder = 10
-      ExplicitLeft = -244
-      ExplicitTop = 363
-    end
-    inherited btnFirstPage: TcxButton
-      Left = -167
-      Top = 363
-      TabOrder = 11
-      ExplicitLeft = -167
-      ExplicitTop = 363
-    end
-    inherited btnPriorPage: TcxButton
-      Left = -130
-      Top = 363
-      TabOrder = 12
-      ExplicitLeft = -130
-      ExplicitTop = 363
-    end
-    inherited edtPageIndex: TcxTextEdit
-      Left = -75
-      Top = 363
-      TabOrder = 13
-      ExplicitLeft = -75
-      ExplicitTop = 363
-    end
-    inherited btnnextPage: TcxButton
-      Left = 2
-      Top = 363
-      TabOrder = 14
-      ExplicitLeft = 2
-      ExplicitTop = 363
-    end
-    inherited btnLastPage: TcxButton
-      Left = 39
-      Top = 363
-      TabOrder = 15
-      ExplicitLeft = 39
-      ExplicitTop = 363
-    end
-    inherited lbCount: TcxLabel
-      Left = -244
-      Top = 391
-      ExplicitLeft = -244
-      ExplicitTop = 391
-    end
-    object BtnExport: TcxButton [13]
-      Left = 704
-      Top = 13
-      Width = 75
-      Height = 25
-      Caption = #23548#20986
-      OptionsImage.ImageIndex = 66
-      OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 7
-      OnClick = BtnExportClick
-    end
-    object cmbSource: TcxComboBox [14]
-      Left = 508
+    object cmbSource: TcxComboBox [12]
+      Left = 569
       Top = 13
       AutoSize = False
       Properties.Items.Strings = (
@@ -137,32 +99,92 @@ inherited ToolYJQSFK: TToolYJQSFK
         #26412#22320
         #38598#25104#24179#21488)
       Style.HotTrack = False
-      TabOrder = 5
+      TabOrder = 4
       Height = 21
       Width = 107
     end
-    object cboYJLX: TcxCheckComboBox [15]
-      Left = 96
+    object btnSearch: TcxButton [13]
+      Left = 683
       Top = 13
-      AutoSize = False
-      Properties.Items = <>
-      Style.HotTrack = False
-      TabOrder = 2
+      Width = 75
       Height = 25
-      Width = 135
+      Caption = #26597#35810
+      OptionsImage.ImageIndex = 901
+      OptionsImage.Images = DM.ilBarSmall
+      TabOrder = 5
+      OnClick = btnSearchClick
     end
-    object btnExportAll: TcxButton [16]
-      Left = 786
+    object BtnExport: TcxButton [14]
+      Left = 765
+      Top = 13
+      Width = 75
+      Height = 25
+      Caption = #23548#20986
+      OptionsImage.ImageIndex = 66
+      OptionsImage.Images = DM.ilBarSmall
+      TabOrder = 6
+      OnClick = BtnExportClick
+    end
+    object btnExportAll: TcxButton [15]
+      Left = 847
       Top = 13
       Width = 75
       Height = 25
       Caption = #23548#20986#20840#37096
       OptionsImage.ImageIndex = 66
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 8
+      TabOrder = 7
       OnClick = btnExportAllClick
     end
-    inherited dxLayoutGroup2: TdxLayoutGroup
+    object cbbwfdd: TcxComboBox [16]
+      Left = 67
+      Top = 45
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 8
+      OnMouseUp = cbbwfddMouseUp
+      Height = 21
+      Width = 225
+    end
+    object cboYJLX: TcxCheckComboBox [17]
+      Left = 353
+      Top = 45
+      AutoSize = False
+      Properties.Items = <>
+      Style.HotTrack = False
+      TabOrder = 9
+      Height = 25
+      Width = 155
+    end
+    inherited dxLayoutItem3: TdxLayoutItem [19]
+    end
+    inherited dxLayoutGroupPage: TdxLayoutGroup [20]
+    end
+    inherited dxLayoutItemPagesize: TdxLayoutItem [21]
+    end
+    inherited dxLayoutItemFirstPage: TdxLayoutItem [22]
+    end
+    inherited dxLayoutItemPriorPage: TdxLayoutItem [23]
+    end
+    inherited dxLayoutItemIndex: TdxLayoutItem [24]
+    end
+    inherited dxLayoutItemnextPage: TdxLayoutItem [25]
+    end
+    inherited dxLayoutItemBtnLastPage: TdxLayoutItem [26]
+    end
+    inherited dxLGCount: TdxLayoutGroup [27]
+    end
+    inherited dxLICount: TdxLayoutItem [28]
+    end
+    object dxLayoutGroup1: TdxLayoutGroup [29]
+      Parent = dxLayoutControl2Group_Root
+      CaptionOptions.Text = 'New Group'
+      ButtonOptions.Buttons = <>
+      ShowBorder = False
+      Index = 0
+    end
+    inherited dxLayoutGroup2: TdxLayoutGroup [30]
+      Parent = dxLayoutGroup1
       LayoutDirection = ldHorizontal
     end
     object dxLayoutItem1: TdxLayoutItem
@@ -190,13 +212,22 @@ inherited ToolYJQSFK: TToolYJQSFK
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 71
       ControlOptions.ShowBorder = False
-      Index = 3
+      Index = 2
     end
     object dxLayoutItem5: TdxLayoutItem
       Parent = dxLayoutGroup2
       Control = edtHPHM
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 77
+      ControlOptions.ShowBorder = False
+      Index = 3
+    end
+    object dxLayoutItem9: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #25968#25454#26469#28304
+      Control = cmbSource
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 107
       ControlOptions.ShowBorder = False
       Index = 4
     end
@@ -208,7 +239,7 @@ inherited ToolYJQSFK: TToolYJQSFK
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 6
+      Index = 5
     end
     object dxLayoutItem6: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -218,25 +249,7 @@ inherited ToolYJQSFK: TToolYJQSFK
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 7
-    end
-    object dxLayoutItem9: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #25968#25454#26469#28304
-      Control = cmbSource
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 107
-      ControlOptions.ShowBorder = False
-      Index = 5
-    end
-    object dxLayoutItem7: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #24067#25511#31867#22411
-      Control = cboYJLX
-      ControlOptions.OriginalHeight = 25
-      ControlOptions.OriginalWidth = 135
-      ControlOptions.ShowBorder = False
-      Index = 2
+      Index = 6
     end
     object dxLayoutItem10: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -246,7 +259,33 @@ inherited ToolYJQSFK: TToolYJQSFK
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 8
+      Index = 7
+    end
+    object dxLayoutGroup3: TdxLayoutGroup
+      Parent = dxLayoutGroup1
+      CaptionOptions.Text = 'New Group'
+      ButtonOptions.Buttons = <>
+      LayoutDirection = ldHorizontal
+      ShowBorder = False
+      Index = 1
+    end
+    object dxLayoutItem11: TdxLayoutItem
+      Parent = dxLayoutGroup3
+      CaptionOptions.Text = #21345#21475#21517#31216
+      Control = cbbwfdd
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 225
+      ControlOptions.ShowBorder = False
+      Index = 0
+    end
+    object dxLayoutItem7: TdxLayoutItem
+      Parent = dxLayoutGroup3
+      CaptionOptions.Text = #24067#25511#31867#22411
+      Control = cboYJLX
+      ControlOptions.OriginalHeight = 25
+      ControlOptions.OriginalWidth = 155
+      ControlOptions.ShowBorder = False
+      Index = 1
     end
   end
   inherited cxdtrpstry1: TcxEditRepository
