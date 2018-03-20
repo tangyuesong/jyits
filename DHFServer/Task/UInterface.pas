@@ -105,7 +105,7 @@ begin
 end;
 
 class procedure Tmypint.DoAlarm(pass: TPass);
-  procedure DoJTP;
+  procedure DoJTP;       // ¼ÙÌ×ÅÆ³µÁ¾Ô¤¾¯
   var
     alarm: TAlarm;
     s, hhmm: string;
@@ -114,11 +114,12 @@ class procedure Tmypint.DoAlarm(pass: TPass);
     begin
       alarm := gDicAlarmJTP[pass.HPHM + pass.HPZL];
       hhmm := FormatDatetime('hhmm', now);
-      if (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm) then
+      if (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm) and alarm.KDBH.Contains(pass.KDBH) then
       begin
-        s := '¡¾¼ÙÌ×ÅÆ¡¿' + pass.hphm + gDicHPZL[pass.hpzl]
-                + #13#10 + pass.gcsj + #13#10
-                + gDicDevice[pass.kdbh].SBDDMC;
+        s := '¡¾¼ÙÌ×ÅÆ¡¿' + pass.hphm + gDicHPZL[pass.hpzl] + #13#10 + alarm.CLPP;
+        if alarm.CSYS <> '' then
+           s := s + ' ' + alarm.CSYS;
+        s := s + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC;
         if SMSUrl = '' then
           uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', alarm.SJHM, s)
         else
@@ -126,25 +127,27 @@ class procedure Tmypint.DoAlarm(pass: TPass);
       end;
     end;
   end;
-  procedure DoSDCL;
+  procedure DoSDCL;        // Éæ¶¾³µÁ¾Ô¤¾¯
   var
-    sdcl: TSDCL;
+    sdcl: TAlarm;
     s, hhmm: string;
   begin
     for sdcl in gListAlarmSDCL do
     begin
-      if pass.HPHM.Contains(sdcl.FZJG) and sdcl.KDBH.Contains(pass.kdbh) then
+      if pass.HPHM.Contains(sdcl.HPHM) and sdcl.KDBH.Contains(pass.kdbh) then
       begin
-        hhmm := FormatDatetime('hhmm', now);
-        if (sdcl.smsBeginTime < hhmm) and (sdcl.smsEndTime > hhmm) then
+        if (sdcl.BZ <> '¼ÙÌ×ÅÆ³µ') or (gDicAlarmJTP.ContainsKey(pass.HPHM + pass.HPZL)) then // ²¼¿Ø·¶Î§£ºÈ«²¿ »ò ½öÏÞ¼ÙÌ×ÅÆ
         begin
-          s := '¡¾Éæ¶¾³µÁ¾¡¿' + pass.hphm + gDicHPZL[pass.hpzl]
-                  + #13#10 + pass.gcsj + #13#10
-                  + gDicDevice[pass.kdbh].SBDDMC;
-          if SMSUrl = '' then
-            uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', sdcl.SJHM, s)
-          else
-            Tmypint.SendSMS(sdcl.SJHM, s);
+          hhmm := FormatDatetime('hhmm', now);
+          if (sdcl.smsBeginTime < hhmm) and (sdcl.smsEndTime > hhmm) then
+          begin
+            s := '¡¾Éæ¶¾³µÁ¾¡¿' + pass.hphm + gDicHPZL[pass.hpzl]
+              + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC;
+            if SMSUrl = '' then
+              uCommon.AddSMS('¡¾¼©²é²¼¿Ø¡¿', sdcl.SJHM, s)
+            else
+              Tmypint.SendSMS(sdcl.SJHM, s);
+          end;
         end;
       end;
     end;

@@ -12,14 +12,10 @@ type
     SJHM: string;
     smsBeginTime: string;
     smsEndTime: string;
-  end;
-
-  TSDCL = record
-    FZJG: string;
+    CLPP: string;
+    CSYS: string;
     KDBH: string;
-    SJHM: string;
-    smsBeginTime: string;
-    smsEndTime: string;
+    BZ: string;
   end;
 
 var
@@ -30,14 +26,14 @@ var
   gDicHBC: TDictionary<string, boolean>;
   gDicAlarm: TDictionary<string, boolean>;
   gDicAlarmJTP: TDictionary<string, TAlarm>;
-  gListAlarmSDCL: TList<TSDCL>;
+  gListAlarmSDCL: TList<TAlarm>;
   gOpenedDevice: TDictionary<string, boolean>;
 
   gOldDevice: TDictionary<string, TDevice>;
   gOldHBC: TDictionary<string, boolean>;
   gOldAlarm: TDictionary<string, boolean>;
   gOldAlarmJTP: TDictionary<string, TAlarm>;
-  gOldAlarmSDCL: TList<TSDCL>;
+  gOldAlarmSDCL: TList<TAlarm>;
   gOldOpenedDevice: TDictionary<string, boolean>;
 
   gUnknowDevice: TDictionary<string, boolean>;

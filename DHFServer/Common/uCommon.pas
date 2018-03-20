@@ -80,11 +80,10 @@ var
   tmp: TDictionary<string, TAlarm>;
   item: TAlarm;
 begin
-  s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsTimeBegin,b.smsTimeEnd from T_KK_ALARM a '
-     + 'inner join T_KK_ALARM_JTP b '
+  s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsTimeBegin,b.smsTimeEnd,b.CLPP,b.CSYS,b.KDBH '
+     + 'from T_KK_ALARM a inner join T_KK_ALARM_JTP b '
      + 'on a.CLPP like ''%'' + b.CLPP + ''%'' and a.CSYS like  ''%'' + b.CSYS + ''%'' '
-     + 'left join T_KK_ALARM_JTP_Except c '
-     + 'on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
+     + 'left join T_KK_ALARM_JTP_Except c on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
      + 'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'') and c.HPHM is null';
   tmp := TDictionary<string, TAlarm>.Create;
   with SQLHelper.Query(s) do
@@ -94,6 +93,9 @@ begin
       item.HPHM := FieldByName('HPHM').AsString;
       item.HPZL := FieldByName('HPZL').AsString;
       item.SJHM := FieldByName('SJHM').AsString;
+      item.CLPP := FieldByName('CLPP').AsString;
+      item.CSYS := FieldByName('CSYS').AsString;
+      item.KDBH := FieldByName('KDBH').AsString;
       item.smsBeginTime := FieldByName('smsTimeBegin').AsString;
       item.smsEndTime := FieldByName('smsTimeEnd').AsString;
       s := item.HPHM + item.HPZL;
@@ -116,18 +118,20 @@ end;
 procedure LoadAlarmSDCL;
 var
   s, sjhm: string;
-  tmp: TList<TSDCL>;
-  item: TSDCL;
+  tmp: TList<TAlarm>;
+  item: TAlarm;
 begin
   s := 'select * from T_KK_ALARM_SDCL';
-  tmp := TList<TSDCL>.Create;
+  tmp := TList<TAlarm>.Create;
   with SQLHelper.Query(s) do
   begin
     while not EOF do
     begin
-      item.FZJG := FieldByName('FZJG').AsString;
+      item.HPHM := FieldByName('FZJG').AsString;
+      item.HPZL := FieldByName('HPZL').AsString;
       item.KDBH := FieldByName('KDBH').AsString;
       item.SJHM := FieldByName('SJHM').AsString;
+      item.BZ := FieldByName('Source').AsString;
       item.smsBeginTime := FieldByName('smsTimeBegin').AsString;
       item.smsEndTime := FieldByName('smsTimeEnd').AsString;
       tmp.Add(item);
