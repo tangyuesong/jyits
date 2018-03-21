@@ -157,8 +157,8 @@ begin
     TColumnGenerator.LookupColumn(tvDev.Columns[5],
       TLookUpDataSource.DataSource['KDBH']);
 
-  dtDateBegin.Date := now - 7;
-  dtDateEnd.Date := now;
+  dtDateBegin.Text := FormatDateTime('yyyy/mm/dd', now - 1);
+  dtDateEnd.Text := FormatDateTime('yyyy/mm/dd', now);
 end;
 
 procedure TFrameJTPCheck.InitControl;
@@ -187,7 +187,8 @@ begin
   ShowFrameWait;
   InitControl;
   Param := 'hphm=' + txtHPHM.Text + '&clpp=' + edtCLPP.Text + '&csys=' + cboCSYS.Text
-    + '&beginGXSJ='+dtDateBegin.Text + '&endGXSJ='+dtDateEnd.Text
+    + '&beginGXSJ='+FormatDateTime('yyyy/mm/dd', dtDateBegin.Date)
+    + '&endGXSJ='+FormatDateTime('yyyy/mm/dd', dtDateEnd.Date + 1)
     + '&bklx=' + copy(cboType.Text, 1, 2);
   s := TRequestItf.DbQuery('GetKKAlarmCheckJTP', Param);
   TJsonUtils.JSONToDataSet(s, tbVio, '');
