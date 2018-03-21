@@ -1112,8 +1112,8 @@ var
   list: TStrings;
 begin
   list := TStringList.Create;
-  ss := 'select SYSTEMID, HPHM,HPZL,CLPP,CLLX,CSYS,BKLX from T_KK_ALARM where ZT=1 and uploadstatus=0 '
-    + 'and hphm+hpzl+clpp+cllx+csys is not null';
+  ss := 'select SYSTEMID, HPHM,HPZL,Left(CLPP,16) as CLPP,Left(CLLX, 3) as CLLX,CSYS,BKLX '
+    + 'from T_KK_ALARM where ZT=1 and uploadstatus=0 and hphm+hpzl+clpp+cllx+csys is not null';
   with FSQLHelper.Query(ss) do
   begin
     while not eof do
