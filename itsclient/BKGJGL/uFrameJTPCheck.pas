@@ -186,7 +186,7 @@ var
 begin
   ShowFrameWait;
   InitControl;
-  Param := 'hphm=' + txtHPHM.Text + '&clpp=' + edtCLPP.Text + '&csys=' + cboCSYS.Text
+  Param := 'hphm=' + txtHPHM.Text + '&clpp=' + txtCLPP.Text + '&csys=' + cboCSYS.Text
     + '&beginGXSJ='+FormatDateTime('yyyy/mm/dd', dtDateBegin.Date)
     + '&endGXSJ='+FormatDateTime('yyyy/mm/dd', dtDateEnd.Date + 1)
     + '&bklx=' + copy(cboType.Text, 1, 2);

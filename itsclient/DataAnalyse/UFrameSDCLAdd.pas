@@ -25,7 +25,8 @@ uses
   dxLayoutContainer, cxClasses, Vcl.StdCtrls, cxButtons, dxLayoutControl,
   dxLayoutcxEditAdapters, cxContainer, cxEdit, cxMemo, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxImage, uEntity, Udictionary, uGlobal, uCommon, uJsonUtils,
-  uRequestItf, cxSpinEdit, cxTimeEdit, cxCheckBox, uFrameSelectDev;
+  uRequestItf, cxSpinEdit, cxTimeEdit, cxCheckBox, uFrameSelectDev,
+  cxCheckComboBox;
 
 type
   TOK = procedure of object;
@@ -42,7 +43,7 @@ type
     dxLayoutItem8: TdxLayoutItem;
     dxLayoutItem9: TdxLayoutItem;
     dxLayoutGroup5: TdxLayoutGroup;
-    edtFZJG: TcxTextEdit;
+    cboFZJG1: TcxComboBox;
     dxLayoutItem16: TdxLayoutItem;
     edtKDBH: TcxTextEdit;
     dxLayoutItem18: TdxLayoutItem;
@@ -52,7 +53,9 @@ type
     cbbHPZL: TcxComboBox;
     dxLayoutGroup6: TdxLayoutGroup;
     dxLayoutItem5: TdxLayoutItem;
-    cbbSource: TcxComboBox;
+    cbbBKLX: TcxComboBox;
+    dxLayoutItem10: TdxLayoutItem;
+    cboFZJG2: TcxCheckComboBox;
     procedure btnSaveClick(Sender: TObject);
     procedure btnKDBHClick(Sender: TObject);
     procedure edtKDBHKeyPress(Sender: TObject; var Key: Char);
@@ -80,6 +83,9 @@ procedure TFrameSDCLAdd.AfterConstruction;
 begin
   inherited;
   TLZDictionary.BindCombobox(cbbHPZL, TLZDictionary.gDicMain['HPZL'], True);
+  TLZDictionary.BindCombobox(cbbBKLX, TLZDictionary.gDicMain['BKLX'], True);
+  cbbBKLX.Properties.Items.Insert(0, '全部');
+  TLZDictionary.BindCombobox(cboFZJG1, TLZDictionary.gDicMain['JC'], True);
 end;
 
 procedure TFrameSDCLAdd.btnKDBHClick(Sender: TObject);
@@ -178,10 +184,10 @@ end;
 
 procedure TFrameSDCLAdd.btnSaveClick(Sender: TObject);
 var
-  s: string;
+  s, fzjg, bklx: string;
 begin
   inherited;
-  if Trim(edtFZJG.Text) = '' then
+  if Trim(cboFZJG1.Text) = '' then
   begin
     Application.MessageBox('发证机关不能为空', '错误', MB_OK + MB_ICONSTOP);
     exit;
@@ -191,10 +197,19 @@ begin
     Application.MessageBox('过车地点不能为空', '错误', MB_OK + MB_ICONSTOP);
     exit;
   end;
-
-  s := 'BKR=' + gUser.yhbh + '&SJHM=' + edtSJ.Text + '&ZT=1&FZJG='
-    + edtFZJG.Text + '&HPZL=' + TLZDictionary.StrtoDicInfo(cbbHPZL.Text).dm
-    + '&KDBH=' + KDBH + '&Source=' + cbbSource.Text + '&BZ=' + edtBZ.Text
+  if edtSJ.Text = '' then
+  begin
+    Application.MessageBox('手机号码不能为空', '错误', MB_OK + MB_ICONSTOP);
+    exit;
+  end;
+  fzjg := copy(cboFZJG1.Text, 4, 2) + cboFZJG2.Text;
+  if (cbbBKLX.Text <> '')and(cbbBKLX.Text <> '全部') then
+    bklx := copy(cbbBKLX.Text, 1, 2)
+  else
+    bklx := '';
+  s := 'BKR=' + gUser.yhbh + '&SJHM=' + edtSJ.Text + '&ZT=1&FZJG='+ fzjg
+    + '&HPZL=' + TLZDictionary.StrtoDicInfo(cbbHPZL.Text).dm
+    + '&KDBH=' + KDBH + '&bklx=' + bklx + '&BZ=' + edtBZ.Text
     + '&smsTimeBegin=' + FormatDatetime('hhmm', tmBegin.Time)
     + '&smsTimeEnd=' + FormatDatetime('hhmm', tmEnd.Time);
 

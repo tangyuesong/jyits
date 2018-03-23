@@ -190,6 +190,8 @@ begin
   end;
   dxLayoutControl2Group_Root.Visible := false;
   FramePictureCompare.Visible := true;
+  FramePictureCompare.HPHM := FDMemTable1.FieldByName('HPHM').AsString;
+  FramePictureCompare.HPZL := FDMemTable1.FieldByName('HPZL').AsString;
   FramePictureCompare.LoadPicture(url1, url2);
 end;
 

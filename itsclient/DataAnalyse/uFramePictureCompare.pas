@@ -25,7 +25,7 @@ uses
   dxSkinValentine, dxSkinVisualStudio2013Blue, dxSkinVisualStudio2013Dark,
   dxSkinVisualStudio2013Light, dxSkinVS2010, dxSkinWhiteprint,
   dxSkinXmas2008Blue, dxSkinscxPCPainter, Generics.Collections, Vcl.ExtCtrls,
-  cxImage, dxBarBuiltInMenu, cxPC;
+  cxImage, dxBarBuiltInMenu, cxPC, uFrameBKCJ, uEntity, uJsonUtils;
 
 type
   TFramePictureCompare = class(TdxDialogBaseFrame)
@@ -34,8 +34,15 @@ type
     dxLayoutItem2: TdxLayoutItem;
     cxImage2: TcxImage;
     procedure btnSaveClick(Sender: TObject);
+  private
+    FrameBKCJ: TFrameBKCJ;
+    FHPHM: string;
+    FHPZL: string;
+    procedure CloseFrame;
   public
     procedure LoadPicture(url1, url2: string);
+    property HPHM: string read FHPHM write FHPHM;
+    property HPZL: string read FHPZL write FHPZL;
   end;
 
 var
@@ -43,13 +50,42 @@ var
 
 implementation
 uses
-  uGlobal, uCommon;
+  uGlobal, uCommon, uDictionary;
 {$R *.dfm}
 
 procedure TFramePictureCompare.btnSaveClick(Sender: TObject);
 begin
   inherited;
- //
+  if not Assigned(FrameBKCJ) then
+  begin
+    FrameBKCJ := TFrameBKCJ.Create(self);
+    with FrameBKCJ do
+    begin
+      Parent := self;
+      Top := 120;
+      Left := (self.Width - Width) div 2;
+    end;
+  end;
+  FrameBKCJ.ClearControls(FrameBKCJ);
+  FrameBKCJ.BKXH := FormatDateTime('yyyymmddhhmmsszzz', Now);
+  FrameBKCJ.EditID := TEditStatus.esNew;
+  FrameBKCJ.OnClose := self.CloseFrame;
+  FrameBKCJ.dxLayoutGroup6.Visible := false;
+  FrameBKCJ.dxLayoutGroup7.Visible := false;
+  FrameBKCJ.dxLayoutItem15.Visible := true;
+  FrameBKCJ.cbbJC.Text := TLZDictionary.getkey('MAIN', 'JC', FHPHM[1]) + ':' + FHPHM[1];
+  FrameBKCJ.edthphm.Text := Copy(FHPHM, 2, 100);
+  FrameBKCJ.cbbHPZL.Text := FHPZL + ':' + TLZDictionary.gDicMain['HPZL'][FHPZL];
+  FrameBKCJ.cboBKLX.Text := '02:' + TLZDictionary.gDicMain['BKLX']['02'];
+  FrameBKCJ.Show;
+  btnSave.Enabled := false;
+  btnExit.Enabled := false;
+end;
+
+procedure TFramePictureCompare.CloseFrame;
+begin
+  btnSave.Enabled := true;
+  btnExit.Enabled := true;
 end;
 
 procedure TFramePictureCompare.LoadPicture(url1, url2: string);
