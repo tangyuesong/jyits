@@ -56,14 +56,31 @@ end;
 
 procedure LoadAlarm;
 var
-  tmp: TDictionary<string, boolean>;
+  tmp: TDictionary<string, TAlarm>;
+  item: TAlarm;
+  key: string;
 begin
-  tmp := TDictionary<string, boolean>.Create;
-  with SQLHelper.Query('select distinct hphm+hpzl as dickey from T_KK_ALARM where zt=1') do
+  tmp := TDictionary<string, TAlarm>.Create;
+  with SQLHelper.Query('select * from T_KK_ALARM where zt=1') do
   begin
     while not EOF do
     begin
-      tmp.Add(Fields[0].AsString, true);
+      item.HPHM := FieldByName('HPHM').AsString;
+      item.HPZL := FieldByName('HPZL').AsString;
+      item.SJHM := FieldByName('SJHM').AsString;
+      item.BKLX := FieldByName('BKLX').AsString;
+      item.BKZL := FieldByName('BKZL').AsString;
+      item.WFCS := FieldByName('WFCS').AsString;
+      item.smsBeginTime := FieldByName('smsTimeBegin').AsString;
+      item.smsEndTime := FieldByName('smsTimeEnd').AsString;
+      item.BZ := FieldByName('BZ').AsString;
+      key := item.HPHM + item.HPZL;
+      if not tmp.ContainsKey(key) then
+        tmp.Add(key, item)
+      else begin
+        item.SJHM := tmp[key].SJHM + ';' + item.SJHM;
+        tmp.AddOrSetValue(key, item);
+      end;
       Next;
     end;
     Free;
@@ -80,7 +97,7 @@ var
   tmp: TDictionary<string, TAlarm>;
   item: TAlarm;
 begin
-  s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsTimeBegin,b.smsTimeEnd,b.CLPP,b.CSYS,b.KDBH '
+  s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsTimeBegin,b.smsTimeEnd,b.CLPP,b.CSYS,b.KDBH,b.BZ '
      + 'from T_KK_ALARM a inner join T_KK_ALARM_JTP b '
      + 'on a.CLPP like ''%'' + b.CLPP + ''%'' and a.CSYS like  ''%'' + b.CSYS + ''%'' '
      + 'left join T_KK_ALARM_JTP_Except c on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
@@ -98,6 +115,7 @@ begin
       item.KDBH := FieldByName('KDBH').AsString;
       item.smsBeginTime := FieldByName('smsTimeBegin').AsString;
       item.smsEndTime := FieldByName('smsTimeEnd').AsString;
+      item.BZ := FieldByName('BZ').AsString;
       s := item.HPHM + item.HPZL;
       if not tmp.ContainsKey(s) then
         tmp.Add(s, item)
@@ -117,7 +135,7 @@ end;
 
 procedure LoadAlarmSDCL;
 var
-  s, sjhm: string;
+  s, fzjg, sf, sjhm: string;
   tmp: TList<TAlarm>;
   item: TAlarm;
 begin
@@ -127,14 +145,22 @@ begin
   begin
     while not EOF do
     begin
-      item.HPHM := FieldByName('FZJG').AsString;
-      item.HPZL := FieldByName('HPZL').AsString;
-      item.KDBH := FieldByName('KDBH').AsString;
-      item.SJHM := FieldByName('SJHM').AsString;
-      item.BZ := FieldByName('Source').AsString;
-      item.smsBeginTime := FieldByName('smsTimeBegin').AsString;
-      item.smsEndTime := FieldByName('smsTimeEnd').AsString;
-      tmp.Add(item);
+      fzjg := FieldByName('FZJG').AsString;
+      sf := copy(fzjg, 1, 1);
+      fzjg := copy(fzjg, 2, 26);
+      for s in fzjg.Split([',']) do
+      begin
+        item.HPHM := sf + s;
+        item.HPZL := FieldByName('HPZL').AsString;
+        item.KDBH := FieldByName('KDBH').AsString;
+        item.SJHM := FieldByName('SJHM').AsString;
+        item.BKLX := FieldByName('BKLX').AsString;
+        item.smsBeginTime := FieldByName('smsTimeBegin').AsString;
+        item.smsEndTime := FieldByName('smsTimeEnd').AsString;
+        item.BZ := FieldByName('BZ').AsString;
+        tmp.Add(item);
+        logger.Info('[LoadAlarmSDCL]' + item.HPHM);
+      end;
 
       Next;
     end;

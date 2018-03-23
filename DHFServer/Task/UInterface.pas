@@ -119,7 +119,7 @@ class procedure Tmypint.DoAlarm(pass: TPass);
         s := '【假套牌】' + pass.hphm + gDicHPZL[pass.hpzl] + #13#10 + alarm.CLPP;
         if alarm.CSYS <> '' then
            s := s + ' ' + alarm.CSYS;
-        s := s + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC;
+        s := s + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + alarm.BZ;
         if SMSUrl = '' then
           uCommon.AddSMS('【缉查布控】', alarm.SJHM, s)
         else
@@ -130,19 +130,20 @@ class procedure Tmypint.DoAlarm(pass: TPass);
   procedure DoSDCL;        // 涉毒车辆预警
   var
     sdcl: TAlarm;
-    s, hhmm: string;
+    key, s, hhmm: string;
   begin
     for sdcl in gListAlarmSDCL do
     begin
       if pass.HPHM.Contains(sdcl.HPHM) and sdcl.KDBH.Contains(pass.kdbh) then
       begin
-        if (sdcl.BZ <> '假套牌车') or (gDicAlarmJTP.ContainsKey(pass.HPHM + pass.HPZL)) then // 布控范围：全部 或 仅限假套牌
+        key := pass.HPHM + pass.HPZL;
+        if (sdcl.BKLX = '') or (gDicAlarm.ContainsKey(key) and (gDicAlarm[key].BKLX = sdcl.BKLX)) then
         begin
           hhmm := FormatDatetime('hhmm', now);
           if (sdcl.smsBeginTime < hhmm) and (sdcl.smsEndTime > hhmm) then
           begin
             s := '【涉毒车辆】' + pass.hphm + gDicHPZL[pass.hpzl]
-              + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC;
+              + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + sdcl.BZ;
             if SMSUrl = '' then
               uCommon.AddSMS('【缉查布控】', sdcl.SJHM, s)
             else
@@ -154,48 +155,31 @@ class procedure Tmypint.DoAlarm(pass: TPass);
   end;
   procedure DoAlarm;
   var
-    SQL, hpzlmc, bz, sj, bkzl, wfcs, bklx, address,hhmm: string;
+    hhmm, bz, sql: string;
+    alarm: TAlarm;
   begin
     hhmm := FormatDatetime('hhmm', now);
     if gDicAlarm.ContainsKey(pass.hphm + pass.hpzl) then
     begin
-      address := gDicDevice[pass.kdbh].SBDDMC;
-
-      hpzlmc := gDicHPZL[pass.hpzl];
-      SQL := 'select * from T_KK_ALARM where zt=1 and hphm=''' + pass.hphm +
-        ''' and hpzl=''' + pass.hpzl + '''';
-      with SQLHelper.Query(SQL) do
+      alarm := gDicAlarm[pass.hphm + pass.hpzl];
+      if (alarm.SJHM <> '') and (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm) then
       begin
-        while not Eof do
+        if now - vartodatetime(pass.gcsj) < OneMinute * 3 then
         begin
-          bkzl := FieldByName('bkzl').AsString;
-          wfcs := FieldByName('wfcs').AsString;
-          bklx := FieldByName('bklx').AsString;
-
-          if (FieldByName('smsTimeBegin').AsString < hhmm)
-            and (FieldByName('smsTimeEnd').AsString > hhmm) then
-          begin
-            sj := FieldByName('sjhm').AsString;
-            if (sj<>'') and (now - vartodatetime(pass.gcsj) < OneMinute * 3)then
-            begin
-              bz := #13#10'号牌号码' + pass.hphm + hpzlmc
-                + #13#10 + pass.gcsj + #13#10 + address
-                + #13#10 + FieldByName('bz').AsString;
-              if SMSUrl = '' then
-                uCommon.AddSMS('【缉查布控】', sj, BZ)
-              else
-                Tmypint.SendSMS(sj, bz);
-            end;
-          end;
-          Next;
+          bz := #13#10'号牌号码' + pass.hphm + gDicHPZL[pass.hpzl]
+            + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC
+            + #13#10 + alarm.BZ;
+          if SMSUrl = '' then
+            uCommon.AddSMS('【缉查布控】', alarm.SJHM, BZ)
+          else
+            Tmypint.SendSMS(alarm.SJHM, bz);
         end;
-        Free;
       end;
 
       sql := 'insert into T_KK_ALARMRESULT(bz,bkzl,wfcs,gcxh,gcsj,hphm,hpzl,cd,clsd,viourl,kdbh,bklx)values('
         + BZ.QuotedString + ','
-        + bkzl.QuotedString + ','
-        + wfcs.QuotedString + ','
+        + alarm.bkzl.QuotedString + ','
+        + alarm.wfcs.QuotedString + ','
         + pass.GCXH.QuotedString + ','
         + pass.GCSJ.QuotedString + ','
         + pass.hphm.QuotedString+ ','
@@ -204,7 +188,7 @@ class procedure Tmypint.DoAlarm(pass: TPass);
         + pass.CLSD.QuotedString + ','
         + (pass.FWQDZ + pass.tp1).QuotedString + ','
         + pass.kdbh.QuotedString  + ','
-        + bklx.QuotedString + ')';
+        + alarm.BKLX.QuotedString + ')';
       sqlhelper.ExecuteSql(SQL);
     end;
   end;
@@ -400,6 +384,7 @@ begin
   //if (not gOpenedDevice.ContainsKey(device.SBBH))or                         // 该设备不上报
   //  (gOpenedDevice[device.SBBH] and (not pass.HPHM.StartsWith(FZJG))) then  // 该设备只上报本地车
   // exit;
+  if pass.HPHM.Length < 6 then exit;
   if uTrans.TransXLH <> '' then
   begin
     ret := TTrans.WriteVehicleInfo(
@@ -556,6 +541,7 @@ begin
       pass.hpzl.QuotedString + ',' +
       pass.gcsj.QuotedString + ',' +
       pass.clsd.QuotedString + ',' +
+      pass.csys.QuotedString + ',' +
       pass.hphm.QuotedString + ',' +
       pass.fwqdz.QuotedString + ',' +
       pass.tp1.QuotedString + ',' +
@@ -569,7 +555,7 @@ begin
     begin
       s := sql.Text;
       s := copy(s, 1, length(s) - 3); // 回车换行
-      s := 'insert into T_KK_VEH_PASSREC(CJJG,GCXH,KKSOURCE,KDBH,FXBH,CDBH,HPZL,GCSJ,CLSD,HPHM,FWQDZ,TP1,TP2,TP3,WFBJ,RKSJ,LDBH,LKBH)values' + s;
+      s := 'insert into T_KK_VEH_PASSREC(CJJG,GCXH,KKSOURCE,KDBH,FXBH,CDBH,HPZL,GCSJ,CLSD,CSYS,HPHM,FWQDZ,TP1,TP2,TP3,WFBJ,RKSJ,LDBH,LKBH)values' + s;
       SQLHelper.ExecuteSql(s);
       logger.Info('SavePassRec OK: ' + sql.Count.ToString);
       sql.Clear;
@@ -579,7 +565,7 @@ begin
   begin
     s := sql.Text;
     s := copy(s, 1, length(s) - 3); // 回车换行
-    s := 'insert into T_KK_VEH_PASSREC(CJJG,GCXH,KKSOURCE,KDBH,FXBH,CDBH,HPZL,GCSJ,CLSD,HPHM,FWQDZ,TP1,TP2,TP3,WFBJ,RKSJ,LDBH,LKBH)values' + s;
+    s := 'insert into T_KK_VEH_PASSREC(CJJG,GCXH,KKSOURCE,KDBH,FXBH,CDBH,HPZL,GCSJ,CLSD,CSYS,HPHM,FWQDZ,TP1,TP2,TP3,WFBJ,RKSJ,LDBH,LKBH)values' + s;
     SQLHelper.ExecuteSql(s);
     logger.Info('SavePassRec OK: ' + sql.Count.ToString);
   end;

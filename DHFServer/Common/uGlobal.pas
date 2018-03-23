@@ -10,6 +10,9 @@ type
     HPHM: string;
     HPZL: string;
     SJHM: string;
+    BKLX: string;
+    BKZL: string;
+    WFCS: string;
     smsBeginTime: string;
     smsEndTime: string;
     CLPP: string;
@@ -24,14 +27,14 @@ var
 
   gDicDevice: TDictionary<string, TDevice>;
   gDicHBC: TDictionary<string, boolean>;
-  gDicAlarm: TDictionary<string, boolean>;
+  gDicAlarm: TDictionary<string, TAlarm>;
   gDicAlarmJTP: TDictionary<string, TAlarm>;
   gListAlarmSDCL: TList<TAlarm>;
   gOpenedDevice: TDictionary<string, boolean>;
 
   gOldDevice: TDictionary<string, TDevice>;
   gOldHBC: TDictionary<string, boolean>;
-  gOldAlarm: TDictionary<string, boolean>;
+  gOldAlarm: TDictionary<string, TAlarm>;
   gOldAlarmJTP: TDictionary<string, TAlarm>;
   gOldAlarmSDCL: TList<TAlarm>;
   gOldOpenedDevice: TDictionary<string, boolean>;

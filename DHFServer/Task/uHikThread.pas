@@ -220,6 +220,8 @@ begin
   end;
   if result.hphm = '-' then
     result.hpzl := '44';
+  if result.HPZL = '99' then
+    result.HPZL := '44';
 
   result.clsd := FQuery.FieldByName('VEHICLE_SPEED').AsString;
   result.hpys := FQuery.FieldByName('PLATE_COLOR').AsString;
