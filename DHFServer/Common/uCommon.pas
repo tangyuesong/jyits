@@ -120,7 +120,7 @@ begin
       if not tmp.ContainsKey(s) then
         tmp.Add(s, item)
       else begin
-        item.SJHM := tmp[s].SJHM + ';' + item.SJHM;
+        item.SJHM := tmp[s].SJHM + ',' + item.SJHM;
         tmp.AddOrSetValue(s, item);
       end;
       Next;

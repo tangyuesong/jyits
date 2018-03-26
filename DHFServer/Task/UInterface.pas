@@ -114,7 +114,8 @@ class procedure Tmypint.DoAlarm(pass: TPass);
     begin
       alarm := gDicAlarmJTP[pass.HPHM + pass.HPZL];
       hhmm := FormatDatetime('hhmm', now);
-      if (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm) and alarm.KDBH.Contains(pass.KDBH) then
+      if (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm)
+        and ((alarm.KDBH='') or alarm.KDBH.Contains(pass.KDBH)) then
       begin
         s := '¡¾¼ÙÌ×ÅÆ¡¿' + pass.hphm + gDicHPZL[pass.hpzl] + #13#10 + alarm.CLPP;
         if alarm.CSYS <> '' then
