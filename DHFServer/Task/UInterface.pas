@@ -135,21 +135,22 @@ class procedure Tmypint.DoAlarm(pass: TPass);
   begin
     for sdcl in gListAlarmSDCL do
     begin
-      if pass.HPHM.Contains(sdcl.HPHM) and sdcl.KDBH.Contains(pass.kdbh) then
+      key := pass.HPHM + pass.HPZL;
+      if sdcl.KDBH.Contains(pass.kdbh)
+        and ((sdcl.HPHM = '') or pass.HPHM.Contains(sdcl.HPHM))    // 发证机关
+        and ((sdcl.HPZL = '') or (pass.HPZL = sdcl.HPZL))
+        and ((sdcl.BKLX = '') or (gDicAlarm.ContainsKey(key) and (gDicAlarm[key].BKLX = sdcl.BKLX)))
+      then
       begin
-        key := pass.HPHM + pass.HPZL;
-        if (sdcl.BKLX = '') or (gDicAlarm.ContainsKey(key) and (gDicAlarm[key].BKLX = sdcl.BKLX)) then
+        hhmm := FormatDatetime('hhmm', now);
+        if (sdcl.smsBeginTime < hhmm) and (sdcl.smsEndTime > hhmm) then
         begin
-          hhmm := FormatDatetime('hhmm', now);
-          if (sdcl.smsBeginTime < hhmm) and (sdcl.smsEndTime > hhmm) then
-          begin
-            s := '【涉毒车辆】' + pass.hphm + gDicHPZL[pass.hpzl]
-              + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + sdcl.BZ;
-            if SMSUrl = '' then
-              uCommon.AddSMS('【缉查布控】', sdcl.SJHM, s)
-            else
-              Tmypint.SendSMS(sdcl.SJHM, s);
-          end;
+          s := '【特定区域】' + pass.hphm + gDicHPZL[pass.hpzl]
+            + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + sdcl.BZ;
+          if SMSUrl = '' then
+            uCommon.AddSMS('【缉查布控】', sdcl.SJHM, s)
+          else
+            Tmypint.SendSMS(sdcl.SJHM, s);
         end;
       end;
     end;
@@ -550,13 +551,18 @@ begin
       pass.tp3.QuotedString + ',' +
       pass.WFXW.QuotedString + ',' +
       pass.rksj.QuotedString + ',' +
+      pass.ser01.QuotedString + ',' +
+      pass.ser02.QuotedString + ',' +
+      pass.ser03.QuotedString + ',' +
+      pass.ser04.QuotedString + ',' +
+      pass.ser05.QuotedString + ',' +
       pass.ldbh.QuotedString + ',' +
       pass.lkbh.QuotedString + '),');
     if sql.Count = 999 then
     begin
       s := sql.Text;
       s := copy(s, 1, length(s) - 3); // 回车换行
-      s := 'insert into T_KK_VEH_PASSREC(CJJG,GCXH,KKSOURCE,KDBH,FXBH,CDBH,HPZL,GCSJ,CLSD,CSYS,HPHM,FWQDZ,TP1,TP2,TP3,WFBJ,RKSJ,LDBH,LKBH)values' + s;
+      s := 'insert into T_KK_VEH_PASSREC(CJJG,GCXH,KKSOURCE,KDBH,FXBH,CDBH,HPZL,GCSJ,CLSD,CSYS,HPHM,FWQDZ,TP1,TP2,TP3,WFBJ,RKSJ,SER01,SER02,SER03,SER04,SER05,LDBH,LKBH)values' + s;
       SQLHelper.ExecuteSql(s);
       logger.Info('SavePassRec OK: ' + sql.Count.ToString);
       sql.Clear;
@@ -566,7 +572,7 @@ begin
   begin
     s := sql.Text;
     s := copy(s, 1, length(s) - 3); // 回车换行
-    s := 'insert into T_KK_VEH_PASSREC(CJJG,GCXH,KKSOURCE,KDBH,FXBH,CDBH,HPZL,GCSJ,CLSD,CSYS,HPHM,FWQDZ,TP1,TP2,TP3,WFBJ,RKSJ,LDBH,LKBH)values' + s;
+    s := 'insert into T_KK_VEH_PASSREC(CJJG,GCXH,KKSOURCE,KDBH,FXBH,CDBH,HPZL,GCSJ,CLSD,CSYS,HPHM,FWQDZ,TP1,TP2,TP3,WFBJ,RKSJ,SER01,SER02,SER03,SER04,SER05,LDBH,LKBH)values' + s;
     SQLHelper.ExecuteSql(s);
     logger.Info('SavePassRec OK: ' + sql.Count.ToString);
   end;

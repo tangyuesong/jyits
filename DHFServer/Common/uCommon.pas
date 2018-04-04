@@ -3,7 +3,7 @@ unit uCommon;
 interface
 
 uses
-  SysUtils, IOUtils, Generics.Collections, IniFiles, DB, Classes,
+  SysUtils, IOUtils, Generics.Collections, IniFiles, DB, Classes, IdHTTP,
   uGlobal, uLogger, uTypes, uSQLHelper, uPassList, uTrans, uTmri;
 
 procedure LoadDevice;
@@ -17,11 +17,11 @@ procedure LoadOpenedDevice;
 procedure UpdateDeviceGXSJ(sbbh: string; gxsj: double);
 procedure AddSMS(sn, sj, msg: string);
 procedure SQLError(const SQL, Description: string);
-
 procedure Initialize;
 procedure Finalizat;
 
 implementation
+
 
 procedure UpdateDeviceGXSJ(sbbh: string; gxsj: double);
 var
@@ -78,7 +78,7 @@ begin
       if not tmp.ContainsKey(key) then
         tmp.Add(key, item)
       else begin
-        item.SJHM := tmp[key].SJHM + ';' + item.SJHM;
+        item.SJHM := tmp[key].SJHM + ',' + item.SJHM;
         tmp.AddOrSetValue(key, item);
       end;
       Next;
@@ -99,10 +99,12 @@ var
 begin
   s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsTimeBegin,b.smsTimeEnd,b.CLPP,b.CSYS,b.KDBH,b.BZ '
      + 'from T_KK_ALARM a inner join T_KK_ALARM_JTP b '
-     + 'on a.CLPP like ''%'' + b.CLPP + ''%'' and a.CSYS like  ''%'' + b.CSYS + ''%'' '
+     + 'on ((a.CLPP like ''%'' + b.CLPP + ''%'') or(a.hpzl=b.hpzl) '
+     + 'or(b.FZJG like  ''%'' + left(a.HPHM,1) + ''%'' and b.FZJG like ''%'' + substr(a.HPHM,2,1)+''%''))'
      + 'left join T_KK_ALARM_JTP_Except c on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
      + 'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'') and c.HPHM is null';
   tmp := TDictionary<string, TAlarm>.Create;
+  logger.Info('[LoadAlarmJTP]' + s);
   with SQLHelper.Query(s) do
   begin
     while not EOF do
@@ -313,6 +315,31 @@ begin
   end;
 end;
 
+procedure LoadPicturePathMap;
+var
+  sql: string;
+  item: TKKPictureConfig;
+begin
+  gPicturePathMap.Clear;
+  sql := 'select KDBH,LocalPath,Url from T_KK_PictureConfig';
+  with SQLHelper.Query(sql) do
+  begin
+    while not EOF do
+    begin
+      item.KDBH := Fields[0].AsString;
+      item.LocalPath := Fields[1].AsString;
+      item.Url := Fields[2].AsString;
+      if not item.LocalPath.EndsWith('\') then
+        item.LocalPath := item.LocalPath + '\';
+      if not item.Url.EndsWith('/') then
+        item.Url := item.Url + '/';
+      gPicturePathMap.Add(item.KDBH, item);
+      Next;
+    end;
+    Free;
+  end;
+end;
+
 procedure LoadMainDic;
 begin
   gDicHPZL.Add('01', '大型汽车');
@@ -423,7 +450,8 @@ begin
 
   reload := ini.ReadInteger('sys', 'reload', 0) = 1;
   gHeartbeatUrl := ini.ReadString('sys', 'Heartbeat', '');
-  DCXXZP := ini.ReadString('sys', 'DCXXZP', ''); // 大车限行抓拍设备编号
+  if not gHeartbeatUrl.EndsWith('/') then
+    gHeartbeatUrl := gHeartbeatUrl + '/';
   //gDeviceStatusMobile := ini.ReadString('sys', 'DeviceStatusMobile', '');
   //gCJJG := ini.ReadString('sys', 'CJJG', '');
 
@@ -432,8 +460,9 @@ begin
   //DFUser := ini.ReadString('K08', 'DFUser', 'admin');
   //DFPwd := ini.ReadString('K08', 'DFPwd', 'Hik12345');
 
-  if not gHeartbeatUrl.EndsWith('/') then
-    gHeartbeatUrl := gHeartbeatUrl + '/';
+  DCXXZP := ini.ReadString('sys', 'DCXXZP', ''); // 大车限行抓拍设备编号
+  gDLMUrl := ini.ReadString('sys', 'DLMUrl', 'http://10.46.177.136:8888/Download?');
+  gAsynchronous := ini.ReadInteger('sys', 'Asyn', 0) = 1;
 
   ini.Free;
   gDicDevice := nil;
@@ -452,6 +481,7 @@ begin
   gUnknowDevice := TDictionary<string, boolean>.Create;
   gVehDic := TDictionary<string, boolean>.Create;
   gDicHPZL := TDictionary<string, string>.Create;
+  gPicturePathMap := TDictionary<string, TKKPictureConfig>.Create;
   PassList := TPassList.Create;
   LoadDevice;
   LoadMainDic;
@@ -461,6 +491,7 @@ begin
   loadHBC;
   LoadOpenedDevice;
   //LoadVeh;
+  LoadPicturePathMap;
 end;
 
 procedure Finalizat;

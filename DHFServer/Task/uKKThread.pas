@@ -6,7 +6,8 @@ uses
   Classes, SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Option, FireDAC.Stan.Def,
   FireDAC.DApt, FireDAC.Stan.Async, FireDAC.Stan.Expr, FireDAC.Stan.Pool,
   IOUtils, IdHttp, Generics.Collections, Variants, DateUtils, uBaseThread,
-  uInterface, uTypes, uGlobal, uCommon, uPassList;
+  uInterface, uTypes, uGlobal, uCommon, uPassList, System.Net.URLClient,
+  System.Net.HttpClient, System.Net.HttpClientComponent;
 
 type
   TKKThread = class(TBaseThread)
@@ -21,6 +22,9 @@ type
     procedure DealPass(pass: TPass);
     function DealVio(pass: TPass): string;
     function GetVioTemp(pass: TPass): TVioTemp;
+    function DownLoadPicture(pass: TPass): TPass;
+    procedure NetHTTPClient1RequestCompleted(const Sender: TObject;
+      const AResponse: IHTTPResponse);
   protected
     procedure Prepare; override;
     procedure Perform; override;
@@ -78,10 +82,11 @@ begin
         pass := GetPass;
         if pass.kdbh <> '' then
         begin
-            TMypint.DoAlarm(pass);
-            wfxw := DealVio(pass);
-            pass.WFXW := wfxw;
-            DealPass(pass);
+          pass := DownLoadPicture(pass);
+          TMypint.DoAlarm(pass);
+          wfxw := DealVio(pass);
+          pass.WFXW := wfxw;
+          DealPass(pass);
         end;
       except
         on e: exception do
@@ -240,8 +245,81 @@ begin
   result.tp1 := TPath.GetFileName(result.tp1);
   result.tp2 := TPath.GetFileName(result.tp2);
   result.tp3 := TPath.GetFileName(result.tp3);
-  if result.fwqdz.Contains('172.31.135.126') then    // 旧设备BUG，特殊处理
-    result.fwqdz := result.fwqdz.Replace('172.31.135.126', '10.43.240.97', [rfReplaceAll]);
+end;
+
+procedure TKKThread.NetHTTPClient1RequestCompleted(const Sender: TObject;
+  const AResponse: IHTTPResponse);
+//var
+//  resp: string;
+begin
+//  resp := AResponse.ContentAsString();
+//  if resp.Contains(':0') then
+//    logger.Warn('[HttpGet.Response]' + resp);
+  Sender.Free;
+end;
+
+
+function TKKThread.DownLoadPicture(pass: TPass): TPass;
+  function HttpGet(url: string; Asynchronous: boolean): boolean;
+  var
+    http: TNetHttpClient;
+  begin
+    result := false;
+    http := TNetHttpClient.Create(nil);
+    if Asynchronous then
+    begin
+      http.Asynchronous := true;
+      http.OnRequestCompleted := NetHTTPClient1RequestCompleted;
+    end;
+    try
+      http.Get(url);
+      result := true;
+      logger.Debug('[TKKThread.HttpGet]' + url);
+    except
+      on e: exception do
+      begin
+        logger.Error('[TKKThread.HttpGet]' +  e.Message);
+        http.Free;
+      end;
+    end;
+    if not Asynchronous then
+      http.Free;
+  end;
+  function HttpSend(fwqdz, tp1, tp2, tp3, path: string): boolean;
+  var
+    url: string;
+  begin
+    url := gDLMUrl + 'src=' + fwqdz + tp1 + '&tgt=' + path + tp1;
+    result := HttpGet(url, gAsynchronous);
+    //if tp2 <> '' then
+    //  HttpGet(gDLMUrl + 'src=' + fwqdz + tp2 + '&tgt=' + path + tp2);
+    //if tp3 <> '' then
+    //  HttpGet(gDLMUrl + 'src=' + fwqdz + tp3 + '&tgt=' + path + tp3);
+  end;
+var
+  path: string;
+  kpc: TKKPictureConfig;
+begin
+  result := pass;
+  if gDLMUrl = '' then exit;
+  if gPicturePathMap.ContainsKey(pass.kdbh) then
+  begin
+    kpc := gPicturePathMap[pass.kdbh];
+  end
+  else if gPicturePathMap.ContainsKey('other') then
+  begin
+    kpc := gPicturePathMap['other'];
+  end
+  else
+    exit;
+  path := formatdatetime('yyyymm\dd\', Now) + pass.kdbh + '\';
+  if HttpSend(pass.FWQDZ, pass.tp1, pass.tp2, pass.tp3, kpc.LocalPath + path) then
+  begin
+    //result.ser01 := kpc.Url + path.Replace('\', '/');
+    result.ser01 := result.FWQDZ;
+    result.FWQDZ := kpc.Url + path.Replace('\', '/');
+    logger.Debug('ser01:' + result.ser01);
+  end;
 end;
 
 function TKKThread.GetVioTemp(pass: TPass): TVioTemp;

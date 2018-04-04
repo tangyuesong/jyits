@@ -167,6 +167,12 @@ type
     Passive: Boolean;
   end;
 
+  TKKPictureConfig = record
+    KDBH: string;
+    LocalPath: string;
+    Url: String;
+  end;
+
 implementation
 
 { TPass }

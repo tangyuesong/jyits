@@ -51,7 +51,9 @@ var
   kk, dj, idchina, hik: boolean;
   DCXXZP: string;
   reload: boolean;
-
+  gDLMUrl: string;
+  gAsynchronous: boolean;
+  gPicturePathMap: TDictionary<string, TKKPictureConfig>;
 
 implementation
 
