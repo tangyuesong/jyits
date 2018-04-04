@@ -38,7 +38,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, uCommon, uDictionary, uEntity,
-  StrUtils, uVioThread,
+  StrUtils, uVioThread, uFrameInput,
   System.Generics.Collections, uFrameBz, hyieutils, iexBitmaps, hyiedefs,
   iesettings, iexRulers, System.Contnrs, imageenview, ieview, ievect,
   Vcl.Imaging.jpeg, uLookUpDataSource, sfContnrs, uFrameWait;
@@ -111,6 +111,10 @@ type
     dxLayoutItem22: TdxLayoutItem;
     cbbCSYS1: TcxComboBox;
     dxLayoutGroup2: TdxLayoutGroup;
+    dxLayoutItem1: TdxLayoutItem;
+    cboSF: TcxComboBox;
+    dxLayoutItem2: TdxLayoutItem;
+    btnSJ: TcxButton;
     procedure AfterConstruction; override;
     procedure btnDeleteClick(Sender: TObject);
     procedure btnNextClick(Sender: TObject);
@@ -118,8 +122,10 @@ type
     procedure tvDevFocusedRecordChanged(Sender: TcxCustomGridTableView;
       APrevFocusedRecord, AFocusedRecord: TcxCustomGridRecord;
       ANewItemRecordFocusingChanged: Boolean);
+    procedure btnSJClick(Sender: TObject);
   private
     FFrameWait: TFrameWait;
+    FFrameInput: TFrameInput;
     FPicFile: String;
     isfms: Integer;
     procedure LoadData;
@@ -129,6 +135,7 @@ type
     procedure ShowVioPicture(picFile: string);
     procedure ShowFrameWait();
     procedure FreeFrameWait();
+    procedure FrameInputbtnSaveClick(Sender: TObject);
   public
   end;
 
@@ -141,7 +148,7 @@ begin
   inherited;
   imgviopic.IO.LoadFromFile(ExtractFilePath(ParamStr(0)) + 'image\ZWTP.png');
 
-  //TLZDictionary.BindCombobox(cbbBklx, TLZDictionary.gDicMain['BKLX'], True);
+  TLZDictionary.BindCombobox(cboSF, TLZDictionary.gDicMain['JC'], True);
   TLZDictionary.BindCombobox(cbbhpzl, TLZDictionary.gDicMain['HPZL'], True);
   TLZDictionary.BindCombobox(cbbCllx, TLZDictionary.gDicMain['CLLX'], True);
   TLZDictionary.BindCombobox(cbbCsys, TLZDictionary.gDicMain['CSYS'], True);
@@ -186,7 +193,7 @@ var
 begin
   ShowFrameWait;
   InitControl;
-  Param := 'hphm=' + txtHPHM.Text + '&clpp=' + txtCLPP.Text + '&csys=' + cboCSYS.Text
+  Param := 'hphm=' + copy(cboSF.Text, 4, 2) + txtHPHM.Text + '&clpp=' + txtCLPP.Text + '&csys=' + cboCSYS.Text
     + '&beginGXSJ='+FormatDateTime('yyyy/mm/dd', dtDateBegin.Date)
     + '&endGXSJ='+FormatDateTime('yyyy/mm/dd', dtDateEnd.Date + 1)
     + '&bklx=' + copy(cboType.Text, 1, 2);
@@ -266,17 +273,53 @@ begin
   LoadData;
 end;
 
+procedure TFrameJTPCheck.btnSJClick(Sender: TObject);
+begin
+  if not tbVio.Eof then exit;
+  if not Assigned(FFrameInput) then
+  begin
+    FFrameInput := TFrameInput.Create(self);
+    FFrameInput.Parent := self;
+    FFrameInput.Top := (self.Height - FFrameInput.Height) div 2;
+    FFrameInput.Left := (self.Width - FFrameInput.Width) div 2;
+    FFrameInput.btnSave.OnClick := self.FrameInputbtnSaveClick;
+    FFrameInput.btnExit.OnClick := self.FrameInputbtnSaveClick;
+  end;
+  dxLayoutControl1Group_Root.Visible := false;
+  FFrameInput.Show;
+end;
+
+procedure TFrameJTPCheck.FrameInputbtnSaveClick(Sender: TObject);
+var
+  sjhm: string;
+begin
+  dxLayoutControl1Group_Root.Visible := true;
+  if Sender = FFrameInput.btnSave then
+  begin
+    SJHM := FFrameInput.edtCZSJ.Text;
+    TRequestItf.DbQuery('ModifyT_KK_ALARM', 'systemid=' + tbVio.FieldByName('SYSTEMID').AsString + '&IsCheck=1&SJHM='+SJHM);
+    tbVio.Delete;
+  end;
+  FFrameInput.Hide;
+end;
+
 procedure TFrameJTPCheck.btnNextClick(Sender: TObject);
 begin
-  TRequestItf.DbQuery('ModifyT_KK_ALARM', 'systemid=' + tbVio.FieldByName('SYSTEMID').AsString + '&IsCheck=1');
-  tbVio.Delete;
+  if not tbVio.Eof then
+  begin
+    TRequestItf.DbQuery('ModifyT_KK_ALARM', 'systemid=' + tbVio.FieldByName('SYSTEMID').AsString + '&IsCheck=1');
+    tbVio.Delete;
+  end;
   //FillControl;
 end;
 
 procedure TFrameJTPCheck.btnDeleteClick(Sender: TObject);
 begin
-  TRequestItf.DbQuery('ModifyT_KK_ALARM', 'systemid=' + tbVio.FieldByName('SYSTEMID').AsString + '&zt=2&IsCheck=1');
-  tbVio.Delete;
+  if not tbVio.Eof then
+  begin
+    TRequestItf.DbQuery('ModifyT_KK_ALARM', 'systemid=' + tbVio.FieldByName('SYSTEMID').AsString + '&zt=2&IsCheck=1');
+    tbVio.Delete;
+  end;
   //FillControl;
 end;
 

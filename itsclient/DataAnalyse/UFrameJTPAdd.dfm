@@ -8,8 +8,8 @@ inherited FrameJTPAdd: TFrameJTPAdd
     Width = 615
     Height = 299
     Align = alClient
-    ExplicitWidth = 550
-    ExplicitHeight = 280
+    ExplicitWidth = 615
+    ExplicitHeight = 299
     inherited btnSave: TcxButton
       Left = 226
       Top = 246

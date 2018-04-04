@@ -115,6 +115,7 @@ begin
     FDev.Left := (self.Parent.Width - FDev.Width) div 2;
     FDev.btnSave.OnClick := self.DevSaveClick;
     FDev.btnExit.OnClick := self.DevExitClick;
+    FDev.liReSelect.Visible := true;
   end;
 
   FDev.tb.Close;

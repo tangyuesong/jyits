@@ -13,25 +13,25 @@ object FrameJTPCheck: TFrameJTPCheck
     TabOrder = 0
     LayoutLookAndFeel = DM.dxLayoutSkinLookAndFeel1
     object btnDelete: TcxButton
-      Left = 707
+      Left = 748
       Top = 596
       Width = 75
       Height = 30
       Caption = #21024#38500'(&D)'
       OptionsImage.ImageIndex = 1
       OptionsImage.Images = cxImageList1
-      TabOrder = 19
+      TabOrder = 21
       OnClick = btnDeleteClick
     end
     object btnNext: TcxButton
-      Left = 788
+      Left = 829
       Top = 596
       Width = 75
       Height = 30
       Caption = #19979#19968#26465'(&N)'
       OptionsImage.ImageIndex = 0
       OptionsImage.Images = cxImageList1
-      TabOrder = 20
+      TabOrder = 22
       OnClick = btnNextClick
     end
     object edtclpp: TcxTextEdit
@@ -40,7 +40,7 @@ object FrameJTPCheck: TFrameJTPCheck
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 12
+      TabOrder = 13
       Height = 21
       Width = 193
     end
@@ -64,7 +64,7 @@ object FrameJTPCheck: TFrameJTPCheck
       Top = 545
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 13
+      TabOrder = 14
       Height = 21
       Width = 193
     end
@@ -77,12 +77,12 @@ object FrameJTPCheck: TFrameJTPCheck
       Properties.CharCase = ecUpperCase
       ShowHint = True
       Style.HotTrack = False
-      TabOrder = 9
+      TabOrder = 10
       Height = 21
       Width = 193
     end
     object txtCLPP: TcxTextEdit
-      Left = 726
+      Left = 795
       Top = 10
       AutoSize = False
       Properties.CharCase = ecUpperCase
@@ -92,7 +92,7 @@ object FrameJTPCheck: TFrameJTPCheck
       Width = 70
     end
     object cboCSYS: TcxComboBox
-      Left = 855
+      Left = 924
       Top = 10
       AutoSize = False
       Style.HotTrack = False
@@ -105,7 +105,7 @@ object FrameJTPCheck: TFrameJTPCheck
       Top = 68
       Width = 471
       Height = 345
-      TabOrder = 8
+      TabOrder = 9
       object tvDev: TcxGridDBTableView
         Navigator.Buttons.CustomButtons = <>
         Navigator.Buttons.Prior.Visible = False
@@ -184,7 +184,7 @@ object FrameJTPCheck: TFrameJTPCheck
       end
     end
     object txtHPHM: TcxTextEdit
-      Left = 603
+      Left = 672
       Top = 10
       AutoSize = False
       Properties.CharCase = ecUpperCase
@@ -195,7 +195,7 @@ object FrameJTPCheck: TFrameJTPCheck
     end
     object dtDateBegin: TcxDateEdit
       Left = 603
-      Top = 41
+      Top = 37
       AutoSize = False
       EditValue = 43179d
       Style.HotTrack = False
@@ -205,7 +205,7 @@ object FrameJTPCheck: TFrameJTPCheck
     end
     object dtDateEnd: TcxDateEdit
       Left = 706
-      Top = 41
+      Top = 37
       AutoSize = False
       EditValue = 43179d
       Style.HotTrack = False
@@ -213,22 +213,13 @@ object FrameJTPCheck: TFrameJTPCheck
       Height = 21
       Width = 90
     end
-    object btnSearch: TcxButton
-      Left = 946
-      Top = 10
-      Width = 75
-      Height = 25
-      Caption = #26597#35810
-      TabOrder = 1
-      OnClick = btnSearchClick
-    end
     object cbbhpzl: TcxComboBox
       Left = 621
       Top = 464
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 10
+      TabOrder = 11
       Height = 21
       Width = 193
     end
@@ -237,7 +228,7 @@ object FrameJTPCheck: TFrameJTPCheck
       Top = 491
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 11
+      TabOrder = 12
       Height = 21
       Width = 193
     end
@@ -250,7 +241,7 @@ object FrameJTPCheck: TFrameJTPCheck
       Properties.CharCase = ecUpperCase
       ShowHint = True
       Style.HotTrack = False
-      TabOrder = 14
+      TabOrder = 15
       Height = 21
       Width = 165
     end
@@ -260,7 +251,7 @@ object FrameJTPCheck: TFrameJTPCheck
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 15
+      TabOrder = 16
       Height = 21
       Width = 165
     end
@@ -269,7 +260,7 @@ object FrameJTPCheck: TFrameJTPCheck
       Top = 491
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 16
+      TabOrder = 17
       Height = 21
       Width = 165
     end
@@ -279,7 +270,7 @@ object FrameJTPCheck: TFrameJTPCheck
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 17
+      TabOrder = 18
       Height = 21
       Width = 165
     end
@@ -288,13 +279,13 @@ object FrameJTPCheck: TFrameJTPCheck
       Top = 545
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 18
+      TabOrder = 19
       Height = 21
       Width = 165
     end
     object cboType: TcxComboBox
       Left = 855
-      Top = 41
+      Top = 37
       AutoSize = False
       Properties.Items.Strings = (
         '02 '#22871#29260
@@ -302,8 +293,37 @@ object FrameJTPCheck: TFrameJTPCheck
       Style.HotTrack = False
       TabOrder = 7
       Text = '02 '#22871#29260
-      Height = 21
+      Height = 25
       Width = 85
+    end
+    object cboSF: TcxComboBox
+      Left = 603
+      Top = 10
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 1
+      Height = 21
+      Width = 63
+    end
+    object btnSearch: TcxButton
+      Left = 946
+      Top = 37
+      Width = 75
+      Height = 25
+      Caption = #26597#35810
+      TabOrder = 8
+      OnClick = btnSearchClick
+    end
+    object btnSJ: TcxButton
+      Left = 667
+      Top = 596
+      Width = 75
+      Height = 30
+      Caption = #24067#25511'(&H)'
+      OptionsImage.ImageIndex = 0
+      OptionsImage.Images = cxImageList1
+      TabOrder = 20
+      OnClick = btnSJClick
     end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       AlignHorz = ahClient
@@ -376,7 +396,7 @@ object FrameJTPCheck: TFrameJTPCheck
       ControlOptions.OriginalHeight = 30
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 0
+      Index = 1
     end
     object dxLayoutItem4: TdxLayoutItem
       Parent = liButton
@@ -386,7 +406,7 @@ object FrameJTPCheck: TFrameJTPCheck
       ControlOptions.OriginalHeight = 30
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 1
+      Index = 2
     end
     object dxLayoutGroup5: TdxLayoutGroup
       Parent = lgInfo
@@ -501,7 +521,6 @@ object FrameJTPCheck: TFrameJTPCheck
     end
     object dxLayoutItem11: TdxLayoutItem
       Parent = dxLayoutGroup1
-      CaptionOptions.Text = #21495#29260#21495#30721
       Control = txtHPHM
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 64
@@ -525,17 +544,6 @@ object FrameJTPCheck: TFrameJTPCheck
       ControlOptions.OriginalWidth = 90
       ControlOptions.ShowBorder = False
       Index = 1
-    end
-    object dxLayoutItem8: TdxLayoutItem
-      Parent = dxLayoutGroup1
-      AlignHorz = ahRight
-      AlignVert = avClient
-      CaptionOptions.Visible = False
-      Control = btnSearch
-      ControlOptions.OriginalHeight = 25
-      ControlOptions.OriginalWidth = 75
-      ControlOptions.ShowBorder = False
-      Index = 0
     end
     object dxLayoutItem14: TdxLayoutItem
       Parent = dxLayoutGroup6
@@ -614,6 +622,36 @@ object FrameJTPCheck: TFrameJTPCheck
       LayoutDirection = ldHorizontal
       ShowBorder = False
       Index = 1
+    end
+    object dxLayoutItem1: TdxLayoutItem
+      Parent = dxLayoutGroup1
+      CaptionOptions.Text = #21495#29260#21495#30721
+      Control = cboSF
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 63
+      ControlOptions.ShowBorder = False
+      Index = 0
+    end
+    object dxLayoutItem8: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      AlignHorz = ahClient
+      AlignVert = avClient
+      CaptionOptions.Visible = False
+      Control = btnSearch
+      ControlOptions.OriginalHeight = 25
+      ControlOptions.OriginalWidth = 75
+      ControlOptions.ShowBorder = False
+      Index = 3
+    end
+    object dxLayoutItem2: TdxLayoutItem
+      Parent = liButton
+      AlignVert = avClient
+      CaptionOptions.Visible = False
+      Control = btnSJ
+      ControlOptions.OriginalHeight = 30
+      ControlOptions.OriginalWidth = 75
+      ControlOptions.ShowBorder = False
+      Index = 0
     end
   end
   object cxImageList1: TcxImageList

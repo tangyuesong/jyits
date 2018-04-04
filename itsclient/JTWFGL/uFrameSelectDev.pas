@@ -41,6 +41,9 @@ type
     tvDevColumn3: TcxGridDBColumn;
     tvDevColumn4: TcxGridDBColumn;
     ColWfxw: TcxGridDBColumn;
+    liReSelect: TdxLayoutItem;
+    btnReSelect: TcxButton;
+    procedure btnReSelectClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -53,5 +56,22 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TFrameSelectDev.btnReSelectClick(Sender: TObject);
+begin
+  inherited;
+  if tb = nil then exit;
+  if tb.Eof then exit;
+  if tb.FindField('bj') = nil then exit;
+  tb.First;
+  while not tb.Eof do
+  begin
+    tb.Edit;
+    tb.FieldByName('bj').AsBoolean := not tb.FieldByName('bj').AsBoolean;
+    tb.Post;
+    tb.Next;
+  end;
+  tb.First;
+end;
 
 end.

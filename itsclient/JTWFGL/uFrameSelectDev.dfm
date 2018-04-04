@@ -106,6 +106,16 @@ inherited FrameSelectDev: TFrameSelectDev
         GridView = tvDev
       end
     end
+    object btnReSelect: TcxButton [3]
+      Left = 28
+      Top = 447
+      Width = 75
+      Height = 25
+      Caption = #21453#36873
+      OptionsImage.ImageIndex = 56
+      TabOrder = 3
+      OnClick = btnReSelectClick
+    end
     inherited dxLayoutGroup1: TdxLayoutGroup
       AlignHorz = ahClient
       CaptionOptions.Text = #36873#25321#35774#22791
@@ -119,6 +129,17 @@ inherited FrameSelectDev: TFrameSelectDev
       ControlOptions.OriginalWidth = 425
       ControlOptions.ShowBorder = False
       Index = 0
+    end
+    object liReSelect: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      AlignVert = avClient
+      CaptionOptions.Visible = False
+      Visible = False
+      Control = btnReSelect
+      ControlOptions.OriginalHeight = 25
+      ControlOptions.OriginalWidth = 75
+      ControlOptions.ShowBorder = False
+      Index = 1
     end
   end
   object tb: TFDMemTable
