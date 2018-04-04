@@ -25,7 +25,8 @@ uses
   dxLayoutContainer, cxClasses, Vcl.StdCtrls, cxButtons, dxLayoutControl,
   dxLayoutcxEditAdapters, cxContainer, cxEdit, cxMemo, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxImage, uEntity, Udictionary, uGlobal, uCommon, uJsonUtils,
-  uRequestItf, cxSpinEdit, cxTimeEdit, cxCheckBox, uFrameSelectDev;
+  uRequestItf, cxSpinEdit, cxTimeEdit, cxCheckBox, uFrameSelectDev,
+  cxCheckComboBox;
 
 type
   TOK = procedure of object;
@@ -44,19 +45,25 @@ type
     dxLayoutGroup5: TdxLayoutGroup;
     edtclpp1: TcxTextEdit;
     dxLayoutItem16: TdxLayoutItem;
-    cbbCsys: TcxComboBox;
+    cbbHPZL: TcxComboBox;
     dxLayoutItem18: TdxLayoutItem;
     edtKDBH: TcxTextEdit;
     btnKDBH: TcxButton;
     dxLayoutItem1: TdxLayoutItem;
     dxLayoutGroup6: TdxLayoutGroup;
     dxLayoutItem2: TdxLayoutItem;
+    cboXZQH: TcxComboBox;
+    dxLayoutItem5: TdxLayoutItem;
+    cboFZJG2: TcxCheckComboBox;
+    cboFZJG1: TcxComboBox;
+    dxLayoutItem10: TdxLayoutItem;
+    dxLayoutItem11: TdxLayoutItem;
     procedure btnSaveClick(Sender: TObject);
     procedure btnKDBHClick(Sender: TObject);
     procedure edtKDBHKeyPress(Sender: TObject; var Key: Char);
+    procedure cboXZQHPropertiesChange(Sender: TObject);
   private
     Fok: TOK;
-    KDBH: string;
     FDev: TFrameSelectDev;
     procedure DevExitClick(Sender: TObject);
     procedure DevSaveClick(Sender: TObject);
@@ -78,12 +85,14 @@ implementation
 procedure TFrameJTPAdd.AfterConstruction;
 begin
   inherited;
-  TLZDictionary.BindCombobox(cbbCsys, TLZDictionary.gDicMain['CSYS'], True);
+  TLZDictionary.BindCombobox(cboFZJG1, TLZDictionary.gDicMain['JC'], True);
+  TLZDictionary.BindCombobox(cbbHPZL, TLZDictionary.gDicMain['HPZL'], True);
+  TLZDictionary.BindCombobox(cboXZQH, TLZDictionary.gDicMain['XZQH'], True);
 end;
 
 procedure TFrameJTPAdd.btnKDBHClick(Sender: TObject);
 var
-  key: string;
+  key, kks, xzqh: string;
   dev: TDevice;
 begin
   inherited;
@@ -112,13 +121,20 @@ begin
 
   FDev.tb.DisableControls;
   FDev.tb.Edit;
+  kks := edtKDBH.Text;
+  xzqh := '';
+  if cboXZQH.SelectedItem >= 0 then
+    xzqh := copy(cboXZQH.Text, 1, 6);
   for key in TLZDictionary.gDicDev[1].Keys do
   begin
     dev := TLZDictionary.gDicDev[1][key];
-    FDev.tb.Append;
-    FDev.tb.FieldByName('WFDD').AsString := dev.SBBH;
-    FDev.tb.FieldByName('SBDDMC').AsString := dev.SBDDMC;
-    FDev.tb.FieldByName('bj').AsBoolean := false;
+    if (xzqh<>'') and dev.SBBH.StartsWith(xzqh) then
+    begin
+      FDev.tb.Append;
+      FDev.tb.FieldByName('WFDD').AsString := dev.SBBH;
+      FDev.tb.FieldByName('SBDDMC').AsString := dev.SBDDMC;
+      FDev.tb.FieldByName('bj').AsBoolean := kks.Contains(dev.SBBH);
+    end;
   end;
   FDev.tb.Post;
   FDev.tb.First;
@@ -130,10 +146,9 @@ end;
 procedure TFrameJTPAdd.DevSaveClick(Sender: TObject);
 var
   recNo: Integer;
-  ss, ss1: string;
+  ss: string;
 begin
   ss := '';
-  ss1 := '';
   if not FDev.tb.Active then
     exit;
   FDev.tb.DisableControls;
@@ -144,15 +159,12 @@ begin
     if FDev.tb.FieldByName('bj').AsBoolean then
     begin
       ss := ss + ',' + FDev.tb.FieldByName('WFDD').AsString;
-      ss1 := ss1 + ',' + FDev.tb.FieldByName('SBDDMC').AsString;
     end;
     FDev.tb.Next;
   end;
   FDev.tb.recNo := recNo;
   FDev.tb.EnableControls;
-
-  KDBH := ss;
-  edtKDBH.Text := ss1;
+  edtKDBH.Text := ss;
   DevExitClick(nil);
 end;
 
@@ -173,17 +185,25 @@ end;
 
 procedure TFrameJTPAdd.btnSaveClick(Sender: TObject);
 var
-  s: string;
+  s, fzjg: string;
 begin
   inherited;
-  if Trim(edtclpp1.Text) = '' then
+  if (edtclpp1.Text = '')and(cbbHPZL.Text = '')and(cboFZJG1.Text = '') then
   begin
-    Application.MessageBox('品牌型号不能为空', '错误', MB_OK + MB_ICONSTOP);
+    Application.MessageBox('发证机关、品牌型号、号牌种类不能同时为空', '错误', MB_OK + MB_ICONSTOP);
     exit;
   end;
-
-  s := 'BKR=' + gUser.yhbh + '&SJHM=' + edtSJ.Text + '&ZT=1&CLPP='
-    + edtCLPP1.Text + '&CSYS=' + TLZDictionary.StrtoDicInfo(cbbCsys.Text).dm
+  if edtSJ.Text = '' then
+  begin
+    Application.MessageBox('手机号码不能为空', '错误', MB_OK + MB_ICONSTOP);
+    exit;
+  end;
+  fzjg := '';
+  if cboFZJG1.Text <> '' then
+    fzjg := copy(cboFZJG1.Text, 4, 2) + cboFZJG2.Text;
+  s := 'BKR=' + gUser.yhbh + '&SJHM=' + edtSJ.Text
+    + '&ZT=1&CLPP=' + edtCLPP1.Text + '&FZJG=' + fzjg
+    + '&HPZL=' + TLZDictionary.StrtoDicInfo(cbbHPZL.Text).dm
     + '&KDBH=' + edtKDBH.Text + '&BZ=' + edtBZ.Text
     + '&smsTimeBegin=' + FormatDatetime('hhmm', tmBegin.Time)
     + '&smsTimeEnd=' + FormatDatetime('hhmm', tmEnd.Time);
@@ -198,6 +218,26 @@ begin
     OnOK();
   end;
   ClearControls(Self);
+end;
+
+procedure TFrameJTPAdd.cboXZQHPropertiesChange(Sender: TObject);
+var
+  key, xzqh, ss: string;
+begin
+  inherited;
+  ss := '';
+  if cboXZQH.SelectedItem >= 0 then
+  begin
+    xzqh := copy(cboXZQH.Text, 1, 6);
+    for key in TLZDictionary.gDicDev[1].Keys do
+    begin
+      if key.StartsWith(xzqh) then
+      begin
+        ss := ss + key + ','
+      end;
+    end;
+  end;
+  edtKDBH.Text := ss;
 end;
 
 end.

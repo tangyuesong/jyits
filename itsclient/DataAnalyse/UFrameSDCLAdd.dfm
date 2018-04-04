@@ -1,22 +1,26 @@
 inherited FrameSDCLAdd: TFrameSDCLAdd
-  Height = 289
+  Width = 609
+  Height = 275
   AutoSize = False
-  ExplicitHeight = 289
+  ExplicitWidth = 609
+  ExplicitHeight = 275
   inherited dxLayoutControl2: TdxLayoutControl
-    Height = 289
+    Width = 609
+    Height = 275
     Align = alClient
     AutoSize = True
-    ExplicitHeight = 289
+    ExplicitWidth = 609
+    ExplicitHeight = 275
     inherited btnSave: TcxButton
-      Top = 236
-      TabOrder = 10
+      Top = 222
+      TabOrder = 11
       OnClick = btnSaveClick
-      ExplicitTop = 236
+      ExplicitTop = 222
     end
     inherited btnExit: TcxButton
-      Top = 236
-      TabOrder = 11
-      ExplicitTop = 236
+      Top = 222
+      TabOrder = 12
+      ExplicitTop = 222
     end
     object tmBegin: TcxTimeEdit [2]
       Left = 82
@@ -41,7 +45,7 @@ inherited FrameSDCLAdd: TFrameSDCLAdd
       Left = 82
       Top = 120
       Style.HotTrack = False
-      TabOrder = 9
+      TabOrder = 10
       Height = 75
       Width = 496
     end
@@ -73,35 +77,35 @@ inherited FrameSDCLAdd: TFrameSDCLAdd
       Width = 131
     end
     object edtKDBH: TcxTextEdit [8]
-      Left = 82
+      Left = 334
       Top = 92
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 7
+      TabOrder = 8
       OnKeyPress = edtKDBHKeyPress
       Height = 21
-      Width = 463
+      Width = 216
     end
     object btnKDBH: TcxButton [9]
-      Left = 552
+      Left = 557
       Top = 92
       Width = 21
       Height = 21
       Caption = '...'
       OptionsImage.ImageIndex = 56
-      TabOrder = 8
+      TabOrder = 9
       OnClick = btnKDBHClick
     end
-    object cbbBKLX: TcxComboBox [10]
+    object cbbBKLX: TcxCheckComboBox [10]
       Left = 471
       Top = 36
       AutoSize = False
-      Properties.Items.Strings = (
-        #20551#22871#29260#36710
-        #20840#37096)
+      Properties.Delimiter = ','
+      Properties.ShowEmptyText = False
+      Properties.DropDownRows = 12
+      Properties.Items = <>
       Style.HotTrack = False
       TabOrder = 3
-      Text = #20551#22871#29260#36710
       Height = 21
       Width = 107
     end
@@ -110,6 +114,7 @@ inherited FrameSDCLAdd: TFrameSDCLAdd
       Top = 36
       AutoSize = False
       Properties.Delimiter = ','
+      Properties.ShowEmptyText = False
       Properties.DropDownRows = 12
       Properties.Items = <
         item
@@ -221,6 +226,16 @@ inherited FrameSDCLAdd: TFrameSDCLAdd
       Height = 21
       Width = 66
     end
+    object cboXZQH: TcxComboBox [12]
+      Left = 82
+      Top = 92
+      AutoSize = False
+      Properties.OnChange = cboXZQHPropertiesChange
+      Style.HotTrack = False
+      TabOrder = 7
+      Height = 21
+      Width = 191
+    end
     inherited dxLayoutGroup1: TdxLayoutGroup
       CaptionOptions.Text = #36861#36394#20449#24687#37319#38598
     end
@@ -314,9 +329,9 @@ inherited FrameSDCLAdd: TFrameSDCLAdd
       CaptionOptions.Text = #36807#36710#22320#28857
       Control = edtKDBH
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 463
+      ControlOptions.OriginalWidth = 216
       ControlOptions.ShowBorder = False
-      Index = 0
+      Index = 1
     end
     object dxLayoutItem1: TdxLayoutItem
       Parent = dxLayoutGroup5
@@ -327,7 +342,7 @@ inherited FrameSDCLAdd: TFrameSDCLAdd
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 21
       ControlOptions.ShowBorder = False
-      Index = 1
+      Index = 2
     end
     object dxLayoutItem5: TdxLayoutItem
       Parent = dxLayoutGroup6
@@ -347,6 +362,16 @@ inherited FrameSDCLAdd: TFrameSDCLAdd
       ControlOptions.OriginalWidth = 66
       ControlOptions.ShowBorder = False
       Index = 1
+    end
+    object dxLayoutItem11: TdxLayoutItem
+      Parent = dxLayoutGroup5
+      AlignVert = avClient
+      CaptionOptions.Text = #36758#21306
+      Control = cboXZQH
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 191
+      ControlOptions.ShowBorder = False
+      Index = 0
     end
   end
 end

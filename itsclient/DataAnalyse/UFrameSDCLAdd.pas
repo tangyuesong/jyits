@@ -53,15 +53,17 @@ type
     cbbHPZL: TcxComboBox;
     dxLayoutGroup6: TdxLayoutGroup;
     dxLayoutItem5: TdxLayoutItem;
-    cbbBKLX: TcxComboBox;
+    cbbBKLX: TcxCheckComboBox;
     dxLayoutItem10: TdxLayoutItem;
     cboFZJG2: TcxCheckComboBox;
+    dxLayoutItem11: TdxLayoutItem;
+    cboXZQH: TcxComboBox;
     procedure btnSaveClick(Sender: TObject);
     procedure btnKDBHClick(Sender: TObject);
     procedure edtKDBHKeyPress(Sender: TObject; var Key: Char);
+    procedure cboXZQHPropertiesChange(Sender: TObject);
   private
     Fok: TOK;
-    KDBH: string;
     FDev: TFrameSelectDev;
     procedure DevExitClick(Sender: TObject);
     procedure DevSaveClick(Sender: TObject);
@@ -80,17 +82,26 @@ implementation
 { TFrameSDCL }
 
 procedure TFrameSDCLAdd.AfterConstruction;
+var
+  bklx: string;
+  item: TcxCheckComboboxItem;
 begin
   inherited;
-  TLZDictionary.BindCombobox(cbbHPZL, TLZDictionary.gDicMain['HPZL'], True);
-  TLZDictionary.BindCombobox(cbbBKLX, TLZDictionary.gDicMain['BKLX'], True);
-  cbbBKLX.Properties.Items.Insert(0, '全部');
   TLZDictionary.BindCombobox(cboFZJG1, TLZDictionary.gDicMain['JC'], True);
+  TLZDictionary.BindCombobox(cbbHPZL, TLZDictionary.gDicMain['HPZL'], True);
+  TLZDictionary.BindCombobox(cboXZQH, TLZDictionary.gDicMain['XZQH'], True);
+
+  for bklx in TLZDictionary.gDicMain['BKLX'].Keys do
+  begin
+    item := cbbBKLX.Properties.Items.Add;
+    item.ShortDescription := bklx;
+    item.Description := TLZDictionary.gDicMain['BKLX'][bklx];
+  end;
 end;
 
 procedure TFrameSDCLAdd.btnKDBHClick(Sender: TObject);
 var
-  key: string;
+  key, xzqh, kks: string;
   dev: TDevice;
 begin
   inherited;
@@ -119,13 +130,20 @@ begin
 
   FDev.tb.DisableControls;
   FDev.tb.Edit;
+  kks := edtKDBH.Text;
+  xzqh := '';
+  if cboXZQH.SelectedItem >= 0 then
+    xzqh := copy(cboXZQH.Text, 1, 6);
   for key in TLZDictionary.gDicDev[1].Keys do
   begin
     dev := TLZDictionary.gDicDev[1][key];
-    FDev.tb.Append;
-    FDev.tb.FieldByName('WFDD').AsString := dev.SBBH;
-    FDev.tb.FieldByName('SBDDMC').AsString := dev.SBDDMC;
-    FDev.tb.FieldByName('bj').AsBoolean := false;
+    if (xzqh<>'') and dev.SBBH.StartsWith(xzqh) then
+    begin
+      FDev.tb.Append;
+      FDev.tb.FieldByName('WFDD').AsString := dev.SBBH;
+      FDev.tb.FieldByName('SBDDMC').AsString := dev.SBDDMC;
+      FDev.tb.FieldByName('bj').AsBoolean := kks.Contains(dev.SBBH);
+    end;
   end;
   FDev.tb.Post;
   FDev.tb.First;
@@ -137,10 +155,9 @@ end;
 procedure TFrameSDCLAdd.DevSaveClick(Sender: TObject);
 var
   recNo: Integer;
-  ss, ss1: string;
+  ss: string;
 begin
   ss := '';
-  ss1 := '';
   if not FDev.tb.Active then
     exit;
   FDev.tb.DisableControls;
@@ -151,7 +168,6 @@ begin
     if FDev.tb.FieldByName('bj').AsBoolean then
     begin
       ss := ss + ',' + FDev.tb.FieldByName('WFDD').AsString;
-      ss1 := ss1 + ',' + FDev.tb.FieldByName('SBDDMC').AsString;
     end;
     FDev.tb.Next;
   end;
@@ -159,8 +175,7 @@ begin
   FDev.tb.EnableControls;
   if ss <> '' then
   begin
-    KDBH := ss;
-    edtKDBH.Text := ss1;
+    edtKDBH.Text := ss;
     DevExitClick(nil);
   end
   else
@@ -187,9 +202,17 @@ var
   s, fzjg, bklx: string;
 begin
   inherited;
-  if Trim(cboFZJG1.Text) = '' then
+  fzjg := '';
+  if cboFZJG1.Text <> '' then
+    fzjg := copy(cboFZJG1.Text, 4, 2) + cboFZJG2.Text;
+  if (cbbBKLX.Text <> '')and(cbbBKLX.Text <> 'ALL') then
+    bklx := cbbBKLX.Text//copy(cbbBKLX.Text, 1, 2)
+  else
+    bklx := '';
+
+  if (fzjg = '')and(bklx = '') then
   begin
-    Application.MessageBox('发证机关不能为空', '错误', MB_OK + MB_ICONSTOP);
+    Application.MessageBox('发证机关和布控类型不能同时为空', '错误', MB_OK + MB_ICONSTOP);
     exit;
   end;
   if edtKDBH.Text = '' then
@@ -202,14 +225,9 @@ begin
     Application.MessageBox('手机号码不能为空', '错误', MB_OK + MB_ICONSTOP);
     exit;
   end;
-  fzjg := copy(cboFZJG1.Text, 4, 2) + cboFZJG2.Text;
-  if (cbbBKLX.Text <> '')and(cbbBKLX.Text <> '全部') then
-    bklx := copy(cbbBKLX.Text, 1, 2)
-  else
-    bklx := '';
   s := 'BKR=' + gUser.yhbh + '&SJHM=' + edtSJ.Text + '&ZT=1&FZJG='+ fzjg
     + '&HPZL=' + TLZDictionary.StrtoDicInfo(cbbHPZL.Text).dm
-    + '&KDBH=' + KDBH + '&bklx=' + bklx + '&BZ=' + edtBZ.Text
+    + '&KDBH=' + edtKDBH.Text + '&bklx=' + bklx + '&BZ=' + edtBZ.Text
     + '&smsTimeBegin=' + FormatDatetime('hhmm', tmBegin.Time)
     + '&smsTimeEnd=' + FormatDatetime('hhmm', tmEnd.Time);
 
@@ -223,6 +241,26 @@ begin
     OnOK();
   end;
   ClearControls(Self);
+end;
+
+procedure TFrameSDCLAdd.cboXZQHPropertiesChange(Sender: TObject);
+var
+  key, xzqh, ss: string;
+begin
+  inherited;
+  ss := '';
+  if cboXZQH.SelectedItem >= 0 then
+  begin
+    xzqh := copy(cboXZQH.Text, 1, 6);
+    for key in TLZDictionary.gDicDev[1].Keys do
+    begin
+      if key.StartsWith(xzqh) then
+      begin
+        ss := ss + key + ','
+      end;
+    end;
+  end;
+  edtKDBH.Text := ss;
 end;
 
 end.

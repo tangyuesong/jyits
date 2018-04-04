@@ -125,10 +125,8 @@ end;
 
 procedure TFrameSDCLList.LoadData;
 var
-  vdt, vdt2, zt, hphm, hpzl, Param: string;
+  vdt, vdt2, Param: string;
   s: string;
-  json: string;
-  pageSize, pageIndex: integer;
 begin
   inherited;
   vdt := DTKSSJ.Text;
