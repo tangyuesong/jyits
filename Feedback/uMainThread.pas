@@ -547,9 +547,9 @@ procedure TMainThread.DownloadAlarms;
     FSQLHelper.ExecuteSql(s);
 
     // 去掉无效预警：未报废、已年捡 等
-    s := 'delete t from ' + tmpTable + ' t, T_VIO_VEHICLE s '
-      + 'where t.hphm=s.hphm and t.hpzl=s.hpzl and (t.bklx=''05'' and s.ZT not like ''%P%'' and s.ZT not like ''%M%'')';
-    FSQLHelper.ExecuteSql(s);
+    //s := 'delete t from ' + tmpTable + ' t, T_VIO_VEHICLE s '
+    //  + 'where t.hphm=s.hphm and t.hpzl=s.hpzl and (t.bklx=''05'' and s.ZT not like ''%P%'' and s.ZT not like ''%M%'')';
+    //FSQLHelper.ExecuteSql(s);
 
     s := 'insert into T_KK_ALARMRESULT(BKLX,GCXH,HPHM,HPZL,GCSJ,CLSD,CD,KDBH,KDMC,VIOURL,BKZL) ';
     s := s + 'select a.BKLX,a.GCXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CD,Min(c.SBBH) SBBH,a.FXLX,a.URL,a.BKZL ';
