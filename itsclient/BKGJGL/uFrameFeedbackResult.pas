@@ -30,7 +30,7 @@ uses
   cxGridLevel, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, dxLayoutControl, dxLayoutcxEditAdapters,
   dxLayoutControlAdapters, cxContainer, Vcl.ComCtrls, dxCore, cxDateUtils,
-  Vcl.Menus,
+  Vcl.Menus, uCommon,
   Vcl.StdCtrls, cxButtons, cxTextEdit, cxDropDownEdit, cxMaskEdit, cxCalendar,
   cxEditRepositoryItems, sDialogs, uFrameSignBase, uEntity, dxPicData,
   uFrameFeedbackBase, System.Actions, Vcl.ActnList, cxLabel;
@@ -50,10 +50,13 @@ type
     edtHPHM: TcxTextEdit;
     btnSearch: TcxButton;
     dxLayoutItem8: TdxLayoutItem;
+    BtnExport: TcxButton;
+    dxLayoutItem6: TdxLayoutItem;
     procedure btnDetailClick(Sender: TObject);
     procedure actViewExecute(Sender: TObject);
     procedure edtHPHMKeyPress(Sender: TObject; var Key: Char);
     procedure btnSearchClick(Sender: TObject);
+    procedure BtnExportClick(Sender: TObject);
   private
     FDetail: TdxFramePicData;
   protected
@@ -107,6 +110,19 @@ begin
   FDetail.HPZL := FDMemTable1.FieldByName('HPZL').AsString;
   FDetail.LoadPassList;
   FDetail.Show;
+end;
+
+procedure TFrameFeedbackResult.BtnExportClick(Sender: TObject);
+begin
+  inherited;
+  if dlgSave.Execute then
+  begin
+    ShowFrameWait;
+    Tcommon.ExportGridtoData(ExtractFileExt(dlgSave.FileName),
+      dlgSave.FileName, cxGrid1);
+    FreeFrameWait;
+    Application.MessageBox('导出成功', '提示', MB_OK + MB_ICONINFORMATION);
+  end;
 end;
 
 procedure TFrameFeedbackResult.LoadData;

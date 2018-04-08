@@ -1,72 +1,68 @@
 inherited FramePicSearch: TFramePicSearch
-  Width = 739
-  Height = 450
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 739
-    Height = 450
     inherited cbbPagesize: TcxComboBox [0]
       Left = 901
-      Top = 399
+      Top = 254
       TabOrder = 32
       ExplicitLeft = 901
-      ExplicitTop = 399
+      ExplicitTop = 254
       ExplicitWidth = 50
       Width = 50
     end
     inherited btnFirstPage: TcxButton [1]
       Left = 958
-      Top = 399
+      Top = 254
       TabOrder = 33
       ExplicitLeft = 958
-      ExplicitTop = 399
+      ExplicitTop = 254
     end
     inherited btnPriorPage: TcxButton [2]
       Left = 995
-      Top = 399
+      Top = 254
       TabOrder = 34
       ExplicitLeft = 995
-      ExplicitTop = 399
+      ExplicitTop = 254
     end
     inherited edtPageIndex: TcxTextEdit [3]
       Left = 1050
-      Top = 399
+      Top = 254
       TabOrder = 35
       ExplicitLeft = 1050
-      ExplicitTop = 399
+      ExplicitTop = 254
       ExplicitWidth = 33
       Width = 33
     end
     inherited btnnextPage: TcxButton [4]
       Left = 1108
-      Top = 399
+      Top = 254
       TabOrder = 36
       ExplicitLeft = 1108
-      ExplicitTop = 399
+      ExplicitTop = 254
     end
     inherited btnLastPage: TcxButton [5]
       Left = 1145
-      Top = 399
+      Top = 254
       TabOrder = 37
       ExplicitLeft = 1145
-      ExplicitTop = 399
+      ExplicitTop = 254
     end
     inherited cxGrid1: TcxGrid [6]
       Left = 901
       Top = 77
       Width = 274
-      Height = 315
+      Height = 170
       Align = alClient
       TabOrder = 31
       ExplicitLeft = 901
       ExplicitTop = 77
       ExplicitWidth = 274
-      ExplicitHeight = 315
+      ExplicitHeight = 170
     end
     object imgviopic: TImageEnVect [7]
       Left = 14
       Top = 78
       Width = 443
-      Height = 285
+      Height = 140
       Background = clWhite
       Ctl3D = False
       ParentCtl3D = False
@@ -83,7 +79,7 @@ inherited FramePicSearch: TFramePicSearch
       Left = 474
       Top = 78
       Width = 419
-      Height = 285
+      Height = 140
       Background = clWhite
       Ctl3D = False
       ParentCtl3D = False
@@ -98,7 +94,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit1: TcxTextEdit [9]
       Left = 55
-      Top = 371
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -108,7 +104,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit2: TcxTextEdit [10]
       Left = 174
-      Top = 371
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -118,7 +114,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit3: TcxTextEdit [11]
       Left = 281
-      Top = 371
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -128,7 +124,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit4: TcxTextEdit [12]
       Left = 388
-      Top = 371
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -138,7 +134,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit5: TcxTextEdit [13]
       Left = 55
-      Top = 399
+      Top = 254
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -148,7 +144,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit6: TcxTextEdit [14]
       Left = 174
-      Top = 399
+      Top = 254
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -158,7 +154,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit7: TcxTextEdit [15]
       Left = 281
-      Top = 399
+      Top = 254
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -168,7 +164,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit8: TcxTextEdit [16]
       Left = 388
-      Top = 399
+      Top = 254
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -178,7 +174,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit9: TcxTextEdit [17]
       Left = 503
-      Top = 371
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -188,7 +184,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit10: TcxTextEdit [18]
       Left = 610
-      Top = 371
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -198,7 +194,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit11: TcxTextEdit [19]
       Left = 717
-      Top = 371
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -208,7 +204,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit12: TcxTextEdit [20]
       Left = 824
-      Top = 371
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -218,7 +214,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit13: TcxTextEdit [21]
       Left = 503
-      Top = 399
+      Top = 254
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -228,7 +224,7 @@ inherited FramePicSearch: TFramePicSearch
     end
     object cxTextEdit14: TcxTextEdit [22]
       Left = 717
-      Top = 399
+      Top = 254
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False

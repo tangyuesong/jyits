@@ -1,7 +1,7 @@
 object DM: TDM
   OldCreateOrder = False
-  Height = 321
-  Width = 630
+  Height = 287
+  Width = 559
   object fdgxwtcrsr1: TFDGUIxWaitCursor
     Provider = 'Forms'
     ScreenCursor = gcrNone
@@ -9,8 +9,8 @@ object DM: TDM
     Top = 59
   end
   object cxdtrpstry1: TcxEditRepository
-    Left = 307
-    Top = 154
+    Left = 347
+    Top = 146
     object cxProgressBarcxdtrpstry1ProgressBar1: TcxEditRepositoryProgressBar
     end
     object cxdtrpstry1ButtonItem1: TcxEditRepositoryButtonItem

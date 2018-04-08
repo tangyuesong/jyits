@@ -1,17 +1,19 @@
 inherited FrameFeedbackResult: TFrameFeedbackResult
+  Width = 805
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
+    Width = 805
     Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 577
-      Height = 202
-      TabOrder = 5
+      Width = 779
+      Height = 191
+      TabOrder = 6
       ExplicitTop = 45
-      ExplicitWidth = 577
-      ExplicitHeight = 202
+      ExplicitWidth = 779
+      ExplicitHeight = 191
     end
     object dtBegin: TcxDateEdit [1]
       Left = 67
@@ -65,34 +67,49 @@ inherited FrameFeedbackResult: TFrameFeedbackResult
       OnClick = btnSearchClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 254
-      TabOrder = 6
-      ExplicitTop = 254
+      Top = 243
+      TabOrder = 7
+      ExplicitTop = 243
     end
     inherited btnFirstPage: TcxButton
-      Top = 254
-      TabOrder = 7
-      ExplicitTop = 254
+      Top = 243
+      TabOrder = 8
+      ExplicitTop = 243
     end
     inherited btnPriorPage: TcxButton
-      Top = 254
-      TabOrder = 8
-      ExplicitTop = 254
+      Top = 243
+      TabOrder = 9
+      ExplicitTop = 243
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 254
-      TabOrder = 9
-      ExplicitTop = 254
+      Top = 243
+      TabOrder = 10
+      ExplicitTop = 243
     end
     inherited btnnextPage: TcxButton
-      Top = 254
-      TabOrder = 10
-      ExplicitTop = 254
+      Top = 243
+      TabOrder = 11
+      ExplicitTop = 243
     end
     inherited btnLastPage: TcxButton
-      Top = 254
-      TabOrder = 11
-      ExplicitTop = 254
+      Top = 243
+      TabOrder = 12
+      ExplicitTop = 243
+    end
+    inherited lbCount: TcxLabel
+      Top = 271
+      ExplicitTop = 271
+    end
+    object BtnExport: TcxButton [13]
+      Left = 597
+      Top = 13
+      Width = 75
+      Height = 25
+      Caption = #23548#20986
+      OptionsImage.ImageIndex = 66
+      OptionsImage.Images = DM.ilBarSmall
+      TabOrder = 5
+      OnClick = BtnExportClick
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
@@ -141,6 +158,16 @@ inherited FrameFeedbackResult: TFrameFeedbackResult
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
       Index = 4
+    end
+    object dxLayoutItem6: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = 'New Item'
+      CaptionOptions.Visible = False
+      Control = BtnExport
+      ControlOptions.OriginalHeight = 25
+      ControlOptions.OriginalWidth = 75
+      ControlOptions.ShowBorder = False
+      Index = 5
     end
   end
   inherited cxdtrpstry1: TcxEditRepository

@@ -2,7 +2,7 @@ unit cLockVio;
 
 interface
 
-uses SysUtils, Classes, uRequestItf, uJsonUtils, uCommon, Soap.EncdDecd;
+uses SysUtils, Classes, uRequestItf, uJsonUtils, uCommon, Soap.EncdDecd, qjson;
 
 type
 
@@ -70,12 +70,46 @@ type
       var msg: String);
     function AnalysisVioUploadResult(s: String): String;
     function WriteVio(json: String): String;
+    function FindJson(AItemName: String; AJSON: TQJson): TQJson;
+    function GetJsonNode(ANode, AJSON: String): String;
   public
     function UploadVio(id: String; whiteList: TStrings): String;
     destructor Destroy; override;
   End;
 
 implementation
+
+function TDealLockVio.FindJson(AItemName: String; AJSON: TQJson): TQJson;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to AJSON.Count - 1 do
+  begin
+    if UpperCase(AJSON.Items[i].Name) = UpperCase(AItemName) then
+      Result := AJSON.Items[i]
+    else
+      Result := FindJson(AItemName, AJSON.Items[i]);
+    if Result <> nil then
+      break;
+  end;
+end;
+
+function TDealLockVio.GetJsonNode(ANode, AJSON: String): String;
+var
+  item, json: TQJson;
+begin
+  Result := '';
+  json := TQJson.Create;
+  try
+    json.Parse(AJSON);
+    item := FindJson(ANode, json);
+    if item <> nil then
+      Result := item.ToString;
+  finally
+    json.Free;
+  end;
+end;
 
 destructor TDealLockVio.Destroy;
 begin
@@ -122,7 +156,11 @@ begin
   end
   else
   begin
-    DecodeRmResultHead(s, code, msg);
+    // DecodeRmResultHead(s, code, msg);
+    code := GetJsonNode('code', s);
+    msg := GetJsonNode('msg1', s);
+    if msg = '' then
+      msg := GetJsonNode('message', s);
     if code = '1' then
     begin
       zt := '8';

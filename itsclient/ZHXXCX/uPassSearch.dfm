@@ -1,17 +1,13 @@
 inherited FramePassSearch: TFramePassSearch
-  Width = 780
-  Height = 580
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 780
-    Height = 580
     inherited cxGrid1: TcxGrid
       Top = 77
       Width = 823
-      Height = 445
+      Height = 170
       TabOrder = 13
       ExplicitTop = 77
       ExplicitWidth = 823
-      ExplicitHeight = 445
+      ExplicitHeight = 170
       inherited GridView: TcxGridDBTableView
         OnCellDblClick = GridViewCellDblClick
         OptionsView.NavigatorOffset = 0
@@ -52,34 +48,34 @@ inherited FramePassSearch: TFramePassSearch
       end
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 529
+      Top = 254
       TabOrder = 14
-      ExplicitTop = 529
+      ExplicitTop = 254
     end
     inherited btnFirstPage: TcxButton
-      Top = 529
+      Top = 254
       TabOrder = 15
-      ExplicitTop = 529
+      ExplicitTop = 254
     end
     inherited btnPriorPage: TcxButton
-      Top = 529
+      Top = 254
       TabOrder = 16
-      ExplicitTop = 529
+      ExplicitTop = 254
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 529
+      Top = 254
       TabOrder = 17
-      ExplicitTop = 529
+      ExplicitTop = 254
     end
     inherited btnnextPage: TcxButton
-      Top = 529
+      Top = 254
       TabOrder = 18
-      ExplicitTop = 529
+      ExplicitTop = 254
     end
     inherited btnLastPage: TcxButton
-      Top = 529
+      Top = 254
       TabOrder = 19
-      ExplicitTop = 529
+      ExplicitTop = 254
     end
     object cboClpp: TcxComboBox [7]
       Left = 252

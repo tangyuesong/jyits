@@ -312,7 +312,7 @@ procedure TFramePassSearch.LoadData;
 var
   params, json: string;
   pageSize, pageIndex: integer;
-  clpp, csys, zyb, clpp1: String;
+  clpp, csys, zyb, clpp1, s, hpzls: String;
 begin
   ShowFrameWait;
   pageSize := StrToIntDef(cbbPageSize.Text, 30);
@@ -323,23 +323,33 @@ begin
   zyb := GetZyb;
   if (clpp <> '') or (csys <> '') or (zyb <> '') or (clpp1 <> '') then // K08
   begin
-    params := 'kssj=' + FormatDateTime('yyyy-mm-dd', dtBegin.Date) + 'T' +
-      FormatDateTime('hh:mm:ss', dtBegin.Date) + '.000Z&jssj=' +
-      FormatDateTime('yyyy-mm-dd', dtEnd.Date) + 'T' +
-      FormatDateTime('hh:mm:ss', dtEnd.Date) + '.999Z&page=' +
-      IntToStr(pageIndex + 1) + '&pagesize=' + pageSize.ToString;
+    params := 'passtime=' + FormatDateTime('yyyy-mm-dd hh:mm:ss', dtBegin.Date)
+      + ',' + FormatDateTime('yyyy-mm-dd hh:mm:ss', dtEnd.Date) +
+      '&currentPage=' + IntToStr(pageIndex + 1) + '&pageSize=' +
+      pageSize.ToString;
     if FKDBH <> '' then
-      params := params + '&kdbh=' + FKDBH;
-    if (FHPZL <> '') and (FHPHM <> '') then
-      params := params + '&hpzl=' + FHPZL + '&hphm=' + FHPHM;
+      params := params + '&crossingid=' + FKDBH;
+    if FHPZL <> '' then
+    begin
+      hpzls := '';
+      for s in TLZDictionary.gK08Hpzl.Keys do
+      begin
+        if TLZDictionary.gK08Hpzl[s].MineKey = FHPZL then
+          hpzls := hpzls + ' ' + s;
+      end;
+      if hpzls <> '' then
+        params := params + '&vehicletype=' + hpzls.Substring(1);
+    end;
+    if FHPHM <> '' then
+      params := params + '&plateno=' + FHPHM;
     if clpp <> '' then
-      params := params + '&clpp=' + clpp;
+      params := params + '&vehiclelogo=' + clpp;
     if csys <> '' then
-      params := params + '&csys=' + csys;
+      params := params + '&vehiclecolor=' + csys;
     if zyb <> '' then
-      params := params + '&zyb=' + zyb;
+      params := params + '&vicepilotsunvisor=' + zyb;
     if clpp1 <> '' then
-      params := params + '&clpp1=' + clpp1;
+      params := params + '&vehiclesublogo=' + clpp1;
     json := TRequestItf.DbQuery('GetK08PassList', params);
   end
   else
