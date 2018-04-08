@@ -15,7 +15,6 @@ type
     class function GetNewSize(width, height: Integer): TSize;
     class procedure DecodeWfInfo(picName: String; var wfsj: String;
       var wfdd: String);
-    class function DelFile(fileName: String): Boolean;
   public
     class procedure ImportVio(tokenKey, wfxw, pic1Name, pic1, pic2: String;
       AResponseInfo: TIdHTTPResponseInfo);
@@ -102,17 +101,6 @@ begin
     wfsj := FormatDatetime('yyyy/mm/dd hh:nn:ss', Now());
   if wfdd = '' then
     wfdd := '民警抓拍';
-end;
-
-class function TImportVio.DelFile(fileName: String): Boolean;
-begin
-  Result := True;
-  try
-    if FileExists(fileName) then
-      DeleteFile(PWideChar(fileName));
-  except
-    Result := False;
-  end;
 end;
 
 class function TImportVio.GetNewSize(width, height: Integer): TSize;
@@ -244,10 +232,10 @@ begin
   else if b then
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('上传图片失败');
 
-  DelFile(tp1);
-  DelFile(tp2);
-  DelFile(mergeTp);
-  DelFile(ExtractFilePath(Paramstr(0)) + compTp);
+  TCommon.DelFile(tp1);
+  TCommon.DelFile(tp2);
+  TCommon.DelFile(mergeTp);
+  TCommon.DelFile(ExtractFilePath(Paramstr(0)) + compTp);
 end;
 
 class function TImportVio.MergePic(tp1, tp2, saveTp: String): Boolean;

@@ -7,6 +7,52 @@ uses
 
 type
 
+  TVehInfo = record
+    code: string; // 返回编码
+    msg: string; // 返回信息
+    rownum: string; // 返回记录数
+    HPHM: string; // 车牌号码
+    HPZL: string; // 号牌种类
+    syr: string; // 所有人
+    sfzmhm: string; // 身份证号码
+    syq: string; // 所有权，对应字典
+    clsbdh: string; // 车辆识别代号
+    fdjh: string; // 发动机号
+    ZSXXDZ: string; // 住所详细地址
+    zzxxdz: string; // 暂住详细地址
+    zzxzqh: string;
+    zsxzqh: string;
+    xzqh: string;
+    zzg: string;
+    zzcmc: string;
+    fzrq: string;
+    fdjrq: string;
+    fprq: string;
+    fhgzrq: string;
+    bpcs: string;
+    bzcs: string;
+    bdjcs: string;
+    hbdbqk: string;
+    gcjk: string;
+    YZBM1: string; // 常住地邮政编码
+    yzbm2: string; // 暂住地邮政编码
+    clpp1: string; // 中文品牌
+    clpp2: string; // 英文品牌
+    clxh: string; // 车辆型号
+    csys: string; // 车身颜色-对应字典表
+    syxz: string; // 使用性质-对应字典表
+    cllx: string; // 车辆类型-对应字典表
+    fzjg: string; // 发证机关
+    glbm: string; // 管理部门
+    ccdjrq: string; // 初次登记日期
+    yxqz: string; // 检验有限期限
+    bxzzrq: string; // 保险期限
+    qzbfqz: string; // 车辆报费期限
+    SJHM: string;
+    lxdh: string;
+    zt: string; // 状态
+  end;
+
   TConfig = Record
     DBServer: String;
     DBPort: Integer;
@@ -66,12 +112,12 @@ type
     fxbh: string;
     cdbh: string;
     cdlx: string;
-    hpzl: string;
+    HPZL: string;
     gcsj: string;
     clsd: string;
     hpys: string;
     cllx: string;
-    hphm: string;
+    HPHM: string;
     cwhphm: string;
     cwhpys: string;
     hpyz: string;
@@ -199,7 +245,7 @@ type
     lxdh: string;
     SJHM: string;
     DWDZ: string;
-    JSCFDD: string;
+    JSCFYHMC: string;
     YHMC: string;
     FYJG1: string;
     FYJG2: string;

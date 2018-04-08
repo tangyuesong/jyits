@@ -21,7 +21,7 @@ object frmMain: TfrmMain
     Top = 0
     Width = 629
     Height = 637
-    ActivePage = Query
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -147,7 +147,9 @@ object frmMain: TfrmMain
             Items.Strings = (
               'string'
               'int'
-              'datetime')
+              'datetime'
+              'json'
+              'base64')
           end
           object cmbNonnull: TsComboBox
             Left = 450

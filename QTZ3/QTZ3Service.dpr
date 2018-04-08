@@ -40,7 +40,8 @@ uses
   uHik in 'Hik\uHik.pas',
   uWSManager in 'RMService\uWSManager.pas',
   TmriOutNewAccess in 'RMService\intf\TmriOutNewAccess.pas',
-  uJKDefine in 'RMService\impl\uJKDefine.pas';
+  uJKDefine in 'RMService\impl\uJKDefine.pas',
+  uSurveilVio in 'SPService\uSurveilVio.pas';
 
 {$R *.RES}
 

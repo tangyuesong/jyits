@@ -69,24 +69,41 @@ type
     class function AddWfxwmc(AJSON: String): String;
     class function GetTmriParam(jkid: string; token: TToken)
       : TTmriParam; static;
-    class procedure WriteForceVio(dsr, wfsj, pzbh, yhxm: String);
-    class procedure WriteSimpleVio(dsr, wfsj, jdsbh, yhxm: String);
+    class procedure WriteForceVio(params: TStrings);
+    class procedure WriteSimpleVio(params: TStrings);
+    class procedure WriteDutySimple(params: TStrings);
     class function FindJson(AItemName: String; AJSON: TQJson): TQJson;
     class procedure SaveVehInfo(AJSON: String);
+    class procedure SaveDrvInfo(AJSON: String);
+    class function QueryDrvInfo(sfzmhm: String): String;
+    class function QueryVehInfo(hphm, hpzl: String): String;
+    class function DelFile(fileName: String): Boolean; static;
+    class function JsonToRecord<T>(JSON: string): T; static;
   end;
 
 procedure SQLError(const SQL, Description: string);
 
 implementation
 
+class function TCommon.DelFile(fileName: String): Boolean;
+begin
+  Result := True;
+  try
+    if FileExists(fileName) then
+      DeleteFile(PWideChar(fileName));
+  except
+    Result := False;
+  end;
+end;
+
 class function TCommon.GetTmriParam(jkid: string; token: TToken): TTmriParam;
 begin
-  result.jkid := jkid;
-  result.yhbz := token.Login;
-  result.dwmc := '';
-  result.dwjgdm := token.User.dwdm;
-  result.yhxm := token.User.yhxm;
-  result.zdbs := token.ip;
+  Result.jkid := jkid;
+  Result.yhbz := token.Login;
+  Result.dwmc := '';
+  Result.dwjgdm := token.User.dwdm;
+  Result.yhxm := token.User.yhxm;
+  Result.zdbs := token.ip;
 end;
 
 class function TCommon.QueryToStream(ASql: String): TStringStream;
@@ -96,7 +113,7 @@ var
   s, c, col, value: string;
   qy: TADOQuery;
 begin
-  result := TStringStream.Create;
+  Result := TStringStream.Create;
   tsList := TStringList.Create;
   qy := gSQLHelper.Query(ASql);
   try
@@ -118,7 +135,7 @@ begin
     end;
     tsList.add(s.Substring(1));
 
-    //qy.first;
+    // qy.first;
     While Not qy.Eof do
     begin
       s := '';
@@ -153,12 +170,12 @@ begin
       tsList.add(s.Substring(1));
       qy.Next;
     end;
-    result.WriteString(tsList.Text);
+    Result.WriteString(tsList.Text);
   except
     on e: Exception do
     begin
       gLogger.Error(e.Message);
-      FreeAndNil(result);
+      FreeAndNil(Result);
     end;
   end;
   qy.Free;
@@ -171,11 +188,13 @@ var
   key, obj, col, value, s: String;
   i: Integer;
   JSON: TDictionary<String, TStrings>;
+  isArray: Boolean;
 begin
-  result := '';
+  Result := '';
   JSON := TDictionary<String, TStrings>.Create;
   with gSQLHelper.Query(ASql) do
   begin
+    isArray := RecordCount > 1;
     if not Eof then
     begin
       ATotal := RecordCount;
@@ -266,23 +285,27 @@ begin
     if key <> 'ALL' then
       s := '{' + key + ',"info":[' + copy(s, 1, length(s) - 1) + ']},';
     JSON[key].Free;
-    result := result + s;
+    Result := Result + s;
   end;
 
-  if result <> '' then
-    result := '[' + copy(result, 1, length(result) - 1) + ']';
+  if Result <> '' then
+  begin
+    Result := copy(Result, 1, length(Result) - 1);
+    if isArray then
+      Result := '[' + Result + ']';
+  end;
   JSON.Free;
 end;
 
 class function TCommon.GetDevID: TDictionary<String, String>;
 begin
-  result := TDictionary<String, String>.Create;
+  Result := TDictionary<String, String>.Create;
   with gSQLHelper.Query('select SBBH, ID from ' + cDBName +
     '.dbo.S_Device where QYZT=''1'' ') do
   begin
     while not Eof do
     begin
-      result.add(FieldByName('ID').AsString, FieldByName('SBBH').AsString);
+      Result.add(FieldByName('ID').AsString, FieldByName('SBBH').AsString);
       Next;
     end;
     Free;
@@ -291,12 +314,12 @@ end;
 
 class function TCommon.GetK08Clpp(): TDictionary<String, String>;
 begin
-  result := TDictionary<String, String>.Create;
+  Result := TDictionary<String, String>.Create;
   with gSQLHelper.Query('select * from ' + cDBName + '.dbo.D_K08_CLPP ') do
   begin
     while not Eof do
     begin
-      result.add(FieldByName('vehiclelogo').AsString + '-' +
+      Result.add(FieldByName('vehiclelogo').AsString + '-' +
         FieldByName('Vehiclesublogo').AsString, FieldByName('MC').AsString);
       Next;
     end;
@@ -306,13 +329,13 @@ end;
 
 class function TCommon.GetHpzl: TDictionary<String, String>;
 begin
-  result := TDictionary<String, String>.Create;
+  Result := TDictionary<String, String>.Create;
   with gSQLHelper.Query('select * from ' + cDBName +
     '.dbo.D_K08 where FLBH=''HPZL'' order by MineKey ') do
   begin
     while not Eof do
     begin
-      result.add(FieldByName('DM').AsString, FieldByName('MineKey').AsString);
+      Result.add(FieldByName('DM').AsString, FieldByName('MineKey').AsString);
       Next;
     end;
     Free;
@@ -321,15 +344,15 @@ end;
 
 class function TCommon.GetK08Hpzl(): TDictionary<String, TStrings>;
 begin
-  result := TDictionary<String, TStrings>.Create;
+  Result := TDictionary<String, TStrings>.Create;
   with gSQLHelper.Query('select * from ' + cDBName +
     '.dbo.D_K08 where FLBH=''HPZL'' order by MineKey ') do
   begin
     while not Eof do
     begin
-      if not result.ContainsKey(FieldByName('MineKey').AsString) then
-        result.add(FieldByName('MineKey').AsString, TStringList.Create);
-      result[FieldByName('MineKey').AsString].add(FieldByName('DM').AsString);
+      if not Result.ContainsKey(FieldByName('MineKey').AsString) then
+        Result.add(FieldByName('MineKey').AsString, TStringList.Create);
+      Result[FieldByName('MineKey').AsString].add(FieldByName('DM').AsString);
       Next;
     end;
     Free;
@@ -338,52 +361,52 @@ end;
 
 class function TCommon.GetRealDatetime(AMilliSecond: Int64): TDatetime;
 begin
-  result := DateUtils.IncMilliSecond(FBaseTime, AMilliSecond);
+  Result := DateUtils.IncMilliSecond(FBaseTime, AMilliSecond);
 end;
 
 class function TCommon.GetUserInfo(userid, pwd: String): TUser;
 begin
-  result.dwdm := '';
-  result.yhbh := '';
-  result.yhxm := '';
-  result.FH := '';
-  result.Manager := '';
-  result.SH := '';
+  Result.dwdm := '';
+  Result.yhbh := '';
+  Result.yhxm := '';
+  Result.FH := '';
+  Result.Manager := '';
+  Result.SH := '';
   with gSQLHelper.Query('select * from ' + cDBName + '.dbo.S_USER where YHBH = '
     + userid.QuotedString + ' and mm = ' + pwd.QuotedString) do
   begin
-    if not EOF then
+    if not Eof then
     begin
-      result.SystemID := FieldByName('SystemID').AsString;
-      result.dwdm := FieldByName('DWDM').AsString;
-      result.yhbh := FieldByName('yhbh').AsString;
-      result.ZW := FieldByName('ZW').AsString;
-      result.yhxm := FieldByName('YHXM').AsString;
-      result.XL := FieldByName('XL').AsString;
-      result.SJHM := FieldByName('SJHM').AsString;
-      result.SFZHM := FieldByName('SFZHM').AsString;
-      result.MM := FieldByName('MM').AsString;
-      result.IPKS := FieldByName('IPKS').AsString;
-      result.IPJS := FieldByName('IPJS').AsString;
-      result.MAC := FieldByName('MAC').AsString;
+      Result.SystemID := FieldByName('SystemID').AsString;
+      Result.dwdm := FieldByName('DWDM').AsString;
+      Result.yhbh := FieldByName('yhbh').AsString;
+      Result.ZW := FieldByName('ZW').AsString;
+      Result.yhxm := FieldByName('YHXM').AsString;
+      Result.XL := FieldByName('XL').AsString;
+      Result.SJHM := FieldByName('SJHM').AsString;
+      Result.SFZHM := FieldByName('SFZHM').AsString;
+      Result.MM := FieldByName('MM').AsString;
+      Result.IPKS := FieldByName('IPKS').AsString;
+      Result.IPJS := FieldByName('IPJS').AsString;
+      Result.MAC := FieldByName('MAC').AsString;
       if FieldByName('FH').AsBoolean then
-        result.FH := '1'
+        Result.FH := '1'
       else
-        result.FH := '0';
-      result.zt := FieldByName('zt').AsString;
-      result.bz := FieldByName('bz').AsString;
-      result.QX := FieldByName('QX').AsString;
-      result.gxsj := FieldByName('gxsj').AsString;
-      result.lrr := FieldByName('lrr').AsString;
+        Result.FH := '0';
+      Result.zt := FieldByName('zt').AsString;
+      Result.bz := FieldByName('bz').AsString;
+      Result.QX := FieldByName('QX').AsString;
+      Result.gxsj := FieldByName('gxsj').AsString;
+      Result.lrr := FieldByName('lrr').AsString;
       if FieldByName('Manager').AsBoolean then
-        result.Manager := '1'
+        Result.Manager := '1'
       else
-        result.Manager := '0';
+        Result.Manager := '0';
       if FieldByName('SH').AsBoolean then
-        result.SH := '1'
+        Result.SH := '1'
       else
-        result.SH := '0';
-      result.role := FieldByName('role').AsString;
+        Result.SH := '0';
+      Result.role := FieldByName('role').AsString;
     end;
     Free;
   end;
@@ -407,23 +430,23 @@ begin
     end;
 
   end;
-  result := FDicWfxw;
+  Result := FDicWfxw;
 end;
 
 class function TCommon.GetXZQH(dwdm: String): String;
 var
   dwjb: String;
 begin
-  result := dwdm;
+  Result := dwdm;
   if Depts.ContainsKey(dwdm) then
   begin
     dwjb := Depts[dwdm].dwjb;
     if dwjb = '2' then
-      result := copy(dwdm, 1, 2)
+      Result := copy(dwdm, 1, 2)
     else if dwjb = '3' then
-      result := copy(dwdm, 1, 4)
+      Result := copy(dwdm, 1, 4)
     else if dwjb = '4' then
-      result := copy(dwdm, 1, 6);
+      Result := copy(dwdm, 1, 6);
   end;
 end;
 
@@ -523,7 +546,7 @@ begin
       Free;
     end;
   end;
-  result := FDicDevice;
+  Result := FDicDevice;
 end;
 
 class function TCommon.GetHpzlmc: TDictionary<String, String>;
@@ -544,18 +567,18 @@ begin
       Free;
     end;
   end;
-  result := FDicHpzlMC;
+  Result := FDicHpzlMC;
 end;
 
 class function TCommon.GetK08Csys: TDictionary<String, String>;
 begin
-  result := TDictionary<String, String>.Create;
+  Result := TDictionary<String, String>.Create;
   with gSQLHelper.Query('select * from ' + cDBName +
     '.dbo.D_K08 where FLBH=''CSYS'' ') do
   begin
     while not Eof do
     begin
-      result.add(FieldByName('DM').AsString, FieldByName('MC').AsString);
+      Result.add(FieldByName('DM').AsString, FieldByName('MC').AsString);
       Next;
     end;
     Free;
@@ -565,7 +588,7 @@ end;
 class function TCommon.AssembleSuccessHttpResult(body, totalnum, currentpage,
   pagesize: String): String;
 begin
-  result := AssembleHttpResult('1', 'success', body, totalnum, currentpage,
+  Result := AssembleHttpResult('1', 'success', body, totalnum, currentpage,
     pagesize);
 end;
 
@@ -574,14 +597,14 @@ var
   bytes: TBytes;
   ms: TMemoryStream;
 begin
-  result := True;
+  Result := True;
   ms := TMemoryStream.Create;
   try
     bytes := TBase64Encoding.Base64.DecodeStringToBytes(ABase64Str);
     ms.WriteBuffer(bytes, length(bytes));
     ms.SaveToFile(AFileName);
   except
-    result := false;
+    Result := False;
   end;
   ms.Free;
 end;
@@ -592,27 +615,42 @@ var
   i: Integer;
   wfxw, wfxwmc: String;
 begin
-  result := AJSON;
+  Result := AJSON;
   qj := TQJson.Create;
   try
     qj.Parse(AJSON);
-    for i := 0 to qj.Count - 1 do
+    if qj.DataType = jdtArray then
     begin
-      item := FindJson('wfxw', qj.Items[i]);
-      if item <> nil then
+      for i := 0 to qj.Count - 1 do
       begin
-        wfxw := item.value;
-        if FindJson('wfxwmc', qj.Items[i]) = nil then
+        item := FindJson('wfxw', qj.Items[i]);
+        if item <> nil then
         begin
+          wfxw := item.value;
           if DicWfxw.ContainsKey(wfxw) then
             wfxwmc := DicWfxw[wfxw]
           else
             wfxwmc := wfxw;
-          qj.Items[i].AddVariant('wfxwmc', wfxwmc);
-        end
+          if FindJson('wfxwmc', qj.Items[i]) = nil then
+            qj.Items[i].AddVariant('wfxwmc', wfxwmc);
+        end;
+      end;
+    end
+    else
+    begin
+      item := FindJson('wfxw', qj);
+      if item <> nil then
+      begin
+        wfxw := item.value;
+        if DicWfxw.ContainsKey(wfxw) then
+          wfxwmc := DicWfxw[wfxw]
+        else
+          wfxwmc := wfxw;
+        if FindJson('wfxwmc', qj.Items[i]) = nil then
+          qj.AddVariant('wfxwmc', wfxwmc);
       end;
     end;
-    result := qj.ToString;
+    Result := qj.ToString;
   except
   end;
   qj.Free;
@@ -620,36 +658,36 @@ end;
 
 class function TCommon.AssembleFailedHttpResult(msg: String): String;
 begin
-  result := AssembleHttpResult('0', msg, '');
+  Result := AssembleHttpResult('0', msg, '');
 end;
 
 class function TCommon.AssembleHttpResult(code, msg, body, totalnum,
   currentpage, pagesize: String): String;
 begin
-  result := '{"head":{"code":"' + code + '","message":"' + msg +
+  Result := '{"head":{"code":"' + code + '","message":"' + msg +
     '","totalnum":"' + totalnum + '",' + '"currentpage":"' + currentpage +
     '","pagesize":"' + pagesize + '"}';
   if body <> '' then
-    result := result + ',"body":' + body;
-  result := result + '}';
+    Result := Result + ',"body":' + body;
+  Result := Result + '}';
 end;
 
 class function TCommon.GetJsonNode(ANode, AJSON: String): String;
 var
   item, JSON: TQJson;
 begin
-  result := '';
+  Result := '';
   JSON := TQJson.Create;
   try
     JSON.Parse(AJSON);
     item := FindJson(ANode, JSON);
     if item <> nil then
-      result := item.ToString;
+      Result := item.ToString;
   except
-    on e: exception do
+    on e: Exception do
     begin
-      result := AJSON;
-      glogger.Error('[TCommon.GetJsonNode]' + e.Message +  AJSON);
+      Result := AJSON;
+      gLogger.Error('[TCommon.GetJsonNode]' + e.Message + AJSON);
     end;
   end;
   JSON.Free;
@@ -659,14 +697,14 @@ class function TCommon.FindJson(AItemName: String; AJSON: TQJson): TQJson;
 var
   i: Integer;
 begin
-  result := nil;
+  Result := nil;
   for i := 0 to AJSON.Count - 1 do
   begin
     if UpperCase(AJSON.Items[i].Name) = UpperCase(AItemName) then
-      result := AJSON.Items[i]
+      Result := AJSON.Items[i]
     else
-      result := FindJson(AItemName, AJSON.Items[i]);
-    if result <> nil then
+      Result := FindJson(AItemName, AJSON.Items[i]);
+    if Result <> nil then
       break;
   end;
 end;
@@ -675,10 +713,10 @@ class function TCommon.FtpPutFile(AHost, AUser, Apw, ASourceFile,
   ADestFile: string; APort: Integer): Boolean;
   function ChangeDir(ftp: TIdFTP; ADir: string): Boolean;
   begin
-    result := false;
+    Result := False;
     try
       ftp.ChangeDir(ADir);
-      result := True;
+      Result := True;
     except
       on e: Exception do
       begin
@@ -686,7 +724,7 @@ class function TCommon.FtpPutFile(AHost, AUser, Apw, ASourceFile,
         begin
           ftp.MakeDir(ADir);
           ftp.ChangeDir(ADir);
-          result := True;
+          Result := True;
         end;
       end;
     end;
@@ -698,7 +736,7 @@ var
   i, n: Integer;
 begin
   // 创建Ftp
-  result := True;
+  Result := True;
   try
     ftp := TIdFTP.Create(nil);
     ftp.ConnectTimeout := 3000;
@@ -720,10 +758,10 @@ begin
     end;
     ftp.Passive := True; // 这里分为主动和被动
     ftp.Noop;
-    ftp.Put(ASourceFile, ss[n - 1], false);
+    ftp.Put(ASourceFile, ss[n - 1], False);
     ftp.Free;
   except
-    result := false;
+    Result := False;
   end;
 end;
 
@@ -744,7 +782,7 @@ begin
       Free;
     end;
   end;
-  result := FColDef;
+  Result := FColDef;
 end;
 
 class procedure TCommon.GetDBActionParams
@@ -809,7 +847,7 @@ begin
         dept.LXDH := FieldByName('LXDH').AsString;
         dept.SJHM := FieldByName('SJHM').AsString;
         dept.DWDZ := FieldByName('DWDZ').AsString;
-        dept.JSCFDD := FieldByName('JSCFDD').AsString;
+        dept.JSCFYHMC := FieldByName('JSCFYHMC').AsString;
         dept.YHMC := FieldByName('YHMC').AsString;
         dept.FYJG1 := FieldByName('FYJG1').AsString;
         dept.FYJG2 := FieldByName('FYJG2').AsString;
@@ -826,14 +864,14 @@ begin
       Free;
     end;
   end;
-  result := FDepts;
+  Result := FDepts;
 end;
 
 class function TCommon.GetDBActions(): TDictionary<String, TDBAction>;
 var
   action: TDBAction;
 begin
-  result := TDictionary<String, TDBAction>.Create;
+  Result := TDictionary<String, TDBAction>.Create;
   with gSQLHelper.Query('select * from S_QTZ3_Action where Activate = 1') do
   begin
     while not Eof do
@@ -845,18 +883,18 @@ begin
       action.SQL := FieldByName('SQL').AsString;
       action.params := TList<TDBActionParam>.Create;
       action.ReturnGroups := TStringList.Create;
-      result.add(UpperCase(action.action), action);
+      Result.add(UpperCase(action.action), action);
       Next;
     end;
     Free;
   end;
-  GetDBActionParams(result);
-  GetDBReturnGroups(result);
+  GetDBActionParams(Result);
+  GetDBReturnGroups(Result);
 end;
 
 class function TCommon.ReadConfig(): Boolean;
 begin
-  result := True;
+  Result := True;
   with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
   begin
     gConfig.DBServer := ReadString('DB', 'Server', '.');
@@ -907,12 +945,12 @@ begin
   for item in list do
   begin
     s := RecordToJSON<T>(@item);
-    result := result + ',' + s;
+    Result := Result + ',' + s;
   end;
-  if result <> '' then
+  if Result <> '' then
   begin
-    result := result.Substring(1);
-    result := '[' + result + ']';
+    Result := Result.Substring(1);
+    Result := '[' + Result + ']';
   end;
 end;
 
@@ -924,16 +962,16 @@ var
   FRTTICtx: TRTTIContext;
   s: string;
 begin
-  result := '';
+  Result := '';
   rrt := TRTTIContext.Create.GetType(TypeInfo(T)).AsRecord;
   arr := rrt.GetFields;
   for Field in arr do
   begin
     s := Field.GetValue(rec).ToString;
     if s <> '' then
-      result := result + ',"' + Field.Name + '":"' + s + '"';
+      Result := Result + ',"' + Field.Name + '":"' + s + '"';
   end;
-  result := '{' + result.Substring(1) + '}';
+  Result := '{' + Result.Substring(1) + '}';
 end;
 
 procedure SQLError(const SQL, Description: string);
@@ -978,11 +1016,11 @@ var
   User: TUser;
   token: TToken;
 begin
-  result := '0';
+  Result := '0';
   yhbh := params.Values['user'];
   pwd := params.Values['pwd'];
   if (SaUsers.IndexOf(yhbh) >= 0) and (pwd = cSaPwd) then
-    result := '"' + gTokenManager.NewToken(yhbh, ip).key + '"'
+    Result := '"' + gTokenManager.NewToken(yhbh, ip).key + '"'
   else
   begin
     pwd := String(AesEncrypt(AnsiString(yhbh + pwd), AnsiString(cUserKey)));
@@ -991,12 +1029,12 @@ begin
     begin
       token := gTokenManager.NewToken(yhbh, ip);
       token.User := User;
-      result := '{"token":"' + token.key + '","dwdm":"' + token.User.dwdm + '"';
+      Result := '{"token":"' + token.key + '","dwdm":"' + token.User.dwdm + '"';
       if Depts.ContainsKey(token.User.dwdm) then
-        result := result + ',"dwmc":"' + Depts[token.User.dwdm].dwmc + '"'
+        Result := Result + ',"dwmc":"' + Depts[token.User.dwdm].dwmc + '"'
       else
-        result := result + ',"dwmc":""';
-      result := result + ',"yhbh":"' + token.User.yhbh + '","yhxm":"' +
+        Result := Result + ',"dwmc":""';
+      Result := Result + ',"yhbh":"' + token.User.yhbh + '","yhxm":"' +
         token.User.yhxm + '","zw":"' + token.User.ZW + '","sjhm":"' +
         token.User.SJHM + '","sh":"' + token.User.SH + '","fh":"' +
         token.User.FH + '","manager":"' + token.User.Manager + '","role":"' +
@@ -1013,6 +1051,60 @@ begin
     token.QuotedString + ',' + yhbh.QuotedString + ',' + ip.QuotedString + ',' +
     action.QuotedString + ',' + param.QuotedString + ')';
   gSQLHelper.ExecuteSql(s);
+end;
+
+class procedure TCommon.SaveDrvInfo(AJSON: String);
+var
+  qj: TQJson;
+  s, sfzmhm, gxsj: String;
+  ts: TStrings;
+begin
+  if AJSON = '' then
+    exit;
+  ts := TStringList.Create;
+  qj := TQJson.Create;
+  try
+    qj.Parse(AJSON);
+    sfzmhm := qj.ItemByName('sfzmhm').value;
+    if sfzmhm <> '' then
+    begin
+      gxsj := gSQLHelper.GetSinge('select max(gxsj) from ' + cDBName +
+        '.dbo.T_VIO_DRIVINGLICENSE');
+      if gxsj = '' then
+        gxsj := Formatdatetime('yyyy-MM-dd hh:nn:ss', now() - 2);
+      // 复制库更新是根据gxsj，防止影响复制库更新
+      ts.add('delete from ' + cDBName +
+        '.dbo.T_VIO_DRIVINGLICENSE where sfzmhm=' + sfzmhm.QuotedString);
+
+      s := 'insert into ' + cDBName +
+        '.dbo.T_VIO_VEHICLE(SFZMHM,ZJCX,FZRQ,XM,XB,CSRQ,DJZSXXDZ,LXZSXXDZ,LXZSYZBM,LXDH,'
+        + 'SJHM,ZZZM,YXQS,YXQZ,GXSJ,ZT,CCLZRQ,DABH,ZXBH,FZJG,DJZSXZQH,XZQH,SFZMMC,LXZSXZQH,'
+        + 'GJ,SYRQ,HMCD,JZQX,LJJF) values (''' + qj.ItemByName('sfzmhm').value +
+        ''',''' + qj.ItemByName('zjcx').value + ''',''' + qj.ItemByName('fzrq')
+        .value + ''',''' + qj.ItemByName('xm').value + ''',''' +
+        qj.ItemByName('xb').value + ''',''' + qj.ItemByName('csrq').value +
+        ''',''' + qj.ItemByName('djzsxxdz').value + ''',''' +
+        qj.ItemByName('lxzsxxdz').value + ''',''' + qj.ItemByName('lxzsyzbm')
+        .value + ''',''' + qj.ItemByName('lxdh').value + ''',''' +
+        qj.ItemByName('sjhm').value + ''',''' + qj.ItemByName('zzzm').value +
+        ''',''' + qj.ItemByName('yxqs').value + ''',''' + qj.ItemByName('yxqz')
+        .value + ''',''' + gxsj + ''',''' + qj.ItemByName('zt').value + ''','''
+        + qj.ItemByName('cclzrq').value + ''',''' + qj.ItemByName('dabh').value
+        + ''',''' + qj.ItemByName('zxbh').value + ''',''' +
+        qj.ItemByName('fzjg').value + ''',''' + qj.ItemByName('djzsxzqh').value
+        + ''',''' + qj.ItemByName('xzqh').value + ''',''' +
+        qj.ItemByName('sfzmmc').value + ''',''' + qj.ItemByName('lxzsxzqh')
+        .value + ''',''' + qj.ItemByName('gj').value + ''',''' +
+        qj.ItemByName('syrq').value + ''',''' + qj.ItemByName('hmcd').value +
+        ''',''' + qj.ItemByName('jzqx').value + ''',''' + qj.ItemByName('ljjf')
+        .value + ''')';
+      ts.add(s);
+      gSQLHelper.ExecuteSqlTran(ts);
+    end;
+  except
+  end;
+  qj.Free;
+  ts.Free;
 end;
 
 class procedure TCommon.SaveVehInfo(AJSON: String);
@@ -1093,7 +1185,7 @@ begin
     end
     else
     begin
-      result := EncodeDateTime(1900, 1, 1, 1, 1, 1, 0);
+      Result := EncodeDateTime(1900, 1, 1, 1, 1, 1, 0);
       exit;
     end;
     d := StrToInt(copy(s, 1, pos(' ', s) - 1));
@@ -1103,26 +1195,160 @@ begin
     n := StrToInt(copy(s, 1, pos(':', s) - 1));
     ss := StrToInt(Trim(copy(s, pos(':', s) + 1, length(s))));
 
-    result := EncodeDateTime(y, m, d, h, n, ss, 0);
+    Result := EncodeDateTime(y, m, d, h, n, ss, 0);
   except
-    result := EncodeDateTime(1900, 1, 1, 1, 1, 1, 0);
+    Result := EncodeDateTime(1900, 1, 1, 1, 1, 1, 0);
   end;
 end;
 
-class procedure TCommon.WriteForceVio(dsr, wfsj, pzbh, yhxm: String);
+class procedure TCommon.WriteDutySimple(params: TStrings);
+var
+  i: Integer;
+  cols, Values, sgbh, s: String;
 begin
-  gSQLHelper.ExecuteSql('insert into ' + cDBName +
-    '.dbo.T_VIO_Force(dsr, wfsj, pzbh, lrr) values (' + dsr.QuotedString + ',' +
-    wfsj.QuotedString + ',' + pzbh.QuotedString + ',' +
-    yhxm.QuotedString + ')');
+  cols := '';
+  Values := '';
+  for i := 0 to params.Count - 1 do
+  begin
+    cols := cols + params.Names[i] + ',';
+    Values := Values + params.ValueFromIndex[i].QuotedString + ',';
+  end;
+  if cols <> '' then
+  begin
+    cols := copy(cols, 1, length(cols) - 1);
+    Values := copy(Values, 1, length(Values) - 1);
+    sgbh := params.Values['sgbh'];
+    if gSQLHelper.GetSinge('select 1 from ' + cDBName +
+      '.dbo.T_Spot_DutySimple where sgbh=' + sgbh.QuotedString) <> '' then
+      gSQLHelper.ExecuteSql('delete from ' + cDBName +
+        '.dbo.T_Spot_DutySimple where sgbh=' + sgbh.QuotedString);
+    s := 'insert into ' + cDBName + '.dbo.T_Spot_DutySimple(' + cols +
+      ') values (' + Values + ')';
+    gSQLHelper.ExecuteSql(s);
+  end;
 end;
 
-class procedure TCommon.WriteSimpleVio(dsr, wfsj, jdsbh, yhxm: String);
+class procedure TCommon.WriteForceVio(params: TStrings);
+var
+  i: Integer;
+  cols, Values, s: String;
 begin
-  gSQLHelper.ExecuteSql('insert into ' + cDBName +
-    '.dbo.T_VIO_Violation(dsr, wfsj, jdsbh, jdslb, xxly, lrr) values (' +
-    dsr.QuotedString + ',' + wfsj.QuotedString + ',' + jdsbh.QuotedString +
-    ',''1'', ''1'',' + yhxm.QuotedString + ')');
+  cols := '';
+  Values := '';
+  for i := 0 to params.Count - 1 do
+  begin
+    cols := cols + params.Names[i] + ',';
+    Values := Values + params.ValueFromIndex[i].QuotedString + ',';
+  end;
+  if cols <> '' then
+  begin
+    cols := copy(cols, 1, length(cols) - 1);
+    Values := copy(Values, 1, length(Values) - 1);
+    s := 'insert into ' + cDBName + '.dbo.T_Spot_Force(' + cols + ') values (' +
+      Values + ')';
+    gSQLHelper.ExecuteSql(s);
+  end;
+end;
+
+class procedure TCommon.WriteSimpleVio(params: TStrings);
+var
+  i: Integer;
+  cols, Values, s: String;
+begin
+  cols := '';
+  Values := '';
+  for i := 0 to params.Count - 1 do
+  begin
+    cols := cols + params.Names[i] + ',';
+    Values := Values + params.ValueFromIndex[i].QuotedString + ',';
+  end;
+  if cols <> '' then
+  begin
+    cols := copy(cols, 1, length(cols) - 1);
+    Values := copy(Values, 1, length(Values) - 1);
+    s := 'insert into ' + cDBName + '.dbo.T_Spot_Violation(' + cols +
+      ') values (' + Values + ')';
+    gSQLHelper.ExecuteSql(s);
+  end;
+end;
+
+Class function TCommon.JsonToRecord<T>(JSON: string): T;
+var
+  rrt: TRttiRecordType;
+  rField: TRTTIField;
+  ja: TJSONArray;
+  jv: TJSONValue;
+  ji: TJSONValue;
+  s: string;
+  v: TValue;
+begin
+  if JSON = '' then
+    exit;
+  try
+    rrt := TRTTIContext.Create.GetType(TypeInfo(T)).AsRecord;
+    ja := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(JSON), 0)
+      as TJSONArray;
+    if ja <> nil then
+    begin
+      for jv in ja do
+      begin
+        for ji in TJSONArray(jv) do
+        begin
+          rField := rrt.GetField(TJSONPair(ji).JsonString.value);
+          if rField = nil then
+            continue;
+          s := TJSONPair(ji).JsonValue.value;
+          if (rField.FieldType.TypeKind = tkUString) or
+            (rField.FieldType.TypeKind = tkString) then
+            v := TValue.From<string>(s)
+          else if rField.FieldType.TypeKind = tkInteger then
+            v := TValue.From<Integer>(strtointdef(s, 0))
+          else if rField.FieldType.TypeKind = tkInt64 then
+            v := TValue.From<Int64>(strtointdef(s, 0))
+          else if rField.FieldType.TypeKind = tkFloat then
+          begin
+            if s.Contains('/') or s.Contains('-') or s.Contains(':') then
+              v := TValue.From<double>(VarToDateTime(s))
+            else
+              v := TValue.From<double>(strtofloatdef(s, 0));
+          end
+          else if rField.FieldType.TypeKind = tkEnumeration then
+            v := TValue.From<Boolean>(StrToBoolDef(s, False))
+          else
+            v := TValue.From<string>(s);
+          rField.SetValue(@Result, v);
+        end;
+      end;
+      ja.Free;
+    end;
+  except
+    on e: Exception do
+      gLogger.Error(e.Message);
+  end;
+end;
+
+class function TCommon.QueryDrvInfo(sfzmhm: String): String;
+var
+  c: Integer;
+begin
+  if sfzmhm = '' then
+    Result := '-1'
+  else
+    Result := TCommon.QueryToJsonString('GetLocalDrvInfo ' +
+      sfzmhm.QuotedString, nil, c);
+end;
+
+class function TCommon.QueryVehInfo(hphm, hpzl: String): String;
+var
+  c: Integer;
+begin
+  if (hphm = '') or (hpzl = '') then
+    Result := '-1'
+  else
+  begin
+    Result := TCommon.QueryToJsonString('GetLocalVehInfo ' + hphm.QuotedString +
+      ',' + hpzl.QuotedString, nil, c);
+  end;
 end;
 
 end.

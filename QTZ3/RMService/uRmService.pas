@@ -7,7 +7,7 @@ uses
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   IdBaseComponent, IdComponent, IdCustomTCPServer, IdCustomHTTPServer,
   IdHTTPServer, IniFiles, IdContext, uLogger, HTTPApp, uTmri, uRmweb,
-  uRminf, uTrans, ActiveX, IdURI, IdHttp, StrUtils,
+  uRminf, uTrans, ActiveX, IdURI, IdHttp, StrUtils, uLockVio,
   IdSSLOpenSSL, uTokenManager, uGlobal, uCommon, QJson;
 
 type
@@ -17,6 +17,8 @@ type
     class function ParamsToJson(params: TStrings; exceptName: string = '')
       : string; static;
     class procedure DoGetVehInfo(token: TToken; params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo);
+    class procedure DoGetDrvInfo(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
     class procedure DoWriteVio(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
@@ -41,7 +43,8 @@ type
     class procedure WriteSG(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
   public
-    class function GetVehinfo(token: TToken; hphm, hpzl: String): String;
+    class function GetVehInfo(token: TToken; hphm, hpzl: String): String;
+    class function GetDrvInfo(token: TToken; params: TStrings): String;
     class procedure DoRM(action, tokenKey: String; params: TStrings;
       isExport: Boolean; AResponseInfo: TIdHTTPResponseInfo);
   end;
@@ -79,16 +82,29 @@ begin
   result := result + '}';
 end;
 
+class procedure TRmService.DoGetDrvInfo(token: TToken; params: TStrings;
+  AResponseInfo: TIdHTTPResponseInfo);
+var
+  json: String;
+begin
+  json := GetDrvInfo(token, params);
+  if (json = '-1') or (json = '') then // 查询6合1失败
+    json := TCommon.QueryDrvInfo(params.Values['SFZMHM']);
+  if (json = '-1') or (json = '') then
+    json := '{}';
+  AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(json);
+end;
+
 class procedure TRmService.DoGetVehInfo(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
   json: string;
 begin
-  json := GetVehinfo(token, params.Values['HPHM'], params.Values['HPZL']);
-  if json = '' then
-  begin
-    json := '[]';
-  end;
+  json := GetVehInfo(token, params.Values['HPHM'], params.Values['HPZL']);
+  if (json = '-1') or (json = '') then // 如果查询6合1失败，查询本地复制库
+    json := TCommon.QueryVehInfo(params.Values['HPHM'], params.Values['HPZL']);
+  if (json = '-1') or (json = '') then
+    json := '{}';
   AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(json);
 end;
 
@@ -342,15 +358,7 @@ begin
   end
   else if action = Uppercase('GetDrvInfo') then
   begin
-    params.Add('JKID=02C06');
-    sjson := DoQeury(token, params);
-    json := TCommon.GetJsonNode('DrvPerson', sjson);
-    if json = '' then
-    begin
-      gLogger.Info(sjson);
-      json := '[]';
-    end;
-    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(json);
+    DoGetDrvInfo(token, params, AResponseInfo);
   end
   else if action = Uppercase('GetVioInfoByDrv') then
   begin
@@ -461,30 +469,41 @@ begin
   ActiveX.CoUninitialize;
 end;
 
-class function TRmService.GetVehinfo(token: TToken; hphm, hpzl: String): String;
+class function TRmService.GetDrvInfo(token: TToken; params: TStrings): String;
 var
-  sf: string;
+  json: String;
+begin
+  params.Add('JKID=02C26');
+  json := DoQeury(token, params);
+  result := TCommon.GetJsonNode('drv', json);
+  if result = json then
+    result := '-1'
+  else
+    TCommon.SaveDrvInfo(json);
+end;
+
+class function TRmService.GetVehInfo(token: TToken; hphm, hpzl: String): String;
+var
+  sf, json: string;
   params: TStrings;
 begin
   params := TStringList.Create;
-  try
-    sf := copy(hphm, 1, 1);
-    params.Add('hphm=' + copy(hphm, 2, 100));
-    params.Add('hpzl=' + hpzl);
-    if sf = '粤' then
-    begin
-      params.Add('JKID=01C21');
-    end
-    else
-    begin
-      params.Add('sf=' + sf);
-      params.Add('JKID=01C49');
-    end;
-    result := DoQeury(token, params);
-    result := TCommon.GetJsonNode('veh', result);
-    TCommon.SaveVehInfo(result);
-  except
+  sf := copy(hphm, 1, 1);
+  params.Add('hphm=' + copy(hphm, 2, 100));
+  params.Add('hpzl=' + hpzl);
+  if sf = '粤' then
+    params.Add('JKID=01C21')
+  else
+  begin
+    params.Add('sf=' + sf);
+    params.Add('JKID=01C49');
   end;
+  json := DoQeury(token, params);
+  result := TCommon.GetJsonNode('veh', json);
+  if result = json then
+    result := '-1'
+  else
+    TCommon.SaveVehInfo(result);
   params.Free;
 end;
 
@@ -537,45 +556,95 @@ end;
 class procedure TRmService.SaveForceVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code: String;
+  json, code, hphm, hpzl, cjjg, wfsj: String;
   tmriParam: TTmriParam;
+  n: Integer;
 begin
+  hphm := params.Values['hphm'];
+  hpzl := params.Values['hpzl'];
+  cjjg := params.Values['fxjg'];
+  wfsj := params.Values['wfsj'];
+
   params.Add('JKID=04C55');
   json := DoWrite(token, params);
+  gLogger.Info(json);
   code := TCommon.GetJsonNode('code', json);
   if code = '1' then
   begin
-    TCommon.WriteForceVio(params.Values['dsr'], params.Values['wfsj'],
-      params.Values['pzbh'], token.User.YHXM);
+    if params.IndexOf('lrr') >= 0 then
+      params.Values['lrr'] := token.Login
+    else
+      params.Add('lrr=' + token.Login);
+    n := params.IndexOfName('JKID');
+    if n >= 0 then
+      params.Delete(n);
+    TCommon.WriteForceVio(params);
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
   end
-  else
+  else if code = '0' then
   begin
     code := TCommon.GetJsonNode('msg', json);
+    if code = '' then
+      code := TCommon.GetJsonNode('msg1', json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+  end
+  else // 6合1问题
+  begin
+    gLogger.Info(json);
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
+    n := params.IndexOfName('JKID');
+    if n >= 0 then
+      params.Delete(n);
+    params.Add('bz=write zhpt error:' + json);
+    TCommon.WriteForceVio(params);
   end;
 end;
 
 class procedure TRmService.SaveSimpleVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code: String;
+  json, code, hphm, hpzl, cjjg, wfsj: String;
   tmriParam: TTmriParam;
+  n: Integer;
 begin
+  hphm := params.Values['hphm'];
+  hpzl := params.Values['hpzl'];
+  cjjg := params.Values['fxjg'];
+  wfsj := params.Values['wfsj'];
+
   params.Add('JKID=04C54');
   json := DoWrite(token, params);
+  gLogger.Info(json);
   code := TCommon.GetJsonNode('code', json);
   if code = '1' then
   begin
-    TCommon.WriteSimpleVio(params.Values['dsr'], params.Values['wfsj'],
-      params.Values['jdsbh'], token.User.YHXM);
+    if params.IndexOf('lrr') >= 0 then
+      params.Values['lrr'] := token.Login
+    else
+      params.Add('lrr=' + token.Login);
+    n := params.IndexOfName('JKID');
+    if n >= 0 then
+      params.Delete(n);
+    TCommon.WriteSimpleVio(params);
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
   end
-  else
+  else if code = '0' then
   begin
     gLogger.Info(json);
     code := TCommon.GetJsonNode('msg', json);
+    if code = '' then
+      code := TCommon.GetJsonNode('msg1', json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+  end
+  else // 6合1问题
+  begin
+    gLogger.Info(json);
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
+    n := params.IndexOfName('JKID');
+    if n >= 0 then
+      params.Delete(n);
+    params.Add('bz=write zhpt error:' + json);
+    TCommon.WriteSimpleVio(params);
   end;
 end;
 
@@ -583,17 +652,53 @@ class procedure TRmService.WriteSG(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
   ryInfo: String;
+  ts: TStrings;
 begin
+  {
+    params.Clear;
+    params.Add('jdsbh=445100100601478');
+    params.Add('ryfl=4');
+    params.Add('jszh=440583198401123199');
+    params.Add('fzjg=粤U');
+    params.Add('zjcx=B2E');
+    params.Add('hphm=粤U99858');
+    params.Add('dsr=林广铭');
+    params.Add('clfl=3');
+    params.Add('hpzl=02');
+    params.Add('jtfs=K33');
+    params.Add('wfsj=2018-03-29 18:30:38');
+    params.Add('xzqh=445101');
+    params.Add('wfdd=60582');
+    params.Add('lddm=1004');
+    params.Add('wfdz=市区福安路口市区福安路口北往南');
+    params.Add('wfxw=1090');
+    params.Add('cfzl=1');
+    params.Add('fkje=0');
+    params.Add('jkfs=0');
+    params.Add('jkbj=0');
+    params.Add('sgdj=0');
+    params.Add('jsjqbj=00');
+    params.Add('zqmj=250414');
+    params.Add('fxjg=445104005200');
+    params.Add('dabh=445192129223');
+    params.Add('dh=13509890999');
+    params.Add('ddms=0');
+  }
   // ryInfo := '$$445101$$1$$胡舒敏$$1$$342921198309063411$$35$$广州$$13570969818$$15$$1$$9009$$$$$$$$$$$$$$F1$$342921$$$$$$$$C1$$$$'
   // + '$$粤A$$5$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$11$$';
 
   ryInfo := '$$445101$$1$$李四$$1$$342921198309063551$$35$$$$$$15$$1$$9009$$$$$$$$$$$$$$X9$$342921$$$$$$$$$$$$'
-    + '$$$$5$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$00$$' + '~~' +
+    + '$$$$5$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$11$$' + '~~' +
     '$$445101$$2$$张三$$1$$445121198111054555$$37$$$$$$14$$1$$$$$$$$$$$$$$$$X9$$445102$$$$$$$$$$$$'
-    + '$$$$5$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$00$$';
+    + '$$$$5$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$11$$~~';
+  ts := TStringList.Create;
+  ts.LoadFromFile(ExtractFilePath(paramstr(0)) + 'sg.txt');
+  ryInfo := ts.Text;
+  ts.Free;
   params.Clear;
+  // params.Add('sgbh=' + FormatDatetime('yyymmddhhnnsszzz', now()));
   params.Add('xzqh=445101');
-  params.Add('sgfssj=2018-02-01 19:05');
+  params.Add('sgfssj=2018-03-31 11:05');
   params.Add('lh=60546');
   params.Add('lm=市区奎元路口');
   params.Add('gls=1001');
@@ -607,7 +712,7 @@ begin
   params.Add('sgxt=36');
   params.Add('dcsg=21');
   params.Add('tjr=陈焕林');
-  params.Add('cclrsj=2018-02-01 19:32:11');
+  params.Add('cclrsj=2018-03-31 11:05:00');
   params.Add('sszd=445101000000');
   params.Add('glbm=445100000000');
   params.Add('sgss=测试数据');
@@ -615,18 +720,21 @@ begin
   params.Add('jar1=陈焕林');
   params.Add('jar2=林广铭');
   params.Add('jbr=陈焕林');
-  params.Add('gxsj=2018-02-01 19:32:11');
+  params.Add('gxsj=2018-03-31 11:05:00');
   params.Add('jafs=1');
   params.Add('tjfs=1');
   params.Add('ryxx=' + ryInfo);
-  params.Add('rylen=2');
+  params.Add('rylen=1');
   SaveDutySimple(token, params, AResponseInfo);
+
+  // SaveSimpleVio(token, params, AResponseInfo);
 end;
 
 class procedure TRmService.SaveDutySimple(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code: String;
+  n: Integer;
+  json, code, djbh, sgbh: String;
   tmriParam: TTmriParam;
 begin
   params.Add('JKID=03C52');
@@ -634,15 +742,43 @@ begin
   code := TCommon.GetJsonNode('code', json);
   if code = '1' then
   begin
-    TCommon.WriteSimpleVio(params.Values['dsr'], params.Values['wfsj'],
-      params.Values['jdsbh'], token.User.YHXM);
-    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
+    djbh := TCommon.GetJsonNode('message', json);
+    sgbh := TCommon.GetJsonNode('Message1', json);
+    if params.IndexOf('djbh') >= 0 then
+      params.Values['djbh'] := djbh
+    else
+      params.Add('djbh=' + djbh);
+    if params.IndexOf('sgbh') >= 0 then
+      params.Values['sgbh'] := djbh
+    else
+      params.Add('sgbh=' + sgbh);
+    if params.IndexOf('lrr') >= 0 then
+      params.Values['lrr'] := token.Login
+    else
+      params.Add('lrr=' + token.Login);
+    n := params.IndexOfName('JKID');
+    if n >= 0 then
+      params.Delete(n);
+    TCommon.WriteDutySimple(params);
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+      ('"' + sgbh + '"');
   end
-  else
+  else if code = '0' then
   begin
     gLogger.Info(json);
     code := TCommon.GetJsonNode('message', json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+  end
+  else // 6合1问题,不能暂时缓存到数据库，因为要返回事故编号，用来开单
+  begin
+    gLogger.Info(json);
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(json);
+    // AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
+    n := params.IndexOfName('JKID');
+    if n >= 0 then
+      params.Delete(n);
+    params.Add('bz=write zhpt error:' + json);
+    TCommon.WriteDutySimple(params);
   end;
 
 end;

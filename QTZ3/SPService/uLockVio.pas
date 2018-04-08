@@ -66,18 +66,20 @@ type
   private
     class function GetLockVio(ASystemID: String): TLockVio;
     class procedure UpdateVioState(id, zt, bz: String; sxh: String = '');
-    class function IsWhite(hphm, hpzl, cjjg, wfsj: String): Boolean;
     class function IsReVio(hphm, hpzl, wfsj, cjjg: String): Boolean;
     class function Is1344Tzc(hphm, hpzl, wfsj, wfdz: String): Boolean;
     class function DownloadVioPic(var vio: TLockVio): Boolean;
     class function GetPic(picServer, picfile, sfilename: string): Boolean;
     class function BitmapToString(lj: string): WideString;
-    class function GetVioUploadStr(vio: TLockVio): String;
     class procedure AnalysisVioUploadResult(json: String; var code: String;
       var msg: String);
   public
+    class function GetVioUploadStr(vio: TLockVio): String;
+    class function IsWhite(hphm, hpzl, cjjg, wfsj: String): Boolean;
     class procedure LockVio(AId, TokenKey: String;
       AResponseInfo: TIdHTTPResponseInfo);
+    class function WriteVio(vioid, TokenKey, vioStr, flag: String;
+      AResponseInfo: TIdHTTPResponseInfo): String;
   end;
 
 implementation
@@ -170,9 +172,7 @@ class procedure TLockVioUtils.LockVio(AId, TokenKey: String;
   AResponseInfo: TIdHTTPResponseInfo);
 var
   vio: TLockVio;
-  json, code, msg: String;
-  tmriParam: TTmriParam;
-  token: TToken;
+  json: String;
 begin
   vio := GetLockVio(AId);
   if vio.sysid = '' then
@@ -221,6 +221,7 @@ begin
   end;
 
   json := GetVioUploadStr(vio);
+  WriteVio(AId, TokenKey, json, vio.flag, AResponseInfo);
   {
     if vio.flag = '0' then
     json := TTmri.WriteVioSurveil(json)
@@ -228,24 +229,39 @@ begin
     json := TTmri.WriteVioSurveil1(json);
   }
 
+end;
+
+class function TLockVioUtils.WriteVio(vioid, TokenKey, vioStr, flag: String;
+  AResponseInfo: TIdHTTPResponseInfo): String;
+var
+  s, code, msg: string;
+  token: TToken;
+  tmriParam: TTmriParam;
+begin
+  Result := '';
   token := gTokenManager.GetToken(TokenKey);
 
-  if vio.flag = '0' then
+  if flag = '0' then
     tmriParam := TCommon.GetTmriParam('04C52', token)
   else
     tmriParam := TCommon.GetTmriParam('04C53', token);
-  json := TTmri.Write(tmriParam, json);
+  s := TTmri.Write(tmriParam, vioStr);
+  glogger.Info(s);
 
-  AnalysisVioUploadResult(json, code, msg);
+  AnalysisVioUploadResult(s, code, msg);
   if code = '1' then
   begin
-    UpdateVioState(AId, '8', '', msg);
-    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
+    if vioid <> '' then
+      UpdateVioState(vioid, '8', '', msg);
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+      ('"' + msg + '"');
+    Result := msg;
   end
   else
   begin
-    UpdateVioState(AId, '6', msg, '');
-    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(msg);
+    if vioid <> '' then
+      UpdateVioState(vioid, '6', msg, '');
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg);
   end;
 end;
 
@@ -264,9 +280,9 @@ class procedure TLockVioUtils.AnalysisVioUploadResult(json: String;
   var code, msg: String);
 begin
   code := TCommon.GetJsonNode('code', json);
-  msg := TCommon.GetJsonNode('msg1', json);
+  msg := TCommon.GetJsonNode('msg', json);
   if msg = '' then
-    msg := TCommon.GetJsonNode('msg', json);
+    msg := TCommon.GetJsonNode('msg1', json);
 end;
 
 class function TLockVioUtils.BitmapToString(lj: string): WideString;
@@ -344,7 +360,7 @@ begin
 
   with gSQLHelper.Query(s) do
   begin
-    if not Eof then
+    if not EOF then
     begin
       Result.sysid := ASystemID;
       Result.cjjg := Trim(FieldByName('cjjg').AsString);
@@ -379,8 +395,7 @@ begin
       Result.zsxxdz := Trim(FieldByName('zsxxdz').AsString);
       Result.dh := Trim(FieldByName('lxdh').AsString);
       Result.lxfs := '';
-      Result.sj := formatDatetime('yyyy-mm-dd hh:nn:ss',
-        FieldByName('WFSJ').ASDATETIME);
+      Result.sj := '';
       Result.wfsj := formatDatetime('yyyy-mm-dd hh:mm',
         FieldByName('WFSJ').ASDATETIME);
 
@@ -505,7 +520,7 @@ begin
       Result := True;
     except
       on e: exception do
-        gLogger.Error(e.Message);
+        glogger.Error(e.Message);
     end;
     idHttp.Free;
     ms.Free;
