@@ -18,7 +18,8 @@ type
 
   THik = class
   private
-    class function GetK08SearchParam(param, page, pageSize: string): TStrings;
+    class function GetK08SearchParam(param: TDictionary<string, String>;
+      page, pageSize: string): TStrings;
     class function HttPPost(AUrl: String; AParams: TStrings;
       var AResult: String; AEncoding: TEncoding = nil): Boolean;
     class function DFLogin(AUser, APwd: String; var AToken: String): Boolean;
@@ -29,8 +30,8 @@ type
       : TList<TDFVehInfo>; overload;
     class function DFAnalysisOnePic(Url: String): String; overload;
     class function GetK08VehInfo(hphm, hpzl: String): String;
-    class function GetK08PassList(kssj, jssj, hphm, hpzl, KDBH, clpp, csys,
-      clpp1, aqd, aqd1, zyb, zyb1, gj, page, pageSize: string): String;
+    class function GetK08PassList(param: TDictionary<string, String>;
+      page, pageSize: String): String;
   end;
 
 implementation
@@ -222,70 +223,54 @@ begin
   Params.Free;
 end;
 
-class function THik.GetK08SearchParam(param, page, pageSize: string): TStrings;
+class function THik.GetK08SearchParam(param: TDictionary<string, String>;
+  page, pageSize: string): TStrings;
+var
+  key: String;
 begin
   Result := TStringList.Create;
   Result.Add
-    ('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/kms/ws/">');
+    ('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">');
   Result.Add('   <soapenv:Header/>');
   Result.Add('   <soapenv:Body>');
   Result.Add('      <ws:moreLikeThis>');
   Result.Add('         <arg0>');
-  Result.Add('            <appCode>ivms8200_hare</appCode>');
   Result.Add('            <beanId>pass</beanId>');
   Result.Add('            <currentPage>' + page + '</currentPage>');
   Result.Add('            <pageSize>' + pageSize + '</pageSize>');
-  Result.Add('            <password>vlss</password>');
-  Result.Add('            <q>' + param + '</q>');
-  Result.Add('            <tableName>BayonetVehiclePass</tableName>');
-  Result.Add('            <userName>vlss</userName>');
+  for key in param.Keys do
+  begin
+    if key = 'q' then
+    begin
+      Result.Add('             <q>' + param[key] + '</q>');
+    end
+    else
+    begin
+      Result.Add('             <fieldOptions>');
+      Result.Add('               <filedName>' + key + '</filedName>');
+      Result.Add('               <keyWords>' + param[key] + '</keyWords>');
+      Result.Add('             </fieldOptions>');
+    end;
+  end;
+  Result.Add('           <sortColumn>passtime</sortColumn>');
+  Result.Add('           <sortMethod>desc</sortMethod>');
   Result.Add('         </arg0>');
   Result.Add('      </ws:moreLikeThis>');
   Result.Add('   </soapenv:Body>');
   Result.Add('</soapenv:Envelope>');
 end;
 
-class function THik.GetK08PassList(kssj, jssj, hphm, hpzl, KDBH, clpp, csys,
-  clpp1, aqd, aqd1, zyb, zyb1, gj, page, pageSize: string): String;
+class function THik.GetK08PassList(param: TDictionary<string, String>;
+  page, pageSize: String): String;
 var
   Params: TStrings;
-  param, s, h: String;
+  s, h, clpp: String;
   vehList: TList<TK08VehInfo>;
   veh: TK08VehInfo;
   totalPage, currentPage: Integer;
 begin
   Result := '';
   ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
-
-  param := 'passtime:([' + kssj + ' TO ' + jssj + '])';
-  if (KDBH <> '') and gDevKDBH.ContainsKey(KDBH) then
-    param := param + ' AND crossingid:(' + gDevKDBH[KDBH] + ')';
-  if hphm <> '' then
-    param := param + ' AND plateinfono:(' + hphm + ')';
-
-  if (hpzl <> '') and (gK08Hpzl.ContainsKey(hpzl)) then
-  begin
-    for s in gK08Hpzl[hpzl] do
-      h := h + ' ' + s;
-    param := param + ' AND vehicletype:(' + h.Substring(1) + ')';
-  end;
-  if clpp <> '' then
-    param := param + ' AND vehiclelogo:(' + clpp + ')';
-  if csys <> '' then
-    param := param + ' AND vehiclecolor:(' + csys + ')';
-  if clpp1 <> '' then
-    param := param + ' AND vehiclesublogo:(' + clpp1 + ')';
-  if aqd <> '' then
-    param := param + ' AND pilotsafebelt:(' + aqd + ')';
-  if aqd1 <> '' then
-    param := param + ' AND vicepilotsafebelt:(' + aqd1 + ')';
-  if zyb <> '' then
-    param := param + ' AND vehiclesunvisor:(' + zyb + ')';
-  if zyb1 <> '' then
-    param := param + ' AND vicepilotsunvisor:(' + zyb1 + ')';
-  if gj <> '' then
-    param := param + ' AND pendant:(' + gj + ')';
-  param := '(' + param + ')';
 
   Params := GetK08SearchParam(param, page, pageSize);
 
@@ -301,35 +286,34 @@ begin
     begin
       for veh in vehList do
       begin
-        // HPHM,HPZL,GCSJ,KDBH,CDBH,CLSD FWQDZ, TP1
-        // if Length(veh.plateinfono) < 6 then
-        // continue;
-
-        s := '"HPHM":"' + veh.plateinfono + '",';
+        s := '"HPHM":"' + veh.plateinfo + '",';
         if gHpzl.ContainsKey(veh.vehicletype) then
           s := s + '"HPZL":"' + gHpzl[veh.vehicletype] + '"'
         else
           s := s + '"HPZL":"' + veh.vehicletype + '"';
-        s := s + ',"GCSJ":"' + veh.PassTime + '",';
+        s := s + ',"GCSJ":"' + FormatDateTime('yyyy/mm/dd hh:nn:ss',
+          DateUtils.IncMilliSecond(25569.3333333333,
+          StrToInt64(veh.PassTime))) + '",';
 
         if gDevID.ContainsKey(veh.crossingid) then
           s := s + '"KDBH":"' + gDevID[veh.crossingid] + '"'
         else
           s := s + '"KDBH":"' + veh.crossingid + '"';
 
-        if gK08Clpp.ContainsKey(veh.vehiclesublogoall) then
-          s := s + ',"CLPP":"' + gK08Clpp[veh.vehiclesublogoall] + '"'
+        clpp := veh.vehiclelogo + '-' + veh.vehiclesublogo;
+        if gK08Clpp.ContainsKey(clpp) then
+          s := s + ',"CLPP":"' + gK08Clpp[clpp] + '"'
         else if gK08Clpp.ContainsKey(veh.vehiclelogo + '-0') then
           s := s + ',"CLPP":"' + gK08Clpp[veh.vehiclelogo + '-0'] + '"'
         else
-          s := s + ',"CLPP":"' + veh.vehiclesublogoall + '"';
+          s := s + ',"CLPP":"' + clpp + '"';
 
         if gK08Csys.ContainsKey(veh.vehiclecolor) then
           s := s + ',"CSYS":"' + gK08Csys[veh.vehiclecolor] + '"'
         else
           s := s + ',"CSYS":"' + veh.vehiclecolor + '"';
-        s := '{' + s + ',"CDBH":"' + veh.laneid + '","CLSD":"' +
-          veh.vehiclespeed + '","FWQDZ":"","TP1":"' + veh.picvehicle + '"}';
+        s := '{' + s + ',"CDBH":"' + veh.laneno + '","CLSD":"' +
+          veh.vehiclespeed + '","FWQDZ":"","TP1":"' + veh.imagepath + '"}';
 
         Result := Result + ',' + s;
       end;
@@ -344,22 +328,24 @@ end;
 class function THik.GetK08VehInfo(hphm, hpzl: String): String;
 var
   Params: TStrings;
-  param, s: String;
+  param: TDictionary<string, String>;
+  s, hpzls, clpp: String;
   vehList: TList<TK08VehInfo>;
   totalPage, currentPage: Integer;
 begin
   Result := '';
   ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
+  param := TDictionary<string, String>.Create;
 
   if gK08Hpzl.ContainsKey(hpzl) then
   begin
     for s in gK08Hpzl[hpzl] do
-      param := param + ' ' + s;
+      hpzls := hpzls + ' ' + s;
   end;
-  param := '(vehicletype:(' + param.Substring(1) + ') AND plateinfono:(' +
-    hphm + '))';
-
+  param.Add('plateno', hphm);
+  param.Add('vehicletype', hpzls.Substring(1));
   Params := GetK08SearchParam(param, '1', '1');
+  param.Free;
 
   if HttPPost(gConfig.HikConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
   begin
@@ -367,12 +353,13 @@ begin
       currentPage);
     if (vehList <> nil) and (vehList.Count > 0) then
     begin
-      if gK08Clpp.ContainsKey(vehList[0].vehiclesublogoall) then
-        Result := '"CLPP":"' + gK08Clpp[vehList[0].vehiclesublogoall] + '"'
+      clpp := vehList[0].vehiclelogo + '-' + vehList[0].vehiclesublogo;
+      if gK08Clpp.ContainsKey(clpp) then
+        Result := '"CLPP":"' + gK08Clpp[clpp] + '"'
       else if gK08Clpp.ContainsKey(vehList[0].vehiclelogo + '-0') then
         Result := 'CLPP:"' + gK08Clpp[vehList[0].vehiclelogo + '-0'] + '"'
       else
-        Result := '"CLPP":"' + vehList[0].vehiclesublogoall + '"';
+        Result := '"CLPP":"' + clpp + '"';
       if gK08Csys.ContainsKey(vehList[0].vehiclecolor) then
         Result := Result + ',"CSYS":"' + gK08Csys[vehList[0].vehiclecolor] + '"'
       else

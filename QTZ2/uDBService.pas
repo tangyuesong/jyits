@@ -93,7 +93,8 @@ var
   action, token, postString: String;
   params: TStrings;
   i: integer;
-  s, clientIP, yhbh: String;
+  s, clientIP, yhbh, page, pageSize: String;
+  param: TDictionary<string, String>;
 begin
   action := UpperCase(ARequestInfo.Document.Substring(1));
   clientIP := Trim(AContext.Connection.Socket.Binding.PeerIP);
@@ -164,13 +165,19 @@ begin
       end
       else if (action = UpperCase('GetK08PassList')) and gHaveK08 then
       begin
-        AResponseInfo.ContentText := TSpecialItf.GetK08PassList
-          (params.Values['kssj'], params.Values['jssj'], params.Values['hphm'],
-          params.Values['hpzl'], params.Values['kdbh'], params.Values['clpp'],
-          params.Values['csys'], params.Values['clpp1'], params.Values['aqd'],
-          params.Values['aqd1'], params.Values['zyb'], params.Values['zyb1'],
-          params.Values['gj'], params.Values['page'],
-          params.Values['pageSize']);
+        param := TDictionary<string, String>.Create;
+        for i := 0 to params.Count - 1 do
+        begin
+          if UpperCase(params.Names[i]) = 'CURRENTPAGE' then
+            page := params.ValueFromIndex[i]
+          else if UpperCase(params.Names[i]) = 'PAGESIZE' then
+            pageSize := params.ValueFromIndex[i]
+          else
+            param.Add(params.Names[i], params.ValueFromIndex[i]);
+        end;
+        AResponseInfo.ContentText := TSpecialItf.GetK08PassList(param, page,
+          pageSize);
+        param.Free;
       end
       else if (action = UpperCase('AnalysisOnePic')) and gHaveK08 then
       begin

@@ -28,7 +28,8 @@ uses
   uTokenManager in 'uTokenManager.pas',
   uJKDefine in 'rm\impl\uJKDefine.pas',
   TmriOutNewAccess in 'rm\intf\TmriOutNewAccess.pas',
-  uWSManager in 'uWSManager.pas';
+  uWSManager in 'uWSManager.pas',
+  TmriOutAccess1 in 'rm\intf\TmriOutAccess1.pas';
 
 {$R *.res}
 
