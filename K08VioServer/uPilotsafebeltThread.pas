@@ -11,6 +11,8 @@ type
   private
     gVioVeh: TStrings; // 防止重复写入，主键为 hphm_yyyymmdd, 只保存5000条
     function GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
+    function GetSecondPic(hphm, hpzl, url, wfxw: String;
+      wfsj: TDateTime): String;
   protected
     procedure Execute; override;
   end;
@@ -53,10 +55,12 @@ implementation
 procedure TPilotsafebeltThread.Execute;
 var
   Params, SQLs, tmpSQLs: TStrings;
-  param, s, EndTime, maxPasstime: String;
+  s, EndTime: String;
+  maxPasstime: TDateTime;
   totalPage, currentPage: Integer;
   currentTime: TDateTime;
   vehList: TList<TK08VehInfo>;
+  param: TDictionary<string, String>;
 begin
   gLogger.Info('[Pilotsafebelt] PilotsafebeltThread Start');
   if gThreadConfig.PilotsafebeltDev = '' then
@@ -68,11 +72,15 @@ begin
   ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
   SQLs := TStringList.Create;
   gVioVeh := TStringList.Create;
+  param := TDictionary<string, String>.Create;
   while True do
   begin
-    maxPasstime := THik.GetMaxPassTime('crossingid:(' +
-      gThreadConfig.PilotsafebeltDev + ')');
-    if maxPasstime = '' then
+    param.Clear;
+    param.Add('crossingid', gThreadConfig.PilotsafebeltDev);
+    param.Add('passtime', gThreadConfig.PilotsafebeltStartTime + ',' +
+      formatdatetime('yyyy-mm-dd hh:nn:ss', Now()));
+    maxPasstime := THik.GetMaxPassTime(param);
+    if maxPasstime = 0 then
     begin
       gLogger.Error('[Pilotsafebelt] 访问K08失败');
       Sleep(10 * 60000);
@@ -82,15 +90,21 @@ begin
     while gVioVeh.Count > 5000 do
       gVioVeh.Delete(0);
 
-    currentTime := TCommon.StringToDT(maxPasstime) - DateUtils.OneHour;
-    EndTime := FormatDatetime('yyyy-mm-dd', currentTime) + 'T' +
-      FormatDatetime('hh:nn:ss', currentTime) + '.999Z';
+    currentTime := maxPasstime - DateUtils.OneHour;
+    EndTime := formatdatetime('yyyy-mm-dd hh:nn:ss', currentTime);
 
-    param := 'crossingid:(' + gThreadConfig.PilotsafebeltDev +
-      ') AND passtime:([' + gThreadConfig.PilotsafebeltStartTime + ' TO ' +
-      EndTime + ']) AND platestate:(0) AND (pilotsafebelt:(1) OR vicepilotsafebelt:(1))';
+    if EndTime <= gThreadConfig.PilotsafebeltStartTime then
+    begin
+      gLogger.Error('[Pilotsafebelt] 没有最新的数据');
+      Sleep(10 * 60000);
+      continue;
+    end;
 
-    gLogger.Info('[Pilotsafebelt] Param: ' + param);
+    param.Clear;
+    param.Add('crossingid', gThreadConfig.PilotsafebeltDev);
+    param.Add('passtime', gThreadConfig.PilotsafebeltStartTime + ',' + EndTime);
+    param.Add('q',
+      'platestate:(0) AND (pilotsafebelt:(1) OR vicepilotsafebelt:(1))');
 
     totalPage := 1;
     currentPage := 1;
@@ -104,7 +118,7 @@ begin
       // 所以只要查询某一页出错，当次查询的所有违法都不保存
 
       try
-        Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '30');
+        Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '100');
         vehList := THik.GetK08PassList(Params, totalPage, currentPage);
         Params.Free;
         if vehList <> nil then
@@ -136,9 +150,8 @@ begin
       if gSQLHelper.ExecuteSqlTran(SQLs) then
       begin
         currentTime := currentTime + DateUtils.OneSecond;
-        gThreadConfig.PilotsafebeltStartTime := FormatDatetime('yyyy-mm-dd',
-          currentTime) + 'T' + FormatDatetime('hh:nn:ss', currentTime)
-          + '.000Z';
+        gThreadConfig.PilotsafebeltStartTime :=
+          formatdatetime('yyyy-mm-dd hh:nn:ss', currentTime);
         TCommon.SaveConfig('Task', 'PilotsafebeltStartTime',
           gThreadConfig.PilotsafebeltStartTime);
         gLogger.Info('[Pilotsafebelt] Save Pilotsafebelt Vio Count: ' +
@@ -155,13 +168,52 @@ begin
   gLogger.Info('[Pilotsafebelt] PilotsafebeltThread Stop');
   SQLs.Free;
   gVioVeh.Free;
+  param.Free;
   ActiveX.CoUninitialize;
+end;
+
+function TPilotsafebeltThread.GetSecondPic(hphm, hpzl, url, wfxw: String;
+  wfsj: TDateTime): String;
+var
+  param: TDictionary<string, String>;
+  Params: TStrings;
+  vehList: TList<TK08VehInfo>;
+  veh: TK08VehInfo;
+  c, t: Integer;
+begin
+  Result := '';
+  param := TDictionary<string, String>.Create;
+  param.Add('passtime', formatdatetime('yyyy-mm-dd', wfsj) + ' 00:00:00,' +
+    formatdatetime('yyyy-mm-dd', wfsj + 1) + ' 00:00:00');
+  param.Add('plateno', hphm);
+  param.Add('vehicletype', hpzl);
+  if wfxw = '6011' then
+    param.Add('pilotsafebelt', '1')
+  else
+    param.Add('vicepilotsafebelt', '1');
+
+  Params := THik.GetK08SearchParam(param, '1', '2');
+  vehList := THik.GetK08PassList(Params, c, t);
+  if (vehList <> nil) and (vehList.Count > 0) then
+  begin
+    for veh in vehList do
+    begin
+      if veh.imagepath <> url then
+      begin
+        Result := veh.imagepath;
+        break;
+      end;
+    end;
+    vehList.Free;
+  end;
+  param.Free;
+  Params.Free;
 end;
 
 function TPilotsafebeltThread.GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
 var
   veh: TK08VehInfo;
-  s, tp1, Tp2, WFXW, hphm: String;
+  s, tp1, tp2, wfxw, hphm: String;
   dt: TDateTime;
 begin
   Result := TStringList.Create;
@@ -170,39 +222,39 @@ begin
     if gDevList.ContainsKey(veh.crossingid) and
       (gHpzlList[veh.vehicletype] <> '07') then
     begin
-      dt := TCommon.StringToDT(veh.passtime);
-      hphm := veh.plateinfono + '_' + FormatDatetime('yyyymmdd', dt);
+      dt := DateUtils.IncMilliSecond(25569.3333333333,
+        StrToInt64(veh.PassTime));
+      hphm := veh.plateinfo + '_' + formatdatetime('yyyymmdd', dt);
       if gVioVeh.IndexOf(hphm) >= 0 then
         continue;
-
-      tp1 := veh.picvehicle;
-      tp1 := tp1.Replace('&amp;', '&');
-      Tp2 := tp1.Replace('1.jpg', '2.jpg');
-      if tp1 = Tp2 then
-        continue;
-      if not InternetCheckConnection(PChar(Tp2), 1, 0) then
-      begin
-        gLogger.Info('[Pilotsafebelt] not found Photofile2');
-        continue;
-      end;
-
       if veh.pilotsafebelt = '1' then
-        WFXW := '6011'
+        wfxw := '6011'
       else if veh.vicepilotsafebelt = '1' then
-        WFXW := '7012'
+        wfxw := '7012'
       else
         continue;
 
+      tp1 := veh.imagepath;
+      tp2 := GetSecondPic(veh.plateinfo, veh.vehicletype, tp1, wfxw, dt);
+      if tp2 = '' then
+      begin
+        gLogger.Info('[Pilotsafebelt]' + veh.plateinfo +
+          ' not found Photofile2');
+        continue;
+      end;
+
+      tp1 := tp1.Replace('&amp;', '&');
+      tp2 := tp2.Replace('&amp;', '&');
       tp1 := TIdURI.URLDecode(tp1);
-      Tp2 := TIdURI.URLDecode(Tp2);
+      tp2 := TIdURI.URLDecode(tp2);
 
       s := ' insert into T_VIO_TEMP(CJJG, HPHM, HPZL, WFDD, WFXW, WFSJ, CD, PHOTOFILE1, PHOTOFILE2, BJ) values ('
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
-        veh.plateinfono.QuotedString + ',' + gHpzlList[veh.vehicletype]
+        veh.plateinfo.QuotedString + ',' + gHpzlList[veh.vehicletype]
         .QuotedString + ',' + gDevList[veh.crossingid].SBBH.QuotedString + ',' +
-        WFXW.QuotedString + ',' + veh.passtime.QuotedString + ',' +
-        veh.laneid.QuotedString + ',' + tp1.QuotedString + ',' +
-        Tp2.QuotedString + ',''0'')';
+        wfxw.QuotedString + ',' + formatdatetime('yyyy/mm/dd hh:nn:ss', dt)
+        .QuotedString + ',' + veh.laneno.QuotedString + ',' + tp1.QuotedString +
+        ',' + tp2.QuotedString + ',''0'')';
       Result.Add(s);
       gVioVeh.Add(hphm)
     end;

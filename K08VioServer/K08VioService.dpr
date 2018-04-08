@@ -8,11 +8,12 @@ uses
   uGlobal in 'Common\uGlobal.pas',
   uLogger in 'Common\uLogger.pas',
   uSQLHelper in 'Common\uSQLHelper.pas',
-  uNoEntryThread in 'uNoEntryThread.pas',
   uHik in 'uHik.pas',
   uDecodeHikResult in 'uDecodeHikResult.pas',
   uEntity in 'uEntity.pas',
-  u2To5NoEntry in 'u2To5NoEntry.pas';
+  qjson in 'Common\qjson.pas',
+  qrbtree in 'Common\qrbtree.pas',
+  QString in 'Common\QString.pas';
 
 {$R *.RES}
 

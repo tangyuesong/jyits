@@ -4,57 +4,80 @@ interface
 
 uses
   SysUtils, Xml.XMLIntf, Xml.XMLDoc, System.Variants, Generics.Collections,
-  System.Rtti;
+  System.Rtti, uCommon, QJson, uGlobal;
 
 Type
 
   TK08VehInfo = Record
-    vicepilotsafebelt: String;
-    platecolor: String;
-    passtimerange: String;
-    vehicleisslave: String;
-    vehcolordepth: String;
-    imageserverid: String;
-    vmodelh: String;
-    HIGHLIGHTCOLS: String;
-    vehiclespeed: String;
-    vehiclelen: String;
-    vehiclehead: String;
-    id: String;
-    passid: String;
-    directionindex: String;
-    vehiclestate: String;
-    vehicleid: String;
-    uphone: String;
-    vehiclesublogoall: String;
-    vehicleinfo: String;
-    vehiclelogo: String;
-    dangmark: String;
-    vehiclemodel: String;
-    vehiclecolor: String;
-    plateinfo: String;
-    passtime: String;
-    plateinfono: String;
-    DOC_ID: String;
-    vehicleinfolevel: String;
-    pilotsafebelt: String;
-    laneid: String;
-    envprosign: String;
-    vehiclemodelall: String;
-    picvehicle: String;
+    area: String;
+    areacode: String;
+    cascade: String;
+    checkresult: String;
+    confidence: String;
+    copilot: String;
     crossingid: String;
-    vicepilotsunvisor: String;
-    vehicletype: String;
-    HITCOLS: String;
-    vehiclesunvisor: String;
-    platetype: String;
-    vehiclesublogo: String;
+    dangmark: String;
+    datasources: String;
+    decoration: String;
+    directionindex: String;
+    driverposition: String;
+    envprosign: String;
+    frontchild: String;
+    frontconfidence: String;
+    frontconfidencedetail: String;
+    id: String;
+    imagepath: String;
+    infolevel: String;
+    slabel: String;
+    laneno: String;
+    mobiledevicelatitude: String;
+    mobiledevicelongitude: String;
+    multivehicle: String;
+    passid: String;
+    passtime: String;
+    pdvs: String;
     pendant: String;
-    vmodely: String;
+    picurl_num: String;
+    pilotsafebelt: String;
+    pilotsunvisor: String;
+    plateblong: String;
+    platecheckresult: String;
+    platecolor: String;
+    platediff: String;
+    plateinfo: String;
+    platenosimilarity: String;
+    plateposition: String;
+    plateprovince: String;
     platestate: String;
-    vmodelw: String;
-    vmodelx: String;
-    ENTITYNAME: String;
+    platetail: String;
+    platetype: String;
+    recognitionsign: String;
+    sequenceid: String;
+    storagetime: String;
+    subfeature: String;
+    sunroofposition: String;
+    tempplateno: String;
+    tfsid: String;
+    tissuebox: String;
+    uphone: String;
+    vehiclecolor: String;
+    vehiclecolordepth: String;
+    vehiclehead: String;
+    vehicleisslave: String;
+    vehiclelamp: String;
+    vehiclelen: String;
+    vehiclelogo: String;
+    vehiclemodel: String;
+    vehiclerect: String;
+    vehiclesign: String;
+    vehiclespeed: String;
+    vehiclestate: String;
+    vehiclesublogo: String;
+    vehicletype: String;
+    vicedriverposition: String;
+    vicepilotsafebelt: String;
+    vicepilotsunvisor: String;
+    videostructure: String;
   end;
 
   TDFVehInfo = Record
@@ -159,61 +182,69 @@ end;
 class function TDecodeHikResult.DecodeK08SearchResult(Xml: String;
   var totalPage: Integer; var currentPage: Integer): TList<TK08VehInfo>;
 var
-  XMLDoc, DocIntf: IXMLDocument;
-  rNode, cNode: IXMLNode;
   I, J: Integer;
-  key, value: String;
+  key, value, s, msg: String;
   veh: TK08VehInfo;
   rrt: TRttiRecordType;
   rField: TRttiField;
   fields: TArray<TRttiField>;
+  Json, Rows, Item: TQJson;
 begin
   Result := nil;
   rrt := TRTTIContext.Create.GetType(TypeInfo(TK08VehInfo)).AsRecord;
   fields := rrt.GetFields;
-  XMLDoc := TXMLDocument.Create(nil);
-  DocIntf := XMLDoc;
-  XMLDoc.LoadFromXML(Xml);
-  rNode := XMLDoc.ChildNodes.Nodes[0];
-  rNode := rNode.ChildNodes.Nodes[0];
-  rNode := rNode.ChildNodes.Nodes[0];
-  rNode := rNode.ChildNodes.Nodes[0];
-  if Trim(rNode.ChildValues['resultCode']) = '0' then
-  begin
-    Result := TList<TK08VehInfo>.Create;
-    rNode := rNode.ChildNodes.FindNode('resultList');
-    totalPage := StrToInt(rNode.ChildValues['totalPage']);
-    currentPage := StrToInt(rNode.ChildValues['currentPage']);
-    rNode := rNode.ChildNodes.FindNode('genSearchResult');
-    if rNode <> nil then
+  I := pos('<return>', Xml);
+  J := pos('</return>', Xml);
+  if (I > 0) and (J > I) then
+    s := Trim(copy(Xml, I + 8, J - I - 8));
+  Json := TQJson.Create;
+  try
+    Json.Parse(s);
+    Rows := TCommon.FindJson('msg', Json);
+    if Rows <> nil then
     begin
-      for I := 0 to rNode.ChildNodes.Count - 1 do // map
+      msg := Rows.value;
+      if msg = 'success' then
       begin
-        InitVehInfo<TK08VehInfo>(@veh);
-        cNode := rNode.ChildNodes[I];
-        for J := 0 to cNode.ChildNodes.Count - 1 do // entry
+        Result := TList<TK08VehInfo>.Create;
+        totalPage := StrToIntDef(TCommon.GetJsonNode('totalPages', s), 0);
+        currentPage := StrToIntDef(TCommon.GetJsonNode('pageNo', s), 0);
+        Rows := TCommon.FindJson('rows', Json);
+        if Rows <> nil then
         begin
-          key := cNode.ChildNodes[J].ChildValues['key'];
-          if cNode.ChildNodes[J].ChildNodes.FindNode('value') <> nil then
-            value := Trim(cNode.ChildNodes[J].ChildNodes.FindNode('value').Text)
-          else
-            value := '0';
-          try
-            rField := GetField(key, fields);
-            if rField <> nil then
-              rField.SetValue(@veh, TValue.From<string>(value));
-          except
-
+          for I := 0 to Rows.Count - 1 do
+          begin
+            Item := TQJson.Create;
+            Item.Parse(Rows.Items[I].value);
+            // Item := Rows.Items[I];
+            for J := 0 to Item.Count - 1 do
+            begin
+              key := Item.Items[J].Name;
+              value := Item.Items[J].value;
+              try
+                rField := GetField(key, fields);
+                if rField <> nil then
+                  rField.SetValue(@veh, TValue.From<string>(value));
+              except
+                on e: exception do
+                  gLogger.Error(e.Message);
+              end;
+            end;
+            if veh.id <> '' then
+              Result.Add(veh);
+            Item.Free;
           end;
         end;
-        if veh.id <> '' then
-          Result.Add(veh);
-      end;
+      end
+      else
+        gLogger.Error(Rows.ToString);
     end;
+  except
+    on e: exception do
+      gLogger.Error(e.Message);
   end;
-  XMLDoc := nil;
-  DocIntf := nil;
   rrt := nil;
+  Json.Free;
 end;
 
 class procedure TDecodeHikResult.InitVehInfo<T>(rec: Pointer);
