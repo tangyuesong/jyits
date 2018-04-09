@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, Classes, DateUtils, uGlobal, uCommon, uSolr, uDBO, uEntity,
-  uHik, FireDAC.Comp.Client;
+  uHik, FireDAC.Comp.Client, Generics.Collections;
 
 type
   TSpecialItf = Class
@@ -14,8 +14,8 @@ type
     class function GetLockVio(ASystemID: String): String;
     class function GetPassList(params: TStrings): string; static;
     class function GetK08VehInfo(hphm, hpzl: String): String;
-    class function GetK08PassList(kssj, jssj, hphm, hpzl, kdbh, clpp, csys,
-      clpp1, aqd, aqd1, zyb, zyb1, gj, page, pageSize: string): String;
+    class function GetK08PassList(param: TDictionary<string, String>;
+      page, pageSize: String): String;
     class function AnalysisOnePic(Url: String): String;
     class function Login(ip: String; params: TStrings): String;
     class procedure SaveQtzLog(token, yhbh, ip, action, param: String);
@@ -31,12 +31,13 @@ begin
     Result := '';
 end;
 
-class function TSpecialItf.GetK08PassList(kssj, jssj, hphm, hpzl, kdbh, clpp,
-  csys, clpp1, aqd, aqd1, zyb, zyb1, gj, page, pageSize: string): String;
+class function TSpecialItf.GetK08PassList(param: TDictionary<string, String>;
+  page, pageSize: String): String;
 begin
   if gHaveK08 then
-    Result := THik.GetK08PassList(kssj, jssj, hphm, hpzl, kdbh, clpp, csys,
-      clpp1, aqd, aqd1, zyb, zyb1, gj, page, pageSize)
+  begin
+    Result := THik.GetK08PassList(param, page, pageSize)
+  end
   else
     Result := '';
 end;

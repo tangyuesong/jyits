@@ -12105,12 +12105,10 @@ object FrmLogin: TFrmLogin
       ExplicitLeft = 214
     end
     inherited btnPIK: TcxButton
-      Top = 214
       LookAndFeel.Kind = lfFlat
       LookAndFeel.SkinName = 'Blueprint'
       TabOrder = 4
       OnClick = sbtbtnQuitClick
-      ExplicitTop = 214
     end
     inherited edtPwd: TcxTextEdit
       Top = 143

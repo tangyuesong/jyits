@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, uGlobal, Rtti, uSQLHelper, uLogger, ADODB,
-  System.JSON, DateUtils, syncobjs,
+  System.JSON, DateUtils, syncobjs, QJson,
   Data.DB, System.Generics.Collections;
 
 type
@@ -22,11 +22,50 @@ type
     class function RecordListToJSON<T>(list: TList<T>): string; static;
     class function RecordToJSON<T>(rec: Pointer): string; static;
     class function StringToDT(s: String): TDatetime;
+    class function GetJsonNode(ANode, AJSON: String): String; static;
+    class function FindJson(AItemName: String; AJSON: TQJson): TQJson; static;
   end;
 
 procedure SQLError(const SQL, Description: string);
 
 implementation
+
+class function TCommon.GetJsonNode(ANode, AJSON: String): String;
+var
+  item, JSON: TQJson;
+begin
+  result := '';
+  JSON := TQJson.Create;
+  try
+    JSON.Parse(AJSON);
+    item := FindJson(ANode, JSON);
+    if item <> nil then
+      result := item.ToString;
+  except
+    on e: Exception do
+    begin
+      result := AJSON;
+      gLogger.Error('[TCommon.GetJsonNode]' + e.Message + AJSON);
+    end;
+  end;
+  JSON.Free;
+end;
+
+class function TCommon.FindJson(AItemName: String; AJSON: TQJson): TQJson;
+var
+  i: Integer;
+begin
+  result := nil;
+  for i := 0 to AJSON.Count - 1 do
+  begin
+    if UpperCase(AJSON.Items[i].Name) = UpperCase(AItemName) then
+      result := AJSON.Items[i]
+    else
+      result := FindJson(AItemName, AJSON.Items[i]);
+    if result <> nil then
+      break;
+  end;
+end;
 
 class function TCommon.StringToDT(s: String): TDatetime;
 var
@@ -58,9 +97,9 @@ begin
     n := StrToInt(copy(s, 1, pos(':', s) - 1));
     ss := StrToInt(Trim(copy(s, pos(':', s) + 1, Length(s))));
 
-    Result := EncodeDateTime(y, m, d, h, n, ss, 0);
+    result := EncodeDateTime(y, m, d, h, n, ss, 0);
   except
-    Result := EncodeDateTime(1901, 1, 1, 1, 1, 1, 0);
+    result := EncodeDateTime(1901, 1, 1, 1, 1, 1, 0);
   end;
 end;
 
@@ -68,7 +107,7 @@ class function TCommon.ReadConfig(): Boolean;
 var
   dt: TDatetime;
 begin
-  Result := True;
+  result := True;
   with TIniFile.Create(ExtractFilePath(Paramstr(0)) + 'Config.ini') do
   begin
     gDBConfig.DBServer := ReadString('DB', 'Server', '.');
@@ -115,12 +154,12 @@ begin
   for item in list do
   begin
     s := RecordToJSON<T>(@item);
-    Result := Result + ',' + s;
+    result := result + ',' + s;
   end;
-  if Result <> '' then
+  if result <> '' then
   begin
-    Result := Result.Substring(1);
-    Result := '[' + Result + ']';
+    result := result.Substring(1);
+    result := '[' + result + ']';
   end;
 end;
 
@@ -132,16 +171,16 @@ var
   FRTTICtx: TRTTIContext;
   s: string;
 begin
-  Result := '';
+  result := '';
   rrt := TRTTIContext.Create.GetType(TypeInfo(T)).AsRecord;
   arr := rrt.GetFields;
   for Field in arr do
   begin
     s := Field.GetValue(rec).ToString;
     if s <> '' then
-      Result := Result + ',"' + Field.Name + '":"' + s + '"';
+      result := result + ',"' + Field.Name + '":"' + s + '"';
   end;
-  Result := '{' + Result.Substring(1) + '}';
+  result := '{' + result.Substring(1) + '}';
 end;
 
 class procedure TCommon.SaveConfig(head, key, value: String);

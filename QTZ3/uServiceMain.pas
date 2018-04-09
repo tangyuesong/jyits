@@ -65,13 +65,14 @@ begin
   while pos('/', action) > 0 do
     action := copy(action, pos('/', action) + 1, 100);
   clientIP := Trim(AContext.Connection.Socket.Binding.PeerIP);
-  s := ARequestInfo.UnparsedParams;
+
+  // s := ARequestInfo.UnparsedParams;
+  s := TIDURI.URLDecode(ARequestInfo.UnparsedParams);
 
   AResponseInfo.ContentType := 'text/html';
   AResponseInfo.CharSet := 'utf-8';
   AResponseInfo.CustomHeaders.AddValue('Access-Control-Allow-Origin', '*');
   AResponseInfo.ContentText := '';
-
   token := '';
 
   params := TStringList.Create;
@@ -106,12 +107,13 @@ begin
       if UpperCase(params.Names[i]) = 'TOKEN' then
       begin
         // token := TIdURI.URLDecode(params.ValueFromIndex[i]);
-        token := HttpDecode(params.ValueFromIndex[i]);
+        // token := HttpDecode(params.ValueFromIndex[i]);
+        token := params.ValueFromIndex[i];
         params.Delete(i);
         continue;
       end;
-      if UpperCase(ARequestInfo.Command) <> 'POST' then
-        params[i] := HttpDecode(params[i]);
+      // if UpperCase(ARequestInfo.Command) <> 'POST' then
+      // params[i] := HttpDecode(params[i]);
     end;
 
     if UpperCase(ARequestInfo.Command) = 'POST' then

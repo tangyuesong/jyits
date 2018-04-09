@@ -58,13 +58,12 @@ begin
 
   s := IdHTTP1.Get
     (TIdURI.URLEncode
-    ('http://10.43.255.8:10088/Login?user=sa&pwd=EB8E560662808ED4FAEA1C8AF016055947C4EF17CFD7AFC5390AA126AB25E2A2')
+    ('http://127.0.0.1:20086/Login?user=admin&pwd=064A4095B75E10D0843241580D69B33E')
     );
 
  //s:= 'http://10.43.255.8:10088/Query?jkid=04C03&hpzl=02&hphm=‘¡U99858'
  //s:= 'http://10.43.255.8:10088/GetVehInfo?hpzl=02&hphm=‘¡U99858'
- s:= 'http://10.43.255.8:10088/GetDrvInfo?sfzmhm=430611198109134511'
- +'&token='+s;
+ s:= 'http://127.0.0.1:20086/GETK08PASSLIST?passtime=2018-03-25 16:12:02,2018-03-26 16:12:02&currentPage=1&pageSize=30&vehiclelogo=1053&token='+s;
 
    s := IdHTTP1.Get(TIdURI.URLEncode(s));
 
@@ -118,7 +117,7 @@ begin
   // FDbService := TDbService.Create;
   // RmService := TRmService.Create;
   TCommon.ProgramInit;
-  //DbService := TDbService.Create;
+  DbService := TDbService.Create;
   RmService := TRmService.Create;
   Timer1.Interval := gHeartbeatInterval * 60000;
   Timer1.Enabled := True;

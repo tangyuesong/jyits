@@ -895,8 +895,8 @@ begin
     MB_OKCANCEL + MB_ICONINFORMATION) = IDOK then
   begin
     UpdateVehFromEdit();
-    if FObj.VioRecord.wfxw = '13441' then
-      FObj.VioRecord.bj := '20';
+    //if FObj.VioRecord.wfxw = '13441' then
+    //  FObj.VioRecord.bj := '20';
 
     try
       UpdateDBVioStatus(FObj.VioRecord.systemid, FObj.VioRecord.bj);

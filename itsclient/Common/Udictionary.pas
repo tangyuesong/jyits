@@ -27,7 +27,7 @@ type
     class var FDicUser: TDictionary<string, TUser>;
     class var FK08Clpp: TDictionary<string, string>;
     class var FK08Csys: TDictionary<string, string>;
-    class var FK08Hpzl: TDictionary<string, string>;
+    class var FK08Hpzl: TDictionary<string, TK08Dic>;
     class function getcombobox(dic: TDictionary<string, string>;
       IsShowKey: Boolean = False): Tstrings;
     class procedure LoadDicMain();
@@ -49,7 +49,7 @@ type
     class procedure BindComboboxDEV(combobox: TcxComboboxExt;
       IsShowKey: Boolean = False; sblx: string = '12'; cjjg: string = '');
     class procedure BindComboboxDEVEx(combobox: TcxCombobox;
-      IsShowKey: Boolean = False;cjjg: string = '');
+      IsShowKey: Boolean = False; cjjg: string = '');
     class procedure BindComboboxDEPT(combobox: TcxCombobox;
       IsShowKey: Boolean = False);
     class function getmail(jc, dz: string): string;
@@ -69,7 +69,7 @@ type
       string >> read FDicMail;
     class property gK08Clpp: TDictionary<string, string> read FK08Clpp;
     class property gK08Csys: TDictionary<string, string> read FK08Csys;
-    class property gK08Hpzl: TDictionary<string, string> read FK08Hpzl;
+    class property gK08Hpzl: TDictionary<string, TK08Dic> read FK08Hpzl;
   end;
 
   // dictocommbbox:stringlist;
@@ -237,9 +237,10 @@ end;
 class procedure TLZDictionary.LoadK08Hpzl;
 var
   s: string;
+  k08Dic: TK08Dic;
   tb: TFDMemTable;
 begin
-  FK08Hpzl := TDictionary<string, string>.Create;
+  FK08Hpzl := TDictionary<string, TK08Dic>.Create;
   s := TRequestItf.DbQuery('GetD_K08', 'FLBH=HPZL');
   if s <> '' then
   begin
@@ -249,8 +250,14 @@ begin
     while not tb.Eof do
     begin
       if not FK08Hpzl.ContainsKey(tb.FieldByName('DM').AsString) then
-        FK08Hpzl.Add(tb.FieldByName('DM').AsString,
-          tb.FieldByName('MC').AsString);
+      begin
+        k08Dic.SYSTEMID := tb.FieldByName('SYSTEMID').AsString;
+        k08Dic.flbh := tb.FieldByName('FLBH').AsString;
+        k08Dic.dm := tb.FieldByName('DM').AsString;
+        k08Dic.mc := tb.FieldByName('MC').AsString;
+        k08Dic.MineKey := tb.FieldByName('MineKey').AsString;
+        FK08Hpzl.Add(tb.FieldByName('DM').AsString, k08Dic);
+      end;
       tb.Next;
     end;
     tb.Free;
@@ -342,7 +349,7 @@ begin
         tb.First;
         while not tb.Eof do
         begin
-          dev.Systemid := FieldByName('SYSTEMID').AsString;
+          dev.SYSTEMID := FieldByName('SYSTEMID').AsString;
           dev.SBBH := FieldByName('SBBH').AsString;
           dev.JCPTBABH := FieldByName('JCPTBABH').AsString;
           dev.JCPTBAFX := FieldByName('JCPTBAFX').AsString;
@@ -350,7 +357,7 @@ begin
           dev.LKMC := FieldByName('LKMC').AsString;
           dev.FXBH := FieldByName('FXBH').AsString;
           dev.FXMC := FieldByName('FXMC').AsString;
-          dev.CJJG := FieldByName('CJJG').AsString;
+          dev.cjjg := FieldByName('CJJG').AsString;
           dev.SBDDMC := FieldByName('SBDDMC').AsString;
           dev.SBJD := FieldByName('SBJD').AsString;
           dev.SBWD := FieldByName('SBWD').AsString;
@@ -544,23 +551,23 @@ end;
 class procedure TLZDictionary.BindComboboxDEV(combobox: TcxComboboxExt;
   IsShowKey: Boolean; sblx, cjjg: string);
 var
-  sbbh: string;
+  SBBH: string;
   str: TStringList;
 begin
   str := TStringList.Create;
   str.Sort;
   str.Sorted := True;
   combobox.Properties.Items.Clear;
-  for sbbh in gDicDev[1].Keys do
+  for SBBH in gDicDev[1].Keys do
   begin
-    if sblx.contains(gDicDev[1][sbbh].sblx) then
+    if sblx.contains(gDicDev[1][SBBH].sblx) then
     begin
-      if (cjjg='') or (gDicDev[1][sbbh].CJJG.Contains(cjjg)) then
+      if (cjjg = '') or (gDicDev[1][SBBH].cjjg.contains(cjjg)) then
       begin
         if IsShowKey then
-          str.Add(sbbh + ':' + gDicDev[1][sbbh].SBDDMC)
+          str.Add(SBBH + ':' + gDicDev[1][SBBH].SBDDMC)
         else
-          str.Add(gDicDev[1][sbbh].SBDDMC);
+          str.Add(gDicDev[1][SBBH].SBDDMC);
       end;
     end;
   end;
@@ -569,25 +576,25 @@ begin
 end;
 
 class procedure TLZDictionary.BindComboboxDEVEx(combobox: TcxCombobox;
-  IsShowKey: Boolean;cjjg: string);
+  IsShowKey: Boolean; cjjg: string);
 var
-  sbbh: string;
+  SBBH: string;
   str: TStringList;
 begin
   str := TStringList.Create;
   str.Sort;
   str.Sorted := True;
   combobox.Properties.Items.Clear;
-  for sbbh in gDicDev[1].Keys do
+  for SBBH in gDicDev[1].Keys do
   begin
-    if (gDicDev[1][sbbh].sblx = '1') or (gDicDev[1][sbbh].sblx = '2') then
+    if (gDicDev[1][SBBH].sblx = '1') or (gDicDev[1][SBBH].sblx = '2') then
     begin
-      if (cjjg='') or (gDicDev[1][sbbh].CJJG.Contains(cjjg)) then
+      if (cjjg = '') or (gDicDev[1][SBBH].cjjg.contains(cjjg)) then
       begin
         if IsShowKey then
-          str.Add(sbbh + ':' + gDicDev[1][sbbh].SBDDMC)
+          str.Add(SBBH + ':' + gDicDev[1][SBBH].SBDDMC)
         else
-          str.Add(gDicDev[1][sbbh].SBDDMC);
+          str.Add(gDicDev[1][SBBH].SBDDMC);
       end;
     end;
   end;
@@ -665,7 +672,7 @@ begin
         dept.XZQY := FieldByName('XZQY').AsString;
         dept.lng := FieldByName('lng').AsString;
         dept.lat := FieldByName('lat').AsString;
-        dept.IsJX:= FieldByName('IsJX').AsBoolean;
+        dept.IsJX := FieldByName('IsJX').AsBoolean;
         if not FDicDept.ContainsKey(dept.DWDM) then
           FDicDept.Add(dept.DWDM, dept);
         Next;
@@ -692,7 +699,7 @@ begin
       tb.First;
       while not Eof do
       begin
-        user.Systemid := FieldByName('SYSTEMID').AsString;
+        user.SYSTEMID := FieldByName('SYSTEMID').AsString;
         user.DWDM := FieldByName('DWDM').AsString;
         user.yhbh := FieldByName('YHBH').AsString;
         user.ZW := FieldByName('ZW').AsString;
@@ -721,12 +728,13 @@ class function TLZDictionary.DM2MC(flbh, dm: string): string;
 var
   key: string;
 begin
-  result := '';
-  if not gDicMain.ContainsKey(flbh) then exit;
+  Result := '';
+  if not gDicMain.ContainsKey(flbh) then
+    exit;
   for key in gDicMain[flbh].Keys do
   begin
-    if dm.Contains(key) then
-      result := result + gDicMain[flbh][key] + ' ';
+    if dm.contains(key) then
+      Result := Result + gDicMain[flbh][key] + ' ';
   end;
 end;
 

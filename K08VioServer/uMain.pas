@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.SvcMgr, Vcl.Dialogs, uCommon, uGlobal,
-  uPilotsafebeltThread, uNoEntryThread, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP, Vcl.ExtCtrls, u2To5NoEntry;
+  uPilotsafebeltThread, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, Vcl.ExtCtrls;
 
 type
   TItsK08VioService = class(TService)
@@ -47,12 +47,12 @@ begin
   TCommon.ProgramInit;
   if gThreadConfig.PilotsafebeltThreadRun then
     TPilotsafebeltThread.Create;
-  if gThreadConfig.NoEntryThreadRun then
-    TNoEntryThread.Create;
+  // if gThreadConfig.NoEntryThreadRun then
+  // TNoEntryThread.Create;
   Timer1.Interval := gHeartbeatInterval * 60000;
   Timer1Timer(nil);
   Timer1.Enabled := True;
-  Timer2.Enabled := True;
+  // Timer2.Enabled := True;
   gLogger.Info('Service Started');
 end;
 
@@ -81,8 +81,8 @@ end;
 
 procedure TItsK08VioService.Timer2Timer(Sender: TObject);
 begin
-  if FormatDatetime('hhnn', Now()) = '1125' then
-    T2To5NoEntry.Create(False);
+  // if FormatDatetime('hhnn', Now()) = '1125' then
+  // T2To5NoEntry.Create(False);
 end;
 
 end.

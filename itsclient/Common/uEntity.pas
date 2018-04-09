@@ -721,54 +721,57 @@ type
   End;
 
   TVehCheck = record
-    systemid,JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX: string;
-    SFD,MDD,GPS,AQSB,CLLTHW,WFYY,JAQD,PLJS,FFGZ,ZTFGBS: string;
-    AZFHZZ,XGJSBZ,AZDSJ,AZDLX,SFWZJS,SFYFJSY,QDYSTXZ,JCJG,JCQKMS: string;
-    CZ,CY,JCSJ,JCMJ,CJR,CJJG,CJSJ,GXSJ,ZJSZH, FJSZH, ZJSLXDH,FJSLXDH,Message: string;
-    HDZKL, HDZZL, ZKS, SJZZL, flag: integer;
+    SYSTEMID, JCXH, GCXH, KKBH, FXLX, CDH, GCSJ, FWZBH, FWZMC, CLZT, HPHM, HPZL,
+      JCCLLX: string;
+    SFD, MDD, GPS, AQSB, CLLTHW, WFYY, JAQD, PLJS, FFGZ, ZTFGBS: string;
+    AZFHZZ, XGJSBZ, AZDSJ, AZDLX, SFWZJS, SFYFJSY, QDYSTXZ, JCJG,
+      JCQKMS: string;
+    CZ, CY, JCSJ, JCMJ, CJR, CJJG, CJSJ, gxsj, ZJSZH, FJSZH, ZJSLXDH, FJSLXDH,
+      Message: string;
+    HDZKL, HDZZL, ZKS, SJZZL, flag: Integer;
   end;
 
   TViolationWrite = record
-    jdsbh  : string;
-    ryfl   : string;
-    jszh   : string;
-    dabh   : string;
-    fzjg   : string;
-    zjcx   : string;
-    dsr	   : string;
-    zsxzqh : string;
-    zsxxdz : string;
-    dh	   : string;
-    lxfs   : string;
-    clfl   : string;
-    hpzl   : string;
-    hphm   : string;
-    jdcsyr : string;
-    syxz   : string;
-    jtfs   : string;
-    wfsj   : string;
-    xzqh   : string;
-    wfdd   : string;
-    lddm   : string;
-    ddms   : string;
-    wfdz   : string;
-    wfxw   : string;
-    scz	   : string;
-    bzz	   : string;
-    cfzl   : string;
-    fkje   : string;
-    zqmj   : string;
-    jkfs   : string;
-    jkbj   : string;
-    jkrq   : string;
-    fxjg   : string;
-    clsj   : string;
-    jsjqbj : string;
-    sgdj   : string;
-    jd	   : string;
-    wd	   : string;
-    Zxbh   : string;
-    Sfzdry : string;
+    jdsbh: string;
+    ryfl: string;
+    jszh: string;
+    dabh: string;
+    fzjg: string;
+    zjcx: string;
+    dsr: string;
+    zsxzqh: string;
+    ZSXXDZ: string;
+    dh: string;
+    LXFS: string;
+    clfl: string;
+    HPZL: string;
+    HPHM: string;
+    jdcsyr: string;
+    syxz: string;
+    jtfs: string;
+    wfsj: string;
+    xzqh: string;
+    wfdd: string;
+    lddm: string;
+    ddms: string;
+    wfdz: string;
+    wfxw: string;
+    scz: string;
+    bzz: string;
+    cfzl: string;
+    fkje: string;
+    zqmj: string;
+    jkfs: string;
+    jkbj: string;
+    jkrq: string;
+    fxjg: string;
+    clsj: string;
+    jsjqbj: string;
+    sgdj: string;
+    JD: string;
+    WD: string;
+    zxbh: string;
+    Sfzdry: string;
   end;
 
   TVehCheckHis = record
@@ -780,6 +783,14 @@ type
   TFwzInfo = record
     FWZBH: string;
     FWZMC: string;
+  end;
+
+  TK08Dic = record
+    SYSTEMID: String;
+    FLBH: String;
+    DM: String;
+    MC: String;
+    MineKey: String;
   end;
 
 implementation

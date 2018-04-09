@@ -1,19 +1,20 @@
 inherited FrameHBCList: TFrameHBCList
-  Width = 667
+  Width = 716
+  Height = 382
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 667
-    Height = 305
+    Width = 716
+    Height = 382
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 641
-      Height = 191
+      Width = 690
+      Height = 268
       TabOrder = 6
       ExplicitTop = 45
-      ExplicitWidth = 641
-      ExplicitHeight = 191
+      ExplicitWidth = 690
+      ExplicitHeight = 268
     end
     object cbbSF: TcxComboBox [1]
       Left = 67
@@ -78,38 +79,38 @@ inherited FrameHBCList: TFrameHBCList
       OnClick = btnImportVioClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 243
+      Top = 320
       TabOrder = 7
-      ExplicitTop = 243
+      ExplicitTop = 320
     end
     inherited btnFirstPage: TcxButton
-      Top = 243
+      Top = 320
       TabOrder = 8
-      ExplicitTop = 243
+      ExplicitTop = 320
     end
     inherited btnPriorPage: TcxButton
-      Top = 243
+      Top = 320
       TabOrder = 9
-      ExplicitTop = 243
+      ExplicitTop = 320
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 243
+      Top = 320
       TabOrder = 10
-      ExplicitTop = 243
+      ExplicitTop = 320
     end
     inherited btnnextPage: TcxButton
-      Top = 243
+      Top = 320
       TabOrder = 11
-      ExplicitTop = 243
+      ExplicitTop = 320
     end
     inherited btnLastPage: TcxButton
-      Top = 243
+      Top = 320
       TabOrder = 12
-      ExplicitTop = 243
+      ExplicitTop = 320
     end
     inherited lbCount: TcxLabel
-      Top = 271
-      ExplicitTop = 271
+      Top = 348
+      ExplicitTop = 348
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
@@ -157,6 +158,7 @@ inherited FrameHBCList: TFrameHBCList
       Parent = dxLayoutGroup2
       CaptionOptions.Text = 'cxButton2'
       CaptionOptions.Visible = False
+      Visible = False
       Control = BtnExport2
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
@@ -167,6 +169,7 @@ inherited FrameHBCList: TFrameHBCList
       Parent = dxLayoutGroup2
       CaptionOptions.Text = 'cxButton3'
       CaptionOptions.Visible = False
+      Visible = False
       Control = btnImportVio2
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75

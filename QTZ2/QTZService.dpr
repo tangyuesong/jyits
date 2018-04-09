@@ -34,7 +34,12 @@ uses
   qrbtree in 'qrbtree.pas',
   QString in 'QString.pas',
   TmriOutAccess in 'rm\intf\TmriOutAccess.pas',
-  TmriOutAccess1 in 'rm\intf\TmriOutAccess1.pas';
+  TmriOutAccess1 in 'rm\intf\TmriOutAccess1.pas',
+  uDataAnalysis in 'hik\uDataAnalysis.pas',
+  uDataStatistics in 'hik\uDataStatistics.pas',
+  uMoreLikeThisHBase in 'hik\uMoreLikeThisHBase.pas',
+  uHikHBase in 'hik\uHikHBase.pas',
+  uAnalysisExtra in 'hik\uAnalysisExtra.pas';
 
 {$R *.RES}
 

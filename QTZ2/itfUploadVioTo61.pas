@@ -378,9 +378,8 @@ begin
     '","clfl":"' + FLockVio.clfl + '","hpzl":"' + FLockVio.hpzl + '","hphm":"' +
     FLockVio.hphm + '","xzqh":"' + FLockVio.xzqh + '","wfdd":"' + FLockVio.wfdd
     + '","lddm":"' + FLockVio.lddm + '","ddms":"' + FLockVio.ddms + '","wfdz":"'
-    + FLockVio.wfdz + '","wfsj":"' + FLockVio.wfsj + '","wfxw":"' +
-    FLockVio.wfxw + '","scz":"' + FLockVio.scz + '","bzz":"' +
-    FLockVio.bzz + '",';
+    + FLockVio.wfdz + '","wfsj":"' + FLockVio.sj + '","wfxw":"' + FLockVio.wfxw
+    + '","scz":"' + FLockVio.scz + '","bzz":"' + FLockVio.bzz + '",';
   if FLockVio.cjfs = '7' then
     Result := Result + '"wfsj1":"' + FLockVio.wfsj + '",';
 

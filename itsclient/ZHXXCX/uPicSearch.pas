@@ -270,7 +270,7 @@ begin
   cxTextEdit1.Text := FdfVehInfo.PlateNum;
   cxTextEdit2.Text := FdfVehInfo.nType;
   if TLZDictionary.gK08Hpzl.ContainsKey(FdfVehInfo.nType) then
-    cxTextEdit2.Text := TLZDictionary.gK08Hpzl[FdfVehInfo.nType];
+    cxTextEdit2.Text := TLZDictionary.gK08Hpzl[FdfVehInfo.nType].MC;
   cxTextEdit3.Text := FdfVehInfo.nColor;
   if TLZDictionary.gK08Csys.ContainsKey(FdfVehInfo.nColor) then
     cxTextEdit3.Text := TLZDictionary.gK08Csys[FdfVehInfo.nColor];

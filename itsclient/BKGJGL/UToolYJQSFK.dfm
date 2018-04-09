@@ -1,54 +1,53 @@
 inherited ToolYJQSFK: TToolYJQSFK
   Width = 885
-  Height = 422
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
     Width = 885
-    Height = 422
+    Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 77
       Width = 909
-      Height = 259
+      Height = 142
       TabOrder = 10
       ExplicitTop = 77
       ExplicitWidth = 909
-      ExplicitHeight = 259
+      ExplicitHeight = 142
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 343
+      Top = 226
       TabOrder = 11
-      ExplicitTop = 343
+      ExplicitTop = 226
     end
     inherited btnFirstPage: TcxButton
-      Top = 343
+      Top = 226
       TabOrder = 12
-      ExplicitTop = 343
+      ExplicitTop = 226
     end
     inherited btnPriorPage: TcxButton
-      Top = 343
+      Top = 226
       TabOrder = 13
-      ExplicitTop = 343
+      ExplicitTop = 226
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 343
+      Top = 226
       TabOrder = 14
-      ExplicitTop = 343
+      ExplicitTop = 226
     end
     inherited btnnextPage: TcxButton
-      Top = 343
+      Top = 226
       TabOrder = 15
-      ExplicitTop = 343
+      ExplicitTop = 226
     end
     inherited btnLastPage: TcxButton
-      Top = 343
+      Top = 226
       TabOrder = 16
-      ExplicitTop = 343
+      ExplicitTop = 226
     end
     inherited lbCount: TcxLabel
-      Top = 371
-      ExplicitTop = 371
+      Top = 254
+      ExplicitTop = 254
     end
     object dtBegin: TcxDateEdit [8]
       Left = 67
@@ -156,36 +155,16 @@ inherited ToolYJQSFK: TToolYJQSFK
       Height = 25
       Width = 155
     end
-    inherited dxLayoutItem3: TdxLayoutItem [19]
+    inherited dxLayoutGroup2: TdxLayoutGroup
+      Parent = dxLayoutGroup1
+      LayoutDirection = ldHorizontal
     end
-    inherited dxLayoutGroupPage: TdxLayoutGroup [20]
-    end
-    inherited dxLayoutItemPagesize: TdxLayoutItem [21]
-    end
-    inherited dxLayoutItemFirstPage: TdxLayoutItem [22]
-    end
-    inherited dxLayoutItemPriorPage: TdxLayoutItem [23]
-    end
-    inherited dxLayoutItemIndex: TdxLayoutItem [24]
-    end
-    inherited dxLayoutItemnextPage: TdxLayoutItem [25]
-    end
-    inherited dxLayoutItemBtnLastPage: TdxLayoutItem [26]
-    end
-    inherited dxLGCount: TdxLayoutGroup [27]
-    end
-    inherited dxLICount: TdxLayoutItem [28]
-    end
-    object dxLayoutGroup1: TdxLayoutGroup [29]
+    object dxLayoutGroup1: TdxLayoutGroup
       Parent = dxLayoutControl2Group_Root
       CaptionOptions.Text = 'New Group'
       ButtonOptions.Buttons = <>
       ShowBorder = False
       Index = 0
-    end
-    inherited dxLayoutGroup2: TdxLayoutGroup [30]
-      Parent = dxLayoutGroup1
-      LayoutDirection = ldHorizontal
     end
     object dxLayoutItem1: TdxLayoutItem
       Parent = dxLayoutGroup2

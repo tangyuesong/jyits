@@ -35,6 +35,7 @@ type
       AResponseInfo: TIdHTTPResponseInfo);
     class function CheckAddUser(Action, yhbh: String): Boolean;
     class procedure CheckHisStatus(AParams: TStrings; TokenKey: String);
+    class function DealBase64(ABase64Str: String): String;
   public
     class property Actions: TDictionary<String, TDBAction> read GetActions;
     class procedure DoDB(Action, TokenKey: String; Params: TStrings;
@@ -71,9 +72,9 @@ begin
   else if s = '@MANAGER' then
     Result := gTokenManager.GetToken(TokenKey).User.Manager
   else if s = '@NOW' then
-    Result := IntToStr(DateUtils.MilliSecondsBetween(Now(),25569.3333333333))
+    Result := IntToStr(DateUtils.MilliSecondsBetween(Now(), 25569.3333333333))
   else if s = '@XH' then
-    Result := FormatDatetime('yyyymmddhhnnsszzz', now())
+    Result := FormatDatetime('yyyymmddhhnnsszzz', Now())
   else if s = '@ZDDM' then
     Result := LeftStr(gTokenManager.GetToken(TokenKey).User.DWDM, 4)
   else if s = '@XZQH' then
@@ -82,6 +83,30 @@ begin
     Result := gTokenManager.GetToken(TokenKey).User.YHXM
   else
     Result := value;
+end;
+
+class function TDBService.DealBase64(ABase64Str: String): String;
+var
+  tp, dir, fwqdz: String;
+begin
+  Result := '';
+
+  if ABase64Str = '' then
+    exit;
+  tp := FormatDatetime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
+  if not TCommon.Base64ToFile(ABase64Str, ExtractFilePath(Paramstr(0)) + tp) or
+    not FileExists(ExtractFilePath(Paramstr(0)) + tp) then
+    exit;
+
+  dir := 'gpy/' + FormatDatetime('yyyymm', Now) + '/' +
+    FormatDatetime('dd', Now) + '/';
+  fwqdz := gConfig.ImportVioHome + dir;
+
+  if TCommon.FtpPutFile(gConfig.ImportVioHost, gConfig.ImportVioUser,
+    gConfig.ImportVioPassword, ExtractFilePath(Paramstr(0)) + tp, dir + tp,
+    gConfig.ImportVioPort) then
+    Result := fwqdz + tp;
+  TCommon.DelFile(ExtractFilePath(Paramstr(0)) + tp);
 end;
 
 class procedure TDBService.DecodeJsonParam(json: String; Params: TStrings);
@@ -156,7 +181,7 @@ class function TDBService.CheckParams(Action, TokenKey: String;
 var
   i, j: integer;
   v: int64;
-  p: String;
+  p, url: String;
 begin
   // 检查参数数目是否一致，参数类型是否一致
   Result := True;
@@ -169,7 +194,7 @@ begin
       begin
         Msg := Actions[Action].Params[i].Param + ' is not found ';
         Result := False;
-        Exit;
+        exit;
       end
       else if not Actions[Action].Params[i].Nonnull and // 非必传，默认值不为空，参数未传
         (Params.IndexOfName(Actions[Action].Params[i].Param) < 0) and
@@ -188,7 +213,7 @@ begin
         begin
           Msg := 'currentpage or pagesize is error';
           Result := False;
-          Exit;
+          exit;
         end;
         continue;
       end
@@ -200,7 +225,8 @@ begin
       begin
         if Actions[Action].Params[j].Param = p then
         begin
-          if Actions[Action].Params[j].DbColName <> '' then // 接口的参数名和数据库的字段名不一致
+          if Actions[Action].Params[j].DbColName <> '' then
+            // 接口的参数名和数据库的字段名不一致
             Params[i] := Actions[Action].Params[j].DbColName + '=' +
               Params.ValueFromIndex[i];
 
@@ -221,13 +247,24 @@ begin
             else
             begin
               Msg := p + ' is error';
-              Exit;
+              exit;
             end;
           end
-          else if Actions[Action].Params[j].ParamType = 'JSON' then // 分解json类型
+          else if Actions[Action].Params[j].ParamType = 'JSON' then
+          // 分解json类型
           begin
             DecodeJsonParam(Params.ValueFromIndex[i], Params);
             Params.Delete(i);
+          end
+          else if Actions[Action].Params[j].ParamType = 'BASE64' then // 图片
+          begin
+            url := DealBase64(Params.ValueFromIndex[i]);
+            if url = '' then
+            begin
+              Msg := p + ' is error';
+              exit;
+            end;
+            Params.ValueFromIndex[i] := url;
           end;
           Result := True;
           break;
@@ -236,7 +273,7 @@ begin
       if not Result then // 参数配置中未找到该参数
       begin
         Msg := p + ' is not found';
-        Exit;
+        exit;
       end;
     end;
   end
@@ -249,7 +286,7 @@ begin
       begin
         Msg := p + ' is not found';
         Result := False;
-        Exit;
+        exit;
       end;
     end;
   end;
@@ -263,7 +300,7 @@ begin
   if not CheckParams(Action, TokenKey, Params, isExport, Msg) then
   begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(Msg);
-    Exit;
+    exit;
   end;
   actionType := Uppercase(Actions[Action].actionType);
   if (actionType = 'Q') or (actionType = 'P') then
@@ -390,14 +427,14 @@ begin
     begin
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
         ('config error');
-      Exit;
+      exit;
     end;
   end
   else
   begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
       ('config error');
-    Exit;
+    exit;
   end;
   AResponseInfo.ContentStream := TCommon.QueryToStream(s);
   if AResponseInfo.ContentStream <> nil then
@@ -491,14 +528,14 @@ begin
     begin
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
         ('parameter error');
-      Exit;
+      exit;
     end;
   end
   else
   begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
       ('parameter error');
-    Exit;
+    exit;
   end;
 
   if body <> '' then
@@ -580,7 +617,7 @@ begin
       begin
         AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
           ('config error');
-        Exit;
+        exit;
       end;
 
       s := 'update ' + Actions[Action].TableName + ' set ' +
@@ -624,7 +661,7 @@ begin
   begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
       ('yhbh is exists');
-    Exit;
+    exit;
   end;
 
   if (Action = Uppercase('SaveTempVio2His')) or
@@ -638,7 +675,7 @@ begin
     begin
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
         ('parameter failed');
-      Exit;
+      exit;
     end;
 
     for i := 0 to Params.Count - 1 do
@@ -671,7 +708,7 @@ var
   sqls: TStrings;
 begin
   Result := True;
-  sqls := TStringList.Create;
+  sqls := TStringlist.Create;
   QJson := TQJson.Create;
   try
     QJson.Parse(json);
@@ -692,7 +729,7 @@ begin
             Result := False;
             QJson.Free;
             sqls.Free;
-            Exit;
+            exit;
           end;
           s := FormatDatetime('yyyy/mm/dd hh:nn:ss',
             TCommon.GetRealDatetime(v));
