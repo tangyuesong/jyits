@@ -1,20 +1,15 @@
 inherited FrameJTPList: TFrameJTPList
-  Width = 802
-  Height = 309
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 802
-    Height = 309
+    Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 776
-      Height = 195
+      Height = 191
       TabOrder = 4
       ExplicitTop = 45
-      ExplicitWidth = 776
-      ExplicitHeight = 195
+      ExplicitHeight = 191
     end
     object DTKSSJ: TcxDateEdit [1]
       Left = 67
@@ -52,7 +47,7 @@ inherited FrameJTPList: TFrameJTPList
       OnClick = btnSearchClick
     end
     object btnAdd: TcxButton [4]
-      Left = 756
+      Left = 405
       Top = 13
       Width = 33
       Height = 25
@@ -64,38 +59,38 @@ inherited FrameJTPList: TFrameJTPList
       OnClick = btnAddClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 247
+      Top = 243
       TabOrder = 5
-      ExplicitTop = 247
+      ExplicitTop = 243
     end
     inherited btnFirstPage: TcxButton
-      Top = 247
+      Top = 243
       TabOrder = 6
-      ExplicitTop = 247
+      ExplicitTop = 243
     end
     inherited btnPriorPage: TcxButton
-      Top = 247
+      Top = 243
       TabOrder = 7
-      ExplicitTop = 247
+      ExplicitTop = 243
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 247
+      Top = 243
       TabOrder = 8
-      ExplicitTop = 247
+      ExplicitTop = 243
     end
     inherited btnnextPage: TcxButton
-      Top = 247
+      Top = 243
       TabOrder = 9
-      ExplicitTop = 247
+      ExplicitTop = 243
     end
     inherited btnLastPage: TcxButton
-      Top = 247
+      Top = 243
       TabOrder = 10
-      ExplicitTop = 247
+      ExplicitTop = 243
     end
     inherited lbCount: TcxLabel
-      Top = 275
-      ExplicitTop = 275
+      Top = 271
+      ExplicitTop = 271
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
