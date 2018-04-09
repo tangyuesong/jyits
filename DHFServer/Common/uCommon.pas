@@ -150,6 +150,7 @@ begin
       fzjg := FieldByName('FZJG').AsString;
       sf := copy(fzjg, 1, 1);
       fzjg := copy(fzjg, 2, 26);
+      if fzjg = '' then fzjg := ',';
       for s in fzjg.Split([',']) do
       begin
         item.HPHM := sf + s;
@@ -161,9 +162,8 @@ begin
         item.smsEndTime := FieldByName('smsTimeEnd').AsString;
         item.BZ := FieldByName('BZ').AsString;
         tmp.Add(item);
-        logger.Info('[LoadAlarmSDCL]' + item.HPHM);
+        logger.Info('[LoadAlarmSDCL]' + item.HPHM + item.BKLX);
       end;
-
       Next;
     end;
     Free;
