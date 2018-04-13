@@ -10,6 +10,9 @@ uses
 type
   TSPService = Class
   private
+    class function GetCCLZRQ(token: TToken; Params: TStrings): String;
+    class function GetWFJFS(cclzrq: TDateTime; token: TToken;
+      Params: TStrings): Integer;
     class function GetActions(): String; static;
     class function GetZhptCode(xtlb, dmlb, dmz: String): String;
     class function GetSGZR(Params: TStrings): String;
@@ -17,6 +20,8 @@ type
     class procedure GetLocalDrvInfo(token: TToken; Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
     class procedure GetLocalVehInfo(token: TToken; Params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo);
+    class procedure GetJFS(token: TToken; Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
   public
     class property Actions: String read GetActions;
@@ -29,7 +34,91 @@ implementation
 class function TSPService.GetActions: String;
 begin
   Result := ',LOCKVIO,GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,'
-    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,';
+    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,';
+end;
+
+class function TSPService.GetCCLZRQ(token: TToken; Params: TStrings): String;
+var
+  json: String;
+begin
+  Result := '-1';
+  json := TCommon.QueryDrvInfo(Params.Values['sfzmhm']);
+  if (json = '') or (json = '-1') then
+    json := TRmService.GetDrvInfo(token, Params);
+  if (json = '') or (json = '-1') then
+    exit;
+  Result := TCommon.GetJsonNode('cclzrq', json) + ' 00:00:00';
+end;
+
+class function TSPService.GetWFJFS(cclzrq: TDateTime; token: TToken;
+  Params: TStrings): Integer;
+var
+  vioStr: String;
+  qjson, jsonItem: TQJson;
+  i, wfjfs: Integer;
+  jfrq, jfks, jfjs, wfsj: TDateTime;
+begin
+  Result := 0;
+  jfrq := TCommon.StringToDT(FormatDateTime('yyyy', Now()) + '-' +
+    FormatDateTime('mm-dd', cclzrq) + ' 00:00:00');
+  if jfrq > Now() then
+  begin
+    jfks := jfrq - 365;
+    jfjs := jfrq;
+  end
+  else
+  begin
+    jfks := jfrq;
+    jfjs := jfrq + 365;
+  end;
+
+  vioStr := TRmService.GetVioInfoByDrv(token, Params);
+  qjson := TQJson.Create;
+  try
+    qjson.Parse(vioStr);
+    for i := 0 to qjson.Count - 1 do
+    begin
+      jsonItem := qjson.Items[i];
+      wfsj := TCommon.StringToDT(TCommon.GetJsonNode('wfsj',
+        jsonItem.ToString));
+      wfjfs := StrToIntDef(TCommon.GetJsonNode('wfjfs', jsonItem.ToString), 0);
+      //gLogger.Info(jsonItem.ToString);
+      if (wfsj > jfks) and (wfsj < jfjs) then
+        Result := Result + wfjfs;
+    end;
+  except
+    on e: exception do
+      gLogger.Error(e.Message);
+  end;
+  qjson.Free;
+end;
+
+class procedure TSPService.GetJFS(token: TToken; Params: TStrings;
+  AResponseInfo: TIdHTTPResponseInfo);
+var
+  sfzmhm: String;
+  cclzrq: TDateTime;
+  jfs: Integer;
+begin
+  sfzmhm := Params.Values['sfzmhm'];
+  if sfzmhm = '' then
+  begin
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
+      ('sfzmhm is not found');
+    exit;
+  end;
+  cclzrq := TCommon.StringToDT(GetCCLZRQ(token, Params));
+  if cclzrq < 2 then
+  begin
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
+      ('Query error');
+    exit;
+  end;
+  Params.Clear;
+  Params.Add('jszh=' + sfzmhm);
+  jfs := 12 - GetWFJFS(cclzrq, token, Params);
+  AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+    ('"' + IntToStr(jfs) + '"');
 end;
 
 class procedure TSPService.GetLocalDrvInfo(token: TToken; Params: TStrings;
@@ -140,6 +229,10 @@ begin
     else
       AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
         ('"' + s + '"');
+  end
+  else if action = 'GETJFS' then
+  begin
+    GetJFS(token, Params, AResponseInfo);
   end;
 end;
 
@@ -147,8 +240,8 @@ class function TSPService.GetSGZR(Params: TStrings): String;
 var
   json, item: TQJson;
   ryxx: String;
-  i, j: integer;
-  ryDic: TDictionary<integer, TStrings>;
+  i, j: Integer;
+  ryDic: TDictionary<Integer, TStrings>;
   ryInfo: TStrings;
 begin
   Result := '';
@@ -156,7 +249,7 @@ begin
   if ryxx = '' then
     exit;
   json := TQJson.Create;
-  ryDic := TDictionary<integer, TStrings>.Create;
+  ryDic := TDictionary<Integer, TStrings>.Create;
   try
     json.Parse(ryxx);
     for i := 0 to json.Count - 1 do

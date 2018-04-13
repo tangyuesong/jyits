@@ -47,7 +47,8 @@ type
     class procedure ProgramInit;
     class procedure ProgramDestroy;
     class function Login(ip: String; params: TStrings): String;
-    class procedure SaveQtzLog(token, yhbh, ip, action, param: String);
+    class procedure SaveQtzLog(token, yhbh, ip, action, param: String;
+      deviceId: String = '');
     class function GetK08Hpzl(): TDictionary<String, TStrings>;
     class function GetHpzl(): TDictionary<String, String>;
     class function GetK08Clpp(): TDictionary<String, String>;
@@ -188,13 +189,11 @@ var
   key, obj, col, value, s: String;
   i: Integer;
   JSON: TDictionary<String, TStrings>;
-  isArray: Boolean;
 begin
   Result := '';
   JSON := TDictionary<String, TStrings>.Create;
   with gSQLHelper.Query(ASql) do
   begin
-    isArray := RecordCount > 1;
     if not Eof then
     begin
       ATotal := RecordCount;
@@ -291,8 +290,7 @@ begin
   if Result <> '' then
   begin
     Result := copy(Result, 1, length(Result) - 1);
-    if isArray then
-      Result := '[' + Result + ']';
+    Result := '[' + Result + ']';
   end;
   JSON.Free;
 end;
@@ -1043,13 +1041,15 @@ begin
   end;
 end;
 
-class procedure TCommon.SaveQtzLog(token, yhbh, ip, action, param: String);
+class procedure TCommon.SaveQtzLog(token, yhbh, ip, action, param: String;
+  deviceId: String);
 var
   s: String;
 begin
-  s := 'insert into S_QTZ_LOG(token, yhbh, ip, action, param) values (' +
-    token.QuotedString + ',' + yhbh.QuotedString + ',' + ip.QuotedString + ',' +
-    action.QuotedString + ',' + param.QuotedString + ')';
+  s := 'insert into S_QTZ_LOG(token, yhbh, ip, action, param, DeviceId) values ('
+    + token.QuotedString + ',' + yhbh.QuotedString + ',' + ip.QuotedString + ','
+    + action.QuotedString + ',' + param.QuotedString + ',' +
+    deviceId.QuotedString + ')';
   gSQLHelper.ExecuteSql(s);
 end;
 
@@ -1197,7 +1197,7 @@ begin
 
     Result := EncodeDateTime(y, m, d, h, n, ss, 0);
   except
-    Result := EncodeDateTime(1900, 1, 1, 1, 1, 1, 0);
+    Result := EncodeDateTime(1899, 12, 31, 0, 0, 0, 0);
   end;
 end;
 

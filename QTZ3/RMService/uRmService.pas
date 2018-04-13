@@ -45,6 +45,7 @@ type
   public
     class function GetVehInfo(token: TToken; hphm, hpzl: String): String;
     class function GetDrvInfo(token: TToken; params: TStrings): String;
+    class function GetVioInfoByDrv(token: TToken; params: TStrings): String;
     class procedure DoRM(action, tokenKey: String; params: TStrings;
       isExport: Boolean; AResponseInfo: TIdHTTPResponseInfo);
   end;
@@ -362,16 +363,7 @@ begin
   end
   else if action = Uppercase('GetVioInfoByDrv') then
   begin
-    params.Add('JKID=04C01');
-    sjson := DoQeury(token, params);
-    json := TCommon.GetJsonNode('violation', sjson);
-    if json = '' then
-    begin
-      gLogger.Info(sjson);
-      json := '[]';
-    end
-    else
-      json := TCommon.AddWfxwmc(json);
+    json := GetVioInfoByDrv(token, params);
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(json);
   end
   else if action = Uppercase('GetVioPicinfo') then
@@ -382,6 +374,7 @@ begin
   begin
     params.Add('JKID=04C03');
     sjson := DoQeury(token, params);
+    gLogger.Info(sJson);
     json := TCommon.GetJsonNode('viosurveil', sjson);
     if json = '' then
     begin
@@ -505,6 +498,23 @@ begin
   else
     TCommon.SaveVehInfo(result);
   params.Free;
+end;
+
+class function TRmService.GetVioInfoByDrv(token: TToken;
+  params: TStrings): String;
+var
+  sjson: String;
+begin
+  params.Add('JKID=04C01');
+  sjson := DoQeury(token, params);
+  result := TCommon.GetJsonNode('violation', sjson);
+  if result = '' then
+  begin
+    gLogger.Info(sjson);
+    result := '[]';
+  end
+  else
+    result := TCommon.AddWfxwmc(result);
 end;
 
 class procedure TRmService.GetViolationInfo(token: TToken; params: TStrings;

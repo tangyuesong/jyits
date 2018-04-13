@@ -158,7 +158,7 @@ begin
   end;
   if action = 'LOGIN' then
     TCommon.SaveQtzLog(token, yhbh, clientIP, ARequestInfo.Document,
-      params.Values['user'])
+      params.Values['user'], params.Values['id'])
   else if (TCommon.SaUsers.IndexOf(yhbh) < 0) and
     (UpperCase(ARequestInfo.Command) <> 'POST') then
     // 后台访问的日志太多，不用记录, post数据太长
