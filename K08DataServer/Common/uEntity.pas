@@ -89,6 +89,7 @@ type
     CDBH: String;
     Url: String;
     PassTime: String;
+    HPHM: String;
   End;
 
 implementation

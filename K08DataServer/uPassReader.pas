@@ -61,7 +61,7 @@ begin
         dt := Now;
       jssj := FormatDatetime('yyyy/MM/dd hh:nn:ss.zzz', dt);
 
-      s := 'select a.GCXH, a.KDBH, a.CDBH, a.GCSJ, a.FWQDZ, a.TP1 from T_KK_VEH_PASSREC a '
+      s := 'select a.HPHM, a.GCXH, a.KDBH, a.CDBH, a.GCSJ, a.FWQDZ, a.TP1 from T_KK_VEH_PASSREC a '
         + ' inner join S_Device b on a.KDBH = b.SBBH and b.XYSB = 1 and b.QYZT = 1 '
         + ' and a.GXSJ>=' + gStartTime.QuotedString + ' and a.GXSJ < ' +
         jssj.QuotedString +
@@ -74,6 +74,7 @@ begin
     while not FQy.Eof do
     begin
       img := TImageInfo.Create;
+      img.HPHM := FQy.FieldByName('HPHM').AsString;
       img.KDBH := FQy.FieldByName('KDBH').AsString;
       img.GCXH := FQy.FieldByName('GCXH').AsString;
       img.CDBH := FQy.FieldByName('CDBH').AsString;

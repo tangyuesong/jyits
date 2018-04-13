@@ -80,13 +80,14 @@ begin
   for img in AImages do
   begin
     imgStr := imgStr + '{"data":"' + img.Url + '",' +
-      '"dataType":1,"id":"dddddddddddddd","LaneNO":1,"plate":"","vehicleDir":0,'
-      + '"targetAttrs":"{\n\t\"crossing_id\":\t\"' + gDicDevice[img.KDBH].ID +
-      '\",\n\t\"pass_id\":\t\"' + img.GCXH + '\",\n\t\"lane_no\":\t\"' +
-      img.CDBH + '\",\n\t\"pass_time\":\t\"' + img.PassTime + '\"\n}"},'
+      '"dataType":1,"id":"dddddddddddddd","LaneNO":1,"plate":"' + img.HPHM +
+      '","vehicleDir":0,' + '"targetAttrs":"{\n\t\"crossing_id\":\t\"' +
+      gDicDevice[img.KDBH].ID + '\",\n\t\"pass_id\":\t\"' + img.GCXH +
+      '\",\n\t\"lane_no\":\t\"' + img.CDBH + '\",\n\t\"pass_time\":\t\"' +
+      img.PassTime + '\"\n}"},'
   end;
   imgStr := copy(imgStr, 1, Length(imgStr) - 1) +
-    '],"operate":524287,"targetNum":100,"plateRegMode":	0}</ivms:streamUrl>';
+    '],"operate":524287,"targetNum":1,"plateRegMode":	0}</ivms:streamUrl>';
   Params.Add(imgStr);
   Params.Add('               <ivms:smart>false</ivms:smart>');
   Params.Add('               <ivms:maxSplitCount>0</ivms:maxSplitCount>');
