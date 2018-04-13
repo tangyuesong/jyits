@@ -141,21 +141,21 @@ object FrameJTPCheck: TFrameJTPCheck
           DataBinding.FieldName = 'HPHM'
           HeaderAlignmentHorz = taCenter
           Options.Editing = False
-          Width = 87
+          Width = 102
         end
         object tvDevColumn3: TcxGridDBColumn
           Caption = #21495#29260#31181#31867
           DataBinding.FieldName = 'HPZL'
           HeaderAlignmentHorz = taCenter
           Options.Editing = False
-          Width = 83
+          Width = 87
         end
         object tvDevColumn1: TcxGridDBColumn
           Caption = #21697#29260#22411#21495
           DataBinding.FieldName = 'CLPP'
           HeaderAlignmentHorz = taCenter
           Options.Editing = False
-          Width = 120
+          Width = 145
         end
         object tvDevColumn4: TcxGridDBColumn
           Caption = #36710#36523#39068#33394
@@ -163,20 +163,6 @@ object FrameJTPCheck: TFrameJTPCheck
           HeaderAlignmentHorz = taCenter
           Options.Editing = False
           Width = 68
-        end
-        object tvDevColumn5: TcxGridDBColumn
-          Caption = #36807#36710#26102#38388
-          DataBinding.FieldName = 'GXSJ'
-          HeaderAlignmentHorz = taCenter
-          Options.Editing = False
-          Width = 113
-        end
-        object tvDevColumn6: TcxGridDBColumn
-          Caption = #36807#36710#22320#28857
-          DataBinding.FieldName = 'KDBH'
-          HeaderAlignmentHorz = taCenter
-          Options.Editing = False
-          Width = 120
         end
       end
       object cxGrid1Level1: TcxGridLevel
@@ -402,6 +388,7 @@ object FrameJTPCheck: TFrameJTPCheck
       Parent = liButton
       CaptionOptions.Text = 'New Item'
       CaptionOptions.Visible = False
+      Visible = False
       Control = btnNext
       ControlOptions.OriginalHeight = 30
       ControlOptions.OriginalWidth = 75

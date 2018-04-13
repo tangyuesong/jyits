@@ -90,8 +90,6 @@ type
     dxLayoutGroup1: TdxLayoutGroup;
     tvDevColumn1: TcxGridDBColumn;
     tvDevColumn4: TcxGridDBColumn;
-    tvDevColumn5: TcxGridDBColumn;
-    tvDevColumn6: TcxGridDBColumn;
     dxLayoutItem11: TdxLayoutItem;
     txtHPHM: TcxTextEdit;
     dxLayoutItem12: TdxLayoutItem;
@@ -160,9 +158,6 @@ begin
   if TLookUpDataSource.DataSource.ContainsKey('CSYS') then
     TColumnGenerator.LookupColumn(tvDev.Columns[3],
       TLookUpDataSource.DataSource['CSYS']);
-  if TLookUpDataSource.DataSource.ContainsKey('KDBH') then
-    TColumnGenerator.LookupColumn(tvDev.Columns[5],
-      TLookUpDataSource.DataSource['KDBH']);
 
   dtDateBegin.Text := FormatDateTime('yyyy/mm/dd', now - 1);
   dtDateEnd.Text := FormatDateTime('yyyy/mm/dd', now);
