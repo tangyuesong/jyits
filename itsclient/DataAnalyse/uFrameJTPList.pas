@@ -90,8 +90,8 @@ begin
   inherited;
   DTKSSJ.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', Now - 30));
   DTJSSJ.Date := VarToDateTime(FormatDateTime('yyyy/mm/dd', Now + 1));
-  GridColumns := 'CLPP,CSYS,SJHM,BKR,GXSJ,²Ù×÷';
-  GridView.Columns[5].RepositoryItem := cxdtrpstry1ButtonItem1;
+  GridColumns := 'CLPP,CSYS,FZJG,HPZL,SJHM,BKR,GXSJ,²Ù×÷';
+  GridView.Columns[7].RepositoryItem := cxdtrpstry1ButtonItem1;
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[0].Visible := false;
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[1].Visible := false;
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[2].Visible := true;
