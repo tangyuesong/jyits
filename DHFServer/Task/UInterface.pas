@@ -600,7 +600,7 @@ begin
   begin
     logger.Info('[SMS]' + sj + content);
     token := getToken;
-    url := Format(smsUrl, [token, sj, HTTPEncode(content)]);
+    url := Format(smsUrl, [token, sj.Replace(';', ','), HTTPEncode(content)]);
     http := TIdHttp.Create(nil);
     http.ConnectTimeout := 2000;
     http.ReadTimeout := 2000;

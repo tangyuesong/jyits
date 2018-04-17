@@ -384,7 +384,7 @@ begin
   begin
     logger.Info('SMS' + sj + msg);
     borderDBHelper.ExecuteSql('insert into [borderdb].[dbo].[T_OUT] (sn,body,msg) values (' +
-      sn.QuotedString + ',' + sj.QuotedString + ',' + msg.QuotedString + ')');
+      sn.QuotedString + ',' + sj.Replace(',', ';').QuotedString + ',' + msg.QuotedString + ')');
   end;
 end;
 
