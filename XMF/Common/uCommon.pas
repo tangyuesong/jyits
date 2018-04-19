@@ -65,10 +65,10 @@ begin
     end;
   end
   else begin
-    FXDic.Add('东向西', '1');
-    FXDic.Add('南向北', '2');
-    FXDic.Add('西向东', '3');
-    FXDic.Add('北向南', '4');
+    FXDic.Add('由东向西', '13');
+    FXDic.Add('由南向北', '24');
+    FXDic.Add('由西向东', '31');
+    FXDic.Add('由北向南', '42');
   end;
 end;
 
