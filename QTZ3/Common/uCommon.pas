@@ -76,7 +76,7 @@ type
     class function FindJson(AItemName: String; AJSON: TQJson): TQJson;
     class procedure SaveVehInfo(AJSON: String);
     class procedure SaveDrvInfo(AJSON: String);
-    class function QueryDrvInfo(sfzmhm: String): String;
+    class function QueryDrvInfo(sfzmhm: String; dabh: String): String;
     class function QueryVehInfo(hphm, hpzl: String): String;
     class function DelFile(fileName: String): Boolean; static;
     class function JsonToRecord<T>(JSON: string): T; static;
@@ -855,6 +855,15 @@ begin
         dept.lng := FieldByName('lng').AsString;
         dept.lat := FieldByName('lat').AsString;
         dept.IsJX := FieldByName('IsJX').AsBoolean;
+
+        dept.CLJG := FieldByName('CLJG').AsString;
+        dept.CLJGDH := FieldByName('CLJGDH').AsString;
+        dept.BMQC := FieldByName('BMQC').AsString;
+        dept.CLDZ := FieldByName('CLDZ').AsString;
+        dept.CLBGCDZ := FieldByName('CLBGCDZ').AsString;
+        dept.YZURL := FieldByName('YZURL').AsString;
+        dept.JSCFDD := FieldByName('JSCFDD').AsString;
+
         if not FDepts.ContainsKey(dept.dwdm) then
           FDepts.add(dept.dwdm, dept);
         Next;
@@ -1029,7 +1038,11 @@ begin
       token.User := User;
       Result := '{"token":"' + token.key + '","dwdm":"' + token.User.dwdm + '"';
       if Depts.ContainsKey(token.User.dwdm) then
-        Result := Result + ',"dwmc":"' + Depts[token.User.dwdm].dwmc + '"'
+      begin
+        Result := Result + ',"dwmc":"' + Depts[token.User.dwdm].dwmc +
+          '","clbgcdz":["' + Depts[token.User.dwdm].CLBGCDZ.Replace(',',
+          '","') + '"]';
+      end
       else
         Result := Result + ',"dwmc":""';
       Result := Result + ',"yhbh":"' + token.User.yhbh + '","yhxm":"' +
@@ -1327,15 +1340,15 @@ begin
   end;
 end;
 
-class function TCommon.QueryDrvInfo(sfzmhm: String): String;
+class function TCommon.QueryDrvInfo(sfzmhm: String; dabh: String): String;
 var
   c: Integer;
 begin
-  if sfzmhm = '' then
+  if (sfzmhm = '') and (dabh = '') then
     Result := '-1'
   else
-    Result := TCommon.QueryToJsonString('GetLocalDrvInfo ' +
-      sfzmhm.QuotedString, nil, c);
+    Result := TCommon.QueryToJsonString('GetLocalDrvInfo ' + sfzmhm.QuotedString
+      + ',' + dabh.QuotedString, nil, c);
 end;
 
 class function TCommon.QueryVehInfo(hphm, hpzl: String): String;

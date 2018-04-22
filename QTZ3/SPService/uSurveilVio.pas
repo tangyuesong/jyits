@@ -57,7 +57,7 @@ end;
 class procedure TSurveilVio.SaveSurveilVio(tokenKey: String; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  hphm, hpzl, vehstr, wfdd, json, fzjg, wfxw, code, ip: String;
+  hphm, hpzl, vehstr, wfdd, json, fzjg, wfxw, code, ip, cfzl: String;
   wfsj: TDatetime;
   device: TDevice;
   vio: TLockVio;
@@ -68,6 +68,7 @@ begin
   wfdd := params.Values['wfdd'];
   wfsj := DateUtils.IncMilliSecond(25569.3333333333,
     StrToInt64Def(params.Values['wfsj'], -346789));
+  cfzl := params.Values['cfzl'];
 
   if TCommon.DicDevice.ContainsKey(wfdd) then
     device := TCommon.DicDevice[wfdd]
@@ -76,8 +77,10 @@ begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('违法地点不存在');
     exit;
   end;
-  vehstr := '[' + TRmService.GetVehinfo(gTokenManager.GetToken(tokenKey), hphm,
-    hpzl) + ']';
+  vehstr:= TRmService.GetVehinfo(gTokenManager.GetToken(tokenKey), hphm,
+    hpzl);
+  gLogger.Info(vehStr);
+  vehstr := '[' + vehStr + ']';
   veh.hphm := '';
   veh := TCommon.JsonToRecord<TVehinfo>(vehstr);
   if veh.hphm = '' then
@@ -153,7 +156,14 @@ begin
   if TLockVioUtils.IsWhite(hphm, hpzl, vio.cjjg, vio.wfsj) then
   begin
     code := 'h' + formatdatetime('hhnnmmzzz', Now());
-    TCommon.AssembleSuccessHttpResult('"' + code + '"');
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+      ('"' + code + '"');
+  end
+  else if cfzl = '1' then
+  begin
+    code := cfzl;
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+      ('"' + code + '"');
   end
   else
   begin

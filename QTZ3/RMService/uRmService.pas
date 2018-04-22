@@ -90,7 +90,8 @@ var
 begin
   json := GetDrvInfo(token, params);
   if (json = '-1') or (json = '') then // ≤È—Ø6∫œ1 ß∞‹
-    json := TCommon.QueryDrvInfo(params.Values['SFZMHM']);
+    json := TCommon.QueryDrvInfo(params.Values['SFZMHM'],
+      params.Values['DABH']);
   if (json = '-1') or (json = '') then
     json := '{}';
   AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(json);
@@ -374,7 +375,7 @@ begin
   begin
     params.Add('JKID=04C03');
     sjson := DoQeury(token, params);
-    gLogger.Info(sJson);
+    gLogger.Info(sjson);
     json := TCommon.GetJsonNode('viosurveil', sjson);
     if json = '' then
     begin

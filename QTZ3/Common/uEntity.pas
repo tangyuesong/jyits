@@ -255,6 +255,13 @@ type
     lng: string;
     lat: string;
     IsJX: Boolean;
+    CLJG: String;
+    CLJGDH: String;
+    BMQC: String;
+    CLDZ: String;
+    CLBGCDZ: String;
+    YZURL: String;
+    JSCFDD: String;
   end;
 
 implementation

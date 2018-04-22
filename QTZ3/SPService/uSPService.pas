@@ -42,7 +42,7 @@ var
   json: String;
 begin
   Result := '-1';
-  json := TCommon.QueryDrvInfo(Params.Values['sfzmhm']);
+  json := TCommon.QueryDrvInfo(Params.Values['SFZMHM'], Params.Values['DABH']);
   if (json = '') or (json = '-1') then
     json := TRmService.GetDrvInfo(token, Params);
   if (json = '') or (json = '-1') then
@@ -82,7 +82,7 @@ begin
       wfsj := TCommon.StringToDT(TCommon.GetJsonNode('wfsj',
         jsonItem.ToString));
       wfjfs := StrToIntDef(TCommon.GetJsonNode('wfjfs', jsonItem.ToString), 0);
-      //gLogger.Info(jsonItem.ToString);
+      // gLogger.Info(jsonItem.ToString);
       if (wfsj > jfks) and (wfsj < jfjs) then
         Result := Result + wfjfs;
     end;
@@ -124,10 +124,9 @@ end;
 class procedure TSPService.GetLocalDrvInfo(token: TToken; Params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  sfzmhm, json: String;
+  json: String;
 begin
-  sfzmhm := Params.Values['sfzmhm'];
-  json := TCommon.QueryDrvInfo(sfzmhm);
+  json := TCommon.QueryDrvInfo(Params.Values['SFZMHM'], Params.Values['DABH']);
   if (json = '') or (json = '-1') then
     json := TRmService.GetDrvInfo(token, Params);
   if (json = '') or (json = '-1') then
