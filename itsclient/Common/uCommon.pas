@@ -8,7 +8,7 @@ uses
   uDictionary, uSetup, uGlobal, ULookUpDataSource, Winapi.Winsock, Windows,
   CxGrid, cxGridExportLink, Variants, ComObj, System.Generics.Collections,
   System.DateUtils, uLogger, uRegisterFrame, System.IOUtils, uUserPower,
-  Vcl.Graphics;
+  Vcl.Graphics, IdUri;
 
 type
   TCommon = Class
@@ -461,7 +461,10 @@ begin
         idhttp.HandleRedirects := True; // 必须支持重定向否则可能出错
         idhttp.ConnectTimeout := 30000; // 超过这个时间则不再访问
         idhttp.ReadTimeout := 30000; //
-        urlcn := idhttp.url.URLEncode(url);
+        if pos('%', url) = 0 then
+          urlcn := TIdUri.URLEncode(url)
+        else
+          urlcn := url;
         idhttp.Get(urlcn, ms);
         if ms.Size > 0 then
         begin
@@ -545,7 +548,10 @@ begin
       idhttp.HandleRedirects := True; // 必须支持重定向否则可能出错
       idhttp.ConnectTimeout := 3000; // 超过这个时间则不再访问
       idhttp.ReadTimeout := 3000; //
-      urlcn := idhttp.url.URLEncode(url);
+      if pos('%', url) = 0 then
+        urlcn := TIdUri.URLEncode(url)
+      else
+        urlcn := url;
       idhttp.Get(urlcn, Result);
     finally
       FreeAndNil(idhttp);
