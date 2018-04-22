@@ -39,7 +39,7 @@ var
   stream: TStream;
 begin
   token := GetToken;
-  url := Format(gConfig.SMSUrl, [token, sj, HTTPEncode(content)]);
+  url := Format(gConfig.SMSUrl, [token, sj.Replace(';', ','), HTTPEncode(content)]);
   http := TIdHttp.Create(nil);
   http.ConnectTimeout := 2000;
   http.ReadTimeout := 2000;

@@ -1628,6 +1628,9 @@ object frmMain: TfrmMain
       StyleFocused.LookAndFeel.NativeStyle = True
       StyleHot.LookAndFeel.NativeStyle = True
       Transparent = True
+      ExplicitLeft = 832
+      ExplicitTop = 0
+      ExplicitHeight = 60
     end
   end
   object mbMain: TdxNavBar
@@ -1673,6 +1676,9 @@ object frmMain: TfrmMain
       AllowCloseButton = False
       Caption = #24179#21488#39318#39029
       ImageIndex = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
   end
   object Chromium1: TChromium

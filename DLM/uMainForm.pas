@@ -1,14 +1,15 @@
-unit uMain;
+unit uMainForm;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.SvcMgr, Vcl.Dialogs, IniFiles, IOUtils, IdBaseComponent,
-  IdComponent, IdCustomTCPServer, IdCustomHTTPServer, IdHTTPServer, uLogger,
-  IdContext, IdHTTP, Generics.Collections, HTTPAPP, System.Net.URLClient,
-  System.Net.HttpClient, System.Net.HttpClientComponent, System.Threading,
-  System.Generics.Collections;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, HTTPAPP, System.Net.URLClient,
+  System.Net.HttpClient, System.Net.HttpClientComponent,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, IniFiles, IOUtils, IdContext,
+  IdCustomHTTPServer, IdBaseComponent, IdComponent, IdCustomTCPServer,
+  IdHTTPServer, System.Threading, System.Generics.Collections, uLogger,
+  Vcl.StdCtrls;
 
 type
   TParam = Record
@@ -16,41 +17,123 @@ type
     Path: string;
   end;
 
-  TsvcDLM = class(TService)
+  TForm1 = class(TForm)
     IdHTTPServer1: TIdHTTPServer;
-    procedure ServiceStart(Sender: TService; var Started: Boolean);
-    procedure ServiceStop(Sender: TService; var Stopped: Boolean);
+    Button1: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure IdHTTPServer1CommandGet(AContext: TIdContext;
       ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    procedure Button1Click(Sender: TObject);
   private
     FQueue: TQueue<TParam>;
     FCount: integer;
     FIPMap: TDictionary<string, string>;
-    function DownLoad: boolean;
     function ConvertUrl(url: string): string;
+    function DownLoad: boolean;
     function LoadIpMap: boolean;
+    { Private declarations }
   public
-    function GetServiceController: TServiceController; override;
+    { Public declarations }
   end;
 
 var
-  svcDLM: TsvcDLM;
+  Form1: TForm1;
 
 implementation
 
 {$R *.dfm}
 
-procedure ServiceController(CtrlCode: DWord); stdcall;
+procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+var
+  n: integer;
 begin
-  svcDLM.Controller(CtrlCode);
+  idHttpServer1.Active := false;
+  n := 0;
+  while FCount > 0 do
+  begin
+    logger.Info('Wait to download, request count: ' + FCount.ToString);
+    Sleep(2000);
+    Inc(n);
+    if n > 10 then
+    begin
+      logger.Warn('Force stop');
+      break;
+    end;
+  end;
+  FIpMap.Free;
+  logger.Info('XMFS stoped');
+  logger.Free;
 end;
 
-function TsvcDLM.GetServiceController: TServiceController;
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  ini: TIniFile;
+  path: string;
 begin
-  Result := ServiceController;
+  path := TPath.GetDirectoryName(ParamStr(0));
+  if not TDirectory.Exists(path + '\log') then
+    TDirectory.CreateDirectory(path + '\log');
+  logger := TLogger.Create(path + '\log\DLM.log');
+  ini := TIniFile.Create(path + '\config.ini');
+  IdHTTPServer1.DefaultPort := ini.ReadInteger('sys', 'PORT', 8888);
+  logger.Level := ini.ReadInteger('sys', 'LoggerLevel', 2);
+  ini.Free;
+  if LoadIpMap then
+  begin
+    try
+      FQueue := TQueue<TParam>.Create;
+      IdHTTPServer1.Active := True;
+      TThreadPool.Current.SetMinWorkerThreads(16);
+
+      logger.Info('DLM start ok');
+    except
+      on e: Exception do
+      begin
+        logger.Error(e.Message);
+      end;
+    end;
+  end;
 end;
 
-function TsvcDLM.ConvertUrl(url: string): string;
+procedure TForm1.Button1Click(Sender: TObject);
+  function HttpGet(url: string): boolean;
+  var
+    http: TNetHttpClient;
+  begin
+    result := false;
+    http := TNetHttpClient.Create(nil);
+    try
+      http.Get(url);
+      result := true;
+      logger.Debug('[TKKThread.HttpGet]' + url);
+    except
+      on e: exception do
+      begin
+        logger.Error('[TKKThread.HttpGet]' +  e.Message);
+        http.Free;
+      end;
+    end;
+    http.Free;
+  end;
+  function HttpSend(fwqdz, tp1, tp2, tp3, path: string): boolean;
+  var
+    url: string;
+  begin
+    url := 'http://localhost:8888/Download?' + 'src=' + fwqdz + tp1 + '&tgt=' + path + tp1;
+    result := HttpGet(url);
+  end;
+var
+  path: string;
+begin
+  if HttpSend('http://10.43.240.97:88/data5/zc/120000840321/20180419/14/',
+    '5950765-129776874874754-2-1.jpg', '','', 'd:\aaaa') then
+  begin
+
+  end;
+end;
+
+function TForm1.ConvertUrl(url: string): string;
 var
   ss: TArray<string>;
   ipPort: string;
@@ -67,7 +150,7 @@ begin
   end;
 end;
 
-function TsvcDLM.DownLoad: boolean;
+function TForm1.DownLoad: boolean;
 var
   http: TNetHttpClient;
   stream: TMemoryStream;
@@ -75,7 +158,7 @@ var
   param: TParam;
 begin
   result := false;
-  param := FQueue.Peek;
+  param := FQueue.Dequeue;
   s := TPath.GetDirectoryName(param.Path);
   if not TDirectory.Exists(s) then
     TDirectory.CreateDirectory(s);
@@ -101,7 +184,7 @@ begin
   Dec(FCount);
 end;
 
-procedure TsvcDLM.IdHTTPServer1CommandGet(AContext: TIdContext;
+procedure TForm1.IdHTTPServer1CommandGet(AContext: TIdContext;
   ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 var
   action, ip, newUrl: string;
@@ -128,7 +211,6 @@ begin
   if (action = 'DOWNLOAD') and (param.url.StartsWith('http')) and (param.path <> '') then
   begin
     newUrl := ConvertUrl(param.url);
-    logger.Debug(newUrl + ' ' + param.url);
     if newUrl <> '' then
     begin
       param.Url := newUrl;
@@ -153,7 +235,7 @@ begin
   end;
 end;
 
-function TsvcDLM.LoadIpMap: boolean;
+function TForm1.LoadIpMap: boolean;
 var
   iniFile, s, key, value: string;
   ss: TArray<string>;
@@ -184,58 +266,6 @@ begin
     end;
     result := true;
   end;
-end;
-
-procedure TsvcDLM.ServiceStart(Sender: TService; var Started: Boolean);
-var
-  ini: TIniFile;
-  path: string;
-begin
-  path := TPath.GetDirectoryName(ParamStr(0));
-  if not TDirectory.Exists(path + '\log') then
-    TDirectory.CreateDirectory(path + '\log');
-  logger := TLogger.Create(path + '\log\DLM.log');
-  ini := TIniFile.Create(path + '\config.ini');
-  IdHTTPServer1.DefaultPort := ini.ReadInteger('sys', 'PORT', 8888);
-  logger.Level := ini.ReadInteger('sys', 'LoggerLevel', 2);
-  ini.Free;
-  if LoadIpMap then
-  begin
-    try
-      FQueue := TQueue<TParam>.Create;
-      IdHTTPServer1.Active := True;
-      TThreadPool.Current.SetMinWorkerThreads(16);
-      logger.Info('DLM start ok');
-    except
-      on e: Exception do
-      begin
-        logger.Error(e.Message);
-        Started := false;
-      end;
-    end;
-  end;
-end;
-
-procedure TsvcDLM.ServiceStop(Sender: TService; var Stopped: Boolean);
-var
-  n: integer;
-begin
-  idHttpServer1.Active := false;
-  n := 0;
-  while FCount > 0 do
-  begin
-    logger.Info('Wait to download, request count: ' + FCount.ToString);
-    Sleep(2000);
-    Inc(n);
-    if n > 10 then
-    begin
-      logger.Warn('Force stop');
-      break;
-    end;
-  end;
-  FIpMap.Free;
-  logger.Info('XMFS stoped');
-  logger.Free;
 end;
 
 end.
