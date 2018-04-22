@@ -63,12 +63,12 @@ begin
     gLogger.Error('Request num is not invalid: ' + num.ToString);
     exit;
   end;
-
+  xzqh := gSQLHelper.GetSinge('select left(dwdm,6) from s_user where yhbh=''' + yhbh + '''');
   cs.Enter;
 
   // DONE: Get Rollback Records
   with gSQLHelper.Query('select top ' + num.ToString + ' wsbh from ' + cDBName +
-    '.dbo.S_WSBH where flag=0') do
+    '.dbo.S_WSBH where flag=0 and xzqh=''' + xzqh + '''') do
   begin
     while not EOF do
     begin
@@ -85,6 +85,7 @@ begin
       .Replace(',', ''',''') + ''')';
     if not gSQLHelper.ExecuteSql(sql) then
     begin
+      gLogger.Error('No min WSBH in DB for : ' + xzqh);
       cs.Leave;
       exit;
     end;
@@ -93,14 +94,17 @@ begin
   if num > 0 then
   begin
     wsbh := gSQLHelper.GetSinge('select max(WSBH) from ' + cDBName +
-      '.dbo.S_WSBH');
+      '.dbo.S_WSBH where xzqh=''' + xzqh + '''');
     if wsbh = '' then
-      wsbh := MinWSBH;
+    begin
+      cs.Leave;
+      exit;
+    end;
     n := strtointdef(wsbh.Substring(6), 0);
     if n > 0 then
     begin
       xzqh := wsbh.Substring(0, 6);
-      sql := 'insert into ' + cDBName + '.dbo.S_WSBH(yhbh, wslb, wsbh)values';
+      sql := 'insert into ' + cDBName + '.dbo.S_WSBH(yhbh,wslb,wsbh,xzqh)values';
       for i := 1 to num do
       begin
         wsbh := GetWSBH(xzqh, n + i);
@@ -108,7 +112,7 @@ begin
         if i > 1 then
           sql := sql + ','#13#10;
         sql := sql + '(' + yhbh.QuotedString + ',' + wslb.QuotedString + ',' +
-          wsbh.QuotedString + ')';
+          wsbh.QuotedString + ',' + xzqh.QuotedString + ')';
       end;
       if gSQLHelper.ExecuteSql(sql) then
       begin
