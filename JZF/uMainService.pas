@@ -7,7 +7,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.SvcMgr, Vcl.Dialogs, uTaskThread, uKKAlarm,
   uGlobal, uCommon, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
   IdHTTP, Vcl.ExtCtrls, uZBDXThread, uUploadVio, uJQThread, uVioSBThread,
-  uDeviceMonitorThread, uDelExpiredVioThread, uHBCVioThread, uWNJVioThread;
+  uDeviceMonitorThread, uDelExpiredVioThread, uHBCVioThread, uWNJVioThread,
+  uJTPThread;
 
 type
   TItsJZFService = class(TService)
@@ -105,6 +106,9 @@ begin
 
   if gWNJ and (Min = 40) then
     TWNJVioThread.Create(False);
+
+  if gJTP and (Min mod 5 = 0) and (not JTPRunning) then
+    TJTPThread.Create;
 end;
 
 end.

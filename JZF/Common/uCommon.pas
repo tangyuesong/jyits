@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, uGlobal, Rtti, uSQLHelper, uLogger, ADODB,
-  System.JSON, Winapi.WinSock, Winapi.Windows,
+  System.JSON, Winapi.WinSock, Winapi.Windows, QJson,
   Data.DB, System.Generics.Collections, DateUtils;
 
 type
@@ -19,6 +19,8 @@ type
     class function RecordListToJSON<T>(list: TList<T>): string; static;
     class function RecordToJSON<T>(rec: Pointer): string; static;
     class function StringToDT(s: String): TDatetime;
+    class function FindJson(AItemName: String; AJSON: TQJson): TQJson; static;
+    class function GetJsonNode(ANode, AJSON: String): String; static;
   end;
 
 procedure SQLError(const SQL, Description: string);
@@ -44,6 +46,43 @@ begin
   StrPCopy(OutPut, Format('%s', [p2]));
   WSACleanup;
   Result := OutPut;
+end;
+
+class function TCommon.GetJsonNode(ANode, AJSON: String): String;
+var
+  item, JSON: TQJson;
+begin
+  result := '';
+  JSON := TQJson.Create;
+  try
+    JSON.Parse(AJSON);
+    item := FindJson(ANode, JSON);
+    if item <> nil then
+      result := item.ToString;
+  except
+    on e: Exception do
+    begin
+      result := AJSON;
+      gLogger.Error('[TCommon.GetJsonNode]' + e.Message + AJSON);
+    end;
+  end;
+  JSON.Free;
+end;
+
+class function TCommon.FindJson(AItemName: String; AJSON: TQJson): TQJson;
+var
+  i: Integer;
+begin
+  result := nil;
+  for i := 0 to AJSON.Count - 1 do
+  begin
+    if UpperCase(AJSON.Items[i].Name) = UpperCase(AItemName) then
+      result := AJSON.Items[i]
+    else
+      result := FindJson(AItemName, AJSON.Items[i]);
+    if result <> nil then
+      break;
+  end;
 end;
 
 class function TCommon.ReadConfig(): Boolean;
@@ -75,6 +114,8 @@ begin
     gHBC := ReadInteger('PROJECT', 'HBC', 0) = 1;
     gWNJ := ReadInteger('PROJECT', 'WNJ', 0) = 1;
     gKKALARM := ReadInteger('PROJECT', 'KKALARM', 0) = 1;
+    gJTP := ReadInteger('PROJECT', 'JTP', 0) = 1;
+    JTPRunning := false;
 
     gZBDX := ReadInteger('PROJECT', 'ZBDX', 0) = 1;
     gZBDXTime := ReadString('PROJECT', 'ZBDXTime', '2000');

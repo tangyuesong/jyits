@@ -23,18 +23,16 @@ type
     class function DFLogin(AUser, APwd: String; var AToken: String): Boolean;
     class procedure DFLogout(AToken: String);
   public
-    class function GetK08SearchParam(param, page, pageSize: string): TStrings;
+    class function GetK08SearchParam(param: TDictionary<string, String>;
+      page, pageSize: string): TStrings;
     class function DFCreateImageJob(AImages: TList<TImageInfo>): Boolean;
     class function DFAnalysisOnePic(Url: String; var AMsg: String)
       : TList<TDFVehInfo>; overload;
     class function DFAnalysisOnePic(Url: String): String; overload;
-    class function GetK08VehInfo(hphm, hpzl: String): String;
-    class function GetK08PassList(kssj, jssj, hphm, hpzl, KDBH, clpp, csys,
-      clpp1, aqd, aqd1, zyb, zyb1, gj, page, pageSize: string): String;
-      overload;
     class function GetK08PassList(AParams: TStrings; var totalPage: Integer;
-      var currentPage: Integer): TList<TK08VehInfo>; overload;
-    class function GetMaxPassTime(): String;
+      var currentPage: Integer): TList<TK08VehInfo>;
+    class function GetMaxPassTime(param: TDictionary<string, String>)
+      : TDateTime;
   end;
 
 implementation
@@ -246,184 +244,59 @@ begin
   ActiveX.CoUninitialize;
 end;
 
-class function THik.GetK08SearchParam(param, page, pageSize: string): TStrings;
+class function THik.GetK08SearchParam(param: TDictionary<string, String>;
+  page, pageSize: string): TStrings;
+var
+  key: String;
 begin
   Result := TStringList.Create;
   Result.Add
-    ('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/kms/ws/">');
+    ('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">');
   Result.Add('   <soapenv:Header/>');
   Result.Add('   <soapenv:Body>');
   Result.Add('      <ws:moreLikeThis>');
   Result.Add('         <arg0>');
-  Result.Add('            <appCode>ivms8200_hare</appCode>');
   Result.Add('            <beanId>pass</beanId>');
   Result.Add('            <currentPage>' + page + '</currentPage>');
   Result.Add('            <pageSize>' + pageSize + '</pageSize>');
-  Result.Add('            <password>vlss</password>');
-  Result.Add('            <q>' + param + '</q>');
-  Result.Add('            <tableName>BayonetVehiclePass</tableName>');
-  Result.Add('            <userName>vlss</userName>');
+  for key in param.Keys do
+  begin
+    if key = 'q' then
+    begin
+      Result.Add('             <q>' + param[key] + '</q>');
+    end
+    else
+    begin
+      Result.Add('             <fieldOptions>');
+      Result.Add('               <filedName>' + key + '</filedName>');
+      Result.Add('               <keyWords>' + param[key] + '</keyWords>');
+      Result.Add('             </fieldOptions>');
+    end;
+  end;
+  Result.Add('           <sortColumn>passtime</sortColumn>');
+  Result.Add('           <sortMethod>desc</sortMethod>');
   Result.Add('         </arg0>');
   Result.Add('      </ws:moreLikeThis>');
   Result.Add('   </soapenv:Body>');
   Result.Add('</soapenv:Envelope>');
 end;
 
-class function THik.GetK08PassList(kssj, jssj, hphm, hpzl, KDBH, clpp, csys,
-  clpp1, aqd, aqd1, zyb, zyb1, gj, page, pageSize: string): String;
+class function THik.GetMaxPassTime(param: TDictionary<string, String>)
+  : TDateTime;
 var
   Params: TStrings;
-  param, s, h: String;
-  vehList: TList<TK08VehInfo>;
-  veh: TK08VehInfo;
-  totalPage, currentPage: Integer;
-begin
-  Result := '';
-  ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
-
-  param := 'passtime:([' + kssj + ' TO ' + jssj + '])';
-  if (KDBH <> '') and gDevKDBH.ContainsKey(KDBH) then
-    param := param + ' AND crossingid:(' + gDevKDBH[KDBH] + ')';
-  if hphm <> '' then
-    param := param + ' AND plateinfono:(' + hphm + ')';
-
-  if (hpzl <> '') and (gK08Hpzl.ContainsKey(hpzl)) then
-  begin
-    for s in gK08Hpzl[hpzl] do
-      h := h + ' ' + s;
-    param := param + ' AND vehicletype:(' + h.Substring(1) + ')';
-  end;
-  if clpp <> '' then
-    param := param + ' AND vehiclelogo:(' + clpp + ')';
-  if csys <> '' then
-    param := param + ' AND vehiclecolor:(' + csys + ')';
-  if clpp1 <> '' then
-    param := param + ' AND vehiclesublogo:(' + clpp1 + ')';
-  if aqd <> '' then
-    param := param + ' AND pilotsafebelt:(' + aqd + ')';
-  if aqd1 <> '' then
-    param := param + ' AND vicepilotsafebelt:(' + aqd1 + ')';
-  if zyb <> '' then
-    param := param + ' AND vehiclesunvisor:(' + zyb + ')';
-  if zyb1 <> '' then
-    param := param + ' AND vicepilotsunvisor:(' + zyb1 + ')';
-  if gj <> '' then
-    param := param + ' AND pendant:(' + gj + ')';
-  param := '(' + param + ')';
-
-  Params := GetK08SearchParam(param, page, pageSize);
-
-  if HttPPost(gHikConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
-  begin
-    try
-      vehList := TDecodeHikResult.DecodeK08SearchResult(s, totalPage,
-        currentPage);
-    except
-      glogger.Error(s);
-    end;
-    if (vehList <> nil) and (vehList.Count > 0) then
-    begin
-      for veh in vehList do
-      begin
-        // HPHM,HPZL,GCSJ,KDBH,CDBH,CLSD FWQDZ, TP1
-        // if Length(veh.plateinfono) < 6 then
-        // continue;
-
-        s := '"HPHM":"' + veh.plateinfono + '",';
-        if gHpzl.ContainsKey(veh.vehicletype) then
-          s := s + '"HPZL":"' + gHpzl[veh.vehicletype] + '"'
-        else
-          s := s + '"HPZL":"' + veh.vehicletype + '"';
-        s := s + ',"GCSJ":"' + veh.PassTime + '",';
-
-        if gDevID.ContainsKey(veh.crossingid) then
-          s := s + '"KDBH":"' + gDevID[veh.crossingid] + '"'
-        else
-          s := s + '"KDBH":"' + veh.crossingid + '"';
-
-        if gK08Clpp.ContainsKey(veh.vehiclesublogoall) then
-          s := s + ',"CLPP":"' + gK08Clpp[veh.vehiclesublogoall] + '"'
-        else if gK08Clpp.ContainsKey(veh.vehiclelogo + '-0') then
-          s := s + ',"CLPP":"' + gK08Clpp[veh.vehiclelogo + '-0'] + '"'
-        else
-          s := s + ',"CLPP":"' + veh.vehiclesublogoall + '"';
-
-        if gK08Csys.ContainsKey(veh.vehiclecolor) then
-          s := s + ',"CSYS":"' + gK08Csys[vehList[0].vehiclecolor] + '"'
-        else
-          s := s + ',"CSYS":"' + veh.vehiclecolor + '"';
-        s := '{' + s + ',"CDBH":"' + veh.laneid + '","CLSD":"' +
-          veh.vehiclespeed + '","FWQDZ":"","TP1":"' + veh.picvehicle + '"}';
-
-        Result := Result + ',' + s;
-      end;
-      Result := '[' + Result.Substring(1) + ']';
-      vehList.Free;
-    end
-  end;
-  Params.Free;
-  ActiveX.CoUninitialize;
-end;
-
-class function THik.GetK08VehInfo(hphm, hpzl: String): String;
-var
-  Params: TStrings;
-  param, s: String;
-  vehList: TList<TK08VehInfo>;
-  totalPage, currentPage: Integer;
-begin
-  Result := '';
-  ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
-
-  if gK08Hpzl.ContainsKey(hpzl) then
-  begin
-    for s in gK08Hpzl[hpzl] do
-      param := param + ' ' + s;
-  end;
-  param := '(vehicletype:(' + param.Substring(1) + ') AND plateinfono:(' +
-    hphm + '))';
-
-  Params := GetK08SearchParam(param, '1', '1');
-
-  if HttPPost(gHikConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
-  begin
-    vehList := TDecodeHikResult.DecodeK08SearchResult(s, totalPage,
-      currentPage);
-    if (vehList <> nil) and (vehList.Count > 0) then
-    begin
-      if gK08Clpp.ContainsKey(vehList[0].vehiclesublogoall) then
-        Result := '"CLPP":"' + gK08Clpp[vehList[0].vehiclesublogoall] + '"'
-      else if gK08Clpp.ContainsKey(vehList[0].vehiclelogo + '-0') then
-        Result := 'CLPP:"' + gK08Clpp[vehList[0].vehiclelogo + '-0'] + '"'
-      else
-        Result := '"CLPP":"' + vehList[0].vehiclesublogoall + '"';
-      if gK08Csys.ContainsKey(vehList[0].vehiclecolor) then
-        Result := Result + ',"CSYS":"' + gK08Csys[vehList[0].vehiclecolor] + '"'
-      else
-        Result := Result + ',"CSYS":"' + vehList[0].vehiclecolor + '"';
-      Result := '[{' + Result + '}]';
-      vehList.Free;
-    end
-  end;
-
-  Params.Free;
-  ActiveX.CoUninitialize;
-end;
-
-class function THik.GetMaxPassTime: String;
-var
-  Params: TStrings;
-  param: String;
   vehList: TList<TK08VehInfo>;
   c, t: Integer;
 begin
-  Result := '';
-  param := 'vehicletype:(3)';
+  Result := 0;
+  if not param.ContainsKey('vehicletype') then
+    param.Add('vehicletype', '3');
   Params := GetK08SearchParam(param, '1', '1');
   vehList := GetK08PassList(Params, c, t);
   if (vehList <> nil) and (vehList.Count > 0) then
   begin
-    Result := vehList[0].PassTime;
+    Result := DateUtils.IncMilliSecond(25569.3333333333,
+      StrToInt64(vehList[0].PassTime));
     vehList.Free;
   end;
   Params.Free;

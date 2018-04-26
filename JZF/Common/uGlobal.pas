@@ -25,6 +25,13 @@ type
     DFPwd: String;
   End;
 
+  TVehInfo = Record
+    HPHM: string;
+    HPZL: string;
+    CLPP: string;
+    CSYS: string;
+  End;
+
 var
   gSQLHelper: TSQLHelper;
   gLogger: TLogger;
@@ -38,13 +45,15 @@ var
   gWNJ: boolean; // Î´Äê¼ì
   gZBDX: Boolean; // Öµ°à¶ÌÐÅ
   gZBDXTime: String;
-  gHpzlList: TDictionary<string, String>;
-  gHpzl: TDictionary<String, String>;
-  gK08Hpzl: TDictionary<String, TStrings>;
+  gJTP: boolean; //¼ÙÌ×ÅÆ
+  JTPRunning: boolean;
+  //gHpzlList: TDictionary<string, String>;
+  gK08Hpzl: TDictionary<String, String>;
   gK08Clpp: TDictionary<String, String>;
   gK08Csys: TDictionary<String, String>;
-  gDevKDBH: TDictionary<String, String>;
-  gDevID: TDictionary<String, String>;
+  //gDevKDBH: TDictionary<String, String>;
+  //gDevID: TDictionary<String, String>;
+  gVehInfoDic: TDictionary<string, TVehInfo>;
   gHeartbeatUrl: String;
   gHeartbeatInterval: Integer;
   gAppIP: String;
