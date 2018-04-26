@@ -54,6 +54,8 @@ type
     GridViewColumn2: TcxGridDBColumn;
     GridViewColumn3: TcxGridDBColumn;
     dxLayoutSeparatorItem2: TdxLayoutSeparatorItem;
+    dxLayoutItem8: TdxLayoutItem;
+    edtHPHM: TcxTextEdit;
     procedure BtnAddClick(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -158,11 +160,11 @@ begin
   sbbh := sbbh.Substring(1);
   sbddmc := sbddmc.Substring(1);
   params := Format
-    ('SYSTEMID=%s&beginTime=%s&endTime=%s&Days=%s&sbbh=%s&sbddmc=%s&TaskName=%s&CreateBy=%s&CreateTime=%s&Status=%s',
+    ('SYSTEMID=%s&beginTime=%s&endTime=%s&Days=%s&hphm=%s&sbbh=%s&sbddmc=%s&TaskName=%s&CreateBy=%s&CreateTime=%s&Status=%s',
     [taskid,
     FormatDatetime('yyyy/mm/dd', edtBeginDate.Date),
     FormatDatetime('yyyy/mm/dd', edtEndDate.Date),
-    edtDays.Text,
+    edtDays.Text, edtHPHM.Text,
     sbbh,sbddmc,
     edtTaskName.Text,
     gUser.YHBH,

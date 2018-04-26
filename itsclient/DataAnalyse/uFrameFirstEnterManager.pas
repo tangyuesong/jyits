@@ -29,7 +29,8 @@ uses
   sDialogs, cxEditRepositoryItems, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, Vcl.StdCtrls, cxButtons,
   cxGridLevel, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, dxLayoutControl, UFrameAddFirstEnter, Vcl.ExtCtrls;
+  cxGridDBTableView, cxGrid, dxLayoutControl, UFrameAddFirstEnter, Vcl.ExtCtrls,
+  cxLabel;
 
 type
   TFrameFirstEnterManager = class(TFrameTaskManager)
@@ -47,8 +48,8 @@ implementation
 procedure TFrameFirstEnterManager.AfterConstruction;
 begin
   inherited;
-  GridColumns:='TaskName, SBDDMC, Days, CreateTime, FinishTime, Status, ²Ù×÷';
-  GridView.Columns[6].RepositoryItem:=cxdtrpstry1ButtonItem1;
+  GridColumns:='TaskName,HPHM,BeginTime,EndTime,Days,CreateTime,FinishTime,Status,²Ù×÷';
+  GridView.Columns[8].RepositoryItem := cxdtrpstry1ButtonItem1;
   JKID := 'GetT_Analyse_FirstEnterTask';
   self.AddFrame := TFrameAddFirstEnter.Create(Self);
   self.ResultFrame.GridColumns := 'HPHM, HPZL, MinGCSJ';

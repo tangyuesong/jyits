@@ -10,7 +10,7 @@ inherited FrameAddFirstEnter: TFrameAddFirstEnter
       Top = 109
       Width = 600
       Height = 294
-      TabOrder = 6
+      TabOrder = 7
       object GridView: TcxGridTableView
         Navigator.Buttons.CustomButtons = <>
         DataController.Summary.DefaultGroupSummaryItems = <>
@@ -34,13 +34,13 @@ inherited FrameAddFirstEnter: TFrameAddFirstEnter
     end
     inherited btnSave: TcxButton
       Left = 246
-      TabOrder = 8
+      TabOrder = 9
       OnClick = btnSaveClick
       ExplicitLeft = 246
     end
     inherited btnExit: TcxButton
       Left = 334
-      TabOrder = 9
+      TabOrder = 10
       ExplicitLeft = 334
     end
     object cboGCDD: TcxComboBoxExt [3]
@@ -51,50 +51,51 @@ inherited FrameAddFirstEnter: TFrameAddFirstEnter
       Properties.IncrementalFiltering = False
       Properties.KeyFieldNames = 'Name'
       Properties.Revertable = True
-      TabOrder = 3
+      TabOrder = 4
       Height = 21
-      Width = 367
+      Width = 375
     end
     object edtBeginDate: TcxDateEdit [4]
-      Left = 82
+      Left = 238
       Top = 36
       AutoSize = False
-      Properties.View = cavClassic
-      Style.HotTrack = False
-      TabOrder = 0
-      Height = 21
-      Width = 183
-    end
-    object edtEndDate: TcxDateEdit [5]
-      Left = 326
-      Top = 36
-      AutoSize = False
+      EditValue = 43216d
       Properties.View = cavClassic
       Style.HotTrack = False
       TabOrder = 1
       Height = 21
-      Width = 183
+      Width = 120
+    end
+    object edtEndDate: TcxDateEdit [5]
+      Left = 419
+      Top = 36
+      AutoSize = False
+      Properties.View = cavClassic
+      Style.HotTrack = False
+      TabOrder = 2
+      Height = 21
+      Width = 120
     end
     object BtnAdd: TcxButton [6]
-      Left = 456
+      Left = 464
       Top = 77
       Width = 75
       Height = 25
       Caption = #28155#21152
       OptionsImage.ImageIndex = 110
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 4
+      TabOrder = 5
       OnClick = BtnAddClick
     end
     object btnDelete: TcxButton [7]
-      Left = 538
+      Left = 546
       Top = 77
       Width = 75
       Height = 25
       Caption = #21024#38500
       OptionsImage.ImageIndex = 79
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 5
+      TabOrder = 6
       OnClick = btnDeleteClick
     end
     object edtTaskName: TcxTextEdit [8]
@@ -102,19 +103,28 @@ inherited FrameAddFirstEnter: TFrameAddFirstEnter
       Top = 410
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 7
+      TabOrder = 8
       Height = 21
       Width = 546
     end
     object edtDays: TcxTextEdit [9]
-      Left = 546
+      Left = 576
       Top = 36
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 2
+      TabOrder = 3
       Text = '30'
       Height = 21
-      Width = 69
+      Width = 51
+    end
+    object edtHPHM: TcxTextEdit [10]
+      Left = 82
+      Top = 36
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 0
+      Height = 21
+      Width = 95
     end
     inherited dxLayoutControl2Group_Root: TdxLayoutGroup
       LayoutDirection = ldHorizontal
@@ -137,7 +147,7 @@ inherited FrameAddFirstEnter: TFrameAddFirstEnter
       CaptionOptions.Text = #36827#22478#21345#21475
       Control = cboGCDD
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 367
+      ControlOptions.OriginalWidth = 375
       ControlOptions.ShowBorder = False
       Index = 0
     end
@@ -164,18 +174,18 @@ inherited FrameAddFirstEnter: TFrameAddFirstEnter
       CaptionOptions.Text = #24320#22987#26085#26399
       Control = edtBeginDate
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 183
+      ControlOptions.OriginalWidth = 120
       ControlOptions.ShowBorder = False
-      Index = 0
+      Index = 1
     end
     object dxLayoutItem12: TdxLayoutItem
       Parent = dxLayoutGroup5
       CaptionOptions.Text = #32467#26463#26085#26399
       Control = edtEndDate
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 183
+      ControlOptions.OriginalWidth = 120
       ControlOptions.ShowBorder = False
-      Index = 1
+      Index = 2
     end
     object dxLayoutItem5: TdxLayoutItem
       Parent = dxLayoutGroup6
@@ -226,14 +236,24 @@ inherited FrameAddFirstEnter: TFrameAddFirstEnter
       CaptionOptions.Text = #22825#25968
       Control = edtDays
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 69
+      ControlOptions.OriginalWidth = 51
       ControlOptions.ShowBorder = False
-      Index = 2
+      Index = 3
     end
     object dxLayoutSeparatorItem2: TdxLayoutSeparatorItem
       Parent = dxLayoutGroup1
       CaptionOptions.Text = 'Separator'
       Index = 1
+    end
+    object dxLayoutItem8: TdxLayoutItem
+      Parent = dxLayoutGroup5
+      AlignVert = avBottom
+      CaptionOptions.Text = #21495#29260#21495#30721
+      Control = edtHPHM
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 95
+      ControlOptions.ShowBorder = False
+      Index = 0
     end
   end
 end

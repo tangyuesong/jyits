@@ -1,19 +1,25 @@
 inherited FrameGCPD: TFrameGCPD
+  Width = 881
+  Height = 303
   inherited dxLayoutControl2: TdxLayoutControl
+    Width = 881
+    Height = 303
     inherited cxGrid1: TcxGrid
+      Left = -138
       Top = 45
-      Width = 1006
-      Height = 202
-      TabOrder = 7
+      Width = 1051
+      Height = 200
+      TabOrder = 8
+      ExplicitLeft = -138
       ExplicitTop = 45
-      ExplicitWidth = 1006
-      ExplicitHeight = 202
+      ExplicitWidth = 1051
+      ExplicitHeight = 200
       inherited GridView: TcxGridDBTableView
         OnCellDblClick = GridViewCellDblClick
       end
     end
     object DTKSSJ: TcxDateEdit [1]
-      Left = 43
+      Left = -108
       Top = 13
       AutoSize = False
       Properties.Kind = ckDateTime
@@ -24,7 +30,7 @@ inherited FrameGCPD: TFrameGCPD
       Width = 158
     end
     object DTJSSJ: TcxDateEdit [2]
-      Left = 226
+      Left = 75
       Top = 13
       AutoSize = False
       Properties.Kind = ckDateTime
@@ -35,58 +41,70 @@ inherited FrameGCPD: TFrameGCPD
       Width = 159
     end
     object cxButton1: TcxButton [3]
-      Left = 944
+      Left = 838
       Top = 13
       Width = 75
       Height = 25
       Caption = #26597#35810
       OptionsImage.ImageIndex = 901
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 6
+      TabOrder = 7
       OnClick = cxButton1Click
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 254
-      TabOrder = 8
-      ExplicitTop = 254
+      Left = -138
+      Top = 252
+      TabOrder = 9
+      ExplicitLeft = -138
+      ExplicitTop = 252
     end
     inherited btnFirstPage: TcxButton
-      Top = 254
-      TabOrder = 9
-      ExplicitTop = 254
+      Left = -61
+      Top = 252
+      TabOrder = 10
+      ExplicitLeft = -61
+      ExplicitTop = 252
     end
     inherited btnPriorPage: TcxButton
-      Top = 254
-      TabOrder = 10
-      ExplicitTop = 254
+      Left = -24
+      Top = 252
+      TabOrder = 11
+      ExplicitLeft = -24
+      ExplicitTop = 252
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 254
-      TabOrder = 11
-      ExplicitTop = 254
+      Left = 31
+      Top = 252
+      TabOrder = 12
+      ExplicitLeft = 31
+      ExplicitTop = 252
     end
     inherited btnnextPage: TcxButton
-      Top = 254
-      TabOrder = 12
-      ExplicitTop = 254
+      Left = 108
+      Top = 252
+      TabOrder = 13
+      ExplicitLeft = 108
+      ExplicitTop = 252
     end
     inherited btnLastPage: TcxButton
-      Top = 254
-      TabOrder = 13
-      ExplicitTop = 254
+      Left = 145
+      Top = 252
+      TabOrder = 14
+      ExplicitLeft = 145
+      ExplicitTop = 252
     end
-    object edtNum: TcxTextEdit [10]
-      Left = 640
+    object edtNumMax: TcxTextEdit [10]
+      Left = 553
       Top = 13
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 3
+      TabOrder = 4
       Text = '3'
       Height = 21
-      Width = 59
+      Width = 40
     end
     object cboHPZL: TcxComboBox [11]
-      Left = 446
+      Left = 295
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -95,25 +113,35 @@ inherited FrameGCPD: TFrameGCPD
       Width = 121
     end
     object edtKDBH: TcxTextEdit [12]
-      Left = 736
+      Left = 630
       Top = 13
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 4
+      TabOrder = 5
       OnKeyPress = edtKDBHKeyPress
       Height = 21
       Width = 171
     end
     object btnKK: TcxButton [13]
-      Left = 914
+      Left = 808
       Top = 13
       Width = 23
       Height = 21
       Caption = '...'
       OptionsImage.ImageIndex = 901
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 5
+      TabOrder = 6
       OnClick = btnKKClick
+    end
+    object edtNumMin: TcxTextEdit [14]
+      Left = 423
+      Top = 13
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 3
+      Text = '1'
+      Height = 21
+      Width = 39
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
@@ -147,16 +175,16 @@ inherited FrameGCPD: TFrameGCPD
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 6
+      Index = 7
     end
     object dxLayoutItem4: TdxLayoutItem
       Parent = dxLayoutGroup2
-      CaptionOptions.Text = #38388#38548#20998#38047#25968
-      Control = edtNum
+      CaptionOptions.Text = '<'#38388#38548#20998#38047#25968'<'
+      Control = edtNumMax
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 59
+      ControlOptions.OriginalWidth = 40
       ControlOptions.ShowBorder = False
-      Index = 3
+      Index = 4
     end
     object dxLayoutItem5: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -174,7 +202,7 @@ inherited FrameGCPD: TFrameGCPD
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 171
       ControlOptions.ShowBorder = False
-      Index = 4
+      Index = 5
     end
     object dxLayoutItem8: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -184,7 +212,15 @@ inherited FrameGCPD: TFrameGCPD
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 23
       ControlOptions.ShowBorder = False
-      Index = 5
+      Index = 6
+    end
+    object dxLayoutItem9: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      Control = edtNumMin
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 39
+      ControlOptions.ShowBorder = False
+      Index = 3
     end
   end
   inherited cxdtrpstry1: TcxEditRepository
