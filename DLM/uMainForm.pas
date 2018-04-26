@@ -9,7 +9,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, IniFiles, IOUtils, IdContext,
   IdCustomHTTPServer, IdBaseComponent, IdComponent, IdCustomTCPServer,
   IdHTTPServer, System.Threading, System.Generics.Collections, uLogger,
-  Vcl.StdCtrls;
+  Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
   TParam = Record
@@ -20,14 +20,17 @@ type
   TForm1 = class(TForm)
     IdHTTPServer1: TIdHTTPServer;
     Button1: TButton;
+    Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure IdHTTPServer1CommandGet(AContext: TIdContext;
       ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     procedure Button1Click(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     FQueue: TQueue<TParam>;
     FCount: integer;
+    FTotal: integer;
     FIPMap: TDictionary<string, string>;
     function ConvertUrl(url: string): string;
     function DownLoad: boolean;
@@ -52,7 +55,7 @@ begin
   n := 0;
   while FCount > 0 do
   begin
-    logger.Info('Wait to download, request count: ' + FCount.ToString);
+    logger.Info('Wait to download, request count: ' + FQueue.Count.ToString);
     Sleep(2000);
     Inc(n);
     if n > 10 then
@@ -62,7 +65,7 @@ begin
     end;
   end;
   FIpMap.Free;
-  logger.Info('XMFS stoped');
+  logger.Info('DLM stoped');
   logger.Free;
 end;
 
@@ -79,11 +82,14 @@ begin
   IdHTTPServer1.DefaultPort := ini.ReadInteger('sys', 'PORT', 8888);
   logger.Level := ini.ReadInteger('sys', 'LoggerLevel', 2);
   ini.Free;
+  FCount := 0;
+  FTotal := 0;
   if LoadIpMap then
   begin
     try
       FQueue := TQueue<TParam>.Create;
       IdHTTPServer1.Active := True;
+      timer1.Enabled := true;
       TThreadPool.Current.SetMinWorkerThreads(16);
 
       logger.Info('DLM start ok');
@@ -158,14 +164,15 @@ var
   param: TParam;
 begin
   result := false;
-  param := FQueue.Dequeue;
-  s := TPath.GetDirectoryName(param.Path);
-  if not TDirectory.Exists(s) then
-    TDirectory.CreateDirectory(s);
 
   http := TNetHttpClient.Create(nil);
   stream := TMemoryStream.Create;
   try
+    param := FQueue.Dequeue;
+    s := TPath.GetDirectoryName(param.Path);
+    if not TDirectory.Exists(s) then
+      TDirectory.CreateDirectory(s);
+
     logger.Debug('DownLoad:' + param.url);
     http.Get(param.url, stream);
     logger.Debug('DownLoad OK: ' + stream.Size.ToString);
@@ -177,7 +184,7 @@ begin
     result := true;
   except
     on e: exception do
-      logger.Error(e.Message + param.url);
+      logger.Error(e.Message + param.url + #9 + param.Path);
   end;
   stream.Free;
   http.Free;
@@ -192,46 +199,48 @@ var
   i: integer;
   param: TParam;
 begin
-  Inc(FCount);
-  if FCount mod 10 = 0 then
-    logger.Info('RequestCount: ' + FCount.ToString);
-  action := UpperCase(ARequestInfo.Document.Substring(1));
-  ip := Trim(AContext.Connection.Socket.Binding.PeerIP);
+  try
+    action := UpperCase(ARequestInfo.Document.Substring(1));
+    ip := Trim(AContext.Connection.Socket.Binding.PeerIP);
 
-  Params := TStringList.Create;
-  Params.Delimiter := '&';
-  Params.DelimitedText := ARequestInfo.UnparsedParams;
-  for i := Params.Count - 1 downto 0 do
-  begin
-    Params[i] := HTTPDecode(Params[i]);
-  end;
-  param.Url := Params.Values['src'];
-  param.Path := Params.Values['tgt'];
-  Params.Free;
-  if (action = 'DOWNLOAD') and (param.url.StartsWith('http')) and (param.path <> '') then
-  begin
-    newUrl := ConvertUrl(param.url);
-    if newUrl <> '' then
+    Params := TStringList.Create;
+    Params.Delimiter := '&';
+    Params.DelimitedText := ARequestInfo.UnparsedParams;
+    for i := Params.Count - 1 downto 0 do
     begin
-      param.Url := newUrl;
-      FQueue.Enqueue(param);
-      TTask.Create(procedure
-        begin
-          DownLoad;
-        end
-      ).Start;
-      AResponseInfo.ContentText := '1: ' + param.url;
+      Params[i] := HTTPDecode(Params[i]);
+    end;
+    param.Url := Params.Values['src'];
+    param.Path := Params.Values['tgt'];
+    Params.Free;
+    if (action = 'DOWNLOAD') and (param.url.StartsWith('http')) and (param.path <> '') then
+    begin
+      Inc(FTotal);
+      newUrl := ConvertUrl(param.url);
+      if newUrl <> '' then
+      begin
+        param.Url := newUrl;
+        FQueue.Enqueue(param);
+        Inc(FCount);
+        TTask.Create(procedure
+          begin
+            DownLoad;
+          end
+        ).Start;
+        AResponseInfo.ContentText := '1: ' + param.url;
+      end
+      else begin
+        AResponseInfo.ContentText := '2: ' + param.url;
+        logger.Warn('Url invalid£º' + param.url);
+      end;
     end
     else begin
-      AResponseInfo.ContentText := '2: ' + param.url;
-      logger.Warn('Url invalid£º' + param.url);
-      Dec(FCount);
+      AResponseInfo.ContentText := '3: ' + param.url;
+      logger.Warn('invalid request: ' + action + ' ' + param.url + ' ' + param.path);
     end;
-  end
-  else begin
-    AResponseInfo.ContentText := '3: ' + param.url;
-    logger.Warn('invalid request: ' + action + ' ' + param.url + ' ' + param.path);
-    Dec(FCount);
+  except
+    on e: exception do
+      logger.Error(e.Message + ARequestInfo.UnparsedParams);
   end;
 end;
 
@@ -266,6 +275,11 @@ begin
     end;
     result := true;
   end;
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+  logger.Info('ToDo/Done: ' + FCount.ToString + '/' + FTotal.ToString);
 end;
 
 end.
