@@ -2,7 +2,7 @@ program QTZ3Service;
 
 uses
   Vcl.SvcMgr,
-  uServiceMain in 'uServiceMain.pas' {ItsQTZ3Service: TService},
+  uServiceMain in 'uServiceMain.pas' {ItsQTZ3Service: TService} ,
   uCommon in 'Common\uCommon.pas',
   uEntity in 'Common\uEntity.pas',
   uGlobal in 'Common\uGlobal.pas',
@@ -34,9 +34,9 @@ uses
   QBAes in 'Common\QBAes.pas',
   ElAES in 'Common\ElAES.pas',
   uImportVio in 'SPService\uImportVio.pas' {,
-  uHik in 'Hik\uHik.pas';
+    uHik in 'Hik\uHik.pas';
 
-{$R *.RES},
+    {$R *.RES} ,
   uHik in 'Hik\uHik.pas',
   uWSManager in 'RMService\uWSManager.pas',
   TmriOutNewAccess in 'RMService\intf\TmriOutNewAccess.pas',

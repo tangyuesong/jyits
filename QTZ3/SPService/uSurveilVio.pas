@@ -10,7 +10,8 @@ type
   TSurveilVio = Class
   private
     class function GetZsxxdz(hphm, hpzl: String): String;
-    class procedure SaveVio2DB(ip, code, wfdd: String; vio: TLockVio);
+    class procedure SaveVio2DB(ip, code, wfdd: String; vio: TLockVio;
+      bz: String = '');
     class function FtpPic(base64Str: String): String;
   public
     class procedure SaveSurveilVio(tokenKey: String; params: TStrings;
@@ -57,7 +58,7 @@ end;
 class procedure TSurveilVio.SaveSurveilVio(tokenKey: String; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  hphm, hpzl, vehstr, wfdd, json, fzjg, wfxw, code, ip, cfzl: String;
+  hphm, hpzl, vehstr, wfdd, json, fzjg, wfxw, code, ip, cfzl, bz: String;
   wfsj: TDatetime;
   device: TDevice;
   vio: TLockVio;
@@ -77,10 +78,11 @@ begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('违法地点不存在');
     exit;
   end;
-  vehstr:= TRmService.GetVehinfo(gTokenManager.GetToken(tokenKey), hphm,
-    hpzl);
-  gLogger.Info(vehStr);
-  vehstr := '[' + vehStr + ']';
+  vehstr := TRmService.GetVehinfo(gTokenManager.GetToken(tokenKey), hphm, hpzl);
+  if vehstr = '-1' then
+    vehstr := TCommon.QueryVehInfo(hphm, hpzl);
+
+  vehstr := '[' + vehstr + ']';
   veh.hphm := '';
   veh := TCommon.JsonToRecord<TVehinfo>(vehstr);
   if veh.hphm = '' then
@@ -170,14 +172,22 @@ begin
     json := TLockVioUtils.GetVioUploadStr(vio);
     code := TLockVioUtils.WriteVio('', tokenKey, json, vio.flag, AResponseInfo);
   end;
-  if code <> '' then
-    SaveVio2DB(ip, code, wfdd, vio);
+  if code = '' then
+    bz := 'zhtp error'
+  else
+    bz := '';
+  SaveVio2DB(ip, code, wfdd, vio, bz);
 end;
 
-class procedure TSurveilVio.SaveVio2DB(ip, code, wfdd: String; vio: TLockVio);
+class procedure TSurveilVio.SaveVio2DB(ip, code, wfdd: String; vio: TLockVio;
+  bz: String);
 var
   s, url1, url2, dir: String;
 begin
+  if bz = '' then
+    bz := '现场违停抓拍'
+  else
+    bz := '现场违停抓拍,' + bz;
   url1 := FtpPic(vio.zpstr1);
   url2 := FtpPic(vio.zpstr2);
 
@@ -195,7 +205,8 @@ begin
     vio.clsbdh.QuotedString + ',' + vio.fdjh.QuotedString + ',' +
     vio.jdcsyr.QuotedString + ',' + vio.zsxzqh.QuotedString + ',' +
     vio.zsxxdz.QuotedString + ',''8'',' + vio.zqmj.QuotedString + ',' +
-    vio.zqmj.QuotedString + ',' + ip.QuotedString + ',''现场违停抓拍'') ';
+    vio.zqmj.QuotedString + ',' + ip.QuotedString + ',' +
+    bz.QuotedString + ') ';
   gSQLHelper.ExecuteSql(s);
 end;
 

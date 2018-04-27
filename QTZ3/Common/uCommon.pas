@@ -11,6 +11,13 @@ uses
 
 type
 
+  TZHPTUserDevice = Record
+    zfjly: String;
+    yj: String;
+    bkq: String;
+    tq: String;
+  End;
+
   TCommon = Class
   private
     class var FColDef: TDictionary<string, string>;
@@ -33,6 +40,7 @@ type
     class function GetWfxw(): TDictionary<string, string>; static;
     class function GetUserInfo(userid, pwd: String): TUser;
     class procedure InitLHY_JK; static;
+    class function GetZHPTUserDevice(yhbh: String): TZHPTUserDevice;
   public
     class property DicHpzlMC: TDictionary<string, string> read GetHpzlmc;
     class property DicDevice: TDictionary<string, TDevice> read GetDevice;
@@ -445,6 +453,29 @@ begin
       Result := copy(dwdm, 1, 4)
     else if dwjb = '4' then
       Result := copy(dwdm, 1, 6);
+  end;
+end;
+
+class function TCommon.GetZHPTUserDevice(yhbh: String): TZHPTUserDevice;
+begin
+  with gSQLHelper.Query('select * from S_ZHPT_UserDevice where yhbh = ' +
+    yhbh.QuotedString) do
+  begin
+    if not Eof then
+    begin
+      Result.zfjly := FieldByName('zfjly').AsString;
+      Result.yj := FieldByName('yj').AsString;
+      Result.bkq := FieldByName('bkq').AsString;
+      Result.tq := FieldByName('tq').AsString;
+    end
+    else
+    begin
+      Result.zfjly := '';
+      Result.yj := '';
+      Result.bkq := '';
+      Result.tq := '';
+    end;
+    Free;
   end;
 end;
 
@@ -1022,6 +1053,7 @@ var
   yhbh, pwd: String;
   User: TUser;
   token: TToken;
+  ud: TZHPTUserDevice;
 begin
   Result := '0';
   yhbh := params.Values['user'];
@@ -1049,7 +1081,10 @@ begin
         token.User.yhxm + '","zw":"' + token.User.ZW + '","sjhm":"' +
         token.User.SJHM + '","sh":"' + token.User.SH + '","fh":"' +
         token.User.FH + '","manager":"' + token.User.Manager + '","role":"' +
-        token.User.role + '"}';
+        token.User.role + '"';
+      ud := GetZHPTUserDevice(token.User.yhbh);
+      Result := Result + ',"zhpt_zfjly":"' + ud.zfjly + '","zhpt_yj":"' + ud.yj
+        + '","zhpt_bkq":"' + ud.bkq + '","zhpt_tq":"' + ud.tq + '"}';
     end;
   end;
 end;
@@ -1281,6 +1316,7 @@ begin
     Values := copy(Values, 1, length(Values) - 1);
     s := 'insert into ' + cDBName + '.dbo.T_Spot_Violation(' + cols +
       ') values (' + Values + ')';
+    gLogger.Info(s);
     gSQLHelper.ExecuteSql(s);
   end;
 end;

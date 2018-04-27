@@ -16,19 +16,22 @@ type
 
   TTmri = class
   private
-    class function CallWebService(xtlb, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs, UTF8XmlDoc: string; write: boolean = false): string; static;
+    class function CallWebService(xtlb, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs,
+      UTF8XmlDoc: string; write: boolean = false): string; static;
   public
-    class function Write(param: TTmriParam; json: string): string; static;
-    class function Query(param: TTmriParam; json: string): string; static;
+    class function write(param: TTmriParam; JSON: string): string; static;
+    class function Query(param: TTmriParam; JSON: string): string; static;
   end;
 
 const
   encoding = 'GBK';
+
 implementation
 
 uses uXmlAndJSON;
 
-class function TTmri.CallWebService(xtlb, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs, UTF8XmlDoc: string; write: boolean = false): string;
+class function TTmri.CallWebService(xtlb, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs,
+  UTF8XmlDoc: string; write: boolean = false): string;
 var
   WSResult: string;
   WSIServer: TmriJaxRpcOutNewAccess;
@@ -39,20 +42,23 @@ begin
   WSIServer := GetTmriJaxRpcOutNewAccess(true, JKDic[jkid].WSDL, Rio);
   try
     if write then
-      WSResult := WSIServer.writeObjectOut(xtlb, JKDic[jkid].XLH, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs, UTF8XmlDoc)
+      WSResult := WSIServer.writeObjectOut(xtlb, JKDic[jkid].XLH, jkid, yhbz,
+        dwmc, dwjgdm, yhxm, zdbs, UTF8XmlDoc)
     else
-      WSResult := WSIServer.queryObjectOut(xtlb, JKDic[jkid].XLH, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs, UTF8XmlDoc);
+      WSResult := WSIServer.queryObjectOut(xtlb, JKDic[jkid].XLH, jkid, yhbz,
+        dwmc, dwjgdm, yhxm, zdbs, UTF8XmlDoc);
     try
       WSResult := HTTPDecode(WSResult);
     except
       on e: exception do
-        logger.Error('[CallWebService1]' + e.Message + ' ' + wsresult);
+        logger.Error('[CallWebService1]' + e.Message + ' ' + WSResult);
     end;
     try
       result := TXmlAndJSON.XML2JSON(WSResult);
     except
       on e: exception do
-        logger.Error('[CallWebService2]' + e.Message + ' ' + wsresult);
+        logger.Error('[CallWebService2]' + e.Message + ' ' + WSResult + ' ' +
+          UTF8XmlDoc);
     end;
 
   except
@@ -62,13 +68,13 @@ begin
   Rio := nil;
 end;
 
-class function TTmri.Query(param: TTmriParam; json: string): string;
+class function TTmri.Query(param: TTmriParam; JSON: string): string;
 var
   xml: string;
 begin
   if JKDic.ContainsKey(param.jkid) then
   begin
-    xml := TXmlAndJson.JSON2XML(JKDic[param.jkid].JDID, json, encoding);
+    xml := TXmlAndJSON.JSON2XML(JKDic[param.jkid].JDID, JSON, encoding);
     result := CallWebService(Copy(param.jkid, 1, 2), param.jkid, param.yhbz,
       param.dwmc, param.dwjgdm, param.yhxm, param.zdbs, xml, false);
   end
@@ -76,13 +82,13 @@ begin
     result := '';
 end;
 
-class function TTmri.Write(param: TTmriParam; json: string): string;
+class function TTmri.write(param: TTmriParam; JSON: string): string;
 var
   xml: string;
 begin
   if JKDic.ContainsKey(param.jkid) then
   begin
-    xml := TXmlAndJson.JSON2XML(JKDic[param.jkid].JDID, json, encoding);
+    xml := TXmlAndJSON.JSON2XML(JKDic[param.jkid].JDID, JSON, encoding);
     result := CallWebService(Copy(param.jkid, 1, 2), param.jkid, param.yhbz,
       param.dwmc, param.dwjgdm, param.yhxm, param.zdbs, xml, true);
   end
