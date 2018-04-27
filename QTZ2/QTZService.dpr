@@ -39,7 +39,8 @@ uses
   uDataStatistics in 'hik\uDataStatistics.pas',
   uMoreLikeThisHBase in 'hik\uMoreLikeThisHBase.pas',
   uHikHBase in 'hik\uHikHBase.pas',
-  uAnalysisExtra in 'hik\uAnalysisExtra.pas';
+  uAnalysisExtra in 'hik\uAnalysisExtra.pas',
+  itfUploadVioToJcpt in 'itfUploadVioToJcpt.pas';
 
 {$R *.RES}
 

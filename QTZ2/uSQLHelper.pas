@@ -3,7 +3,7 @@ unit uSQLHelper;
 interface
 
 uses
-  Classes,Activex, SysUtils,DB, ADODB;
+  Classes, Activex, SysUtils, DB, ADODB;
 
 type
   TSQLHelperError = procedure(const SQL, Description: string);
@@ -17,8 +17,8 @@ type
     FDBUser: String;
     FDBPWD: String;
     FDBType: string;
-    function BuildQuery(SQLString: String): TADOQuery;overload;
-    function BuildQuery(SQLStringList: TStrings): TADOQuery;overload;
+    function BuildQuery(SQLString: String): TADOQuery; overload;
+    function BuildQuery(SQLStringList: TStrings): TADOQuery; overload;
     procedure DoError(const SQL, Description: string);
     procedure SetOnError(const Value: TSQLHelperError);
     procedure SetDBName(const Value: String);
@@ -28,32 +28,35 @@ type
     procedure SetDBType(const Value: string);
     function GetConnectionString: string;
   public
-    constructor Create;overload;
-    constructor Create(DBServer, DBDataBase, DBUserName, DBPassword: string);overload;
-    constructor Create(AConnectionString: string);overload;
-    function GetSinge(SQLString: String):string;overload;
-    function GetSinge(fieldName,TableName,where: String):String;overload;
-    function GetMaxID(FieldName, TableName: string):integer;
-    function ExistsRecord(TableName, where: string):boolean;
-    function ExistsTable(TableName: String):boolean;
-    function ExecuteSql(SQLString: string):boolean;
-    function Query(TableName, where: string; FieldNames: String = '*'):TADOQuery;overload;
-    function Query(SQLString: String):TADOQuery;overload;
-    function ExecuteSqlTran(SQLStringList: TStrings):boolean;
+    constructor Create; overload;
+    constructor Create(DBServer, DBDataBase, DBUserName,
+      DBPassword: string); overload;
+    constructor Create(AConnectionString: string); overload;
+    function GetSinge(SQLString: String): string; overload;
+    function GetSinge(fieldName, TableName, where: String): String; overload;
+    function GetMaxID(fieldName, TableName: string): integer;
+    function ExistsRecord(TableName, where: string): boolean; overload;
+    function ExistsRecord(SQLString: string): boolean; overload;
+    function ExistsTable(TableName: String): boolean;
+    function ExecuteSql(SQLString: string): boolean;
+    function Query(TableName, where: string; FieldNames: String = '*')
+      : TADOQuery; overload;
+    function Query(SQLString: String): TADOQuery; overload;
+    function ExecuteSqlTran(SQLStringList: TStrings): boolean;
     function Enabled: boolean;
-    property ConnectionString: string read GetConnectionString write FConnectionString;
+    property ConnectionString: string read GetConnectionString
+      write FConnectionstring;
     property OnError: TSQLHelperError read FOnError write SetOnError;
-    property DBUser:String read FDBUser write SetDBUser;
-    property DBPWD:String read FDBPWD write SetDBPWD;
-    property DBName:String read FDBName write SetDBName;
-    property DBServer:String read FDBServer write SetDBServer;
+    property DBUser: String read FDBUser write SetDBUser;
+    property DBPWD: String read FDBPWD write SetDBPWD;
+    property DBName: String read FDBName write SetDBName;
+    property DBServer: String read FDBServer write SetDBServer;
     property DBType: string read FDBType write SetDBType;
   end;
 
 implementation
 
-{TSQLHelper}
-
+{ TSQLHelper }
 
 function TSQLHelper.BuildQuery(SQLString: String): TADOQuery;
 var
@@ -61,10 +64,10 @@ var
 begin
   CoInitialize(nil);
   qy := TADOQuery.Create(nil);
-  qy.ConnectionString := self.Connectionstring;
+  qy.ConnectionString := self.ConnectionString;
   qy.ParamCheck := false;
   qy.CommandTimeout := 0;
-  qy.sql.Text := SQLString;
+  qy.SQL.Text := SQLString;
   qy.DisableControls;
   result := qy;
 end;
@@ -75,10 +78,10 @@ var
 begin
   CoInitialize(nil);
   qy := TADOQuery.Create(nil);
-  qy.ConnectionString := self.Connectionstring;
+  qy.ConnectionString := self.ConnectionString;
   qy.ParamCheck := false;
   qy.CommandTimeout := 0;
-  qy.sql.AddStrings(SQLStringList);
+  qy.SQL.AddStrings(SQLStringList);
   qy.DisableControls;
   result := qy;
 end;
@@ -88,14 +91,14 @@ var
   qy: TADOQuery;
 begin
   result := true;
-  qy := buildQuery(SqlString);
+  qy := BuildQuery(SQLString);
   try
     qy.execSql;
   except
     on e: Exception do
     begin
       result := false;
-      DoError(SqlString, e.Message);
+      DoError(SQLString, e.Message);
     end;
   end;
 
@@ -109,14 +112,17 @@ begin
   result := false;
   qy := BuildQuery(SQLStringList);
   try
-    if qy.Connection <> nil then qy.Connection.BeginTrans;
+    if qy.Connection <> nil then
+      qy.Connection.BeginTrans;
     qy.execSql;
-    if qy.Connection <> nil then qy.Connection.CommitTrans;
+    if qy.Connection <> nil then
+      qy.Connection.CommitTrans;
     result := true;
   except
     on e: Exception do
     begin
-      if qy.Connection <> nil then qy.Connection.RollbackTrans;
+      if qy.Connection <> nil then
+        qy.Connection.RollbackTrans;
       DoError(SQLStringList.Text, e.Message);
     end;
   end;
@@ -129,9 +135,10 @@ var
   s: String;
 begin
   result := false;
-  s := 'select * from '+TableName+' ';
-  if pos('where',where)=0 then s := s+'where ';
-  s := s+where;
+  s := 'select * from ' + TableName + ' ';
+  if pos('where', where) = 0 then
+    s := s + 'where ';
+  s := s + where;
   qy := Query(s);
   if qy.Active then
   begin
@@ -141,19 +148,31 @@ begin
   qy.Free;
 end;
 
+function TSQLHelper.ExistsRecord(SQLString: string): boolean;
+begin
+  result := false;
+  with Query(SQLString) do
+  begin
+    if Active then
+      result := RecordCount > 0;
+    Free;
+  end;
+end;
+
 function TSQLHelper.ExistsTable(TableName: String): boolean;
 var
   qy: TADOQuery;
   database: string;
 begin
   result := false;
-  database := copy(tablename, 1, pos('.', tablename));
-  if database<>'' then
+  database := copy(TableName, 1, pos('.', TableName));
+  if database <> '' then
   begin
-    tablename := copy(tablename, length(database)+1, length(tablename));
-    tablename := copy(tablename,pos('.', tablename)+1, length(tablename));
+    TableName := copy(TableName, length(database) + 1, length(TableName));
+    TableName := copy(TableName, pos('.', TableName) + 1, length(TableName));
   end;
-  qy := query('select 1 from '+database+'dbo.sysObjects with(NOLOCK) where name='''+tableName+'''');
+  qy := Query('select 1 from ' + database +
+    'dbo.sysObjects with(NOLOCK) where name=''' + TableName + '''');
   if qy.Active then
   begin
     if not qy.IsEmpty then
@@ -162,37 +181,37 @@ begin
   qy.Free;
 end;
 
-function TSQLHelper.GetMaxID(FieldName, TableName: string):integer;
+function TSQLHelper.GetMaxID(fieldName, TableName: string): integer;
 var
-	strSql: string;
+  strSql: string;
   qy: TADOQuery;
 begin
   result := 1;
-	strsql := 'select max(' + FieldName + ')+1 from ' + TableName;
-  qy := query(strsql);
+  strSql := 'select max(' + fieldName + ')+1 from ' + TableName;
+  qy := Query(strSql);
   if qy.Active then
   begin
     if not qy.Fields[0].IsNull then
-    try
-      result := qy.Fields[0].AsInteger;
-    except
-      on e: Exception do
-        DoError(strSql, e.Message);
-    end;
+      try
+        result := qy.Fields[0].AsInteger;
+      except
+        on e: Exception do
+          DoError(strSql, e.Message);
+      end;
   end;
   qy.Close;
   qy.Free;
 end;
 
-function TSQLHelper.Query(TableName, where,
-  FieldNames: String): TADOQuery;
+function TSQLHelper.Query(TableName, where, FieldNames: String): TADOQuery;
 var
-  sql: String;
+  SQL: String;
 begin
-  sql := 'select '+FieldNames+' from '+TableName+' ';
-  if pos('where',where)=0 then sql := sql + 'where ';
-  sql := sql + where;
-  result := query(sql);
+  SQL := 'select ' + FieldNames + ' from ' + TableName + ' ';
+  if pos('where', where) = 0 then
+    SQL := SQL + 'where ';
+  SQL := SQL + where;
+  result := Query(SQL);
 end;
 
 function TSQLHelper.Query(SQLString: String): TADOQuery;
@@ -211,11 +230,11 @@ var
   qy: TADOQuery;
 begin
   result := '';
-  qy := query(sqlstring);
+  qy := Query(SQLString);
   if qy.Active then
   begin
     if not qy.IsEmpty then
-      if not qy.Fields[0].isnull then
+      if not qy.Fields[0].IsNull then
         result := qy.Fields[0].AsString;
   end;
   qy.Close;
@@ -227,11 +246,11 @@ var
   qy: TADOQuery;
 begin
   result := '';
-  qy := query(tablename,where,fieldname);
+  qy := Query(TableName, where, fieldName);
   if qy.Active then
     if not qy.IsEmpty then
       if not qy.Fields[0].IsNull then
-       result := qy.Fields[0].AsString;
+        result := qy.Fields[0].AsString;
   qy.Free;
 end;
 
@@ -266,9 +285,9 @@ var
 begin
   result := true;
   conn := TADOConnection.Create(nil);
-  conn.ConnectionString := Connectionstring;
+  conn.ConnectionString := ConnectionString;
   conn.LoginPrompt := false;
-//  conn.ConnectionTimeout := 2;
+  // conn.ConnectionTimeout := 2;
   try
     conn.Open;
   except
@@ -284,37 +303,37 @@ end;
 
 procedure TSQLHelper.SetDBName(const Value: String);
 begin
-  if self.FDBUser <> value then
+  if self.FDBUser <> Value then
   begin
     FDBName := Value;
-    FConnectionString := '';
+    FConnectionstring := '';
   end;
 end;
 
 procedure TSQLHelper.SetDBPWD(const Value: String);
 begin
-  if self.FDBUser <> value then
+  if self.FDBUser <> Value then
   begin
     FDBPWD := Value;
-    FConnectionString := '';
+    FConnectionstring := '';
   end;
 end;
 
 procedure TSQLHelper.SetDBServer(const Value: String);
 begin
-  if self.FDBUser <> value then
+  if self.FDBUser <> Value then
   begin
     FDBServer := Value;
-    FConnectionString := '';
+    FConnectionstring := '';
   end;
 end;
 
 procedure TSQLHelper.SetDBUser(const Value: String);
 begin
-  if self.FDBUser <> value then
+  if self.FDBUser <> Value then
   begin
     FDBUser := Value;
-    FConnectionString := '';
+    FConnectionstring := '';
   end;
 end;
 
@@ -325,26 +344,13 @@ end;
 
 function TSQLHelper.GetConnectionString: string;
 begin
-  if FConnectionString = '' then
+  if FConnectionstring = '' then
   begin
-    FConnectionString := 'Provider=SQLOLEDB.1;Password='+FDBPwd
-    +';Persist Security Info=True;User ID='+DBUser
-    +';Initial Catalog='+DBName
-    +';Data Source='+DBServer;
+    FConnectionstring := 'Provider=SQLOLEDB.1;Password=' + FDBPWD +
+      ';Persist Security Info=True;User ID=' + DBUser + ';Initial Catalog=' +
+      DBName + ';Data Source=' + DBServer;
   end;
-  Result := FConnectionString;
+  result := FConnectionstring;
 end;
 
 end.
-
-
-
-
-
-
-
-
-
-
-
-

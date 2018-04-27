@@ -8,7 +8,8 @@ uses
   IdBaseComponent, IdComponent, IdCustomTCPServer, IdCustomHTTPServer,
   IdHTTPServer, IniFiles, IdContext, HTTPApp, ActiveX, uGlobal, uEntity,
   System.Generics.Collections, uCommon, uSpecialItf, uDBO, uSMS, IdURI,
-  IdHeaderList, EncdDecd, IdServerIOHandler, IdSSL, IdSSLOpenSSL, uHikLY;
+  IdHeaderList, EncdDecd, IdServerIOHandler, IdSSL, IdSSLOpenSSL, uHikLY,
+  itfUploadVioToJcpt;
 
 type
   TDBService = class
@@ -188,6 +189,10 @@ begin
       begin
         AResponseInfo.ContentText := THikLY.IntelligentSearch
           (ARequestInfo.PostStream);
+      end
+      else if action = UpperCase('UploadTempVio') then
+      begin
+        TLockVioUtils.LockVio(params.Values['SYSTEMID'], AResponseInfo);
       end
       else if gActionDic.ContainsKey(action) then
       begin

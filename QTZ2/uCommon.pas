@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, uGlobal, Rtti, uSQLHelper, uLogger, ADODB,
   System.JSON, FireDAC.Comp.Client, uTokenManager, uJKDefine, uWSManager,
-  Data.DB, uEntity, System.Generics.Collections, QJSON, StrUtils;
+  Data.DB, uEntity, System.Generics.Collections, QJSON, StrUtils, DateUtils;
 
 type
 
@@ -37,6 +37,7 @@ type
     class function GetJsonNode(ANode, AJSON: String): String;
     class function FindJson(AItemName: String; AJSON: TQJson): TQJson;
     class function GetLocalVehInfo(hphm, hpzl: String): String;
+    class function StringToDT(s: String): TDatetime;
   end;
 
 procedure SQLError(const SQL, Description: string);
@@ -543,6 +544,48 @@ begin
   end;
   qj.Free;
   ts.Free;
+
+end;
+
+class function TCommon.StringToDT(s: String): TDatetime;
+var
+  y, m, d, h, n, ss: word;
+begin
+  try
+    s := Trim(s);
+    if pos('.', s) > 0 then
+      s := Copy(s, 1, pos('.', s) - 1);
+
+    if pos('/', s) > 1 then
+    begin
+      y := StrToInt(Copy(s, 1, pos('/', s) - 1));
+      s := Trim(Copy(s, pos('/', s) + 1, Length(s)));
+      m := StrToInt(Copy(s, 1, pos('/', s) - 1));
+      s := Trim(Copy(s, pos('/', s) + 1, Length(s)));
+    end
+    else if pos('-', s) > 1 then
+    begin
+      y := StrToInt(Copy(s, 1, pos('-', s) - 1));
+      s := Trim(Copy(s, pos('-', s) + 1, Length(s)));
+      m := StrToInt(Copy(s, 1, pos('-', s) - 1));
+      s := Trim(Copy(s, pos('-', s) + 1, Length(s)));
+    end
+    else
+    begin
+      Result := EncodeDateTime(1900, 1, 1, 1, 1, 1, 0);
+      exit;
+    end;
+    d := StrToInt(Copy(s, 1, pos(' ', s) - 1));
+    s := Trim(Copy(s, pos(' ', s) + 1, Length(s)));
+    h := StrToInt(Copy(s, 1, pos(':', s) - 1));
+    s := Trim(Copy(s, pos(':', s) + 1, Length(s)));
+    n := StrToInt(Copy(s, 1, pos(':', s) - 1));
+    ss := StrToInt(Trim(Copy(s, pos(':', s) + 1, Length(s))));
+
+    Result := EncodeDateTime(y, m, d, h, n, ss, 0);
+  except
+    Result := EncodeDateTime(1899, 12, 31, 0, 0, 0, 0);
+  end;
 
 end;
 
