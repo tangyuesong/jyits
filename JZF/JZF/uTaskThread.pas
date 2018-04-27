@@ -117,6 +117,7 @@ begin
         item := TFirstEnterEntity.Create;
         item.TaskID := FieldByName('SYSTEMID').AsString;
         item.TaskName := FieldByName('TaskName').AsString;
+        item.HPHM := FieldByName('HPHM').AsString;
         item.SBBH := FieldByName('SBBH').AsString;
         item.BeginTime := VarToDateTime(FieldByName('BeginTime').AsString);
         item.EndTime := VarToDateTime(FieldByName('EndTime').AsString);

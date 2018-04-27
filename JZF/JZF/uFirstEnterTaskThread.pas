@@ -11,6 +11,7 @@ type
     TaskId: string;
     TaskName: string;
     SBBH: string;
+    HPHM: string;
     BeginTime: TDateTime;
     EndTime: TDateTime;
     Days: integer;
@@ -47,7 +48,8 @@ begin
     + FTask.TaskID + ''','''
     + FormatDateTime('yyyy/mm/dd', FTask.BeginTime) + ''','''
     + FormatDateTime('yyyy/mm/dd', FTask.EndTime) + ''','''
-    + FTask.SBBH +''','
+    + FTask.SBBH + ''','''
+    + FTask.HPHM + ''','
     + FTask.Days.ToString);
   gLogger.Info('[' + FTask.TaskId + ']FirstEnterTask Start');
   FTask.Free;

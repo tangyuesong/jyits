@@ -28,7 +28,11 @@ uses
   uFirstEnterTaskThread in 'JZF\uFirstEnterTaskThread.pas',
   uDelExpiredVioThread in 'DelExpiredVio\uDelExpiredVioThread.pas',
   uHBCVioThread in 'HBCVio\uHBCVioThread.pas',
-  uWNJVioThread in 'HBCVio\uWNJVioThread.pas';
+  uWNJVioThread in 'HBCVio\uWNJVioThread.pas',
+  uJTPThread in 'JTP\uJTPThread.pas',
+  qjson in 'Common\qjson.pas',
+  qrbtree in 'Common\qrbtree.pas',
+  QString in 'Common\QString.pas';
 
 {$R *.RES}
 

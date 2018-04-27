@@ -44,7 +44,7 @@ type
     dxLayoutItem7: TdxLayoutItem;
     ActionList1: TActionList;
     ActionDetail: TAction;
-    edtNum: TcxTextEdit;
+    edtNumMax: TcxTextEdit;
     dxLayoutItem4: TdxLayoutItem;
     dxLayoutItem5: TdxLayoutItem;
     cboHPZL: TcxComboBox;
@@ -52,6 +52,8 @@ type
     btnKK: TcxButton;
     dxLayoutItem6: TdxLayoutItem;
     dxLayoutItem8: TdxLayoutItem;
+    dxLayoutItem9: TdxLayoutItem;
+    edtNumMin: TcxTextEdit;
     procedure cxButton1Click(Sender: TObject);
     procedure btnKKClick(Sender: TObject);
     procedure edtKDBHKeyPress(Sender: TObject; var Key: Char);
@@ -213,9 +215,14 @@ end;
 procedure TFrameGCPD.cxButton1Click(Sender: TObject);
 begin
   inherited;
-  if strtointdef(edtNum.Text, 0) = 0 then
+  if strtointdef(edtNumMin.Text, 0) = 0 then
   begin
-    edtNum.SetFocus;
+    edtNumMin.SetFocus;
+    exit;
+  end;
+  if strtointdef(edtNumMax.Text, 0) = 0 then
+  begin
+    edtNumMax.SetFocus;
     exit;
   end;
   LoadData;
@@ -223,15 +230,17 @@ end;
 
 procedure TFrameGCPD.LoadData;
 var
-  vdt, vdt2, hpzl, num, Param: string;
+  vdt, vdt2, hpzl, numMin, numMax, Param: string;
   s: string;
 begin
   inherited;
   vdt := formatdatetime('yyyy/mm/dd hh:nn:ss', DTKSSJ.Date);
   vdt2 := formatdatetime('yyyy/mm/dd hh:nn:ss', DTJSSJ.Date);
-  num := edtNum.Text;
+  numMin := edtNumMin.Text;
+  numMax := edtNumMax.Text;
   hpzl := Copy(cboHPZL.Text, 0, 2);
-  Param := Format('beginTime=%s&endTime=%s&hpzl=%s&num=%s&kdbh=%s', [vdt, vdt2, hpzl, num, kdbh]);
+  Param := Format('beginTime=%s&endTime=%s&hpzl=%s&numMin=%s&numMax=%s&kdbh=%s',
+    [vdt, vdt2, hpzl, numMin, numMax, kdbh]);
   ShowFrameWait;
   s := TRequestItf.DbQuery('getGCPD', Param);
   TJSONUtils.JSONToDataSet(s, FDMemTable1);

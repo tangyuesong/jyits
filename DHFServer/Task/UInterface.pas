@@ -139,7 +139,7 @@ class procedure Tmypint.DoAlarm(pass: TPass);
       if sdcl.KDBH.Contains(pass.kdbh)
         and ((sdcl.HPHM = '') or pass.HPHM.Contains(sdcl.HPHM))    // 发证机关
         and ((sdcl.HPZL = '') or (pass.HPZL = sdcl.HPZL))
-        and ((sdcl.BKLX = '') or (gDicAlarm.ContainsKey(key) and (gDicAlarm[key].BKLX = sdcl.BKLX)))
+        and ((sdcl.BKLX = '') or (gDicAlarm.ContainsKey(key) and (sdcl.BKLX.Contains(gDicAlarm[key].BKLX))))
       then
       begin
         hhmm := FormatDatetime('hhmm', now);
