@@ -115,6 +115,7 @@ begin
     gWNJ := ReadInteger('PROJECT', 'WNJ', 0) = 1;
     gKKALARM := ReadInteger('PROJECT', 'KKALARM', 0) = 1;
     gJTP := ReadInteger('PROJECT', 'JTP', 0) = 1;
+    gJinXing := ReadInteger('PROJECT', 'JinXing', 0) = 1;
     JTPRunning := false;
 
     gZBDX := ReadInteger('PROJECT', 'ZBDX', 0) = 1;

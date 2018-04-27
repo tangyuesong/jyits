@@ -8,7 +8,7 @@ uses
   uGlobal, uCommon, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
   IdHTTP, Vcl.ExtCtrls, uZBDXThread, uUploadVio, uJQThread, uVioSBThread,
   uDeviceMonitorThread, uDelExpiredVioThread, uHBCVioThread, uWNJVioThread,
-  uJTPThread;
+  uJTPThread, uJinXingThread;
 
 type
   TItsJZFService = class(TService)
@@ -104,8 +104,16 @@ begin
   if gHBC and (Min = 5) then
     THBCVioThread.Create(False);
 
-  if gWNJ and (Min = 40) then
+  if gWNJ and (Min = 6) then
     TWNJVioThread.Create(False);
+
+  if gJinXing and (Min = 7) then
+  begin
+    TJinXingThread.Create(1);
+    TJinXingThread.Create(2);
+    TJinXingThread.Create(3);
+    TJinXingThread.Create(4);
+  end;
 
   if gJTP and (Min mod 5 = 0) and (not JTPRunning) then
     TJTPThread.Create;

@@ -11,7 +11,7 @@ type
   private
     gVioVeh: TStrings; // 防止重复写入，主键为 hphm_yyyymmdd, 只保存5000条
     function GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
-    function GetTp2(dt, hphm, sbid, tp1: string): String;
+    function GetTp2(dt: TDateTime; hphm, sbid, tp1: string): String;
   protected
     procedure Execute; override;
   end;
@@ -23,10 +23,11 @@ implementation
 procedure TNoEntryThread.Execute;
 var
   Params, SQLs, tmpSQLs: TStrings;
-  param, s, EndTime, maxPasstime: String;
+  EndTime: String;
   totalPage, currentPage: Integer;
-  currentTime: TDateTime;
+  currentTime, maxPasstime: TDateTime;
   vehList: TList<TK08VehInfo>;
+  param: TDictionary<string, String>;
 begin
   gLogger.Info('[NoEntry] NoEntryThread Start');
   if gThreadConfig.NoEntryDev = '' then
@@ -40,9 +41,12 @@ begin
   SQLs := TStringList.Create;
   while True do
   begin
-    maxPasstime := THik.GetMaxPassTime('crossingid:(' +
-      gThreadConfig.NoEntryDev + ')');
-    if maxPasstime = '' then
+    param := TDictionary<string, String>.Create;
+    param.Add('crossingid', gThreadConfig.NoEntryDev);
+    param.Add('passtime', gThreadConfig.NoEntryStartTime + ',' + formatdatetime('yyyy-mm-dd hh:nn:ss', Now()));
+
+    maxPasstime := THik.GetMaxPassTime(param);
+    if maxPasstime = 0 then
     begin
       gLogger.Error('[NoEntry] 访问K08失败');
       Sleep(10 * 60000);
@@ -52,13 +56,16 @@ begin
     while gVioVeh.Count > 5000 do
       gVioVeh.Delete(0);
 
-    currentTime := TCommon.StringToDT(maxPasstime) - DateUtils.OneHour;
-    EndTime := FormatDatetime('yyyy-mm-dd', currentTime) + 'T' +
-      FormatDatetime('hh:nn:ss', currentTime) + '.999Z';
+    currentTime := maxPasstime - DateUtils.OneHour;
+    EndTime := formatdatetime('yyyy-mm-dd hh:nn:ss', currentTime);
 
-    param := 'crossingid:(' + gThreadConfig.NoEntryDev + ') AND passtime:([' +
-      gThreadConfig.NoEntryStartTime + ' TO ' + EndTime +
-      ']) AND platecolor:(1)  AND vehicletype:(2) AND platetype:(8 102) AND platestate:(0)';
+    param.Clear;
+    param.Add('crossingid', gThreadConfig.NoEntryDev);
+    param.Add('passtime', gThreadConfig.NoEntryStartTime + ',' + EndTime);
+    param.Add('platecolor', '1');
+    param.Add('vehicletype', '2');
+    param.Add('platetype', '8 102');
+    param.Add('platestate', '0');
 
     totalPage := 1;
     currentPage := 1;
@@ -101,13 +108,9 @@ begin
       if gSQLHelper.ExecuteSqlTran(SQLs) then
       begin
         currentTime := currentTime + DateUtils.OneSecond;
-        gThreadConfig.NoEntryStartTime := FormatDatetime('yyyy-mm-dd',
-          currentTime) + 'T' + FormatDatetime('hh:nn:ss', currentTime)
-          + '.000Z';
-        TCommon.SaveConfig('Task', 'NoEntryStartTime',
-          gThreadConfig.NoEntryStartTime);
-        gLogger.Info('[NoEntry] Save NoEntry Vio Count: ' +
-          IntToStr(SQLs.Count));
+        gThreadConfig.NoEntryStartTime := FormatDatetime('yyyy-mm-dd hh:mm:ss', currentTime);
+        TCommon.SaveConfig('Task', 'NoEntryStartTime', gThreadConfig.NoEntryStartTime);
+        gLogger.Info('[NoEntry] Save NoEntry Vio Count: ' + IntToStr(SQLs.Count));
       end
       else
         gLogger.Error('[NoEntry] Save NoEntry Vio Error');
@@ -115,6 +118,7 @@ begin
     end
     else
       gLogger.Info('[NoEntry] Save NoEntry Vio Count: 0');
+    param.Free;
     Sleep(10 * 60000);
   end;
   gLogger.Info('[NoEntry] NoEntryThread Stop');
@@ -123,19 +127,27 @@ begin
   ActiveX.CoUninitialize;
 end;
 
-function TNoEntryThread.GetTp2(dt, hphm, sbid, tp1: string): String;
+function TNoEntryThread.GetTp2(dt: TDateTime; hphm, sbid, tp1: string): String;
 var
   Params: TStrings;
-  param: String;
+  param: TDictionary<string, String>;
   totalPage, currentPage: Integer;
   vehList: TList<TK08VehInfo>;
   veh: TK08VehInfo;
+  dtParam: string;
 begin
   Result := '';
 
-  param := 'crossingid:(' + sbid + ') AND ' + dt +
-    ' AND platecolor:(1)  AND vehicletype:(2) AND platetype:(8 102) AND platestate:(0) AND plateinfono:('
-    + hphm + ')';
+  dtParam := FormatDatetime('yyyy-mm-dd hh:nn:ss', dt - DateUtils.OneMinute)
+    + ' TO ' + FormatDatetime('yyyy-mm-dd hh:nn:ss', dt + DateUtils.OneMinute);
+  param := TDictionary<string, String>.Create;
+  param.Add('crossingid', sbid);
+  param.Add('passtime', dtParam);
+  param.Add('platecolor', '1');
+  param.Add('vehicletype', '2');
+  param.Add('platetype', '8 102');
+  param.Add('platestate', '0');
+  param.Add('plateinfono', hphm);
 
   totalPage := 1;
   currentPage := 1;
@@ -148,11 +160,12 @@ begin
     begin
       for veh in vehList do
       begin
-        if Trim(veh.picvehicle) = Trim(tp1) then
+        if Trim(veh.imagepath) = Trim(tp1) then
           continue;
-        Result := veh.picvehicle;
+        Result := veh.imagepath;
         Result := Result.Replace('&amp;', '&');
       end;
+      vehList.Free;
     end;
   except
     on e: exception do
@@ -160,12 +173,13 @@ begin
       gLogger.Error('[NoEntry] ' + e.Message);
     end;
   end;
+  param.Free;
 end;
 
 function TNoEntryThread.GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
 var
   veh: TK08VehInfo;
-  s, tp1, Tp2, dtParam, hphm: String;
+  s, tp1, Tp2, hphm: String;
   dt: TDateTime;
 begin
   Result := TStringList.Create;
@@ -173,21 +187,15 @@ begin
   begin
     if gDevList.ContainsKey(veh.crossingid) then
     begin
-      dt := TCommon.StringToDT(veh.passtime);
-      hphm := veh.plateinfono + '_' + FormatDatetime('yyyymmdd', dt);
+      dt := DateUtils.IncMilliSecond(25569.3333333333, StrToInt64(veh.PassTime));
+      hphm := veh.plateinfo + '_' + FormatDatetime('yyyymmdd', dt);
       if gVioVeh.IndexOf(hphm) >= 0 then
         continue;
 
-      tp1 := veh.picvehicle;
+      tp1 := veh.imagepath;
       tp1 := tp1.Replace('&amp;', '&');
-      dtParam := FormatDatetime('yyyy-mm-dd', dt - DateUtils.OneMinute) + 'T' +
-        FormatDatetime('hh:nn:ss', dt - DateUtils.OneMinute) + '.000Z';
-      dtParam := dtParam + ' TO ' + FormatDatetime('yyyy-mm-dd',
-        dt + DateUtils.OneMinute) + 'T' + FormatDatetime('hh:nn:ss',
-        dt + DateUtils.OneMinute) + '.999Z';
-      dtParam := 'passtime:([' + dtParam + '])';
 
-      Tp2 := GetTp2(dtParam, veh.plateinfono, veh.crossingid, tp1);
+      Tp2 := GetTp2(dt, veh.plateinfo, veh.crossingid, tp1);
       if Tp2 = '' then
       begin
         gLogger.Info('[NoEntry] not found Photofile2');
@@ -197,9 +205,10 @@ begin
       Tp2 := TIDURI.URLDecode(Tp2);
       s := ' insert into T_VIO_TEMP(CJJG, HPHM, HPZL, WFDD, WFXW, WFSJ, CD, PHOTOFILE1, PHOTOFILE2, BJ) values ('
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
-        veh.plateinfono.QuotedString + ',' + gHpzlList[veh.vehicletype]
+        veh.plateinfo.QuotedString + ',' + gHpzlList[veh.vehicletype]
         .QuotedString + ',' + gDevList[veh.crossingid].SBBH.QuotedString +
-        ',''1344'',' + veh.passtime.QuotedString + ',' + veh.laneid.QuotedString
+        ',''1344'',' + FormatDateTime('yyyy-mm-dd hh:mm:ss', dt).QuotedString
+        + ',' + veh.laneno.QuotedString
         + ',' + tp1.QuotedString + ',' + Tp2.QuotedString + ',''0'')';
       Result.Add(s);
       gVioVeh.Add(hphm);

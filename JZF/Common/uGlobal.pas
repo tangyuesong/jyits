@@ -46,6 +46,7 @@ var
   gZBDX: Boolean; // Öµ°à¶ÌÐÅ
   gZBDXTime: String;
   gJTP: boolean; //¼ÙÌ×ÅÆ
+  gJinXing: boolean; //½ûÐÐ
   JTPRunning: boolean;
   //gHpzlList: TDictionary<string, String>;
   gK08Hpzl: TDictionary<String, String>;

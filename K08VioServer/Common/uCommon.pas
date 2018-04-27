@@ -116,26 +116,18 @@ begin
     gDBConfig.DBPwd := ReadString('DB', 'Pwd', 'lgm1224,./');
     gDBConfig.DBName := ReadString('DB', 'Name', 'YjItsDB');
 
-    gHikConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL',
-      'http://10.43.255.16:8080/kms/services/ws/vehicleSearch');
-    gHikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
-      'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
-    gHikConfig.DFUrl := ReadString('Hik', 'DFUrl', 'http://10.43.255.20:18010');
+    gHikConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL', '');  //http://10.43.255.16:8080/kms/services/ws/vehicleSearch
+    gHikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl', ''); //http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl
+    gHikConfig.DFUrl := ReadString('Hik', 'DFUrl', ''); //http://10.43.255.20:18010
     gHikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
     gHikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
 
-    gThreadConfig.PilotsafebeltThreadRun :=
-      ReadString('Task', 'PilotsafebeltActive', '1') = '1';
-    gThreadConfig.NoEntryThreadRun := ReadString('Task', 'NoEntryActive',
-      '1') = '1';
-    gThreadConfig.LC25NoEntryThreadRun :=
-      ReadString('Task', 'LC25NoEntryActive', '1') = '1';
-    gThreadConfig.PilotsafebeltStartTime :=
-      ReadString('Task', 'PilotsafebeltStartTime', '2017-01-01T00:00:00.000Z');
-    gThreadConfig.NoEntryStartTime := ReadString('Task', 'NoEntryStartTime',
-      '2017-01-01T00:00:00.000Z');
-    gThreadConfig.LC25NoEntryStartDate :=
-      ReadString('Task', 'LC25NoEntryStartDate', '2017-01-01');
+    gThreadConfig.PilotsafebeltThreadRun := ReadString('Task', 'PilotsafebeltActive', '1') = '1';
+    gThreadConfig.NoEntryThreadRun := ReadString('Task', 'NoEntryActive', '0') = '1';
+    gThreadConfig.LC25NoEntryThreadRun := ReadString('Task', 'LC25NoEntryActive', '0') = '1';
+    gThreadConfig.PilotsafebeltStartTime := ReadString('Task', 'PilotsafebeltStartTime', '2017-01-01 00:00:00');
+    gThreadConfig.NoEntryStartTime := ReadString('Task', 'NoEntryStartTime', '2017-01-0 00:00:00');
+    gThreadConfig.LC25NoEntryStartDate := ReadString('Task', 'LC25NoEntryStartDate', '2018-04-26');
 
     gHeartbeatUrl := ReadString('Heartbeat', 'Url', 'http://127.0.0.1:20090/');
     gHeartbeatInterval := ReadInteger('Heartbeat', 'Interval', 3);

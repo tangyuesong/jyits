@@ -18,47 +18,16 @@ type
   end;
 
 implementation
-
-{
-  Important: Methods and properties of objects in visual components can only be
-  used in a method called using Synchronize, for example,
-
-  Synchronize(UpdateCaption);
-
-  and UpdateCaption could look like,
-
-  procedure T2To5NoEntry.UpdateCaption;
-  begin
-  Form1.Caption := 'Updated in a thread';
-  end;
-
-  or
-
-  Synchronize(
-  procedure
-  begin
-  Form1.Caption := 'Updated in thread via an anonymous method'
-  end
-  )
-  );
-
-  where an anonymous method is passed.
-
-  Similarly, the developer can call the Queue method with similar parameters as
-  above, instead passing another TThread class as the first parameter, putting
-  the calling thread in a queue with the other thread.
-
-}
-
 { T2To5NoEntry }
 
 procedure T2To5NoEntry.Execute;
 var
   Params, SQLs, tmpSQLs: TStrings;
-  param, maxPasstime, kssj, jssj: String;
+  kssj, jssj: String;
   totalPage, currentPage: Integer;
   vehList: TList<TK08VehInfo>;
   minDate, maxDate, currentDate: TDateTime;
+  param: TDictionary<string, String>;
 begin
   gLogger.Info('[2To5NoEntry] 2To5NoEntry Thread Start');
   if gThreadConfig.LC25NoEntryDev = '' then
@@ -68,9 +37,13 @@ begin
     exit;
   end;
   ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
-  maxPasstime := THik.GetMaxPassTime('crossingid:(' +
-    gThreadConfig.LC25NoEntryDev + ')');
-  if maxPasstime = '' then
+
+
+  param := TDictionary<string, String>.Create;
+  param.Add('crossingid', gThreadConfig.LC25NoEntryDev);
+  param.Add('passtime', gThreadConfig.LC25NoEntryStartDate + ',' + formatdatetime('yyyy-mm-dd hh:nn:ss', Now()));
+  maxDate := THik.GetMaxPassTime(param);
+  if maxDate = 0 then
   begin
     gLogger.Error('[2To5NoEntry] 访问K08失败');
     gLogger.Info('[2To5NoEntry] 2To5NoEntry Thread End');
@@ -81,25 +54,25 @@ begin
   gvioVeh := TStringList.Create;
   SQLs := TStringList.Create;
 
-  minDate := TCommon.StringToDT(gThreadConfig.LC25NoEntryStartDate +
-    ' 00:00:00');
-  maxDate := TCommon.StringToDT(maxPasstime);
+  minDate := TCommon.StringToDT(gThreadConfig.LC25NoEntryStartDate + ' 00:00:00');
   if maxDate < TCommon.StringToDT(FormatDatetime('yyyy/mm/dd', maxDate) +
     ' 05:00:00') then // 如果最大时间小于今天的5点，那么今天的闯禁行违法就不取
     maxDate := maxDate - 1;
 
   currentDate := minDate;
-
   while FormatDatetime('yyyy-mm-dd', currentDate) <=
     FormatDatetime('yyyy-mm-dd', maxDate) do
   begin
     gvioVeh.Clear;
-    kssj := FormatDatetime('yyyy-mm-dd', currentDate) + 'T02:00:00.000Z';
-    jssj := FormatDatetime('yyyy-mm-dd', currentDate) + 'T05:00:00.000Z';
-
-    param := 'crossingid:(' + gThreadConfig.LC25NoEntryDev + ') AND passtime:(['
-      + kssj + ' TO ' + jssj +
-      ']) AND vehiclehead:(1) AND platestate:(0) AND vehicletype:(1) AND platecolor:(1)';
+    kssj := FormatDatetime('yyyy-mm-dd', currentDate) + ' 02:00:00';
+    jssj := FormatDatetime('yyyy-mm-dd', currentDate) + ' 05:00:00';
+    param.Clear;
+    param.Add('crossingid', gThreadConfig.LC25NoEntryDev);
+    param.Add('passtime', kssj + ',' + jssj);
+    param.Add('vehiclehead', '1');
+    param.Add('platestate', '0');
+    param.Add('vehicletype', '1');
+    param.Add('platecolor', '1');
 
     totalPage := 1;
     currentPage := 1;
@@ -148,14 +121,12 @@ begin
     else
       gLogger.Info('[2To5NoEntry] Save NoEntry Vio Count: 0');
 
-    gThreadConfig.LC25NoEntryStartDate := FormatDatetime('yyyy-mm-dd',
-      currentDate + 1);
-    TCommon.SaveConfig('Task', 'LC25NoEntryStartDate',
-      gThreadConfig.LC25NoEntryStartDate);
+    gThreadConfig.LC25NoEntryStartDate := FormatDatetime('yyyy-mm-dd', currentDate + 1);
+    TCommon.SaveConfig('Task', 'LC25NoEntryStartDate', gThreadConfig.LC25NoEntryStartDate);
 
     currentDate := currentDate + 1;
   end;
-
+  param.Free;
   gLogger.Info('[2To5NoEntry] 2To5NoEntry Thread End');
   SQLs.Free;
   gvioVeh.Free;
@@ -165,10 +136,11 @@ end;
 function T2To5NoEntry.GetTp2(hphm, tp1, kssj, jssj: string): String;
 var
   Params: TStrings;
-  param, tp2: String;
+  tp2: String;
   totalPage, currentPage: Integer;
   vehList: TList<TK08VehInfo>;
   veh: TK08VehInfo;
+  param: TDictionary<string, String>;
 begin
   Result := '';
   tp2 := tp1.Replace('1.jpg', '2.jpg');
@@ -181,9 +153,14 @@ begin
     end;
   end;
 
-  param := 'crossingid:(' + gThreadConfig.LC25NoEntryDev + ') AND passtime:([' +
-    kssj + ' TO ' + jssj + ']) AND vehiclehead:(1) AND platestate:(0) AND ' +
-    'vehicletype:(1) AND platecolor:(1)  AND plateinfono:(' + hphm + ')';
+  param := TDictionary<string, String>.Create;
+  param.Add('crossingid', gThreadConfig.LC25NoEntryDev);
+  param.Add('passtime', kssj + ',' + jssj);
+  param.Add('vehiclehead', '1');
+  param.Add('platestate', '0');
+  param.Add('vehicletype', '1');
+  param.Add('platecolor', '1');
+  param.Add('plateinfono', hphm);
 
   totalPage := 1;
   currentPage := 1;
@@ -196,11 +173,12 @@ begin
     begin
       for veh in vehList do
       begin
-        if Trim(veh.picvehicle) = Trim(tp1) then
+        if Trim(veh.imagepath) = Trim(tp1) then
           continue;
-        Result := veh.picvehicle;
+        Result := veh.imagepath;
         Result := Result.Replace('&amp;', '&');
       end;
+      vehList.Free;
     end;
   except
     on e: exception do
@@ -208,6 +186,7 @@ begin
       gLogger.Error('[2To5NoEntry] ' + e.Message);
     end;
   end;
+  param.Free;
 end;
 
 function T2To5NoEntry.GetVioSQLs(vehList: TList<TK08VehInfo>;
@@ -222,13 +201,13 @@ begin
   begin
     if gDevList.ContainsKey(veh.crossingid) then
     begin
-      dt := TCommon.StringToDT(veh.passtime);
-      hphm := veh.plateinfono + '_' + FormatDatetime('yyyymmdd', dt);
+      dt := DateUtils.IncMilliSecond(25569.3333333333, StrToInt64(veh.PassTime));
+      hphm := veh.plateinfo + '_' + FormatDatetime('yyyymmdd', dt);
       if gvioVeh.IndexOf(hphm) >= 0 then
         continue;
-      tp1 := veh.picvehicle;
+      tp1 := veh.imagepath;
       tp1 := tp1.Replace('&amp;', '&');
-      tp2 := GetTp2(veh.plateinfono, tp1, kssj, jssj);
+      tp2 := GetTp2(veh.plateinfo, tp1, kssj, jssj);
       if tp2 = '' then
       begin
         gLogger.Info('[2To5NoEntry] not found Photofile2');
@@ -238,9 +217,9 @@ begin
       tp2 := TIDURI.URLDecode(tp2);
       s := ' insert into T_VIO_TEMP(CJJG, HPHM, HPZL, WFDD, WFXW, WFSJ, CD, PHOTOFILE1, PHOTOFILE2, BJ) values ('
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
-        veh.plateinfono.QuotedString + ',' + gHpzlList[veh.vehicletype]
+        veh.plateinfo.QuotedString + ',' + gHpzlList[veh.vehicletype]
         .QuotedString + ',' + gDevList[veh.crossingid].SBBH.QuotedString +
-        ',''1344'',' + veh.passtime.QuotedString + ',' + veh.laneid.QuotedString
+        ',''1344'',' + FormatDateTime('yyyy-mm-dd hh:nn:ss', dt).QuotedString + ',' + veh.laneno.QuotedString
         + ',' + tp1.QuotedString + ',' + tp2.QuotedString + ',''111'')';
       Result.Add(s);
       gvioVeh.Add(hphm);

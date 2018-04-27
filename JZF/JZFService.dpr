@@ -32,7 +32,8 @@ uses
   uJTPThread in 'JTP\uJTPThread.pas',
   qjson in 'Common\qjson.pas',
   qrbtree in 'Common\qrbtree.pas',
-  QString in 'Common\QString.pas';
+  QString in 'Common\QString.pas',
+  uJinXingThread in 'HBCVio\uJinXingThread.pas';
 
 {$R *.RES}
 

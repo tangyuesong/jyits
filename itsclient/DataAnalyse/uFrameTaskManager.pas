@@ -32,7 +32,7 @@ uses
   cxGridCustomView, cxGridCustomTableView, cxGridTableView, cxGridDBTableView,
   cxGrid, dxLayoutControl, Vcl.ComCtrls, dxCore, cxDateUtils, cxMaskEdit,
   cxDropDownEdit, cxCalendar, uCommon, uJsonUtils, uRequestItf, uEntity,
-  dxDialogBase, Vcl.ExtCtrls, uFrameResult;
+  dxDialogBase, Vcl.ExtCtrls, uFrameResult, cxLabel;
 
 type
   TFrameTaskManager = class(TToolGridFrame)

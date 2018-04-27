@@ -22,6 +22,7 @@ var
   s, hphm, hpzl, gcrq, tbName: String;
 begin
   ActiveX.CoInitialize(nil);
+  FreeOnTerminate := true;
   tbName := gConfig.DBNamePass + '.dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',
     Now() - 3 / 24);
   gLogger.Info('WNJVioThread Start [' + tbName + ']');

@@ -13,7 +13,9 @@ uses
   uEntity in 'uEntity.pas',
   qjson in 'Common\qjson.pas',
   qrbtree in 'Common\qrbtree.pas',
-  QString in 'Common\QString.pas';
+  QString in 'Common\QString.pas',
+  u2To5NoEntry in 'u2To5NoEntry.pas',
+  uNoEntryThread in 'uNoEntryThread.pas';
 
 {$R *.RES}
 
