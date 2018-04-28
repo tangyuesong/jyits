@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, uGlobal, uCommon, uHik, IdCustomHTTPServer, uRmService,
-  uEntity, uLockVio, DateUtils;
+  uEntity, uLockVio, DateUtils, uRmInf;
 
 type
   TSurveilVio = Class
@@ -13,6 +13,7 @@ type
     class procedure SaveVio2DB(ip, code, wfdd: String; vio: TLockVio;
       bz: String = '');
     class function FtpPic(base64Str: String): String;
+    class function GetVioUploadStr(vio: TLockVio): String; static;
   public
     class procedure SaveSurveilVio(tokenKey: String; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
@@ -58,7 +59,7 @@ end;
 class procedure TSurveilVio.SaveSurveilVio(tokenKey: String; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  hphm, hpzl, vehstr, wfdd, json, fzjg, wfxw, code, ip, cfzl, bz: String;
+  hphm, hpzl, vehstr, wfdd, json, fzjg, wfxw, code, ip, cfzl, bz, msg: String;
   wfsj: TDatetime;
   device: TDevice;
   vio: TLockVio;
@@ -169,14 +170,54 @@ begin
   end
   else
   begin
-    json := TLockVioUtils.GetVioUploadStr(vio);
-    code := TLockVioUtils.WriteVio('', tokenKey, json, vio.flag, AResponseInfo);
+    //json := TLockVioUtils.GetVioUploadStr(vio);
+    //code := TLockVioUtils.WriteVio('', tokenKey, json, vio.flag, AResponseInfo);
+    json := GetVioUploadStr(vio);
+    json := TRminf.surscreen(json);
+    glogger.Info('[SaveSurveilVio]' + json);
+    code := TCommon.GetJsonNode('code', json);
+    bz := TCommon.GetJsonNode('message', json);
+
+    if code = '1' then
+    begin
+      AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(bz);
+    end
+    else
+    begin
+      AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(bz);
+    end;
+
   end;
   if code = '' then
-    bz := 'zhtp error'
+    bz := 'JCPT error'
   else
     bz := '';
   SaveVio2DB(ip, code, wfdd, vio, bz);
+end;
+
+class function TSurveilVio.GetVioUploadStr(vio: TLockVio): String;
+var
+  zpsl: string;
+begin
+  Result := '{"sbbh":"' + vio.sbbh + '","hpzl":"' + vio.hpzl + '","hphm":"' +
+    vio.hphm + '","wfsj":"' + vio.wfsj + '","wfxw":"' + vio.wfxw + '","scz":"' +
+    vio.scz + '",';
+
+  zpsl := '1';
+  if vio.zpstr1 <> '' then
+    Result := Result + '"zpstr1":"' + vio.zpstr1 + '",';
+  if vio.zpstr2 <> '' then
+  begin
+    Result := Result + '"zpstr2":"' + vio.zpstr2 + '",';
+    zpsl := '2';
+  end;
+  if (zpsl = '2') and (vio.zpstr3 <> '') then
+  begin
+    Result := Result + '"zpstr3:"' + vio.zpstr3 + '",';
+    zpsl := '3';
+  end;
+
+  Result := Result + '"zpsl":"' + zpsl + '"}';
 end;
 
 class procedure TSurveilVio.SaveVio2DB(ip, code, wfdd: String; vio: TLockVio;
