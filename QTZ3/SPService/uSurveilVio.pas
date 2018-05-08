@@ -14,6 +14,8 @@ type
       bz: String = '');
     class function FtpPic(base64Str: String): String;
     class function GetVioUploadStr(vio: TLockVio): String; static;
+    class function IsReVio(hphm, hpzl, wfdd, wfxw: String;
+      wfsj: TDateTime): Boolean;
   public
     class procedure SaveSurveilVio(tokenKey: String; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
@@ -56,11 +58,24 @@ begin
   end;
 end;
 
+class function TSurveilVio.IsReVio(hphm, hpzl, wfdd, wfxw: String;
+  wfsj: TDateTime): Boolean;
+var
+  s: String;
+begin
+  s := ' where hphm=' + hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString +
+    ' and zt=''8'' and wfsj>''' + formatdatetime('yyyy/mm/dd', wfsj - 1) +
+    ' 23:50:01'' and wfsj<''' + formatdatetime('yyyy/mm/dd', wfsj + 1) +
+    ' 00:10:59'' and wfxw=' + wfxw.QuotedString + ' and wfdd=' +
+    wfdd.QuotedString;
+  Result := gSQLHelper.ExistsRecord(cDBName + '.dbo.T_VIO_HIS', s);
+end;
+
 class procedure TSurveilVio.SaveSurveilVio(tokenKey: String; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
   hphm, hpzl, vehstr, wfdd, json, fzjg, wfxw, code, ip, cfzl, bz, msg: String;
-  wfsj: TDatetime;
+  wfsj: TDateTime;
   device: TDevice;
   vio: TLockVio;
   veh: TVehinfo;
@@ -72,6 +87,12 @@ begin
     StrToInt64Def(params.Values['wfsj'], -346789));
   cfzl := params.Values['cfzl'];
 
+  wfxw := params.Values['wfxw'];
+  if wfxw = '1352' then
+    wfxw := '1352A';
+  if wfxw = '1302' then
+    wfxw := '1625';
+
   if TCommon.DicDevice.ContainsKey(wfdd) then
     device := TCommon.DicDevice[wfdd]
   else
@@ -79,6 +100,13 @@ begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('违法地点不存在');
     exit;
   end;
+
+  if IsReVio(hphm, hpzl, wfdd, wfxw, wfsj) then
+  begin
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('重复录入');
+    exit;
+  end;
+
   vehstr := TRmService.GetVehinfo(gTokenManager.GetToken(tokenKey), hphm, hpzl);
   if vehstr = '-1' then
     vehstr := TCommon.QueryVehInfo(hphm, hpzl);
@@ -125,12 +153,6 @@ begin
   vio.dh := veh.lxdh;
   vio.wfsj := formatdatetime('yyyy-mm-dd hh:nn:ss', wfsj);
 
-  wfxw := params.Values['wfxw'];
-  if wfxw = '1352' then
-    wfxw := '1352A';
-  if wfxw = '1302' then
-    wfxw := '1625';
-
   vio.wfxw := wfxw;
   vio.spdz := '';
   vio.zpstr1 := params.Values['pic1'];
@@ -170,11 +192,11 @@ begin
   end
   else
   begin
-    //json := TLockVioUtils.GetVioUploadStr(vio);
-    //code := TLockVioUtils.WriteVio('', tokenKey, json, vio.flag, AResponseInfo);
+    // json := TLockVioUtils.GetVioUploadStr(vio);
+    // code := TLockVioUtils.WriteVio('', tokenKey, json, vio.flag, AResponseInfo);
     json := GetVioUploadStr(vio);
     json := TRminf.surscreen(json);
-    glogger.Info('[SaveSurveilVio]' + json);
+    gLogger.Info('[SaveSurveilVio]' + json);
     code := TCommon.GetJsonNode('code', json);
     bz := TCommon.GetJsonNode('message', json);
 

@@ -40,20 +40,21 @@ var
   gUploadVio: Boolean; // 自动上传违法
   gJZF: Boolean; // 技战法
   gKKALARM: Boolean; // 套牌车二次识别
-  gJQ: boolean; // 警情
-  gHBC: boolean; // 黄标车
-  gWNJ: boolean; // 未年检
+  gJQ: Boolean; // 警情
+  gHBC: Boolean; // 黄标车
+  gWNJ: Boolean; // 未年检
   gZBDX: Boolean; // 值班短信
   gZBDXTime: String;
-  gJTP: boolean; //假套牌
-  gJinXing: boolean; //禁行
-  JTPRunning: boolean;
-  //gHpzlList: TDictionary<string, String>;
+  gJTP: Boolean; // 假套牌
+  gJinXing: Boolean; // 禁行
+  JTPRunning: Boolean;
+  gUploadTempVio: Boolean;
+  // gHpzlList: TDictionary<string, String>;
   gK08Hpzl: TDictionary<String, String>;
   gK08Clpp: TDictionary<String, String>;
   gK08Csys: TDictionary<String, String>;
-  //gDevKDBH: TDictionary<String, String>;
-  //gDevID: TDictionary<String, String>;
+  // gDevKDBH: TDictionary<String, String>;
+  // gDevID: TDictionary<String, String>;
   gVehInfoDic: TDictionary<string, TVehInfo>;
   gHeartbeatUrl: String;
   gHeartbeatInterval: Integer;

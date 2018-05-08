@@ -118,6 +118,8 @@ begin
     gJinXing := ReadInteger('PROJECT', 'JinXing', 0) = 1;
     JTPRunning := false;
 
+    gUploadTempVio := ReadInteger('PROJECT', 'UPLOADTEMPVIO', 0) = 1;
+
     gZBDX := ReadInteger('PROJECT', 'ZBDX', 0) = 1;
     gZBDXTime := ReadString('PROJECT', 'ZBDXTime', '2000');
 

@@ -297,6 +297,7 @@ class procedure TDBService.DoDB(Action, TokenKey: String; Params: TStrings;
 var
   actionType, Msg: String;
 begin
+  ActiveX.CoInitialize(nil);
   if not CheckParams(Action, TokenKey, Params, isExport, Msg) then
   begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(Msg);
@@ -357,6 +358,7 @@ begin
   else
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
       ('parameter error');
+  ActiveX.CoUninitialize;
 end;
 
 class procedure TDBService.DataExport(Action: String; Params: TStrings;

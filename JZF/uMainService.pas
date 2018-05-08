@@ -8,7 +8,7 @@ uses
   uGlobal, uCommon, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
   IdHTTP, Vcl.ExtCtrls, uZBDXThread, uUploadVio, uJQThread, uVioSBThread,
   uDeviceMonitorThread, uDelExpiredVioThread, uHBCVioThread, uWNJVioThread,
-  uJTPThread, uJinXingThread;
+  uJTPThread, uJinXingThread, uUploadTempVio;
 
 type
   TItsJZFService = class(TService)
@@ -50,6 +50,8 @@ begin
     TTaskThread.Create;
   if gKKALARM then
     TKKAlarmThread.Create(False);
+  if gUploadTempVio then
+    TUploadTempVioThread.Create(False);
   TVioSBThread.Create(False);
   Timer1.Interval := gHeartbeatInterval * 60000;
   Timer1Timer(nil);

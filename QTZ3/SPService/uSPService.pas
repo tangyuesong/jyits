@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uSMS, EncdDecd, uHik,
   uLockVio, uVehPass, uAnalysisPic, uImportVio, uRmService, qjson, uSurveilVio,
-  Generics.Collections, StrUtils, uTokenManager;
+  Generics.Collections, StrUtils, uTokenManager, ActiveX;
 
 type
   TSPService = Class
@@ -163,6 +163,7 @@ var
   s: String;
   token: TToken;
 begin
+  ActiveX.CoInitialize(nil);
   token := gTokenManager.GetToken(tokenKey);
   if action = UpperCase('LockVio') then
   begin
@@ -233,6 +234,7 @@ begin
   begin
     GetJFS(token, Params, AResponseInfo);
   end;
+  ActiveX.CoUninitialize;
 end;
 
 class function TSPService.GetSGZR(Params: TStrings): String;

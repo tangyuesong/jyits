@@ -7,7 +7,7 @@ uses
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   IdBaseComponent, IdComponent, IdCustomTCPServer, IdCustomHTTPServer,
   IdHTTPServer, IniFiles, IdContext, uLogger, HTTPApp, uTmri, uRmweb,
-  uRminf, uTrans, ActiveX, IdURI, IdHttp, StrUtils, uLockVio,
+  uRminf, uTrans, ActiveX, IdURI, IdHttp, StrUtils, uLockVio, DateUtils,
   IdSSLOpenSSL, uTokenManager, uGlobal, uCommon, QJson, uWSManager;
 
 type
@@ -44,6 +44,7 @@ type
       AResponseInfo: TIdHTTPResponseInfo);
     class procedure ApplyWSBH(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
+    class function IsReVio(params: TStrings; lx: Integer): Boolean;
   public
     class function GetVehInfo(token: TToken; hphm, hpzl: String): String;
     class function GetDrvInfo(token: TToken; params: TStrings): String;
@@ -586,20 +587,20 @@ end;
 class procedure TRmService.SaveForceVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, hphm, hpzl, cjjg, wfsj: String;
+  json, code, wfsj, pzbh: String;
   tmriParam: TTmriParam;
   n: Integer;
 begin
-  hphm := params.Values['hphm'];
-  hpzl := params.Values['hpzl'];
-  cjjg := params.Values['fxjg'];
-  wfsj := params.Values['wfsj'];
-
+  if IsReVio(params, 2) then
+  begin
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('重复录入');
+    exit;
+  end;
   params.Add('JKID=04C55');
   json := DoWrite(token, params);
   gLogger.Info(json);
   code := TCommon.GetJsonNode('code', json);
-  if (code = '1') or (code = '') then
+  if code = '1' then
   begin
     if params.IndexOf('lrr') >= 0 then
       params.Values['lrr'] := token.Login
@@ -608,14 +609,17 @@ begin
     n := params.IndexOfName('JKID');
     if n >= 0 then
       params.Delete(n);
-    if code = '' then
-    begin
-      params.Add('bz=write zhpt error:' + json);
-      params.Add('zt=0');
-    end
+    params.Add('zt=1');
+    pzbh := params.Values['pzbh'];
+    if RightStr(pzbh, 8) >= '30000000' then
+      TWSManager.Submit(pzbh)
     else
-      params.Add('zt=1');
-    TWSManager.Submit(params.Values['pzbh']);
+    begin
+      wfsj := params.Values['wfsj'];
+      if DateUtils.MinutesBetween(TCommon.StringToDT(wfsj), Now()) > 10 then
+        // 如果用手写单但10分钟内在pda上录入，也认为是非手写单
+        TCommon.SaveSLWS(token.Login);
+    end;
     TCommon.WriteForceVio(params);
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
   end
@@ -626,24 +630,30 @@ begin
       code := TCommon.GetJsonNode('msg1', json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
   end
+  else if code = '' then
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('6合1网络故障')
   else
-  begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
-  end;
 end;
 
 class procedure TRmService.SaveSimpleVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, zt: String;
+  json, code, zt, wfsj, jdsbh: String;
   tmriParam: TTmriParam;
   n: Integer;
 begin
+  if IsReVio(params, 1) then
+  begin
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('重复录入');
+    exit;
+  end;
+
   params.Add('JKID=04C54');
   json := DoWrite(token, params);
   gLogger.Info(json);
   code := TCommon.GetJsonNode('code', json);
-  if (code = '1') or (code = '') then
+  if code = '1' then
   begin
     if params.IndexOf('lrr') >= 0 then
       params.Values['lrr'] := token.Login
@@ -652,14 +662,19 @@ begin
     n := params.IndexOfName('JKID');
     if n >= 0 then
       params.Delete(n);
-    if code = '' then
-    begin
-      params.Add('bz=write zhpt error:' + json);
-      params.Add('zt=0');
-    end
+    params.Add('zt=1');
+
+    jdsbh := params.Values['jdsbh'];
+    if RightStr(jdsbh, 8) >= '30000000' then
+      TWSManager.Submit(jdsbh)
     else
-      params.Add('zt=1');
-    TWSManager.Submit(params.Values['jdsbh']);
+    begin
+      wfsj := params.Values['wfsj'];
+      if DateUtils.MinutesBetween(TCommon.StringToDT(wfsj), Now()) > 10 then
+        // 如果用手写单但10分钟内在pda上录入，也认为是非手写单
+        TCommon.SaveSLWS(token.Login);
+    end;
+
     TCommon.WriteSimpleVio(params);
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
   end
@@ -671,6 +686,8 @@ begin
       code := TCommon.GetJsonNode('msg1', json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
   end
+  else if code = '' then
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('6合1网络故障')
   else
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
 end;
@@ -750,7 +767,46 @@ begin
   end
   else
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+end;
 
+class function TRmService.IsReVio(params: TStrings; lx: Integer): Boolean;
+// 1 简易  2 强制
+var
+  s, zqmj, ryfl, jszh, hphm, hpzl, wfdd, wfsj: String;
+  tb: String;
+begin
+  result := false;
+  zqmj := params.Values['zqmj'];
+  ryfl := params.Values['ryfl'];
+  jszh := params.Values['jszh'];
+  hphm := params.Values['hphm'];
+  hpzl := params.Values['hpzl'];
+  wfdd := params.Values['wfdd'];
+  wfsj := params.Values['wfsj'];
+
+  s := ' where zqmj=' + zqmj.QuotedString + ' and ryfl=' + ryfl.QuotedString +
+    ' and wfdd=' + wfdd.QuotedString + ' and abs(DATEDIFF(MI, ' +
+    wfsj.QuotedString + ', wfsj)) <= 60 ';
+  if ryfl = '4' then
+  begin
+    s := s + ' and jszh=' + jszh.QuotedString;
+  end
+  else if pos('无', jszh) <= 0 then
+  begin
+    s := s + ' and jszh=' + jszh.QuotedString;
+  end
+  else if (pos('无', hphm) <= 0) and (pos('无', hpzl) <= 0) then
+    s := s + ' and hphm = ' + hphm.QuotedString + ' and hpzl=' +
+      hpzl.QuotedString
+  else
+    exit;
+
+  if lx = 1 then
+    tb := cDBName + '.dbo.T_Spot_Violation'
+  else
+    tb := cDBName + '.dbo.T_Spot_Force';
+
+  result := gSQLHelper.ExistsRecord(tb, s);
 end;
 
 end.

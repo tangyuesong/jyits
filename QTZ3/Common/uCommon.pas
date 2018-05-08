@@ -88,6 +88,7 @@ type
     class function QueryVehInfo(hphm, hpzl: String): String;
     class function DelFile(fileName: String): Boolean; static;
     class function JsonToRecord<T>(JSON: string): T; static;
+    class procedure SaveSLWS(yhbh: String);
   end;
 
 procedure SQLError(const SQL, Description: string);
@@ -1099,6 +1100,12 @@ begin
     + action.QuotedString + ',' + param.QuotedString + ',' +
     deviceId.QuotedString + ')';
   gSQLHelper.ExecuteSql(s);
+end;
+
+class procedure TCommon.SaveSLWS(yhbh: String);
+begin
+  gSQLHelper.ExecuteSql('update ' + cDBName +
+    '.dbo.S_USER set YYSLCS = YYSLCS + 1 where yhbh = ' + yhbh.QuotedString);
 end;
 
 class procedure TCommon.SaveDrvInfo(AJSON: String);
