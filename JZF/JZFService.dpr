@@ -33,7 +33,8 @@ uses
   qjson in 'Common\qjson.pas',
   qrbtree in 'Common\qrbtree.pas',
   QString in 'Common\QString.pas',
-  uJinXingThread in 'HBCVio\uJinXingThread.pas';
+  uJinXingThread in 'HBCVio\uJinXingThread.pas',
+  uUploadTempVio in 'UploadTempVio\uUploadTempVio.pas';
 
 {$R *.RES}
 

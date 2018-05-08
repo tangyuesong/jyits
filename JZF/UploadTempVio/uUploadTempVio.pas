@@ -57,7 +57,7 @@ begin
   gLogger.Info('UploadTempVioThread Start');
   while True do
   begin
-    s := ' select SYSTEMID from T_VIO_TEMP with(nolock) where bj=''0'' and wfxw<>''13441'' ';
+    s := ' select SYSTEMID from T_VIO_TEMP with(nolock) where bj=''0'' and wfxw=''1340'' and PHOTOFILE2 is null ';
     with gSQLHelper.Query(s) do
     begin
       while not Eof do
