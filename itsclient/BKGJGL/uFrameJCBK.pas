@@ -30,7 +30,9 @@ uses
   xtImage, cxMemo, uFrameSelectDev, uFrameFeedback, uFrameSign, dxpicdata,
   hyieutils, iexBitmaps, hyiedefs, iesettings, iexRulers, System.Contnrs,
   imageenview, ieview, imageen, ievect, cxGroupBox, uFrameInput,
-  dxGDIPlusClasses, cxImage, cxCheckBox, dxViodata;
+  dxGDIPlusClasses, cxImage, cxCheckBox, dxViodata, cxLookupEdit,
+  cxDBLookupEdit, cxDBExtLookupComboBox, cxComboBoxExt, cxMaskEdit,
+  cxDropDownEdit, cxCheckComboBox;
 
 type
   TFrameJCBK = class(TFrame)
@@ -143,6 +145,8 @@ type
     edtCLZT: TcxTextEdit;
     cbLocal: TcxCheckBox;
     dxLayoutItem3: TdxLayoutItem;
+    cboBKLX: TcxCheckComboBox;
+    dxLayoutItem26: TdxLayoutItem;
     procedure Timer1Timer(Sender: TObject);
     procedure btnDeviceClick(Sender: TObject);
     procedure btnPauseClick(Sender: TObject);
@@ -196,6 +200,7 @@ type
     function CheckBKR(HPHM, hpzl, yhbh: string): Boolean;
     procedure HideZFZ;
     function AlarmToZFZ(alarm: TAlarmResult): TVehCheck;
+    procedure BindBKLX;
   public
     procedure BeforeDestruction; override;
     procedure AfterConstruction; override;
@@ -238,6 +243,39 @@ begin
   self.dxTileControl1.Items.Clear;
   ImageEnVect1.IO.LoadFromFile(ExtractFilePath(ParamStr(0)) + 'image\ZWTP.png');
   ImageEnVect1.Fit();
+  BindBKLX;
+end;
+
+procedure TFrameJCBK.BindBKLX;
+
+  function GetBKLXList: TStrings;
+  var
+    s, v: string;
+    str: TStringList;
+  begin
+    str := TStringList.Create;
+    str.Sort;
+    str.Sorted := True;
+    for s in TLZDictionary.gDicMain['BKLX'].Keys do
+      str.Add(s);
+    Result := str;
+  end;
+  procedure AddBKLXItem(code, desc: string);
+  begin
+    with cboBKLX.Properties.Items.Add do
+    begin
+      Description := desc;
+      ShortDescription := code + ' ' + desc;
+    end;
+  end;
+var
+  bklxs: TStrings;
+  key: string;
+begin
+  bklxs := GetBKLXList;
+  for Key in bklxs do
+    AddBKLXItem('', Key + ':' + TLZDictionary.gDicMain['BKLX'][Key]);
+  bklxs.Free;
 end;
 
 procedure TFrameJCBK.BeforeDestruction;
@@ -862,6 +900,15 @@ procedure TFrameJCBK.LoadAlarm;
     end;
   end;
 
+  function GetBKLX: string;
+  var
+    s: string;
+  begin
+    s := cboBKLX.Text;
+    result := '';
+    for s in s.Split([';']) do
+      result := result +','+ s.Substring(0, 1);
+  end;
 var
   json, vioce: string;
   list: TList<TAlarmResult>;
@@ -870,11 +917,13 @@ var
   b: Boolean;
   n: Integer;
   veh: TVehInfo;
+  bklx: string;
 begin
   FAlarmList.Clear;
   voiceList := '';
   n := 0;
-  json := TRequestItf.DbQuery('GetJCBKData', 'sbbh=' + FSBBH);
+  bklx := GetBKLX;
+  json := TRequestItf.DbQuery('GetJCBKData', 'sbbh=' + FSBBH + '&bklx' + bklx);
   list := TJsonUtils.JsonToRecordList<TAlarmResult>(json);
   for alarm in list do
   begin

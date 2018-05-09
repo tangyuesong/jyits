@@ -14,22 +14,22 @@ object FrameJCBK: TFrameJCBK
     TabOrder = 0
     LayoutLookAndFeel = DM.dxLayoutSkinLookAndFeel1
     object btnDetail: TcxButton
-      Left = 507
+      Left = 613
       Top = 627
       Width = 70
       Height = 25
       Caption = #35814#32454
-      TabOrder = 32
+      TabOrder = 33
       OnClick = btnDetailClick
     end
     object btnPause: TcxButton
-      Left = 426
+      Left = 532
       Top = 627
       Width = 75
       Height = 25
       Caption = #26242#20572
       OptionsImage.ImageIndex = 9
-      TabOrder = 31
+      TabOrder = 32
       OnClick = btnPauseClick
     end
     object edtCZDZ: TcxTextEdit
@@ -212,12 +212,12 @@ object FrameJCBK: TFrameJCBK
       Width = 69
     end
     object btnDevice: TcxButton
-      Left = 350
+      Left = 456
       Top = 627
       Width = 70
       Height = 25
       Caption = #36335#21475
-      TabOrder = 30
+      TabOrder = 31
       OnClick = btnDeviceClick
     end
     object ImageEnVect1: TImageEnVect
@@ -483,12 +483,12 @@ object FrameJCBK: TFrameJCBK
       end
     end
     object btnMobile: TcxButton
-      Left = 659
+      Left = 765
       Top = 627
       Width = 75
       Height = 25
       Caption = #30701#20449
-      TabOrder = 34
+      TabOrder = 35
       OnClick = btnMobileClick
     end
     object edtBKLX: TcxTextEdit
@@ -9538,7 +9538,7 @@ object FrameJCBK: TFrameJCBK
       end
     end
     object cbMoto: TcxCheckBox
-      Left = 222
+      Left = 117
       Top = 627
       Caption = #25705#25176#36710
       State = cbsChecked
@@ -9550,7 +9550,7 @@ object FrameJCBK: TFrameJCBK
       TabOrder = 28
     end
     object cbDC: TcxCheckBox
-      Left = 286
+      Left = 181
       Top = 627
       Caption = #22823#22411#36710
       State = cbsChecked
@@ -9562,14 +9562,14 @@ object FrameJCBK: TFrameJCBK
       TabOrder = 29
     end
     object btnVioInfo: TcxButton
-      Left = 583
+      Left = 689
       Top = 627
       Width = 70
       Height = 25
       Caption = #36829#27861#20449#24687
       Colors.Default = clYellow
       LookAndFeel.SkinName = ''
-      TabOrder = 33
+      TabOrder = 34
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlack
       Font.Height = -11
@@ -9607,7 +9607,7 @@ object FrameJCBK: TFrameJCBK
       Width = 208
     end
     object cbLocal: TcxCheckBox
-      Left = 122
+      Left = 17
       Top = 627
       Caption = #21482#26174#31034#26412#22320#36710
       Properties.OnChange = cbLocalPropertiesChange
@@ -9617,6 +9617,16 @@ object FrameJCBK: TFrameJCBK
       StyleFocused.LookAndFeel.SkinName = 'Office2013White'
       StyleHot.LookAndFeel.SkinName = 'Office2013White'
       TabOrder = 27
+    end
+    object cboBKLX: TcxCheckComboBox
+      Left = 298
+      Top = 627
+      AutoSize = False
+      Properties.Items = <>
+      Style.HotTrack = False
+      TabOrder = 30
+      Height = 25
+      Width = 152
     end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       AlignHorz = ahClient
@@ -9653,7 +9663,7 @@ object FrameJCBK: TFrameJCBK
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 70
       ControlOptions.ShowBorder = False
-      Index = 5
+      Index = 6
     end
     object dxLayoutGroup3: TdxLayoutGroup
       Parent = dxLayoutControl1Group_Root
@@ -9673,7 +9683,7 @@ object FrameJCBK: TFrameJCBK
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 4
+      Index = 5
     end
     object dxLayoutGroup5: TdxLayoutGroup
       Parent = dxLayoutGroup3
@@ -9952,7 +9962,7 @@ object FrameJCBK: TFrameJCBK
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 70
       ControlOptions.ShowBorder = False
-      Index = 3
+      Index = 4
     end
     object dxLayoutItem27: TdxLayoutItem
       Parent = dxLayoutGroup8
@@ -9976,7 +9986,7 @@ object FrameJCBK: TFrameJCBK
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 7
+      Index = 8
     end
     object dxLayoutItem29: TdxLayoutItem
       Parent = dxLayoutGroup4
@@ -10039,7 +10049,7 @@ object FrameJCBK: TFrameJCBK
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 70
       ControlOptions.ShowBorder = False
-      Index = 6
+      Index = 7
     end
     object liFeedback: TdxLayoutItem
       Parent = dxLayoutGroup10
@@ -10088,6 +10098,15 @@ object FrameJCBK: TFrameJCBK
       ControlOptions.OriginalWidth = 94
       ControlOptions.ShowBorder = False
       Index = 0
+    end
+    object dxLayoutItem26: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #24067#25511#31867#22411
+      Control = cboBKLX
+      ControlOptions.OriginalHeight = 25
+      ControlOptions.OriginalWidth = 152
+      ControlOptions.ShowBorder = False
+      Index = 3
     end
   end
   object Timer1: TTimer

@@ -94,7 +94,7 @@ begin
     result := true;
   except
     on e: exception do
-      logger.Error(e.Message + param.url);
+      logger.Error(e.Message + param.url + param.path);
   end;
   stream.Free;
   http.Free;

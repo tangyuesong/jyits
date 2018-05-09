@@ -169,22 +169,26 @@ begin
   stream := TMemoryStream.Create;
   try
     param := FQueue.Dequeue;
-    s := TPath.GetDirectoryName(param.Path);
-    if not TDirectory.Exists(s) then
-      TDirectory.CreateDirectory(s);
+    if param.Path <> '' then
+    begin
+      s := TPath.GetDirectoryName(param.Path);
+      if not TDirectory.Exists(s) then
+        TDirectory.CreateDirectory(s);
 
-    logger.Debug('DownLoad:' + param.url);
-    http.Get(param.url, stream);
-    logger.Debug('DownLoad OK: ' + stream.Size.ToString);
-    if stream.Size > 100 * 1024 then
-    begin;
-      stream.SaveToFile(param.path);
-      logger.Debug('SaveToFile OK: ' + param.path);
-    end;
-    result := true;
+      logger.Debug('DownLoad:' + param.url);
+      http.Get(param.url, stream);
+      logger.Debug('DownLoad OK: ' + stream.Size.ToString);
+      if stream.Size > 100 * 1024 then
+      begin;
+        stream.SaveToFile(param.path);
+        logger.Debug('SaveToFile OK: ' + param.path);
+      end;
+      result := true;
+    end else
+      logger.Error('[DownLoad] path is empty!');
   except
     on e: exception do
-      logger.Error(e.Message + param.url + #9 + param.Path);
+      logger.Error('[DownLoad]' + e.Message + param.url + #9 + param.Path);
   end;
   stream.Free;
   http.Free;
