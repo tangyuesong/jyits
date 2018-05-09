@@ -29,10 +29,14 @@ uses
   sDialogs, cxEditRepositoryItems, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, Vcl.StdCtrls, cxButtons,
   cxGridLevel, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, dxLayoutControl, UFrameAddCrash, Vcl.ExtCtrls;
+  cxGridDBTableView, cxGrid, dxLayoutControl, UFrameAddCrash, Vcl.ExtCtrls,
+  cxLabel, dxpicdata;
 
 type
   TFrameCrashManager = class(TFrameTaskManager)
+  private
+    FDetail: TdxFramePicData;
+    procedure actViewExecute(Sender: TObject);
   public
     procedure AfterConstruction;override;
   end;
@@ -48,12 +52,31 @@ procedure TFrameCrashManager.AfterConstruction;
 begin
   inherited;
   GridColumns:='TaskName, CreateTime, FinishTime, Status, Rate, ²Ù×÷';
-  GridView.Columns[5].RepositoryItem:=cxdtrpstry1ButtonItem1;
   JKID := 'GetT_Analyse_CrashTask';
   self.AddFrame := TFrameAddcrash.Create(Self);
-  self.ResultFrame.GridColumns := 'HPHM, HPZL,HitCount,HitRate';
   self.ResultJKID := 'GetT_Analyse_CrashTask_Result';
   self.DeleteTaskJKID := 'DELT_Analyse_CrashTask';
+
+  self.ResultFrame.GridColumns := 'HPHM, HPZL,HitCount,HitRate,²Ù×÷';
+  self.ResultFrame.cxdtrpstry1ButtonItem1.Properties.Buttons[0].Action := self.ResultFrame.actView;
+  self.ResultFrame.actView.OnExecute := self.actViewExecute;
+end;
+
+procedure TFrameCrashManager.actViewExecute(Sender: TObject);
+var
+  s, Param: string;
+begin
+  inherited;
+  if not Assigned(FDetail) then
+  begin
+    FDetail := TdxFramePicData.Create(self);
+    FDetail.Parent := self;
+    FDetail.Align := TAlign.alClient;
+  end;
+  FDetail.HPHM := self.ResultFrame.FDMemTable1.FieldByName('HPHM').AsString;
+  FDetail.hpzl := self.ResultFrame.FDMemTable1.FieldByName('HPZL').AsString;
+  FDetail.LoadPassList;
+  FDetail.Show;
 end;
 
 end.

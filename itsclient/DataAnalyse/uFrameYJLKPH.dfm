@@ -10,7 +10,7 @@ inherited FrameYJLKPH: TFrameYJLKPH
       ExplicitHeight = 202
     end
     object DTKSSJ: TcxDateEdit [1]
-      Left = -122
+      Left = 67
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -20,7 +20,7 @@ inherited FrameYJLKPH: TFrameYJLKPH
       Width = 103
     end
     object DTJSSJ: TcxDateEdit [2]
-      Left = 6
+      Left = 195
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -30,7 +30,7 @@ inherited FrameYJLKPH: TFrameYJLKPH
       Width = 103
     end
     object cxButton1: TcxButton [3]
-      Left = 363
+      Left = 552
       Top = 13
       Width = 75
       Height = 25
@@ -41,7 +41,7 @@ inherited FrameYJLKPH: TFrameYJLKPH
       OnClick = cxButton1Click
     end
     object cbbYJLX: TcxCheckComboBox [4]
-      Left = 170
+      Left = 359
       Top = 13
       AutoSize = False
       Properties.Items = <>
