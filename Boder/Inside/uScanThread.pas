@@ -65,6 +65,7 @@ begin
 
       Next;
     end;
+    Close;
     Free;
   end;
   for AIn in list do

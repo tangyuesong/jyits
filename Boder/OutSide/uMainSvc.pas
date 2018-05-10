@@ -219,6 +219,7 @@ begin
 
         break;
       end;
+      Close;
       Free;
     end;
   end;

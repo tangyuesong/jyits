@@ -116,6 +116,7 @@ begin
       end;
     end;
   end;
+  qy.Close;
   qy.Free;
 end;
 
@@ -138,6 +139,7 @@ begin
       end;
     end;
   end;
+  qy.Close;
   qy.Free;
 end;
 
@@ -163,6 +165,7 @@ begin
       end;
     end;
   end;
+  qy.Close;
   qy.Free;
 end;
 
@@ -182,6 +185,7 @@ begin
     if not qy.IsEmpty then
       result := true;
   end;
+  qy.Close;
   qy.Free;
 end;
 
@@ -204,6 +208,7 @@ begin
     if not qy.IsEmpty then
       result := true;
   end;
+  qy.Close;
   qy.Free;
 end;
 
@@ -279,6 +284,7 @@ begin
     if not qy.IsEmpty then
       if not qy.Fields[0].IsNull then
         result := qy.Fields[0].AsString;
+  qy.Close;
   qy.Free;
 end;
 
