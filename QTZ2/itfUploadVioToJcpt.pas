@@ -81,7 +81,7 @@ var
 begin
   dt := TCommon.StringToDT(wfsj);
   s := ' where hphm=' + hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString +
-    ' and zt=''8'' and cjjg=' + cjjg.QuotedString + ' and wfsj>''' +
+    ' and bj=''8'' and cjjg=' + cjjg.QuotedString + ' and wfsj>''' +
     formatDatetime('yyyy/mm/dd', dt - 1) + ' 23:50:01'' and wfsj<''' +
     formatDatetime('yyyy/mm/dd', dt + 1) + ' 00:10:59''';
   Result := gSQLHelper.ExistsRecord('T_VIO_TEMP', s);
