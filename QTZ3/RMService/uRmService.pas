@@ -772,7 +772,7 @@ end;
 class function TRmService.IsReVio(params: TStrings; lx: Integer): Boolean;
 // 1 ¼òÒ×  2 Ç¿ÖÆ
 var
-  s, zqmj, ryfl, jszh, hphm, hpzl, wfdd, wfsj: String;
+  s, zqmj, ryfl, jszh, hphm, hpzl, wfdd, wfsj, wfxw: String;
   tb: String;
 begin
   result := false;
@@ -783,10 +783,13 @@ begin
   hpzl := params.Values['hpzl'];
   wfdd := params.Values['wfdd'];
   wfsj := params.Values['wfsj'];
+  wfxw := params.Values['wfxw'];
 
   s := ' where zqmj=' + zqmj.QuotedString + ' and ryfl=' + ryfl.QuotedString +
     ' and wfdd=' + wfdd.QuotedString + ' and abs(DATEDIFF(MI, ' +
     wfsj.QuotedString + ', wfsj)) <= 60 ';
+  if wfxw <> '' then
+    s := s + ' and wfxw = ' + wfxw.QuotedString;
   if ryfl = '4' then
   begin
     s := s + ' and jszh=' + jszh.QuotedString;
