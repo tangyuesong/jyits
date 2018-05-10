@@ -58,11 +58,11 @@ type
     FDeleteTaskJKID: string;
     procedure SetAddFrame(const Value: TdxDialogBaseFrame);
     procedure OnAddFrameClosed;
-    procedure SetResultFrame(const Value: TFrameResult);
+    //procedure SetResultFrame(const Value: TFrameResult);
   protected
     property AddFrame: TdxDialogBaseFrame read FAddFrame write SetAddFrame;
     property JKid: string read FJkid write FJkid;
-    property ResultFrame: TFrameResult read FResultFrame write SetResultFrame;
+    property ResultFrame: TFrameResult read FResultFrame;// write SetResultFrame;
     property ResultJKID: string read FResultJKID write FResultJKID;
     property DeleteTaskJKID: string read FDeleteTaskJKID write FDeleteTaskJKID;
   public
@@ -114,7 +114,7 @@ begin
   inherited;
   DTKSSJ.Date := now - 30;
   DTJSSJ.Date := now + 1;
-  self.ResultFrame := TFrameResult.Create(self);
+  self.FResultFrame := TFrameResult.Create(self);
   DeleteTaskJKID := '';
 end;
 
@@ -150,11 +150,11 @@ begin
   FAddFrame.OnClose := OnAddFrameClosed;
 end;
 
-procedure TFrameTaskManager.SetResultFrame(const Value: TFrameResult);
+{procedure TFrameTaskManager.SetResultFrame(const Value: TFrameResult);
 begin
   FResultFrame := Value;
   FResultFrame.Parent := self;
-end;
+end; }
 
 procedure TFrameTaskManager.Timer1Timer(Sender: TObject);
 begin

@@ -1,14 +1,16 @@
 inherited FrameCrashManager: TFrameCrashManager
-  Width = 688
+  Width = 451
+  Height = 305
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 688
+    Width = 451
+    Height = 305
     inherited cxGrid1: TcxGrid
-      Width = 662
-      ExplicitWidth = 662
+      Width = 523
+      ExplicitWidth = 523
     end
     inherited BtnAdd: TcxButton
-      Left = 645
-      ExplicitLeft = 645
+      Left = 506
+      ExplicitLeft = 506
     end
   end
   inherited cxdtrpstry1: TcxEditRepository

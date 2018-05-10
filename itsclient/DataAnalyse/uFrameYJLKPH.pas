@@ -27,7 +27,7 @@ uses
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, cxGridLevel, cxClasses,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView, cxGridDBTableView,
-  cxGrid, dxLayoutControl, dxLayoutcxEditAdapters, dxpicdata,
+  cxGrid, dxLayoutControl, dxLayoutcxEditAdapters,
   dxLayoutControlAdapters, cxContainer, Vcl.ComCtrls, dxCore, cxDateUtils,
   Vcl.Menus,
   Vcl.StdCtrls, cxButtons, cxTextEdit, cxDropDownEdit, cxMaskEdit, cxCalendar,
@@ -50,7 +50,6 @@ type
     procedure cxButton1Click(Sender: TObject);
   private
     { Private declarations }
-    FDetail: TdxFramePicData;
   protected
     procedure LoadData; override;
   public

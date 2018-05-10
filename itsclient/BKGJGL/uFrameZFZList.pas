@@ -32,8 +32,8 @@ uses
   dxLayoutControlAdapters, cxContainer, Vcl.ComCtrls, dxCore, cxDateUtils,
   Vcl.Menus,
   Vcl.StdCtrls, cxButtons, cxTextEdit, cxDropDownEdit, cxMaskEdit, cxCalendar,
-  cxEditRepositoryItems, sDialogs, uFrameSignBase, uEntity, dxPicData,
-  uFrameZFZ, System.Actions, Vcl.ActnList;
+  cxEditRepositoryItems, sDialogs, uFrameSignBase, uEntity,
+  uFrameZFZ, System.Actions, Vcl.ActnList, cxLabel;
 
 type
   TFrameZFZList = class(TToolGridFrame)
@@ -54,7 +54,6 @@ type
     procedure btnSearchClick(Sender: TObject);
     procedure btnNewClick(Sender: TObject);
   private
-    FDetail: TdxFramePicData;
     FFrameZFZ: TFrameZFZ;
     procedure HideZFZ;
     procedure ShowEdit(item: TVehCheck);

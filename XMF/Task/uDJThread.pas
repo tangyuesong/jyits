@@ -187,8 +187,8 @@ begin
 
     yyyymm := formatdatetime('yyyymm', Now);
     dd := formatdatetime('dd', Now);
-    pass.FWQDZ := Format('%s/%s/%s/%/', [FConfig.scurl, yyyymm, dd, pass.kdbh]);
-    localPath := Format('%s/%s/%s/%/', [FConfig.sclj, yyyymm, dd, pass.kdbh]);
+    pass.FWQDZ := Format('%s/%s/%s/%s/', [FConfig.scurl, yyyymm, dd, pass.kdbh]);
+    localPath := Format('%s\%s\%s\%s\', [FConfig.sclj, yyyymm, dd, pass.kdbh]);
     if ProcessPicture(pass, localPath) then
     begin
       pass.tp1 := pass.KDBH + pass.GCXH + FConfig.szfl + '_1.jpg';
