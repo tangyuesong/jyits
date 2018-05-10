@@ -1,21 +1,21 @@
 inherited ToolVioGZGL: TToolVioGZGL
-  Width = 673
+  Width = 778
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 673
+    Width = 778
     Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 647
-      Height = 219
-      TabOrder = 6
+      Width = 787
+      Height = 174
+      TabOrder = 7
       ExplicitTop = 45
-      ExplicitWidth = 647
-      ExplicitHeight = 219
+      ExplicitWidth = 787
+      ExplicitHeight = 174
       inherited GridView: TcxGridDBTableView
-        Navigator.Visible = True
+        OptionsData.Editing = False
       end
     end
     object cxDateEdit1: TcxDateEdit [1]
@@ -42,7 +42,7 @@ inherited ToolVioGZGL: TToolVioGZGL
       Width = 121
     end
     object ChkJm: TcxCheckBox [3]
-      Left = 424
+      Left = 566
       Top = 13
       Caption = #21551#21160#21152#23494
       Style.HotTrack = False
@@ -50,74 +50,88 @@ inherited ToolVioGZGL: TToolVioGZGL
       StyleDisabled.LookAndFeel.SkinName = 'Office2013White'
       StyleFocused.LookAndFeel.SkinName = 'Office2013White'
       StyleHot.LookAndFeel.SkinName = 'Office2013White'
-      TabOrder = 3
+      TabOrder = 4
       Transparent = True
     end
     object btnSearch: TcxButton [4]
-      Left = 501
+      Left = 643
       Top = 13
       Width = 75
       Height = 25
       Caption = #26597#35810
       OptionsImage.ImageIndex = 901
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 4
+      TabOrder = 5
       OnClick = btnSearchClick
     end
     object BtnExport2: TcxButton [5]
-      Left = 583
+      Left = 725
       Top = 13
       Width = 75
       Height = 25
-      Caption = #23548#20986
+      Caption = #25171#21360
       OptionsImage.ImageIndex = 66
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 5
+      TabOrder = 6
       OnClick = BtnExport2Click
     end
-    object cbblx: TcxComboBox [6]
-      Left = 341
+    inherited cbbPagesize: TcxComboBox
+      Top = 226
+      TabOrder = 8
+      ExplicitTop = 226
+    end
+    inherited btnFirstPage: TcxButton
+      Top = 226
+      TabOrder = 9
+      ExplicitTop = 226
+    end
+    inherited btnPriorPage: TcxButton
+      Top = 226
+      TabOrder = 10
+      ExplicitTop = 226
+    end
+    inherited edtPageIndex: TcxTextEdit
+      Top = 226
+      TabOrder = 11
+      ExplicitTop = 226
+    end
+    inherited btnnextPage: TcxButton
+      Top = 226
+      TabOrder = 12
+      ExplicitTop = 226
+    end
+    inherited btnLastPage: TcxButton
+      Top = 226
+      TabOrder = 13
+      ExplicitTop = 226
+    end
+    inherited lbCount: TcxLabel
+      Top = 254
+      ExplicitTop = 254
+    end
+    object edtNum: TcxTextEdit [13]
+      Left = 371
+      Top = 13
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 2
+      Text = '50'
+      Height = 21
+      Width = 75
+    end
+    object cbblx: TcxComboBox [14]
+      Left = 483
       Top = 13
       AutoSize = False
       Properties.DropDownListStyle = lsEditFixedList
       Properties.Items.Strings = (
-        #26410#23548#20986
-        #24050#23548#20986)
+        #26410#25171#21360
+        #24050#25171#21360)
       Style.HotTrack = False
-      TabOrder = 2
-      Text = #26410#23548#20986
+      TabOrder = 3
+      Text = #26410#25171#21360
       Height = 21
       Width = 76
-    end
-    inherited cbbPagesize: TcxComboBox
-      Top = 271
-      TabOrder = 7
-      ExplicitTop = 271
-    end
-    inherited btnFirstPage: TcxButton
-      Top = 271
-      TabOrder = 8
-      ExplicitTop = 271
-    end
-    inherited btnPriorPage: TcxButton
-      Top = 271
-      TabOrder = 9
-      ExplicitTop = 271
-    end
-    inherited edtPageIndex: TcxTextEdit
-      Top = 271
-      TabOrder = 10
-      ExplicitTop = 271
-    end
-    inherited btnnextPage: TcxButton
-      Top = 271
-      TabOrder = 11
-      ExplicitTop = 271
-    end
-    inherited btnLastPage: TcxButton
-      Top = 271
-      TabOrder = 12
-      ExplicitTop = 271
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
@@ -147,11 +161,12 @@ inherited ToolVioGZGL: TToolVioGZGL
       Parent = dxLayoutGroup2
       CaptionOptions.Text = 'cxCheckBox2'
       CaptionOptions.Visible = False
+      Visible = False
       Control = ChkJm
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 70
       ControlOptions.ShowBorder = False
-      Index = 3
+      Index = 4
     end
     object dxLayoutItem12: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -161,7 +176,7 @@ inherited ToolVioGZGL: TToolVioGZGL
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 4
+      Index = 5
     end
     object dxLayoutItem1: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -171,15 +186,25 @@ inherited ToolVioGZGL: TToolVioGZGL
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 5
+      Index = 6
+    end
+    object dxLayoutItem4: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #25968#37327
+      Control = edtNum
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 75
+      ControlOptions.ShowBorder = False
+      Index = 2
     end
     object dxLayoutItem2: TdxLayoutItem
       Parent = dxLayoutGroup2
+      CaptionOptions.Text = #31867#22411
       Control = cbblx
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 76
       ControlOptions.ShowBorder = False
-      Index = 2
+      Index = 3
     end
   end
   inline FrameWFGZ1: TFrameWFGZ [1]
@@ -391,6 +416,40 @@ inherited ToolVioGZGL: TToolVioGZGL
       Visible = ivAlways
       OnClick = btnExportClick
       LargeImageIndex = 66
+    end
+  end
+  object frxReport1: TfrxReport
+    Version = '5.3.14'
+    DotMatrixReport = False
+    IniFile = '\Software\Fast Reports'
+    PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick]
+    PreviewOptions.Zoom = 1.000000000000000000
+    PrintOptions.Printer = 'Default'
+    PrintOptions.PrintOnSheet = 0
+    ReportOptions.CreateDate = 43209.807794363420000000
+    ReportOptions.LastChange = 43209.807794363420000000
+    ScriptLanguage = 'PascalScript'
+    ScriptText.Strings = (
+      'begin'
+      ''
+      'end.')
+    Left = 128
+    Top = 112
+    Datasets = <>
+    Variables = <>
+    Style = <>
+    object Data: TfrxDataPage
+      Height = 1000.000000000000000000
+      Width = 1000.000000000000000000
+    end
+    object Page1: TfrxReportPage
+      PaperWidth = 210.000000000000000000
+      PaperHeight = 297.000000000000000000
+      PaperSize = 9
+      LeftMargin = 10.000000000000000000
+      RightMargin = 10.000000000000000000
+      TopMargin = 10.000000000000000000
+      BottomMargin = 10.000000000000000000
     end
   end
 end

@@ -30,11 +30,12 @@ uses
   cxGridLevel, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, dxLayoutControl, dxLayoutcxEditAdapters,
   dxLayoutControlAdapters, cxContainer, Vcl.ComCtrls, dxCore, cxDateUtils,
-  Vcl.Menus,
+  Vcl.Menus, DateUtils,
   Vcl.StdCtrls, cxButtons, cxCheckBox, cxTextEdit, cxMaskEdit, cxDropDownEdit,
   cxCalendar, Udictionary, dxFrame, uLookUpDataSource, dxDialogBase, UFrameWFGZ,
   uColumnGenerator, UEntity, uRequestItf, uJSONUtils, uGlobal, uCommon, QBAes,
-  sDialogs, cxEditRepositoryItems, System.Actions, Vcl.ActnList;
+  sDialogs, cxEditRepositoryItems, System.Actions, Vcl.ActnList, cxLabel,
+  frxClass;
 
 type
   TToolVioGZGL = class(TToolGridFrame)
@@ -54,8 +55,11 @@ type
     btnExport: TdxBarLargeButton;
     BtnExport2: TcxButton;
     dxLayoutItem1: TdxLayoutItem;
+    dxLayoutItem4: TdxLayoutItem;
+    edtNum: TcxTextEdit;
     cbblx: TcxComboBox;
     dxLayoutItem2: TdxLayoutItem;
+    frxReport1: TfrxReport;
     procedure btnUpdateClick(Sender: TObject);
     procedure btnSearchClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -143,20 +147,25 @@ procedure TToolVioGZGL.btnSearchClick(Sender: TObject);
 var
   s, Param: string;
   hphm, hpzl: string;
-  dic: Tdic;
-  dclx: string;
+  dybj: string;
 begin
   inherited;
+  if StrToIntDef(edtNum.Text, 0) = 0 then
+  begin
+    Application.MessageBox('数量必须大于0', '错误', MB_OK + MB_ICONERROR);
+    Exit;
+  end;
+
   ShowFrameWait;
   vdt := cxDateEdit1.Text;
   vdt2 := FormatDateTime('yyyy/mm/dd', cxDateEdit2.Date + 1);
-  if cbblx.ItemIndex = 1 then
-    dclx := 'Q'
+  if cbblx.ItemIndex = 0 then
+    dybj := '0'
   else
-    dclx := 'W';
-  Param := 'kssj=' + vdt + '&jssj=' + vdt2 + '&dclx=' + dclx;
-  Param := Param + '&cjjg=' + gUser.DWDM;
-  s := TRequestItf.pDbQuery('GETMail', Param);
+    dybj := '1';
+  Param := 'kssj=' + vdt + '&jssj=' + vdt2 + '&dybj=' + dybj;
+  Param := Param + '&num=' + edtNum.Text;
+  s := TRequestItf.pDbQuery('GetJCPTSurveil', Param);
   TJSONUtils.JSONToDataSet(s, FDMemTable1, '');
   FreeFrameWait;
 end;
@@ -197,61 +206,90 @@ end;
 
 procedure TToolVioGZGL.btnExportClick(Sender: TObject);
 var
-  hpzl: string;
-  i: Integer;
-  dm, Param: string;
+  wfsj: TDateTime;
+  y, m, d, h, n, ss, ms: word;
+  yy, mm, dd: String;
+  b: Boolean;
 begin
-  if dlgSave.Execute then
+  if not FDMemTable1.Active or (FDMemTable1.RecordCount = 0) then
   begin
-    ShowFrameWait;
-    if ChkJm.Checked then
-    begin
-      for i := 0 to GridView.ColumnCount - 1 do
-      begin
-        dm := GridView.Columns[i].DataBinding.FieldName;
-        GridView.Columns[i].Caption := dm;
-        if (dm = 'WFXW') or (dm = 'HPZL') then
-          GridView.Columns[i].PropertiesClass := TcxTextEditProperties;
-      end;
-      FDMemTable1.First;
-      FDMemTable1.DisableControls;
-      while not FDMemTable1.Eof do
-      begin
-        FDMemTable1.Edit;
-        FDMemTable1.FieldByName('hphm').AsString :=
-          AesEncrypt(FDMemTable1.FieldByName('hphm').AsString, Expostkey);
-        hpzl := FDMemTable1.FieldByName('hpzl').AsString;
-        if TLZdictionary.gDicMain['HPZL'].ContainsKey(hpzl) then
-          FDMemTable1.FieldByName('hpzl').AsString :=
-            AesEncrypt(trim(TLZdictionary.gDicMain['HPZL'][hpzl]), Expostkey);
-        FDMemTable1.FieldByName('jdcsyr').AsString :=
-          AesEncrypt(FDMemTable1.FieldByName('jdcsyr').AsString, Expostkey);
-        FDMemTable1.FieldByName('wfxw').AsString :=
-          AesEncrypt(FDMemTable1.FieldByName('wfxw').AsString, Expostkey);
-        FDMemTable1.FieldByName('wfdz').AsString :=
-          AesEncrypt(FDMemTable1.FieldByName('wfdz').AsString, Expostkey);
-        FDMemTable1.FieldByName('xh').AsString :=
-          AesEncrypt(FDMemTable1.FieldByName('xh').AsString, Expostkey);
-        FDMemTable1.FieldByName('ZSXXDZ').AsString :=
-          AesEncrypt(FDMemTable1.FieldByName('ZSXXDZ').AsString, Expostkey);
-        FDMemTable1.Post;
-        FDMemTable1.Next;
-      end;
-      FDMemTable1.EnableControls;
-
-    end;
-    Tcommon.ExportGridtoData(ExtractFileExt(dlgSave.FileName),
-      dlgSave.FileName, cxGrid1);
-
-    Param := 'cjjg=' + gUser.DWDM;
-    Param := Param + '&begin_GXSJ=' + vdt + '&end_GXSJ=' + vdt2;
-    TRequestItf.pDbQuery('ModifySurveilBz', Param);
-    GridColumns :=
-      'XH,cjjg,hphm,hpzl,wfdz,wfxw,wfsj,jdcsyr,yzbm,ZSXXDZ, FG, JE, JF';
-    btnSearchClick(nil);
-    FreeFrameWait;
-    Application.MessageBox('导出成功', '提示', MB_OK + MB_ICONINFORMATION);
+    Application.MessageBox('没有数据可以打印', '提示', MB_OK + MB_ICONSTOP);
+    Exit;
   end;
+  b := true;
+  yy := FormatDateTime('yyyy', now());
+  mm := FormatDateTime('mm', now());
+  dd := FormatDateTime('dd', now());
+
+  FDMemTable1.DisableControls;
+  FDMemTable1.First;
+  while not FDMemTable1.Eof do
+  begin
+    self.frxReport1.Clear;
+    self.frxReport1.LoadFromFile(ExtractFilePath(ParamStr(0)) + 'wftzs1.fr3');
+    TfrxMemoView(frxReport1.FindObject('Memo19')).Memo.Text :=
+      FDMemTable1.FieldByName('XH').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo1')).Memo.Text :=
+      FDMemTable1.FieldByName('JDCSYR').AsString;
+
+    TfrxMemoView(frxReport1.FindObject('Memo2')).Memo.Text :=
+      FDMemTable1.FieldByName('HPHM').AsString;
+
+    TfrxMemoView(frxReport1.FindObject('Memo3')).Memo.Text :=
+      FDMemTable1.FieldByName('HPZLMC').AsString;
+
+    wfsj := FDMemTable1.FieldByName('WFSJ').AsDateTime;
+
+    DateUtils.DecodeDateTime(wfsj, y, m, d, h, n, ss, ms);
+
+    TfrxMemoView(frxReport1.FindObject('Memo4')).Memo.Text := IntToStr(y);
+    TfrxMemoView(frxReport1.FindObject('Memo5')).Memo.Text := IntToStr(m);
+    TfrxMemoView(frxReport1.FindObject('Memo6')).Memo.Text := IntToStr(d);
+    TfrxMemoView(frxReport1.FindObject('Memo7')).Memo.Text := IntToStr(h);
+    TfrxMemoView(frxReport1.FindObject('Memo8')).Memo.Text := IntToStr(n);
+    TfrxMemoView(frxReport1.FindObject('Memo9')).Memo.Text :=
+      FDMemTable1.FieldByName('WFDZ').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo10')).Memo.Text :=
+      FDMemTable1.FieldByName('WFXWMC').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo11')).Memo.Text :=
+      FDMemTable1.FieldByName('WFXW').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo12')).Memo.Text :=
+      FDMemTable1.FieldByName('JTF').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo20')).Memo.Text :=
+      FDMemTable1.FieldByName('GTL').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo13')).Memo.Text :=
+      FDMemTable1.FieldByName('STL').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo14')).Memo.Text :=
+      FDMemTable1.FieldByName('JE').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo15')).Memo.Text :=
+      FDMemTable1.FieldByName('JF').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo16')).Memo.Text := yy;
+    TfrxMemoView(frxReport1.FindObject('Memo17')).Memo.Text := mm;
+    TfrxMemoView(frxReport1.FindObject('Memo18')).Memo.Text := dd;
+
+    self.frxReport1.PrepareReport(true);
+    self.frxReport1.PrintOptions.ShowDialog := b; // 第一次显示打印设置窗口
+    if b then
+      b := false;
+    self.frxReport1.Print;
+
+    self.frxReport1.Clear;
+    self.frxReport1.LoadFromFile(ExtractFilePath(ParamStr(0)) + 'wftzs2.fr3');
+    TfrxMemoView(frxReport1.FindObject('Memo1')).Memo.Text :=
+      FDMemTable1.FieldByName('ZSXXDZ').AsString;
+    TfrxMemoView(frxReport1.FindObject('Memo2')).Memo.Text :=
+      FDMemTable1.FieldByName('JDCSYR').AsString;
+
+    self.frxReport1.PrepareReport(true);
+    self.frxReport1.PrintOptions.ShowDialog := b;
+    self.frxReport1.Print;
+
+    TRequestItf.pDbQuery('ModifyJCPTSurveil',
+      'xh=' + FDMemTable1.FieldByName('xh').AsString);
+
+    FDMemTable1.Next;
+  end;
+  FDMemTable1.EnableControls;
 end;
 
 function TToolVioGZGL.GetVIOTZS: TvioTZS;
@@ -264,7 +302,7 @@ begin
   Result.hpzl := FDMemTable1.FieldByName('HPZL').AsString;
   Result.WFDD := FDMemTable1.FieldByName('WFDD').AsString;
   Result.WFXW := FDMemTable1.FieldByName('WFXW').AsString;
-  Result.WFSJ := FDMemTable1.FieldByName('WFSJ').AsString;
+  Result.wfsj := FDMemTable1.FieldByName('WFSJ').AsString;
   Result.JDCSYR := FrameWFGZ1.EdtSYR.Text;
   Result.YZBM1 := FrameWFGZ1.Edtyzbm.Text;
   Result.zsxxdz := FrameWFGZ1.EdtZSXXDZ.Text;;
