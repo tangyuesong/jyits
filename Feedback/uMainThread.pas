@@ -64,6 +64,7 @@ type
     procedure VehCheck;
     procedure DoVehCheck(item: TVehCheck);
     procedure DownloadAlarmVehicle;
+    procedure DownloadSURVEIL;
   protected
     procedure Execute; override;
   public
@@ -110,6 +111,7 @@ begin
     DownloadAlarms;
     if now - FLastUploadTime > OneMinute then
     begin
+      DownloadSURVEIL;
       SignAll;
       FeedbackAll;
       UploadVeh;
@@ -586,7 +588,7 @@ procedure TMainThread.DownloadAlarms;
     s := s + 'insert into T_VIO_TEMP(CJJG, HPHM,HPZL,WFSJ,WFDD,WFXW,CD,PHOTOFILE1,BJ) ';
     s := s + ' select c.CJJG, a.HPHM,a.HPZL,a.GCSJ,Min(c.SBBH) SBBH,''1340'' as WFXW, a.CD, a.URL,''0'' ';
     s := s + ' from ' + tmpTable + ' as a ';
-    s := s + ' inner join S_DEVICE c on a.SBBH=c.JCPTBABH and a.FXLX = c.JCPTBAFX ';
+    s := s + ' inner join S_DEVICE c on a.SBBH=c.JCPTBABH and a.FXLX = c.JCPTBAFX and JCPTVIO = 1';
     s := s + 'where a.BKLX=''04'' ';
     s := s + 'group by c.CJJG, a.HPHM,a.HPZL,a.GCSJ, a.CD, a.URL, a.FXLX ';
     s := s + 'drop table ' + tmpTable;
@@ -735,6 +737,179 @@ begin
       on e: exception do
       begin
         logger.Error('[DownloadAlarmVehicle]:' + e.Message + ' ' + SQL.Text);
+      end;
+    end;
+  end;
+
+  if ss.Count > 0 then
+  begin
+    Save(ss);
+  end;
+  ss.Free;
+end;
+
+procedure TMainThread.DownloadSURVEIL;
+  procedure Save(ss: TStrings);
+  var
+    s, tmpTable: string;
+  begin
+    logger.Info('DownloadSURVEIL: ' + ss.Count.ToString);
+    tmpTable := 'tmp_JCPT_SURVEIL' + FormatDateTime('yymmddhhmmsszzz', now);
+    s := 'create table ' + tmpTable +
+      '(XH	VARCHAR(16) NULL,	YSXH	VARCHAR(16) NULL,	PH	VARCHAR(12) NULL, '
+      +' FXJG	VARCHAR(12) NULL,	FXJGMC	VARCHAR(128) NULL,	ZQMJ	VARCHAR(30) NULL, '
+      +' CLFL	VARCHAR(1) NULL, HPZL	VARCHAR(2) NULL, HPHM	VARCHAR(15) NULL, '
+      +' JDCSYR	VARCHAR(128) NULL, ZSXZQH	VARCHAR(10) NULL, ZSXXDZ	VARCHAR(128) NULL, '
+      +' DH	VARCHAR(50) NULL, LXFS	VARCHAR(128) NULL, SYXZ	VARCHAR(2) NULL, '
+      +' CSYS	VARCHAR(10) NULL, CLPP	VARCHAR(32) NULL,	JTFS	VARCHAR(3) NULL, '
+      +' FZJG	VARCHAR(10) NULL, CLYT	VARCHAR(2) NULL, XCFW	VARCHAR(1) NULL, '
+      +' SBLX	VARCHAR(2) NULL, SBBH	VARCHAR(18) NULL, YSBBH	VARCHAR(18) NULL, '
+      +' QJBH	VARCHAR(18) NULL, XZQH	VARCHAR(6) NULL, DLLX	VARCHAR(2) NULL, '
+      +' GLXZDJ	VARCHAR(1) NULL, WFDZ	VARCHAR(128) NULL, WFSJ	DATETIME  NULL, '
+      +' WFDD	VARCHAR(5) NULL, LDDM	VARCHAR(4) NULL, DDMS	VARCHAR(3) NULL, '
+      +' WFSJ1	DATETIME NULL, WFDD1	VARCHAR(5) NULL, LDDM1	VARCHAR(4) NULL, '
+      +' DDMS1	VARCHAR(3) NULL, WFXW	VARCHAR(5) NULL, SCZ REAL  NULL, '
+      +' BZZ	REAL NULL, TZSH	VARCHAR(15) NULL, TZBJ	VARCHAR(1) NULL, '
+      +' TZRQ	DATETIME NULL, LRR	VARCHAR(30) NULL, LRBM	VARCHAR(12) NULL, '
+      +' LRSJ	DATETIME NULL, SCBJ	VARCHAR(1) NULL, SCSJ	DATETIME NULL, '
+      +' XXLY	VARCHAR(1) NULL, GXSJ	DATETIME NULL, BZ	VARCHAR(256) NULL, '
+      +' WFSPDZ	VARCHAR(512) NULL, YSZT	VARCHAR(1) NULL, SXR	VARCHAR(30) NULL, '
+      +' SXBM	VARCHAR(12) NULL, SXSJ	DATETIME NULL, SHR	VARCHAR(30) NULL, '
+      +' SHBM	VARCHAR(12) NULL, SHSJ	DATETIME NULL, CSBJ	VARCHAR(1) NULL, '
+      +' BJCSBJ	VARCHAR(1) NULL, TXBJ	VARCHAR(1) NULL)';
+    FSQLHelper.ExecuteSQL(s);
+
+    s := ss.Text;
+    s := copy(s, 1, length(s) - 3); // »Ø³µ»»ÐÐ
+    s := 'insert into ' + tmpTable +
+      '(XH,YSXH,PH,FXJG,FXJGMC,ZQMJ,CLFL,HPZL,HPHM,JDCSYR,ZSXZQH,ZSXXDZ,DH,LXFS,SYXZ,'
+      +'CSYS,CLPP,JTFS,FZJG,CLYT,XCFW,SBLX,SBBH,YSBBH,QJBH,XZQH,DLLX,GLXZDJ,WFDZ,WFSJ,WFDD'
+      +',LDDM,DDMS,WFSJ1,WFDD1,LDDM1,DDMS1,WFXW,SCZ,BZZ,TZSH,TZBJ,TZRQ,LRR,LRBM,LRSJ,SCBJ'
+      +',SCSJ,XXLY,GXSJ,BZ,WFSPDZ,YSZT,SXR,SXBM,SXSJ,SHR,SHBM,SHSJ,CSBJ,BJCSBJ,TXBJ)values' + s;
+    FSQLHelper.ExecuteSQL(s);
+
+    s := 'insert into T_JCPT_VIO_SURVEIL(XH,YSXH,PH,FXJG,FXJGMC,ZQMJ,CLFL,HPZL,HPHM,JDCSYR,ZSXZQH,'
+      +'ZSXXDZ,DH,LXFS,SYXZ,CSYS,CLPP,JTFS,FZJG,CLYT,XCFW,SBLX,SBBH,YSBBH,QJBH,XZQH,DLLX,GLXZDJ,'
+      +'WFDZ,WFSJ,WFDD,LDDM,DDMS,WFSJ1,WFDD1,LDDM1,DDMS1,WFXW,SCZ,BZZ,TZSH,TZBJ,TZRQ,LRR,LRBM,LRSJ,'
+      +'SCBJ,SCSJ,XXLY,GXSJ,BZ,WFSPDZ,YSZT,SXR,SXBM,SXSJ,SHR,SHBM,SHSJ,CSBJ,BJCSBJ,TXBJ) ';
+    s := s + 'select a.XH,a.YSXH,a.PH,a.FXJG,a.FXJGMC,a.ZQMJ,a.CLFL,a.HPZL,a.HPHM,a.JDCSYR,a.ZSXZQH,a.ZSXXDZ '
+      +',a.DH,a.LXFS,a.SYXZ,a.CSYS,a.CLPP,a.JTFS,a.FZJG,a.CLYT,a.XCFW,a.SBLX,a.SBBH,a.YSBBH,a.QJBH,a.XZQH,a.DLLX,a.GLXZDJ,a.WFDZ,a.WFSJ,'
+      +'a.WFDD,a.LDDM,a.DDMS,a.WFSJ1,a.WFDD1,a.LDDM1,a.DDMS1,a.WFXW,a.SCZ,a.BZZ,a.TZSH,a.TZBJ,a.TZRQ,a.LRR,a.LRBM,a.LRSJ,a.SCBJ,a.SCSJ,'
+      +'a.XXLY,a.GXSJ,a.BZ,a.WFSPDZ,a.YSZT,a.SXR,a.SXBM,a.SXSJ,a.SHR,a.SHBM,a.SHSJ,a.CSBJ,a.BJCSBJ,a.TXBJ';
+    s := s + ' from ' + tmpTable + '  a ';
+    s := s + ' left join T_JCPT_VIO_SURVEIL  b on a.YSXH=b.YSXH ';
+    s := s + ' where b.YSXH is null ';
+    s := s + ' drop table ' + tmpTable;
+    FSQLHelper.ExecuteSQL(s);
+
+    logger.Info('DownloadSURVEIL OK');
+  end;
+var
+  ss: TStrings;
+  s: string;
+  maxGXSJ: double;
+begin
+  s := FSQLHelper.GetSinge('select max(gxsj) from T_JCPT_VIO_SURVEIL');
+  if s = '' then
+    maxGXSJ := now - 1
+  else
+    maxGXSJ := vartodatetime(s);
+  ss := TStringList.Create;
+  with FOraQuery do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select XH,YSXH,PH,FXJG,FXJGMC,ZQMJ,CLFL,HPZL,HPHM,JDCSYR,ZSXZQH,ZSXXDZ');
+    SQL.Add(',DH,LXFS,SYXZ,CSYS,CLPP,JTFS,FZJG,CLYT,XCFW,SBLX');
+    SQL.Add(',SBBH,YSBBH,QJBH,XZQH,DLLX,GLXZDJ,WFDZ,WFSJ,WFDD');
+    SQL.Add(',LDDM,DDMS,WFSJ1,WFDD1,LDDM1,DDMS1,WFXW,SCZ,BZZ,TZSH');
+    SQL.Add(',TZBJ,TZRQ,LRR,LRBM,LRSJ,SCBJ,SCSJ,XXLY,GXSJ,BZ,WFSPDZ');
+    SQL.Add(',YSZT,SXR,SXBM,SXSJ,SHR,SHBM,SHSJ,CSBJ,BJCSBJ,TXBJ ');
+    SQL.Add('from RM.VIO_SURVEIL ');
+    SQL.Add('where GXSJ > to_date(''' + FormatDateTime('yyyy-mm-dd hh:mm',
+      maxGXSJ) + ''',''yyyy-mm-dd hh24:mi'') ');
+    try
+      if not FOraConn.Connected then
+        FOraConn.Open;
+      Open;
+      DisableControls;
+      while not EOF do
+      begin
+        ss.Add('(' + FieldByName('XH').AsString.QuotedString+','+
+          FieldByName('YSXH').AsString.QuotedString+','+
+          FieldByName('PH').AsString.QuotedString+','+
+          FieldByName('FXJG').AsString.QuotedString+','+
+          FieldByName('FXJGMC').AsString.QuotedString+','+
+          FieldByName('ZQMJ').AsString.QuotedString+','+
+          FieldByName('CLFL').AsString.QuotedString+','+
+          FieldByName('HPZL').AsString.QuotedString+','+
+          FieldByName('HPHM').AsString.QuotedString+','+
+          FieldByName('JDCSYR').AsString.QuotedString+','+
+          FieldByName('ZSXZQH').AsString.QuotedString+','+
+          FieldByName('ZSXXDZ').AsString.QuotedString+','+
+          FieldByName('DH').AsString.QuotedString+','+
+          FieldByName('LXFS').AsString.QuotedString+','+
+          FieldByName('SYXZ').AsString.QuotedString+','+
+          FieldByName('CSYS').AsString.QuotedString+','+
+          FieldByName('CLPP').AsString.QuotedString+','+
+          FieldByName('JTFS').AsString.QuotedString+','+
+          FieldByName('FZJG').AsString.QuotedString+','+
+          FieldByName('CLYT').AsString.QuotedString+','+
+          FieldByName('XCFW').AsString.QuotedString+','+
+          FieldByName('SBLX').AsString.QuotedString+','+
+          FieldByName('SBBH').AsString.QuotedString+','+
+          FieldByName('YSBBH').AsString.QuotedString+','+
+          FieldByName('QJBH').AsString.QuotedString+','+
+          FieldByName('XZQH').AsString.QuotedString+','+
+          FieldByName('DLLX').AsString.QuotedString+','+
+          FieldByName('GLXZDJ').AsString.QuotedString+','+
+          FieldByName('WFDZ').AsString.QuotedString+','+
+          FieldByName('WFSJ').AsString.QuotedString+','+
+          FieldByName('WFDD').AsString.QuotedString+','+
+          FieldByName('LDDM').AsString.QuotedString+','+
+          FieldByName('DDMS').AsString.QuotedString+','+
+          FieldByName('WFSJ1').AsString.QuotedString+','+
+          FieldByName('WFDD1').AsString.QuotedString+','+
+          FieldByName('LDDM1').AsString.QuotedString+','+
+          FieldByName('DDMS1').AsString.QuotedString+','+
+          FieldByName('WFXW').AsString.QuotedString+','+
+          FieldByName('SCZ').AsString.QuotedString+','+
+          FieldByName('BZZ').AsString.QuotedString+','+
+          FieldByName('TZSH').AsString.QuotedString+','+
+          FieldByName('TZBJ').AsString.QuotedString+','+
+          FieldByName('TZRQ').AsString.QuotedString+','+
+          FieldByName('LRR').AsString.QuotedString+','+
+          FieldByName('LRBM').AsString.QuotedString+','+
+          FieldByName('LRSJ').AsString.QuotedString+','+
+          FieldByName('SCBJ').AsString.QuotedString+','+
+          FieldByName('SCSJ').AsString.QuotedString+','+
+          FieldByName('XXLY').AsString.QuotedString+','+
+          FieldByName('GXSJ').AsString.QuotedString+','+
+          FieldByName('BZ').AsString.QuotedString+','+
+          FieldByName('WFSPDZ').AsString.QuotedString+','+
+          FieldByName('YSZT').AsString.QuotedString+','+
+          FieldByName('SXR').AsString.QuotedString+','+
+          FieldByName('SXBM').AsString.QuotedString+','+
+          FieldByName('SXSJ').AsString.QuotedString+','+
+          FieldByName('SHR').AsString.QuotedString+','+
+          FieldByName('SHBM').AsString.QuotedString+','+
+          FieldByName('SHSJ').AsString.QuotedString+','+
+          FieldByName('CSBJ').AsString.QuotedString+','+
+          FieldByName('BJCSBJ').AsString.QuotedString+','+
+          FieldByName('TXBJ').AsString.QuotedString+ '),');
+        if ss.Count = 999 then
+        begin
+          Save(ss);
+          ss.Clear;
+        end;
+
+        Next;
+      end;
+      Close;
+    except
+      on e: exception do
+      begin
+        logger.Error('[Download_VIO_SURVEIL]:' + e.Message + ' ' + SQL.Text);
       end;
     end;
   end;
