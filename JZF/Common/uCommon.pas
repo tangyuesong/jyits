@@ -137,6 +137,11 @@ begin
     if Copy(gHeartbeatUrl, Length(gHeartbeatUrl), 1) <> '/' then
       gHeartbeatUrl := gHeartbeatUrl + '/';
 
+    gUploadHisCfg.ACTIVATE:= ReadString('UPLOADHIS', 'ACTIVATE', '0') = '1';
+    gUploadHisCfg.DAY:= ReadString('UPLOADHIS', 'DAY', '0');
+    gUploadHisCfg.TIME:= ReadString('UPLOADHIS', 'TIME', '');
+    gUploadHisCfg.WFXW:= ReadString('UPLOADHIS', 'WFXW', '');
+
     // gDeviceMonitorSJHM := ReadString('DeviceMonitor', 'SJHM', '');
 
     ReadSectionValues('DeviceMonitor', ts);

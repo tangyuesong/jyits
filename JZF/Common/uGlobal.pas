@@ -32,6 +32,13 @@ type
     CSYS: string;
   End;
 
+  TUploadHisCfg = Record
+    ACTIVATE: Boolean;
+    DAY: String;
+    TIME: String;
+    WFXW: String;
+  End;
+
 var
   gSQLHelper: TSQLHelper;
   gLogger: TLogger;
@@ -62,6 +69,8 @@ var
   gToken: String;
   // gDeviceMonitorSJHM: string;
   gDeviceMonitorSJHM: TDictionary<String, String>;
+
+  gUploadHisCfg: TUploadHisCfg;
 
 implementation
 

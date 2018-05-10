@@ -81,7 +81,7 @@ begin
   ActiveX.CoInitialize(nil);
   gLogger.Info('Upload Vio Thread Start');
   FWhiteList := TStringList.Create;
-  UploadVioAutoCjjg();
+  // UploadVioAutoCjjg();
   UploadVioDateDiff();
   FWhiteList.Free;
   gLogger.Info('Upload Vio Thread End');
@@ -97,7 +97,8 @@ begin
     s := ' select DWDM from S_DEPT where SCMS=''3'' '
   else
     s := 'select distinct CJJG from T_VIO_HIS where ZT=''2'' and ' +
-      ' DATEDIFF(dd, WFSJ, getdate())>7 and DATEDIFF(dd, WFSJ, getdate())<=15 ';
+      ' DATEDIFF(dd, WFSJ, getdate())>' + gUploadHisCfg.DAY +
+      ' and DATEDIFF(dd, WFSJ, getdate())<=15 ';
   with gSQLHelper.Query(s) do
   begin
     while not Eof do
@@ -138,7 +139,7 @@ begin
   Param := 'Count=30&IP=' + gAppIP;
   Param := Param + '&CJJG=' + cjjg;
   if dd <> '' then
-    Param := Param + '&dd=7';
+    Param := Param + '&dd=' + dd;
   while True do
   begin
     s := TRequestItf.DbQuery('GetLockVioList', Param);
@@ -185,16 +186,16 @@ var
   s, cjjg: String;
   cjjgs: TStrings;
 begin
-  gLogger.Info('[UploadVio]上传一周前的违法 Start');
+  gLogger.Info('[UploadVio]Start');
   FWhiteList := TStringList.Create;
   cjjgs := GetCjjgList(False);
   if cjjgs.Count = 0 then
-    gLogger.Info('[UploadVio] 不存在一周未上传的违法');
+    gLogger.Info('[UploadVio] 不存在未上传的违法');
   for cjjg in cjjgs do
   begin
     gLogger.Info('[UploadVio] Upload CJJG: ' + cjjg);
     LoadWhiteList(cjjg);
-    UploadVio(cjjg, '7');
+    UploadVio(cjjg, gUploadHisCfg.DAY);
   end;
   cjjgs.Free;
   gLogger.Info('[UploadVio]上传一周前的违法 End');

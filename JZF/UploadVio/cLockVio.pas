@@ -2,7 +2,8 @@ unit cLockVio;
 
 interface
 
-uses SysUtils, Classes, uRequestItf, uJsonUtils, uCommon, Soap.EncdDecd;
+uses SysUtils, Classes, uRequestItf, uJsonUtils, uCommon, Soap.EncdDecd,
+  uGlobal;
 
 type
 
@@ -70,6 +71,7 @@ type
       var msg: String);
     function AnalysisVioUploadResult(s: String): String;
     function WriteVio(json: String): String;
+    function IsXCCF(hphm, hpzl, wfxw, wfsj: String): Boolean;
   public
     function UploadVio(id: String; whiteList: TStrings): String;
     destructor Destroy; override;
@@ -86,8 +88,28 @@ end;
 
 function TDealLockVio.IsWhite(hphm, hpzl, wfsj: String): Boolean;
 begin
-  Result := TRequestItf.DbQuery('GetT_VIO_WHILELIST', 'zt=1&end_lrsj=' +
-    wfsj + '&hphm=' + hphm + '&hpzl=' + hpzl) <> '';
+  Result := TRequestItf.DbQuery('GetT_VIO_WHILELIST', 'zt=1&end_lrsj=' + wfsj +
+    '&hphm=' + hphm + '&hpzl=' + hpzl) <> '';
+end;
+
+function TDealLockVio.IsXCCF(hphm, hpzl, wfxw, wfsj: String): Boolean;
+var
+  param: String;
+  sj: TDateTime;
+begin
+  // 是否现场已经处罚
+  Result := False;
+  if pos(',' + wfxw + ',', ',' + gUploadHisCfg.wfxw + ',') > 0 then
+  begin
+    sj := TCommon.StringToDT(wfsj);
+    param := 'hphm=' + hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString +
+      ' and wfsj>''' + formatDatetime('YYYY/MM/DD HH:NN:SS', sj - 1 / 24) +
+      ''' and wfsj < ''' + formatDatetime('YYYY/MM/DD HH:NN:SS',
+      sj + 1 / 24) + '''';
+
+    Result := gSQLHelper.ExistsRecord('T_VIO_Force', param) or
+      gSQLHelper.ExistsRecord('T_VIO_Violation', param);
+  end;
 end;
 
 procedure TDealLockVio.UpdateVioState(id, zt, bz: String; sxh: String = '');
@@ -148,27 +170,27 @@ var
 begin
   tmpTs := TStringList.Create;
   tmpTs.Delimiter := ',';
-  if Pos('"head":{', json) > 0 then
+  if pos('"head":{', json) > 0 then
   begin
-    json := Copy(json, Pos('"head":{', json) + 8, Length(json));
-    head := Copy(json, 1, Pos('}', json) - 1);
-    json := Copy(json, Pos('}', json) + 1, Length(json));
+    json := Copy(json, pos('"head":{', json) + 8, Length(json));
+    head := Copy(json, 1, pos('}', json) - 1);
+    json := Copy(json, pos('}', json) + 1, Length(json));
     head := StringReplace(head, '"', '', [rfReplaceAll]);
     tmpTs.DelimitedText := head;
     for i := 0 to tmpTs.Count - 1 do
     begin
-      if Pos('code', tmpTs[i]) = 1 then
-        code := Trim(Copy(tmpTs[i], Pos(':', tmpTs[i]) + 1, 10))
-      else if Pos('msg:', tmpTs[i]) = 1 then
+      if pos('code', tmpTs[i]) = 1 then
+        code := Trim(Copy(tmpTs[i], pos(':', tmpTs[i]) + 1, 10))
+      else if pos('msg:', tmpTs[i]) = 1 then
       begin
-        s := Trim(Copy(tmpTs[i], Pos(':', tmpTs[i]) + 1, Length(tmpTs[i])));
+        s := Trim(Copy(tmpTs[i], pos(':', tmpTs[i]) + 1, Length(tmpTs[i])));
         if Length(s) >= 5 then
           msg := s;
       end
-      else if Pos('msg1', tmpTs[i]) = 1 then
+      else if pos('msg1', tmpTs[i]) = 1 then
       begin
         if Length(msg) < 5 then
-          msg := Trim(Copy(tmpTs[i], Pos(':', tmpTs[i]) + 1, Length(tmpTs[i])));
+          msg := Trim(Copy(tmpTs[i], pos(':', tmpTs[i]) + 1, Length(tmpTs[i])));
       end;
     end;
   end;
@@ -180,7 +202,7 @@ var
   s: String;
 begin
   Result := '';
-   s := Trim(TRequestItf.DbQuery('GetLockVio', 'systemid=' + id));
+  s := Trim(TRequestItf.DbQuery('GetLockVio', 'systemid=' + id));
   if s = '' then
   begin
     UpdateVioState(id, '14', '违法记录或违法设备不存在');
@@ -210,6 +232,13 @@ begin
     begin
       UpdateVioState(id, 'B', '');
       Result := '上传成功B';
+      exit;
+    end;
+
+    if IsXCCF(vio.hphm, vio.hpzl, vio.wfxw, vio.sj) then
+    begin
+      UpdateVioState(id, '11', '现场已处罚');
+      Result := '上传失败[现场已处罚]';
       exit;
     end;
 
