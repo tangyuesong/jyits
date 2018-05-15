@@ -75,6 +75,7 @@ begin
   SQLHelper.OnError := self.SQLError;
   ini.Free;
   FScanThread := TScanThread.Create;
+  logger.Info('start');
 end;
 
 procedure TBorderInsideSvc.ServiceStop(Sender: TService; var Stopped: Boolean);
@@ -82,6 +83,7 @@ begin
   FScanThread.Stop;
   Sleep(1000);
   SQLHelper.Free;
+  logger.Info('stop');
   logger.Free;
 end;
 

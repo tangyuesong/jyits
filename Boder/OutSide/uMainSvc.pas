@@ -129,9 +129,8 @@ begin
   action := ARequestInfo.Document.Substring(1);
   params := ARequestInfo.UnparsedParams;
   stream := ARequestInfo.PostStream;
-  logger.Info('Command: [' + ip + '][' + action+']' + params);
+  logger.Info('[' + ip + ']' + action + params);
   id := InsertToDB(action, params, stream);
-  logger.Debug('Command: [' + ip + '][' + action+'] 1 ');
   if id <> '' then
   begin
     response := GetResponse(id);
@@ -142,7 +141,6 @@ begin
   end
   else
     AResponseInfo.ContentText := FormatResponse('Request Failed(ERROR: 60512)');
-  logger.Debug('Command: [' + ip + '][' + action+'] 2 ');
 end;
 
 procedure TBoderSvc.IdHTTPServer1CreatePostStream(AContext: TIdContext;
@@ -159,35 +157,31 @@ end;
 function TBoderSvc.InsertToDB(cmd, body: string; stream: TStream): string;
 var
   SQL, sysid: string;
-  param: TFDParam;
   params: TFDParams;
 begin
   result := '';
   sysid := TGuid.NewGuid.ToString;
   params := TFDParams.Create;
-  param := params.Add;
-  //if (stream = nil)and(body.Length<4000) then
-  //begin
-  //  SQL := 'insert into T_IN(sysid, cmd, body)VALUES('''
-  //    + sysid + ''',''' + cmd + ''',:body)';
-  //  param.AsString := body;
-  //  if SQLHelper.ExecuteSql1(SQL, params) then
-  //    result := sysid;
-  //end
-  //else begin
-  if stream = nil then
+  params.Add('id', sysid);
+  params.Add('cmd', cmd);
+  if (stream = nil)and(body.Length<4000) then
   begin
-    stream := TStringStream.Create(body);
+    SQL := 'insert into T_IN(sysid, cmd, body)VALUES(:id,:cmd,:body)';
+    params.Add('body', body);
+  end
+  else begin
+    if stream = nil then
+    begin
+      stream := TStringStream.Create(body);
+    end;
+    stream.Position := 0;
+    params.Add('text', '').LoadFromStream(stream, TFieldType.ftBlob);
+    stream.Free;
+    SQL := 'insert into T_IN(sysid, cmd, text)VALUES(:id,:cmd,:text)';
+    logger.Debug('BLOB');
   end;
-  stream.Position := 0;
-  param.LoadFromStream(stream, TFieldType.ftBlob);
-  SQL := 'insert into T_IN(sysid, cmd, text)VALUES('''
-    + sysid + ''',''' + cmd + ''',:text)';
   if SQLHelper.ExecuteSql1(SQL, params) then
     result := sysid;
-  stream.Free;
-  //end;
-  param.Free;
   params.Free;
 end;
 
@@ -220,6 +214,8 @@ begin
         break;
       end;
       Close;
+      Connection.Close;
+      Connection.Free;
       Free;
     end;
   end;

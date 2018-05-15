@@ -34,15 +34,12 @@ var
   url, response: string;
 begin
   ActiveX.CoInitialize(nil);
-  logger.Debug(FIn.CMD + ' 1');
   CoInitializeEx(Nil, COINIT_MULTITHREADED);
   url := QTZHost+FIn.CMD + '?' + FIn.BODY;
   if FIn.LBLOB <> '' then
     url := url + FIn.LBLOB;
   response := HttpGet(url);
-  logger.Debug(FIn.CMD + ' 2');
   SaveResult(response);
-  logger.Debug(FIn.CMD + ' 3');
 end;
 
 function TBllThread.HttpGet(url: string): string;
@@ -67,27 +64,26 @@ var
   sql: string;
   stream: TStringStream;
   params: TFDParams;
-  param: TFDParam;
 begin
   if json = '' then
     json := '{"head":{"code":"0","message":"no data"}';
-  //if json.Length < 4000 then
-  //begin
-  //  sql := 'insert into T_OUT(SYSID,BODY)VALUES(''' + FIn.SYSID + ''',''' + json + ''')';
-  //  SQLHelper.ExecuteSql(sql);
-  //end
-  //else begin
-  stream := TStringStream.Create(json);
   params := TFDParams.Create;
-  param := params.Add;
-  stream.Position := 0;
-  param.LoadFromStream(stream, TFieldType.ftBlob);
-  SQL := 'insert into T_OUT(sysid, text)VALUES(''' + FIn.SYSID + ''',:text)';
+  params.Add('id', FIn.SYSID);
+  if json.Length < 4000 then
+  begin
+    sql := 'insert into T_OUT(SYSID,BODY)VALUES(:id,:text)';
+    params.Add('text', json);
+  end
+  else begin
+    logger.Info('BLOB');
+    stream := TStringStream.Create(json);
+    stream.Position := 0;
+    params.Add('text', '').LoadFromStream(stream, TFieldType.ftBlob);
+    stream.Free;
+    SQL := 'insert into T_OUT(sysid, text)VALUES(:id,:text)';
+  end;
   SQLHelper.ExecuteSql1(SQL, params);
-  param.Free;
   params.Free;
-  stream.Free;
-  //end;
 end;
 
 end.

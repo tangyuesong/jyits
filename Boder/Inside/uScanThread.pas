@@ -3,7 +3,8 @@ unit uScanThread;
 interface
 
 uses
-  System.Classes, ActiveX, DB, System.Generics.Collections, uCommon, uBllThread;
+  System.Classes, ActiveX, DB, System.Generics.Collections, System.NetEncoding,
+  uCommon, uBllThread;
 
 type
   TScanThread = class(TThread)
@@ -53,6 +54,7 @@ begin
       AIn.SYSID := Fields[0].AsString;
       AIn.CMD := Fields[1].AsString;
       AIn.BODY := Fields[2].AsString;
+      //AIn.BODY := TNetEncoding.Base64.Decode(AIn.BODY);
       AIn.LBLOB := '';
       if not Fields[3].IsNull then
       begin
@@ -62,10 +64,12 @@ begin
         stream.Free;
       end;
       list.Add(AIn);
-
+      logger.Info(AIn.CMD + AIn.BODY);
       Next;
     end;
     Close;
+    Connection.Close;
+    Connection.Free;
     Free;
   end;
   for AIn in list do

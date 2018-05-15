@@ -33,7 +33,6 @@ type
     FNT: boolean;
     FConnection: TFDConnection;
     function BuildQuery(SQLString: String): TFDQuery; overload;
-    function BuildQuery(SQLStringList: TStrings): TFDQuery; overload;
     procedure DoError(const SQL, Description: string);
     procedure SetOnError(const Value: TSQLHelperError);
     procedure SetDBName(const Value: String);
@@ -48,16 +47,9 @@ type
       DBPassword: string); overload;
     destructor Destroy; override;
     function GetSinge(SQLString: String): string; overload;
-    function GetSinge(fieldName, TableName, where: String): String; overload;
-    function GetMaxID(fieldName, TableName: string): integer;
-    function ExistsRecord(TableName, where: string): boolean;
-    function ExistsTable(TableName: String): boolean;
     function ExecuteSql(SQLString: string): boolean;
     function ExecuteSql1(SQLString: string; params: TFDParams): boolean;
-    function Query(TableName, where: string; FieldNames: String = '*')
-      : TFDQuery; overload;
     function Query(SQLString: String): TFDQuery; overload;
-    function ExecuteSqlTran(SQLStringList: TStrings): boolean;
     function Enabled: boolean;
     property OnError: TSQLHelperError read FOnError write SetOnError;
     property DBUser: String read FDBUser write SetDBUser;
@@ -79,20 +71,16 @@ var
 begin
   CoInitialize(nil);
   qy := TFDQuery.Create(nil);
-  qy.Connection := self.Connection;
+  qy.Connection := self.Connection.CloneConnection;
+  try
+    qy.Connection.Open();
+  except
+    on e: Exception do
+    begin
+      DoError(SQLString, e.Message);
+    end;
+  end;
   qy.SQL.Text := SQLString;
-  qy.DisableControls;
-  result := qy;
-end;
-
-function TSQLHelper.BuildQuery(SQLStringList: TStrings): TFDQuery;
-var
-  qy: TFDQuery;
-begin
-  CoInitialize(nil);
-  qy := TFDQuery.Create(nil);
-  qy.Connection := self.Connection;
-  qy.SQL.AddStrings(SQLStringList);
   qy.DisableControls;
   result := qy;
 end;
@@ -103,8 +91,7 @@ var
 begin
   result := false;
   qy := BuildQuery(SQLString);
-
-  if FConnection.Connected then
+  if qy.Connection.Connected then
   begin
     try
       qy.ExecSQL;
@@ -117,6 +104,8 @@ begin
     end;
   end;
   qy.Close;
+  qy.Connection.Close;
+  qy.Connection.Free;
   qy.Free;
 end;
 
@@ -127,7 +116,7 @@ begin
   result := false;
   qy := BuildQuery(SQLString);
   qy.Params := params;
-  if FConnection.Connected then
+  if qy.Connection.Connected then
   begin
     try
       qy.ExecSQL;
@@ -140,115 +129,15 @@ begin
     end;
   end;
   qy.Close;
+  qy.Connection.Close;
+  qy.Connection.Free;
   qy.Free;
-end;
-
-function TSQLHelper.ExecuteSqlTran(SQLStringList: TStrings): boolean;
-var
-  qy: TFDQuery;
-begin
-  result := false;
-  qy := BuildQuery(SQLStringList);
-  if FConnection.Connected then
-  begin
-    try
-      qy.Connection.StartTransaction;
-      qy.ExecSQL;
-      qy.Connection.Commit;
-      result := true;
-    except
-      on e: Exception do
-      begin
-        if qy.Connection <> nil then
-          qy.Connection.Rollback;
-        DoError(SQLStringList.Text, e.Message);
-      end;
-    end;
-  end;
-  qy.Close;
-  qy.Free;
-end;
-
-function TSQLHelper.ExistsRecord(TableName, where: string): boolean;
-var
-  qy: TFDQuery;
-  s: String;
-begin
-  result := false;
-  s := 'select * from ' + TableName + ' ';
-  if pos('where', where) = 0 then
-    s := s + 'where ';
-  s := s + where;
-  qy := Query(s);
-  if qy.Active then
-  begin
-    if not qy.IsEmpty then
-      result := true;
-  end;
-  qy.Close;
-  qy.Free;
-end;
-
-function TSQLHelper.ExistsTable(TableName: String): boolean;
-var
-  qy: TFDQuery;
-  database: string;
-begin
-  result := false;
-  database := copy(TableName, 1, pos('.', TableName));
-  if database <> '' then
-  begin
-    TableName := copy(TableName, length(database) + 1, length(TableName));
-    TableName := copy(TableName, pos('.', TableName) + 1, length(TableName));
-  end;
-  qy := Query('select * from ' + database + 'dbo.sysObjects where name=''' +
-    TableName + '''');
-  if qy.Active then
-  begin
-    if not qy.IsEmpty then
-      result := true;
-  end;
-  qy.Close;
-  qy.Free;
-end;
-
-function TSQLHelper.GetMaxID(fieldName, TableName: string): integer;
-var
-  strSql: string;
-  qy: TFDQuery;
-begin
-  result := 1;
-  strSql := 'select max(' + fieldName + ')+1 from ' + TableName;
-  qy := Query(strSql);
-  if qy.Active then
-  begin
-    if not qy.Fields[0].IsNull then
-      try
-        result := qy.Fields[0].AsInteger;
-      except
-        on e: Exception do
-          DoError(strSql, e.Message);
-      end;
-  end;
-  qy.Close;
-  qy.Free;
-end;
-
-function TSQLHelper.Query(TableName, where, FieldNames: String): TFDQuery;
-var
-  SQL: String;
-begin
-  SQL := 'select ' + FieldNames + ' from ' + TableName + ' ';
-  if pos('where', where) = 0 then
-    SQL := SQL + 'where ';
-  SQL := SQL + where;
-  result := Query(SQL);
 end;
 
 function TSQLHelper.Query(SQLString: String): TFDQuery;
 begin
   result := BuildQuery(SQLString);
-  if FConnection.Connected then
+  if result.Connection.Connected then
   begin
     try
       result.Open;
@@ -271,20 +160,8 @@ begin
       result := qy.Fields[0].AsString;
   end;
   qy.Close;
-  qy.Free;
-end;
-
-function TSQLHelper.GetSinge(fieldName, TableName, where: String): String;
-var
-  qy: TFDQuery;
-begin
-  result := '';
-  qy := Query(TableName, where, fieldName);
-  if qy.Active then
-    if not qy.IsEmpty then
-      if not qy.Fields[0].IsNull then
-        result := qy.Fields[0].AsString;
-  qy.Close;
+  qy.Connection.Close;
+  qy.Connection.Free;
   qy.Free;
 end;
 
