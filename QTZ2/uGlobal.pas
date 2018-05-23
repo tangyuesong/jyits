@@ -30,6 +30,7 @@ var
   gSaUsers: TStrings;
   gWSManager: TWSManager;
   gIsUploadJCPT: Boolean;
+  gServiceIp: TStrings;
 
 implementation
 

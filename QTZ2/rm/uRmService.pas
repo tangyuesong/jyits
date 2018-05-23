@@ -362,13 +362,21 @@ begin
     AResponseInfo.ContentText := TSpecialItf.Login(IP, Params)
   else
   begin
-    if not gTokenManager.CheckToken(tokenStr, IP) then
+    if gServiceIp.IndexOf(IP) >= 0 then
     begin
-      logger.logging('[' + IP + ']' + action + ' invalid token,' + tokenStr, 4);
-      AResponseInfo.ContentText := 'invalid token';
-      exit;
+      token := gTokenManager.NewToken('sa', IP);
+    end
+    else
+    begin
+      if not gTokenManager.CheckToken(tokenStr, IP) then
+      begin
+        logger.logging('[' + IP + ']' + action + ' invalid token,' +
+          tokenStr, 4);
+        AResponseInfo.ContentText := 'invalid token';
+        exit;
+      end;
+      token := gTokenManager.GetToken(tokenStr);
     end;
-    token := gTokenManager.GetToken(tokenStr);
 
     if action = UpperCase('GetVehInfo') then
     begin

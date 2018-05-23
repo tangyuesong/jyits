@@ -454,6 +454,10 @@ begin
         Length(gConfig.HikConfig.LYHttpConverter) - 1);
     Free;
   end;
+
+  gServiceIp := TStringList.Create;
+  if FileExists(ExtractFilePath(ParamStr(0)) + 'IP.ini') then
+    gServiceIp.LoadFromFile(ExtractFilePath(ParamStr(0)) + 'IP.ini');
 end;
 
 class function TCommon.RecordListToJSON<T>(list: TList<T>): string;
@@ -641,6 +645,7 @@ begin
   gSaUsers.Free;
   JKDic.Free;
   gUserDic.Free;
+  gServiceIp.Free;
 end;
 
 end.
