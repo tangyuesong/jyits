@@ -238,7 +238,7 @@ begin
     TfrxMemoView(frxReport1.FindObject('Memo3')).Memo.Text :=
       FDMemTable1.FieldByName('HPZLMC').AsString;
 
-    wfsj := FDMemTable1.FieldByName('WFSJ').AsDateTime;
+    wfsj := VartoDateTime(FDMemTable1.FieldByName('WFSJ').AsString);
 
     DateUtils.DecodeDateTime(wfsj, y, m, d, h, n, ss, ms);
 

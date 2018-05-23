@@ -14,73 +14,93 @@ object FrameBlackCheck: TFrameBlackCheck
     LayoutLookAndFeel = DM.dxLayoutSkinLookAndFeel1
     object btnDelete: TcxButton
       Left = 842
-      Top = 598
+      Top = 737
       Width = 75
       Height = 30
       Caption = #21024#38500'(&D)'
       OptionsImage.ImageIndex = 1
       OptionsImage.Images = cxImageList1
-      TabOrder = 24
+      TabOrder = 23
       OnClick = btnDeleteClick
     end
     object btnSave: TcxButton
       Left = 923
-      Top = 598
+      Top = 737
       Width = 75
       Height = 30
       Caption = #24067#25511'(&S)'
       OptionsImage.ImageIndex = 0
       OptionsImage.Images = cxImageList1
-      TabOrder = 25
+      TabOrder = 24
       OnClick = cxButton2Click
     end
     object edthphm: TcxTextEdit
       Left = 892
-      Top = 316
+      Top = 455
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
       Properties.CharCase = ecUpperCase
       ShowHint = True
       Style.HotTrack = False
-      TabOrder = 6
+      TabOrder = 5
       OnKeyPress = edthphmKeyPress
       Height = 21
       Width = 70
     end
     object cbbsf: TcxComboBox
       Left = 811
-      Top = 316
+      Top = 455
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 5
+      TabOrder = 4
       Height = 21
       Width = 75
     end
     object cbbhpzl: TcxComboBox
       Left = 968
-      Top = 316
+      Top = 455
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 7
+      TabOrder = 6
       Height = 21
       Width = 120
     end
     object edtsyr: TcxTextEdit
       Left = 811
-      Top = 343
+      Top = 482
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 8
+      TabOrder = 7
       Height = 21
       Width = 278
     end
     object edtclpp1: TcxTextEdit
       Left = 811
-      Top = 370
+      Top = 509
+      AutoSize = False
+      ParentFont = False
+      Style.HotTrack = False
+      TabOrder = 8
+      Height = 21
+      Width = 103
+    end
+    object edtclpp2: TcxTextEdit
+      Left = 986
+      Top = 509
+      AutoSize = False
+      ParentFont = False
+      Style.HotTrack = False
+      TabOrder = 12
+      Height = 21
+      Width = 103
+    end
+    object edtclxh: TcxTextEdit
+      Left = 811
+      Top = 536
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
@@ -88,81 +108,85 @@ object FrameBlackCheck: TFrameBlackCheck
       Height = 21
       Width = 103
     end
-    object edtclpp2: TcxTextEdit
-      Left = 986
-      Top = 370
-      AutoSize = False
-      ParentFont = False
-      Style.HotTrack = False
-      TabOrder = 13
-      Height = 21
-      Width = 103
-    end
-    object edtclxh: TcxTextEdit
-      Left = 811
-      Top = 397
-      AutoSize = False
-      ParentFont = False
-      Style.HotTrack = False
-      TabOrder = 10
-      Height = 21
-      Width = 103
-    end
     object edtccdjrq: TcxTextEdit
       Left = 986
-      Top = 424
+      Top = 563
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 15
+      TabOrder = 14
       Height = 21
       Width = 103
     end
     object edtyxqz: TcxTextEdit
       Left = 811
-      Top = 451
+      Top = 590
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
       Style.TextColor = clWindowText
-      TabOrder = 12
+      TabOrder = 11
       Height = 21
       Width = 103
     end
     object edtqzbfqz: TcxTextEdit
       Left = 986
-      Top = 451
+      Top = 590
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
       Style.HotTrack = False
-      TabOrder = 16
+      TabOrder = 15
       Height = 21
       Width = 103
     end
     object mmozsxxdz: TcxMemo
       Left = 811
-      Top = 478
+      Top = 617
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 17
+      TabOrder = 16
       Height = 21
       Width = 278
     end
     object edtsyxz: TcxTextEdit
       Left = 811
-      Top = 505
+      Top = 644
       AutoSize = False
       ParentFont = False
       Style.HotTrack = False
-      TabOrder = 18
+      TabOrder = 17
       Height = 21
       Width = 64
     end
     object edtfdjh: TcxTextEdit
       Left = 941
-      Top = 505
+      Top = 644
+      AutoSize = False
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      Style.HotTrack = False
+      TabOrder = 20
+      Height = 21
+      Width = 148
+    end
+    object edthbbj: TcxTextEdit
+      Left = 811
+      Top = 671
+      AutoSize = False
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      Style.HotTrack = False
+      TabOrder = 18
+      Height = 21
+      Width = 64
+    end
+    object edtclsbdh: TcxTextEdit
+      Left = 941
+      Top = 671
       AutoSize = False
       ParentFont = False
       ParentShowHint = False
@@ -172,53 +196,29 @@ object FrameBlackCheck: TFrameBlackCheck
       Height = 21
       Width = 148
     end
-    object edthbbj: TcxTextEdit
+    object edtbxzzrq: TcxTextEdit
       Left = 811
-      Top = 532
+      Top = 698
       AutoSize = False
       ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
       Style.HotTrack = False
       TabOrder = 19
       Height = 21
       Width = 64
     end
-    object edtclsbdh: TcxTextEdit
+    object edtfzjg: TcxTextEdit
       Left = 941
-      Top = 532
+      Top = 698
       AutoSize = False
       ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
       Style.HotTrack = False
       TabOrder = 22
       Height = 21
       Width = 148
     end
-    object edtbxzzrq: TcxTextEdit
-      Left = 811
-      Top = 559
-      AutoSize = False
-      ParentFont = False
-      Style.HotTrack = False
-      TabOrder = 20
-      Height = 21
-      Width = 64
-    end
-    object edtfzjg: TcxTextEdit
-      Left = 941
-      Top = 559
-      AutoSize = False
-      ParentFont = False
-      Style.HotTrack = False
-      TabOrder = 23
-      Height = 21
-      Width = 148
-    end
     object cxGrid1: TcxGrid
       Left = 752
-      Top = -129
+      Top = 10
       Width = 337
       Height = 133
       TabOrder = 1
@@ -274,7 +274,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object imgviopic: TImageEnVect
       Left = 11
-      Top = -128
+      Top = 11
       Width = 727
       Height = 755
       Background = clWhite
@@ -291,7 +291,7 @@ object FrameBlackCheck: TFrameBlackCheck
     end
     object img1: TImageEnView
       Left = 753
-      Top = 11
+      Top = 150
       Width = 335
       Height = 260
       Background = clBtnFace
@@ -305,39 +305,30 @@ object FrameBlackCheck: TFrameBlackCheck
       EnableInteractionHints = True
       TabOrder = 2
     end
-    object edtBkzl: TcxTextEdit
-      Left = 1022
-      Top = 289
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 4
-      Height = 21
-      Width = 67
-    end
     object cbbBklx: TcxComboBox
       Left = 811
-      Top = 289
+      Top = 428
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 3
       Height = 21
-      Width = 152
+      Width = 278
     end
     object cbbCllx: TcxComboBox
       Left = 986
-      Top = 397
+      Top = 536
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 14
+      TabOrder = 13
       Height = 21
       Width = 103
     end
     object cbbCsys: TcxComboBox
       Left = 811
-      Top = 424
+      Top = 563
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 11
+      TabOrder = 10
       Height = 21
       Width = 103
     end
@@ -743,33 +734,16 @@ object FrameBlackCheck: TFrameBlackCheck
       CaptionOptions.Text = 'Separator'
       Index = 3
     end
-    object dxLayoutItem2: TdxLayoutItem
-      Parent = dxLayoutAutoCreatedGroup1
-      AlignHorz = ahLeft
-      AlignVert = avTop
-      CaptionOptions.Text = #24067#25511#31181#31867
-      Control = edtBkzl
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 67
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
     object dxLayoutItem1: TdxLayoutItem
-      Parent = dxLayoutAutoCreatedGroup1
+      Parent = lgInfo
       AlignHorz = ahClient
+      AlignVert = avTop
       CaptionOptions.Text = #24067#25511#31867#22411
       Control = cbbBklx
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 121
       ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutAutoCreatedGroup1: TdxLayoutAutoCreatedGroup
-      Parent = lgInfo
-      AlignVert = avTop
-      LayoutDirection = ldHorizontal
       Index = 1
-      AutoCreated = True
     end
     object dxLayoutItem6: TdxLayoutItem
       Parent = dxLayoutGroup7

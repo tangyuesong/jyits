@@ -140,7 +140,7 @@ var
   list: Tlist<Tvioinfosrl>;
 begin
   inherited;
-  Vehinfo := TCommon.GetVehinfo(HPHM, HPZL, '',False);
+  Vehinfo := TCommon.GetVehinfo(HPHM, HPZL, '');
   list := TCommon.GetVioByVeh(HPHM, HPZL, '');
   list := TJSONUtils.RecordListSort<Tvioinfosrl>(list, 'wfsj', [ixDescending]);
   TJSONUtils.RecordListToTable<Tvioinfosrl>(list, FDMemTable1);

@@ -119,7 +119,7 @@ begin
         begin
           try
             obj.VehInfo := TCommon.GetVehInfo(obj.VioRecord.hphm,
-              obj.VioRecord.hpzl, '',False);
+              obj.VioRecord.hpzl, '');
             obj.DoneVehInfo := true;
           except
             on e: exception do

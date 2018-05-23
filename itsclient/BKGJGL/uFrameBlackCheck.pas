@@ -117,11 +117,8 @@ type
     dxLayoutSeparatorItem1: TdxLayoutSeparatorItem;
     imgviopic: TImageEnVect;
     img1: TImageEnView;
-    edtBkzl: TcxTextEdit;
-    dxLayoutItem2: TdxLayoutItem;
     cbbBklx: TcxComboBox;
     dxLayoutItem1: TdxLayoutItem;
-    dxLayoutAutoCreatedGroup1: TdxLayoutAutoCreatedGroup;
     cbbCllx: TcxComboBox;
     dxLayoutItem6: TdxLayoutItem;
     cbbCsys: TcxComboBox;
@@ -294,11 +291,11 @@ begin
       vio.VioRecord.hpzl := tbVio.FieldByName('HPZL').AsString;
       vio.VioRecord.WFXW := tbVio.FieldByName('BKLX').AsString;
       vio.VioRecord.bj := tbVio.FieldByName('BKZL').AsString;
-      if vio.VioRecord.wfxw = '03' then
+      if vio.VioRecord.WFXW = '03' then
       begin
         vio.VehInfo.clpp1 := tbVio.FieldByName('CLPP').AsString;
         vio.VehInfo.csys := tbVio.FieldByName('CSYS').AsString;
-        vio.DoneVehInfo := true;
+        vio.DoneVehInfo := True;
       end;
       url := tbVio.FieldByName('VioUrl').AsString;
       while pos('/', url) > 0 do
@@ -339,7 +336,6 @@ begin
       [FObj.VioRecord.WFXW]
   else
     cbbBklx.Text := FObj.VioRecord.WFXW;
-  edtBkzl.Text := FObj.VioRecord.bj;
   hphm := FObj.VioRecord.hphm;
   if hphm <> '' then
   begin
@@ -364,7 +360,7 @@ begin
   if not FObj.DoneVehInfo then
   begin
     FObj.VehInfo := TCommon.GetVehInfo(FObj.VioRecord.hphm,
-      FObj.VioRecord.hpzl, '',False);
+      FObj.VioRecord.hpzl, '');
     FObj.DoneVehInfo := True;
   end;
   LoadVehInfo(FObj.VehInfo);
@@ -462,7 +458,7 @@ begin
   begin
     hphm := RightStr(Trim(cbbsf.Text), 1) + Trim(edthphm.Text);
     hpzl := LeftStr(Trim(cbbhpzl.Text), 2);
-    veh := TCommon.GetVehInfo(hphm, hpzl, '',False);
+    veh := TCommon.GetVehInfo(hphm, hpzl, '');
   end;
   edtsyr.Text := veh.syr;
   edtclpp1.Text := veh.clpp1;
@@ -537,7 +533,7 @@ begin
   if FObj = nil then
     exit;
 
-  Param := 'SYSTEMID=' + FObj.VioRecord.SystemID + '&BKLX=' +
+  Param := 'SYSTEMID=' + FObj.VioRecord.SystemID + '&BKZL=手动布控&BKLX=' +
     TLZDictionary.StrtoDicInfo(cbbBklx.Text).DM + '&ZT=1&SPR=' + gUser.YHBH +
     '&SPSJ=' + FormatDatetime('yyyy/mm/dd hh:nn:ss', now()) + '&SPYJ=同意' +
     '&CLPP=' + Trim(edtclpp1.Text) + '&CLLX=' + TLZDictionary.StrtoDicInfo

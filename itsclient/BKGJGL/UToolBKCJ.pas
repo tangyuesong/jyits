@@ -130,7 +130,7 @@ begin
   cbbJC.ItemIndex := 18;
   cbbHPZL.ItemIndex := 1;
   cbbZT.ItemIndex := 0;
-  GridColumns := 'bkxh,bkr,HPHM,HPZL,BKLX,gxsj,操作';
+  GridColumns := 'BKXH,BKR,HPHM,HPZL,BKLX,BKZL,gxsj,操作';
   GridView.Columns[6].RepositoryItem := cxdtrpstry1ButtonItem1;
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[0].Visible :=
     btnUpdate.Enabled;
@@ -363,7 +363,7 @@ begin
     Application.MessageBox('开始时间和结束时间必须填写', '提示', MB_OK + MB_ICONSTOP);
     Exit;
   end;
-  Param := Format('bkzl=1&begin_gxsj=%s&end_gxsj=%s', [vdt, vdt2]);
+  Param := Format('begin_gxsj=%s&end_gxsj=%s&not_bkzl=黑名单', [vdt, vdt2]);
   zt := IntToStr(cbbZT.ItemIndex);
   if zt <> '' then
   begin

@@ -1,10 +1,7 @@
 inherited fVioTZCLGL: TfVioTZCLGL
-  Width = 611
-  Height = 485
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 611
-    Height = 485
+    Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     object btnSearch: TcxButton [0]
@@ -42,12 +39,12 @@ inherited fVioTZCLGL: TfVioTZCLGL
     end
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 585
-      Height = 399
+      Width = 500
+      Height = 174
       TabOrder = 6
       ExplicitTop = 45
-      ExplicitWidth = 585
-      ExplicitHeight = 399
+      ExplicitWidth = 500
+      ExplicitHeight = 174
     end
     object cbbhpzl: TcxComboBox [4]
       Left = 229
@@ -70,7 +67,7 @@ inherited fVioTZCLGL: TfVioTZCLGL
       Width = 68
     end
     object Btnadd: TcxButton [6]
-      Left = 568
+      Left = 483
       Top = 13
       Width = 30
       Height = 25
@@ -82,34 +79,34 @@ inherited fVioTZCLGL: TfVioTZCLGL
       OnClick = BtnaddClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 451
+      Top = 226
       TabOrder = 7
-      ExplicitTop = 451
+      ExplicitTop = 226
     end
     inherited btnFirstPage: TcxButton
-      Top = 451
+      Top = 226
       TabOrder = 8
-      ExplicitTop = 451
+      ExplicitTop = 226
     end
     inherited btnPriorPage: TcxButton
-      Top = 451
+      Top = 226
       TabOrder = 9
-      ExplicitTop = 451
+      ExplicitTop = 226
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 451
+      Top = 226
       TabOrder = 10
-      ExplicitTop = 451
+      ExplicitTop = 226
     end
     inherited btnnextPage: TcxButton
-      Top = 451
+      Top = 226
       TabOrder = 11
-      ExplicitTop = 451
+      ExplicitTop = 226
     end
     inherited btnLastPage: TcxButton
-      Top = 451
+      Top = 226
       TabOrder = 12
-      ExplicitTop = 451
+      ExplicitTop = 226
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
