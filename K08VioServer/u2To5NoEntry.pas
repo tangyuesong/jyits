@@ -18,6 +18,7 @@ type
   end;
 
 implementation
+
 { T2To5NoEntry }
 
 procedure T2To5NoEntry.Execute;
@@ -38,10 +39,10 @@ begin
   end;
   ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
 
-
   param := TDictionary<string, String>.Create;
   param.Add('crossingid', gThreadConfig.LC25NoEntryDev);
-  param.Add('passtime', gThreadConfig.LC25NoEntryStartDate + ',' + formatdatetime('yyyy-mm-dd hh:nn:ss', Now()));
+  param.Add('passtime', gThreadConfig.LC25NoEntryStartDate + ',' +
+    formatdatetime('yyyy-mm-dd hh:nn:ss', Now()));
   maxDate := THik.GetMaxPassTime(param);
   if maxDate = 0 then
   begin
@@ -54,18 +55,19 @@ begin
   gvioVeh := TStringList.Create;
   SQLs := TStringList.Create;
 
-  minDate := TCommon.StringToDT(gThreadConfig.LC25NoEntryStartDate + ' 00:00:00');
-  if maxDate < TCommon.StringToDT(FormatDatetime('yyyy/mm/dd', maxDate) +
+  minDate := TCommon.StringToDT(gThreadConfig.LC25NoEntryStartDate +
+    ' 00:00:00');
+  if maxDate < TCommon.StringToDT(formatdatetime('yyyy/mm/dd', maxDate) +
     ' 05:00:00') then // 如果最大时间小于今天的5点，那么今天的闯禁行违法就不取
     maxDate := maxDate - 1;
 
   currentDate := minDate;
-  while FormatDatetime('yyyy-mm-dd', currentDate) <=
-    FormatDatetime('yyyy-mm-dd', maxDate) do
+  while formatdatetime('yyyy-mm-dd', currentDate) <=
+    formatdatetime('yyyy-mm-dd', maxDate) do
   begin
     gvioVeh.Clear;
-    kssj := FormatDatetime('yyyy-mm-dd', currentDate) + ' 02:00:00';
-    jssj := FormatDatetime('yyyy-mm-dd', currentDate) + ' 05:00:00';
+    kssj := formatdatetime('yyyy-mm-dd', currentDate) + ' 02:00:00';
+    jssj := formatdatetime('yyyy-mm-dd', currentDate) + ' 05:00:00';
     param.Clear;
     param.Add('crossingid', gThreadConfig.LC25NoEntryDev);
     param.Add('passtime', kssj + ',' + jssj);
@@ -79,7 +81,7 @@ begin
     while currentPage <= totalPage do
     begin
       gLogger.Info('[2To5NoEntry] Get 2To5NoEntry Date:' +
-        FormatDatetime('yyyy/mm/dd', currentDate) + ', Page:' +
+        formatdatetime('yyyy/mm/dd', currentDate) + ', Page:' +
         IntToStr(currentPage) + ', TotalPage:' + IntToStr(totalPage));
 
       try
@@ -121,8 +123,10 @@ begin
     else
       gLogger.Info('[2To5NoEntry] Save NoEntry Vio Count: 0');
 
-    gThreadConfig.LC25NoEntryStartDate := FormatDatetime('yyyy-mm-dd', currentDate + 1);
-    TCommon.SaveConfig('Task', 'LC25NoEntryStartDate', gThreadConfig.LC25NoEntryStartDate);
+    gThreadConfig.LC25NoEntryStartDate := formatdatetime('yyyy-mm-dd',
+      currentDate + 1);
+    TCommon.SaveConfig('Task', 'LC25NoEntryStartDate',
+      gThreadConfig.LC25NoEntryStartDate);
 
     currentDate := currentDate + 1;
   end;
@@ -160,7 +164,7 @@ begin
   param.Add('platestate', '0');
   param.Add('vehicletype', '1');
   param.Add('platecolor', '1');
-  param.Add('plateinfono', hphm);
+  param.Add('plateno', hphm);
 
   totalPage := 1;
   currentPage := 1;
@@ -201,8 +205,9 @@ begin
   begin
     if gDevList.ContainsKey(veh.crossingid) then
     begin
-      dt := DateUtils.IncMilliSecond(25569.3333333333, StrToInt64(veh.PassTime));
-      hphm := veh.plateinfo + '_' + FormatDatetime('yyyymmdd', dt);
+      dt := DateUtils.IncMilliSecond(25569.3333333333,
+        StrToInt64(veh.PassTime));
+      hphm := veh.plateinfo + '_' + formatdatetime('yyyymmdd', dt);
       if gvioVeh.IndexOf(hphm) >= 0 then
         continue;
       tp1 := veh.imagepath;
@@ -219,8 +224,9 @@ begin
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
         veh.plateinfo.QuotedString + ',' + gHpzlList[veh.vehicletype]
         .QuotedString + ',' + gDevList[veh.crossingid].SBBH.QuotedString +
-        ',''1344'',' + FormatDateTime('yyyy-mm-dd hh:nn:ss', dt).QuotedString + ',' + veh.laneno.QuotedString
-        + ',' + tp1.QuotedString + ',' + tp2.QuotedString + ',''111'')';
+        ',''1344'',' + formatdatetime('yyyy-mm-dd hh:nn:ss', dt).QuotedString +
+        ',' + veh.laneno.QuotedString + ',' + tp1.QuotedString + ',' +
+        tp2.QuotedString + ',''111'')';
       Result.Add(s);
       gvioVeh.Add(hphm);
     end;
