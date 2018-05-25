@@ -11,7 +11,7 @@ type
   private
     gVioVeh: TStrings; // 防止重复写入，主键为 hphm_yyyymmdd, 只保存5000条
     function GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
-    function GetTp2(dt: TDateTime; hphm, sbid, tp1: string): String;
+    function GetTp2(dt: TDateTime; hphm, tp1: string): String;
   protected
     procedure Execute; override;
   end;
@@ -64,7 +64,7 @@ begin
     param.Add('passtime', gThreadConfig.NoEntryStartTime + ',' + EndTime);
     param.Add('platecolor', '1');
     param.Add('vehicletype', '2');
-    param.Add('platetype', '8 102');
+    //param.Add('platetype', '8 102');
     param.Add('platestate', '0');
 
     totalPage := 1;
@@ -129,7 +129,7 @@ begin
   ActiveX.CoUninitialize;
 end;
 
-function TNoEntryThread.GetTp2(dt: TDateTime; hphm, sbid, tp1: string): String;
+function TNoEntryThread.GetTp2(dt: TDateTime; hphm, tp1: string): String;
 var
   Params: TStrings;
   param: TDictionary<string, String>;
@@ -142,11 +142,11 @@ begin
   passtime := FormatDatetime('yyyy-mm-dd hh:nn:ss', dt)
     + ',' + FormatDatetime('yyyy-mm-dd 00:00:00', dt + 1);
   param := TDictionary<string, String>.Create;
-  param.Add('crossingid', gThreadConfig.NoEntryDev);
+  //param.Add('crossingid', gThreadConfig.NoEntryDev);
   param.Add('passtime', passtime);
   param.Add('platecolor', '1');
   param.Add('vehicletype', '2');
-  param.Add('platetype', '8 102');
+  //param.Add('platetype', '8 102');
   param.Add('platestate', '0');
   param.Add('plateno', hphm);
 
@@ -165,7 +165,6 @@ begin
         begin
           Result := veh.imagepath;
           Result := Result.Replace('&amp;', '&');
-          break;
         end;
       end;
       vehList.Free;
@@ -198,7 +197,7 @@ begin
       tp1 := veh.imagepath;
       tp1 := tp1.Replace('&amp;', '&');
 
-      Tp2 := GetTp2(dt, veh.plateinfo, veh.crossingid, tp1);
+      Tp2 := GetTp2(dt, veh.plateinfo, tp1);
       if Tp2 = '' then
       begin
         gLogger.Info('[NoEntry] not found Photofile2');
