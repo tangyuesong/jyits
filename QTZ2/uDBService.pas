@@ -133,14 +133,21 @@ begin
     end
     else
     begin
-      if not gTokenManager.CheckToken(token, clientIP) then
+      if gServiceIp.IndexOf(clientIP) >= 0 then
       begin
-        gLogger.logging('[' + clientIP + ']' + action + ' invalid token', 4);
-        AResponseInfo.ContentText := 'invalid token';
-        params.Free;
-        exit;
+        yhbh := gTokenManager.NewToken('sa', clientIP).Login;
+      end
+      else
+      begin
+        if not gTokenManager.CheckToken(token, clientIP) then
+        begin
+          gLogger.logging('[' + clientIP + ']' + action + ' invalid token', 4);
+          AResponseInfo.ContentText := 'invalid token';
+          params.Free;
+          exit;
+        end;
+        yhbh := gTokenManager.GetToken(token).Login;
       end;
-      yhbh := gTokenManager.GetToken(token).Login;
 
       if action = UpperCase('GetLockVio') then
       begin

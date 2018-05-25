@@ -96,14 +96,14 @@ begin
       item.BKLX := FDMemTable1.FieldByName('BKLX').AsString;
       if item.BKLX.Length = 1 then
         item.BKLX := '0' + item.BKLX;
-      item.BKZL := '1';
+      item.BKZL := '≤ºøÿ÷÷¿‡';
       item.CJJG := gUser.DWDM;
       item.BKR := gUser.YHBH;
       item.ZT := '0';
       if FDMemTable1.FieldByName('SJHM') <> nil then
       begin
         item.SJHM := FDMemTable1.FieldByName('SJHM').AsString;
-        item.SJHM := item.SJHM.Replace(',', ';');
+        item.SJHM := item.SJHM.Replace(';', ',');
         item.SMSTimeBegin := '0800';
         item.SMSTimeEnd := '2200';
       end

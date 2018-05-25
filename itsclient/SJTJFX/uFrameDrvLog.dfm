@@ -1,49 +1,47 @@
 inherited FrameDrvLog: TFrameDrvLog
-  Width = 811
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 811
     Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 785
-      Height = 219
+      Width = 618
+      Height = 174
       TabOrder = 4
       ExplicitTop = 45
-      ExplicitWidth = 785
-      ExplicitHeight = 219
+      ExplicitWidth = 618
+      ExplicitHeight = 174
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 271
+      Top = 226
       TabOrder = 5
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited btnFirstPage: TcxButton
-      Top = 271
+      Top = 226
       TabOrder = 6
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited btnPriorPage: TcxButton
-      Top = 271
+      Top = 226
       TabOrder = 7
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 271
+      Top = 226
       TabOrder = 8
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited btnnextPage: TcxButton
-      Top = 271
+      Top = 226
       TabOrder = 9
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited btnLastPage: TcxButton
-      Top = 271
+      Top = 226
       TabOrder = 10
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     object BtnSearch: TcxButton [7]
       Left = 556

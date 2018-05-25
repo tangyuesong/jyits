@@ -148,7 +148,7 @@ begin
   param.Add('vehicletype', '2');
   param.Add('platetype', '8 102');
   param.Add('platestate', '0');
-  param.Add('plateinfono', hphm);
+  param.Add('plateno', hphm);
 
   totalPage := 1;
   currentPage := 1;

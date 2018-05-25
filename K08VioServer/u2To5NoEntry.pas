@@ -160,7 +160,7 @@ begin
   param.Add('platestate', '0');
   param.Add('vehicletype', '1');
   param.Add('platecolor', '1');
-  param.Add('plateinfono', hphm);
+  param.Add('plateno', hphm);
 
   totalPage := 1;
   currentPage := 1;

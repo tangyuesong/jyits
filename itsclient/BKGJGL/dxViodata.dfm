@@ -1,17 +1,15 @@
 inherited dxFrameVioData: TdxFrameVioData
-  Width = 710
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 710
+    ExplicitWidth = 710
   end
   object dxLayoutControl1: TdxLayoutControl
     Left = 0
     Top = 0
-    Width = 710
+    Width = 451
     Height = 305
     Align = alClient
     TabOrder = 1
     LayoutLookAndFeel = DM.dxLayoutSkinLookAndFeel1
-    ExplicitWidth = 451
     object cxGrid1: TcxGrid
       Left = 45
       Top = 313

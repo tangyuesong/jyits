@@ -204,10 +204,10 @@ begin
   Result.HPHM := TLZDictionary.StrtoDicInfo(cbbJC.Text).mc + edthphm.Text;
   Result.HPZL := TLZDictionary.StrtoDicInfo(cbbHPZL.Text).dm;
   Result.SJHM := edtSJ.Text;
-  Result.sjhm := result.sjhm.Replace(',', ';');
+  Result.sjhm := result.sjhm.Replace(';', ',');
   Result.SMSTimeBegin := FormatDatetime('hhmm', tmBegin.Time);
   Result.SMSTimeEnd := FormatDatetime('hhmm', tmEnd.Time);
-  Result.BKZL := '1';
+  Result.BKZL := 'ÊÖ¶¯²¼¿Ø';
   if (EditID = TEditStatus.esNew) or (EditID = TEditStatus.esModify) then
   begin
     Result.BKR := gUser.YHBH;

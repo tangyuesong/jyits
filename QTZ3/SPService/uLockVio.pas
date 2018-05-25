@@ -70,10 +70,10 @@ type
     class function Is1344Tzc(hphm, hpzl, wfsj, wfdz: String): Boolean;
     class function DownloadVioPic(var vio: TLockVio): Boolean;
     class function GetPic(picServer, picfile, sfilename: string): Boolean;
-    class function BitmapToString(lj: string): WideString;
     class procedure AnalysisVioUploadResult(json: String; var code: String;
       var msg: String);
   public
+    class function BitmapToString(lj: string): WideString;
     class function GetVioUploadStr(vio: TLockVio): String;
     class function IsWhite(hphm, hpzl, cjjg, wfsj: String): Boolean;
     class procedure LockVio(AId, TokenKey: String;

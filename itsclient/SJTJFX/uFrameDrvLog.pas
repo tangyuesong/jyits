@@ -32,7 +32,7 @@ uses
   cxGridCustomView, cxGridCustomTableView, cxGridTableView, cxGridDBTableView,
   cxGrid, dxLayoutControl, Vcl.ComCtrls, dxCore, cxDateUtils, cxMaskEdit,
   cxDropDownEdit, cxCalendar, uCommon, uJsonUtils, uRequestItf, uEntity,
-  dxDialogBase, Vcl.ExtCtrls, uFrameResult;
+  dxDialogBase, Vcl.ExtCtrls, uFrameResult, cxLabel;
 
 type
   TFrameDrvLog = class(TToolGridFrame)
@@ -73,7 +73,7 @@ begin
   inherited;
   FResultFrame.Show;
   jszh := FDMemTable1.FieldByName('SFZMHM').AsString;
-  clrq := FDMemTable1.FieldByName('CLRQ').AsDateTime;
+  clrq := VarToDateTime(FDMemTable1.FieldByName('CLRQ').AsString);
   vioList := TCommon.GetVio('', '', jszh, '', '1');
   for i := vioList.Count - 1 downto 0 do
   begin

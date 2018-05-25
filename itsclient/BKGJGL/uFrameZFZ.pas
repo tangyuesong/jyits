@@ -674,7 +674,7 @@ var
   veh: TVehInfo;
 begin
   veh := TCommon.GetVehinfo(TLZDictionary.StrtoDicInfo(cboJC.Text).mc +
-    edthphm.Text, TLZDictionary.StrtoDicInfo(cboHPZL.Text).dm, '', false);
+    edthphm.Text, TLZDictionary.StrtoDicInfo(cboHPZL.Text).dm, '');
 
   if TLZDictionary.gDicMain['CLLX'].ContainsKey(veh.cllx) then
     edtCLLX.Text := TLZDictionary.gDicMain['CLLX'][veh.cllx];

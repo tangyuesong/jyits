@@ -251,7 +251,7 @@ begin
   if (txtHPHM.Text <> '') and (cboHPZL.Text <> '') then
   begin
     veh := TCommon.GetVehinfo(txtHPHM.Text, Copy(cboHPZL.Text, 1, 2),
-      '', False);
+      '');
     cboCLLX.Text := TLZDictionary.gDicMain['CLLX'][veh.cllx];
     cboSYXZ.Text := TLZDictionary.gDicMain['SYXZ'][veh.syxz];
     txtSYR.Text := veh.syr;
@@ -376,7 +376,7 @@ begin
   if Key = #13 then
   begin
     veh := TCommon.GetVehinfo(txtHPHM.Text, Copy(cboHPZL.Text, 1, 2),
-      '', False);
+      '');
     cboCLLX.Text := veh.cllx;
     cboSYXZ.Text := veh.syxz;
     txtSYR.Text := veh.syr;

@@ -476,7 +476,7 @@ begin
   if not FObj.DoneVehInfo then
   begin
     FObj.VehInfo := TCommon.GetVehInfo(FObj.VioRecord.hphm,
-      FObj.VioRecord.hpzl, '',False);
+      FObj.VioRecord.hpzl, '');
     FObj.DoneVehInfo := True;
   end;
   LoadVehInfo(FObj.VehInfo);
@@ -600,7 +600,7 @@ begin
   begin
     hphm := RightStr(Trim(cbbsf.Text), 1) + Trim(edthphm.Text);
     hpzl := LeftStr(Trim(cbbhpzl.Text), 2);
-    veh := TCommon.GetVehInfo(hphm, hpzl, '',False);
+    veh := TCommon.GetVehInfo(hphm, hpzl, '');
   end;
   edtsyr.Text := veh.syr;
   edtclpp1.Text := veh.clpp1;
@@ -851,11 +851,13 @@ begin
 
   bklx := TLZDictionary.StrtoDicInfo(fBz.cbbBz.Text).dm;
 
+  UpdateVehFromEdit();
+
   Param := 'BKXH=' + FormatDatetime('yyyymmddhhnnsszzz', now()) + '&BKR=' +
-    gUser.YHBH + '&HPHM=' + FObj.VioRecord.hphm + '&HPZL=' + FObj.VioRecord.hpzl
-    + '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&Eocode_VioUrl=' +
+    gUser.YHBH + '&HPHM=' + FObj.VehInfo.hphm + '&HPZL=' + FObj.VehInfo.hpzl +
+    '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&Eocode_VioUrl=' +
     EncodeString(Trim(FObj.VioRecord.FWQDZ) + Trim(FObj.VioRecord.PHOTOFILE1)) +
-    '&ZT=0&BKLX=' + bklx + '&BKZL=手动布控&CJJG=' + gUser.DWDM;
+    '&ZT=0&BKLX=' + bklx + '&BKZL=黑名单&CJJG=' + gUser.DWDM;
   // TRequestItf.DbQuery('AddT_KK_Alarm', Param);
 
   New(cmd);
@@ -879,12 +881,13 @@ procedure TFrameVioFH.cxButton2Click(Sender: TObject);
 begin
   if FObj = nil then
     exit;
-
-  if Length(edtclsbdh.Text) = 0 then
-  begin
+  {
+    if Length(edtclsbdh.Text) = 0 then
+    begin
     Application.MessageBox('该信息不完整请认真核实', '提示', MB_OK + MB_ICONSTOP);
     exit;
-  end;
+    end;
+  }
   if edtqzbfqz.Style.TextColor = clRed then
   begin
     Application.MessageBox('该该车达到报废期', '提示', MB_OK + MB_ICONSTOP);
@@ -895,8 +898,8 @@ begin
     MB_OKCANCEL + MB_ICONINFORMATION) = IDOK then
   begin
     UpdateVehFromEdit();
-    //if FObj.VioRecord.wfxw = '13441' then
-    //  FObj.VioRecord.bj := '20';
+    // if FObj.VioRecord.wfxw = '13441' then
+    // FObj.VioRecord.bj := '20';
 
     try
       UpdateDBVioStatus(FObj.VioRecord.systemid, FObj.VioRecord.bj);

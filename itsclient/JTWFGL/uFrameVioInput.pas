@@ -603,7 +603,7 @@ begin
   if not FObj.DoneVehInfo then
   begin
     FObj.VehInfo := TCommon.GetVehInfo(FObj.VioRecord.HPHM,
-      FObj.VioRecord.HPZL, '',False);
+      FObj.VioRecord.HPZL, '');
     FObj.DoneVehInfo := True;
   end;
   LoadVehInfo(FObj.VehInfo);
@@ -773,7 +773,7 @@ begin
   begin
     HPHM := RightStr(Trim(cbbsf.Text), 1) + Trim(edthphm.Text);
     HPZL := LeftStr(Trim(cbbhpzl.Text), 2);
-    veh := TCommon.GetVehInfo(HPHM, HPZL, '',False);
+    veh := TCommon.GetVehInfo(HPHM, HPZL, '');
   end;
   edtsyr.Text := veh.syr;
   edtclpp1.Text := veh.clpp1;
@@ -1051,13 +1051,15 @@ begin
   if not FOK then
     exit;
 
+  UpdateVehFromEdit();
+
   bklx := TLZDictionary.StrtoDicInfo(fBz.cbbBz.Text).dm;
 
   Param := 'BKXH=' + formatDatetime('yyyymmddhhnnsszzz', now()) + '&BKR=' +
-    gUser.YHBH + '&HPHM=' + FObj.VioRecord.HPHM + '&HPZL=' + FObj.VioRecord.HPZL
-    + '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&Encode_VioUrl=' +
+    gUser.YHBH + '&HPHM=' + FObj.VehInfo.HPHM + '&HPZL=' + FObj.VehInfo.HPZL +
+    '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&Encode_VioUrl=' +
     EncodeString(Trim(FObj.VioRecord.FWQDZ) + Trim(FObj.VioRecord.PHOTOFILE1)) +
-    '&ZT=0&BKLX=' + bklx + '&BKZL=手动布控&CJJG=' + gUser.DWDM;
+    '&ZT=0&BKLX=' + bklx + '&BKZL=黑名单&CJJG=' + gUser.DWDM;
   // TRequestItf.DbQuery('AddT_KK_ALARM', Param);
 
   New(cmd);
@@ -1081,12 +1083,13 @@ procedure TFrameVioInput.cxButton2Click(Sender: TObject);
 begin
   if FObj = nil then
     exit;
-
-  if Length(edtclsbdh.Text) = 0 then
-  begin
+  {
+    if Length(edtclsbdh.Text) = 0 then
+    begin
     Application.MessageBox('该信息不完整请认真核实', '提示', MB_OK + MB_ICONSTOP);
     exit;
-  end;
+    end;
+  }
   if edtqzbfqz.Style.TextColor = clRed then
   begin
     Application.MessageBox('该该车达到报废期', '提示', MB_OK + MB_ICONSTOP);
@@ -1097,8 +1100,8 @@ begin
     MB_OKCANCEL + MB_ICONINFORMATION) = IDOK then
   begin
     UpdateVehFromEdit();
-    //if FObj.VioRecord.wfxw = '13441' then
-    //  FObj.VioRecord.bj := '20';
+    // if FObj.VioRecord.wfxw = '13441' then
+    // FObj.VioRecord.bj := '20';
     if (gUser.FH <> '') and StrToBool(gUser.FH) then
       FObj.VioRecord.bj := '9'
     else if (gUser.SH <> '') and StrToBool(gUser.SH) then

@@ -330,8 +330,8 @@ begin
   FrameWmd1.edthphm.Text := '';
   if obj.SystemId <> '' then
   begin
-    FrameWmd1.cxDateEdit1.Date := StrToDateTimeDef(obj.yxsj, now);
-    FrameWmd1.cxDateEdit2.Date := StrToDateTimeDef(obj.jssj, now);
+    FrameWmd1.cxDateEdit1.Date := VarToDateTime(obj.yxsj);
+    FrameWmd1.cxDateEdit2.Date := VarToDateTime(obj.jssj);
     FrameWmd1.MemoYY.Text := obj.yy;
     FrameWmd1.cbbhpzl.Text := obj.hpzl + ':' + TLZDictionary.gdicmain['HPZL']
       [obj.hpzl];
