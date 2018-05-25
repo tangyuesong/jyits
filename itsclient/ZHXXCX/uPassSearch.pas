@@ -82,6 +82,8 @@ type
     cxCKBOXCSYS: TcxCheckComboBox;
     dxLayoutItem25: TdxLayoutItem;
     Timer1: TTimer;
+    dxLayoutItem10: TdxLayoutItem;
+    cmbVehType: TcxComboBox;
     procedure btnSearchClick(Sender: TObject);
     procedure ActionViewListExecute(Sender: TObject);
     procedure ActionPictureExecute(Sender: TObject);
@@ -312,7 +314,7 @@ procedure TFramePassSearch.LoadData;
 var
   params, json: string;
   pageSize, pageIndex: integer;
-  clpp, csys, zyb, clpp1, s, hpzls: String;
+  clpp, csys, zyb, clpp1, s, hpzls, vehicletype: String;
 begin
   ShowFrameWait;
   pageSize := StrToIntDef(cbbPageSize.Text, 30);
@@ -321,27 +323,37 @@ begin
   csys := GetCsys;
   clpp1 := GetClpp1;
   zyb := GetZyb;
-  if (clpp <> '') or (csys <> '') or (zyb <> '') or (clpp1 <> '') then // K08
+  if cmbVehType.ItemIndex > 0 then
+    vehicletype := IntToStr(cmbVehType.ItemIndex - 1)
+  else
+    vehicletype := '';
+  if (clpp <> '') or (csys <> '') or (zyb <> '') or (clpp1 <> '') or
+    (vehicletype <> '') then // K08
   begin
     params := 'passtime=' + FormatDateTime('yyyy-mm-dd hh:mm:ss', dtBegin.Date)
       + ',' + FormatDateTime('yyyy-mm-dd hh:mm:ss', dtEnd.Date) +
       '&currentPage=' + IntToStr(pageIndex + 1) + '&pageSize=' +
       pageSize.ToString;
     if FKDBH <> '' then
-      params := params + '&crossingid=' + FKDBH;
-    if FHPZL <> '' then
-    begin
-      hpzls := '';
-      for s in TLZDictionary.gK08Hpzl.Keys do
-      begin
-        if TLZDictionary.gK08Hpzl[s].MineKey = FHPZL then
-          hpzls := hpzls + ' ' + s;
-      end;
-      if hpzls <> '' then
-        params := params + '&vehicletype=' + hpzls.Substring(1);
-    end;
+      params := params + '&crossingid=' + TLZDictionary.gDicDev[2][FKDBH].ID;
+    if vehicletype <> '' then
+      params := params + '&vehicletype=' + vehicletype;
+
     if FHPHM <> '' then
+    begin
       params := params + '&plateno=' + FHPHM;
+      if (FHPZL <> '') and (vehicletype = '') then
+      begin
+        hpzls := '';
+        for s in TLZDictionary.gK08Hpzl.Keys do
+        begin
+          if TLZDictionary.gK08Hpzl[s].MineKey = FHPZL then
+            hpzls := hpzls + ' ' + s;
+        end;
+        if hpzls <> '' then
+          params := params + '&vehicletype=' + hpzls.Substring(1);
+      end;
+    end;
     if clpp <> '' then
       params := params + '&vehiclelogo=' + clpp;
     if csys <> '' then

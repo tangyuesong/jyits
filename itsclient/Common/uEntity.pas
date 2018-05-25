@@ -255,6 +255,7 @@ type
     XYSB: Boolean;
     CZDW: string;
     AddSY: Boolean;
+    ID: String;
   end;
 
   Tviotemp = record
@@ -613,7 +614,7 @@ type
     lat: Double;
     lng: Double;
     icon: string;
-    id: string;
+    ID: string;
     info: string;
   end;
 
@@ -621,7 +622,7 @@ type
     lat: Double;
     lng: Double;
     icon: string;
-    id: string;
+    ID: string;
     info: string;
   end;
 
@@ -643,7 +644,7 @@ type
   end;
 
   TSMessage = record
-    id: string;
+    ID: string;
     msg: string;
     gxsj: string;
   end;

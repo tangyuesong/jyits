@@ -1,12 +1,14 @@
 inherited FramePassSearch: TFramePassSearch
   inherited dxLayoutControl2: TdxLayoutControl
     inherited cxGrid1: TcxGrid
+      Left = -654
       Top = 77
-      Width = 823
+      Width = 1092
       Height = 170
-      TabOrder = 13
+      TabOrder = 14
+      ExplicitLeft = -654
       ExplicitTop = 77
-      ExplicitWidth = 823
+      ExplicitWidth = 1092
       ExplicitHeight = 170
       inherited GridView: TcxGridDBTableView
         OnCellDblClick = GridViewCellDblClick
@@ -48,66 +50,78 @@ inherited FramePassSearch: TFramePassSearch
       end
     end
     inherited cbbPagesize: TcxComboBox
+      Left = -654
       Top = 254
-      TabOrder = 14
+      TabOrder = 15
+      ExplicitLeft = -654
       ExplicitTop = 254
     end
     inherited btnFirstPage: TcxButton
+      Left = -577
       Top = 254
-      TabOrder = 15
+      TabOrder = 16
+      ExplicitLeft = -577
       ExplicitTop = 254
     end
     inherited btnPriorPage: TcxButton
+      Left = -540
       Top = 254
-      TabOrder = 16
+      TabOrder = 17
+      ExplicitLeft = -540
       ExplicitTop = 254
     end
     inherited edtPageIndex: TcxTextEdit
+      Left = -485
       Top = 254
-      TabOrder = 17
+      TabOrder = 18
+      ExplicitLeft = -485
       ExplicitTop = 254
     end
     inherited btnnextPage: TcxButton
+      Left = -408
       Top = 254
-      TabOrder = 18
+      TabOrder = 19
+      ExplicitLeft = -408
       ExplicitTop = 254
     end
     inherited btnLastPage: TcxButton
+      Left = -371
       Top = 254
-      TabOrder = 19
+      TabOrder = 20
+      ExplicitLeft = -371
       ExplicitTop = 254
     end
     object cboClpp: TcxComboBox [7]
-      Left = 252
+      Left = -194
       Top = 41
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 6
+      TabOrder = 7
       Height = 21
       Width = 110
     end
     object btnSearch: TcxButton [8]
-      Left = 704
+      Left = 306
       Top = 13
       Width = 75
       Height = 25
       Caption = #26597#35810
       OptionsImage.ImageIndex = 901
       OptionsImage.Images = DM.ilBarSmall
-      TabOrder = 10
+      TabOrder = 11
       OnClick = btnSearchClick
     end
     object btnReSet: TcxButton [9]
-      Left = 704
+      Left = 306
       Top = 45
       Width = 75
       Height = 25
       Caption = #23548#20986
-      TabOrder = 11
+      TabOrder = 12
       OnClick = btnReSetClick
     end
     object cboZyb: TcxComboBox [10]
-      Left = 494
+      Left = 232
       Top = 41
       AutoSize = False
       Properties.DropDownListStyle = lsFixedList
@@ -117,21 +131,21 @@ inherited FramePassSearch: TFramePassSearch
         #20851#38381
         #26410#30693)
       Style.HotTrack = False
-      TabOrder = 8
+      TabOrder = 10
       Height = 21
       Width = 67
     end
     object edtClpp1: TcxTextEdit [11]
-      Left = 369
+      Left = -77
       Top = 41
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 7
+      TabOrder = 8
       Height = 21
-      Width = 76
+      Width = 89
     end
     object btnView: TcxButton [12]
-      Left = 786
+      Left = 388
       Top = 45
       Width = 50
       Height = 25
@@ -142,11 +156,76 @@ inherited FramePassSearch: TFramePassSearch
       ShowHint = True
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Transparent = True
-      TabOrder = 12
+      TabOrder = 13
       OnClick = btnViewClick
     end
-    object cxCKBOXCSYS: TcxCheckComboBox [13]
-      Left = 622
+    object cboKDBH: TcxComboBoxExt [13]
+      Left = -600
+      Top = 41
+      AutoSize = False
+      Properties.DropDownAutoSize = True
+      Properties.DropDownListStyle = lsEditList
+      Properties.IncrementalFiltering = False
+      Properties.KeyFieldNames = 'Name'
+      Properties.Revertable = True
+      Style.HotTrack = False
+      TabOrder = 5
+      Height = 21
+      Width = 142
+    end
+    object cboJC: TcxComboBox [14]
+      Left = -194
+      Top = 13
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 2
+      Height = 21
+      Width = 110
+    end
+    object edtHPHM: TcxTextEdit [15]
+      Left = -77
+      Top = 13
+      AutoSize = False
+      Properties.CharCase = ecUpperCase
+      Style.HotTrack = False
+      TabOrder = 3
+      OnKeyPress = edtHPHMKeyPress
+      Height = 21
+      Width = 89
+    end
+    object cboHPZL: TcxComboBox [16]
+      Left = 73
+      Top = 13
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 4
+      Height = 21
+      Width = 110
+    end
+    object dtBegin: TcxDateEdit [17]
+      Left = -600
+      Top = 13
+      AutoSize = False
+      Properties.Kind = ckDateTime
+      Properties.View = cavClassic
+      Style.HotTrack = False
+      TabOrder = 0
+      Height = 21
+      Width = 142
+    end
+    object dtEnd: TcxDateEdit [18]
+      Left = -397
+      Top = 13
+      AutoSize = False
+      Properties.Kind = ckDateTime
+      Properties.View = cavClassic
+      Style.HotTrack = False
+      TabOrder = 1
+      Height = 21
+      Width = 142
+    end
+    object cxCKBOXCSYS: TcxCheckComboBox [19]
+      Left = -397
       Top = 41
       AutoSize = False
       Properties.Delimiter = ' '
@@ -205,74 +284,32 @@ inherited FramePassSearch: TFramePassSearch
           ShortDescription = #20854#20182
         end>
       Style.HotTrack = False
-      TabOrder = 9
+      TabOrder = 6
       Height = 21
-      Width = 75
+      Width = 142
     end
-    object cboKDBH: TcxComboBoxExt [14]
-      Left = 43
+    object cmbVehType: TcxComboBox [20]
+      Left = 73
       Top = 41
       AutoSize = False
-      Properties.DropDownAutoSize = True
-      Properties.DropDownListStyle = lsEditList
-      Properties.IncrementalFiltering = False
-      Properties.KeyFieldNames = 'Name'
-      Properties.Revertable = True
+      Properties.DropDownListStyle = lsFixedList
+      Properties.Items.Strings = (
+        ''
+        #26410#30693
+        #22823#22411#23458#36710
+        #36135#36710
+        #36735#36710
+        #38754#21253#36710
+        #23567#36135#36710
+        #34892#20154
+        #20108#36718#36710
+        #19977#36718#36710
+        'SUV/MPV'
+        #20013#22411#23458#36710)
       Style.HotTrack = False
-      TabOrder = 5
-      Height = 21
-      Width = 172
-    end
-    object cboJC: TcxComboBox [15]
-      Left = 43
-      Top = 13
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 0
-      Height = 21
-      Width = 76
-    end
-    object edtHPHM: TcxTextEdit [16]
-      Left = 126
-      Top = 13
-      AutoSize = False
-      Properties.CharCase = ecUpperCase
-      Style.HotTrack = False
-      TabOrder = 1
-      OnKeyPress = edtHPHMKeyPress
-      Height = 21
-      Width = 89
-    end
-    object dtBegin: TcxDateEdit [17]
-      Left = 369
-      Top = 13
-      AutoSize = False
-      Properties.Kind = ckDateTime
-      Properties.View = cavClassic
-      Style.HotTrack = False
-      TabOrder = 3
-      Height = 21
-      Width = 152
-    end
-    object cboHPZL: TcxComboBox [18]
-      Left = 252
-      Top = 13
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 2
+      TabOrder = 9
       Height = 21
       Width = 110
-    end
-    object dtEnd: TcxDateEdit [19]
-      Left = 539
-      Top = 13
-      AutoSize = False
-      Properties.Kind = ckDateTime
-      Properties.View = cavClassic
-      Style.HotTrack = False
-      TabOrder = 4
-      Height = 21
-      Width = 158
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       Parent = dxLayoutGroup3
@@ -318,12 +355,12 @@ inherited FramePassSearch: TFramePassSearch
     end
     object dxLayoutItem1: TdxLayoutItem
       Parent = dxLayoutGroup4
-      CaptionOptions.Text = #21697#29260
+      CaptionOptions.Text = #36710#36742#21697#29260
       Control = cboClpp
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 110
       ControlOptions.ShowBorder = False
-      Index = 1
+      Index = 2
     end
     object dxLayoutGroup6: TdxLayoutGroup
       Parent = dxLayoutGroup5
@@ -355,19 +392,20 @@ inherited FramePassSearch: TFramePassSearch
     object dxLayoutItem9: TdxLayoutItem
       Parent = dxLayoutGroup4
       CaptionOptions.Text = #36974#38451#26495
+      Visible = False
       Control = cboZyb
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 67
       ControlOptions.ShowBorder = False
-      Index = 3
+      Index = 5
     end
     object dxLayoutItem24: TdxLayoutItem
       Parent = dxLayoutGroup4
       Control = edtClpp1
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 76
+      ControlOptions.OriginalWidth = 89
       ControlOptions.ShowBorder = False
-      Index = 2
+      Index = 3
     end
     object dxLayoutGroup7: TdxLayoutGroup
       Parent = dxLayoutGroup5
@@ -389,32 +427,23 @@ inherited FramePassSearch: TFramePassSearch
       ControlOptions.ShowBorder = False
       Index = 0
     end
-    object dxLayoutItem25: TdxLayoutItem
-      Parent = dxLayoutGroup4
-      CaptionOptions.Text = #36710#36523#39068#33394
-      Control = cxCKBOXCSYS
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 75
-      ControlOptions.ShowBorder = False
-      Index = 4
-    end
     object liKDBH: TdxLayoutItem
       Parent = dxLayoutGroup4
-      CaptionOptions.Text = #22320#28857
+      CaptionOptions.Text = #36807#36710#22320#28857
       Control = cboKDBH
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 172
+      ControlOptions.OriginalWidth = 142
       ControlOptions.ShowBorder = False
       Index = 0
     end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxLayoutGroup2
-      CaptionOptions.Text = #21495#29260
+      CaptionOptions.Text = #21495#29260#21495#30721
       Control = cboJC
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 76
+      ControlOptions.OriginalWidth = 110
       ControlOptions.ShowBorder = False
-      Index = 0
+      Index = 2
     end
     object dxLayoutItem8: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -422,33 +451,51 @@ inherited FramePassSearch: TFramePassSearch
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 89
       ControlOptions.ShowBorder = False
-      Index = 1
-    end
-    object dxLayoutItem6: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      Control = dtBegin
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 152
-      ControlOptions.ShowBorder = False
       Index = 3
     end
     object dxLayoutItem2: TdxLayoutItem
       Parent = dxLayoutGroup2
       AlignVert = avClient
-      CaptionOptions.Text = #36710#22411
+      CaptionOptions.Text = #21495#29260#31181#31867
       Control = cboHPZL
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 110
       ControlOptions.ShowBorder = False
-      Index = 2
+      Index = 4
+    end
+    object dxLayoutItem6: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #36807#36710#26102#38388
+      Control = dtBegin
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 142
+      ControlOptions.ShowBorder = False
+      Index = 0
     end
     object dxLayoutItem5: TdxLayoutItem
       Parent = dxLayoutGroup2
-      AlignVert = avClient
-      CaptionOptions.Text = '-'
+      CaptionOptions.Text = #32467#26463#26102#38388
       Control = dtEnd
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 158
+      ControlOptions.OriginalWidth = 142
+      ControlOptions.ShowBorder = False
+      Index = 1
+    end
+    object dxLayoutItem25: TdxLayoutItem
+      Parent = dxLayoutGroup4
+      CaptionOptions.Text = #36710#36523#39068#33394
+      Control = cxCKBOXCSYS
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 142
+      ControlOptions.ShowBorder = False
+      Index = 1
+    end
+    object dxLayoutItem10: TdxLayoutItem
+      Parent = dxLayoutGroup4
+      CaptionOptions.Text = #36710#36742#31867#22411
+      Control = cmbVehType
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 110
       ControlOptions.ShowBorder = False
       Index = 4
     end

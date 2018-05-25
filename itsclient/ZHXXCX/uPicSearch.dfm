@@ -1,5 +1,7 @@
 inherited FramePicSearch: TFramePicSearch
+  Width = 833
   inherited dxLayoutControl2: TdxLayoutControl
+    Width = 833
     inherited cbbPagesize: TcxComboBox [0]
       Left = 901
       Top = 254

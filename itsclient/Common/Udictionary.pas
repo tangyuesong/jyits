@@ -402,6 +402,7 @@ begin
           dev.YSXZB := FieldByName('YSXZB').AsBoolean;
           dev.CZDW := FieldByName('CZDW').AsString;
           dev.AddSY := FieldByName('AddSY').AsBoolean;
+          dev.ID := FieldByName('ID').AsString;
           // 设备只到大队，CJJG为支队取全市设备。其他的取他所在的大队
           { if ((gDicDept[gUser.DWDM].DWJB = '3') and
             (copy(dev.CJJG, 1, 4) = copy(gUser.DWDM, 1, 4))) or

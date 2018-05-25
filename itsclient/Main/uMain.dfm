@@ -1610,6 +1610,8 @@ object frmMain: TfrmMain
       SpeedButtonOptions.Transparent = True
       TabOrder = 4
       OnClick = btnPwdClick
+      ExplicitLeft = 946
+      ExplicitTop = -4
     end
     object lbUser: TcxLabel
       Left = 880

@@ -270,7 +270,7 @@ begin
   cxTextEdit1.Text := FdfVehInfo.PlateNum;
   cxTextEdit2.Text := FdfVehInfo.nType;
   if TLZDictionary.gK08Hpzl.ContainsKey(FdfVehInfo.nType) then
-    cxTextEdit2.Text := TLZDictionary.gK08Hpzl[FdfVehInfo.nType].MC;
+    cxTextEdit2.Text := TLZDictionary.gK08Hpzl[FdfVehInfo.nType].mc;
   cxTextEdit3.Text := FdfVehInfo.nColor;
   if TLZDictionary.gK08Csys.ContainsKey(FdfVehInfo.nColor) then
     cxTextEdit3.Text := TLZDictionary.gK08Csys[FdfVehInfo.nColor];
@@ -364,36 +364,36 @@ begin
   pageSize := StrToIntDef(cbbPageSize.Text, 30);
   pageIndex := StrToIntDef(edtPageIndex.Text, 0);
 
-  params := 'kssj=' + FormatDatetime('yyyy-mm-dd', dtBegin.Date) + 'T' +
-    FormatDatetime('hh:mm:ss', dtBegin.Date) + '.000Z&jssj=' +
-    FormatDatetime('yyyy-mm-dd', dtEnd.Date) + 'T' + FormatDatetime('hh:mm:ss',
-    dtEnd.Date) + '.999Z&page=' + IntToStr(pageIndex + 1) + '&pagesize=' +
-    pageSize.ToString;
+  params := 'passtime=' + FormatDatetime('yyyy-mm-dd hh:mm:ss', dtBegin.Date) +
+    ',' + FormatDatetime('yyyy-mm-dd hh:mm:ss', dtEnd.Date) + '&currentPage=' +
+    IntToStr(pageIndex + 1) + '&pageSize=' + pageSize.ToString;
   if cboKDBH.Text <> '' then
-    params := params + '&kdbh=' + TLZDictionary.GetKey('DEV', '', cboKDBH.Text);
+    params := params + '&crossingid=' + TLZDictionary.gDicDev[2]
+      [TLZDictionary.GetKey('DEV', '', cboKDBH.Text)].ID;
   if cb1.Checked then
-    params := params + '&hphm=' + FdfVehInfo.PlateNum;
+    params := params + '&plateno=' + FdfVehInfo.PlateNum
+  else if Trim(edtHphm.Text) <> '' then
+    params := params + '&plateno=' + Trim(edtHphm.Text);
+
   if cb2.Checked then
-    params := params + '&hpzl=' + FdfVehInfo.nType;
+    params := params + '&vehicletype=' + FdfVehInfo.nType;
   if cb3.Checked then
-    params := params + '&csys=' + FdfVehInfo.nColor;
+    params := params + '&vehiclecolor=' + FdfVehInfo.nColor;
   if cb4.Checked then
   begin
-    params := params + '&clpp=' + FdfVehInfo.nMainLogo;
-    params := params + '&clpp1=' + FdfVehInfo.nSubLogo;
+    params := params + '&vehiclelogo=' + FdfVehInfo.nMainLogo;
+    params := params + '&vehiclesublogo=' + FdfVehInfo.nSubLogo;
   end;
   if cb5.Checked then
-    params := params + '&aqd=' + FdfVehInfo.nPilotSB;
+    params := params + '&pilotsafebelt=' + FdfVehInfo.nPilotSB;
   if cb6.Checked then
-    params := params + '&aqd1=' + FdfVehInfo.nCopilotSB;
+    params := params + '&vicepilotsafebelt=' + FdfVehInfo.nCopilotSB;
   if cb7.Checked then
-    params := params + '&zyb=' + FdfVehInfo.nPilotSV;
+    params := params + '&pilotsunvisor=' + FdfVehInfo.nPilotSV;
   if cb8.Checked then
-    params := params + '&zyb1=' + FdfVehInfo.nCopilotSV;
+    params := params + '&vicepilotsunvisor=' + FdfVehInfo.nCopilotSV;
   if cb9.Checked then
-    params := params + '&gj=' + FdfVehInfo.nPendant;
-  if Trim(edtHphm.Text) <> '' then
-    params := params + '&hphm=' + Trim(edtHphm.Text);
+    params := params + '&pendant=' + FdfVehInfo.nPendant;
 
   json := TRequestItf.DbQuery('GetK08PassList', params);
 
