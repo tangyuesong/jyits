@@ -140,11 +140,11 @@ var
 begin
   sql := 'if not exists(select 1 from T_KK_ALARM where hphm=''' + item.plateinfo
     + ''' and hpzl=''' + item.vehicletype + ''' and bklx=''' + bklx + ''')'
-    + 'insert into T_KK_ALARM(BKXH,HPHM,HPZL,BKLX,BKR,ZT,UploadStatus,CLPP,CSYS,CLLX,BZ,vioUrl)'
+    + 'insert into T_KK_ALARM(BKXH,HPHM,HPZL,BKLX,BKZL,BKR,ZT,UploadStatus,CLPP,CSYS,CLLX,BZ,vioUrl)'
     + 'values(''' + FormatDateTime('yyyymmddhhmmsszzz', now) + ''','''
     + item.plateinfo + ''',''' + item.vehicletype + ''',''' + bklx
-    + ''',''JTPSvc'',''1'',''2'',''' + item.vehiclelogo + ''','''
-    + item.vehiclecolor + ''',''无'',''JTP'',''' + item.imagepath +''')';
+    + ''',''自动布控'',''SYSTEM'',''1'',''2'',''' + item.vehiclelogo + ''','''
+    + item.vehiclecolor + ''',''无'',''JZF_JTP'',''' + item.imagepath +''')';
   gSQLHelper.ExecuteSql(sql);
   //glogger.Info('[JTP]' + item.plateinfo);
 end;

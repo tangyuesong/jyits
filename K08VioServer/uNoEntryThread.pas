@@ -77,10 +77,12 @@ begin
 
       try
         Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '30');
+        gLogger.Debug(Params.Text);
         vehList := THik.GetK08PassList(Params, totalPage, currentPage);
         Params.Free;
         if vehList <> nil then
         begin
+          gLogger.Debug(vehList.Count.ToString);
           tmpSQLs := GetVioSQLs(vehList);
           if tmpSQLs.Count > 0 then
             SQLs.AddStrings(tmpSQLs);
@@ -134,15 +136,14 @@ var
   totalPage, currentPage: Integer;
   vehList: TList<TK08VehInfo>;
   veh: TK08VehInfo;
-  dtParam: string;
+  passtime: string;
 begin
   Result := '';
-
-  dtParam := FormatDatetime('yyyy-mm-dd hh:nn:ss', dt - DateUtils.OneMinute)
-    + ' TO ' + FormatDatetime('yyyy-mm-dd hh:nn:ss', dt + DateUtils.OneMinute);
+  passtime := FormatDatetime('yyyy-mm-dd hh:nn:ss', dt)
+    + ',' + FormatDatetime('yyyy-mm-dd 00:00:00', dt + 1);
   param := TDictionary<string, String>.Create;
-  param.Add('crossingid', sbid);
-  param.Add('passtime', dtParam);
+  param.Add('crossingid', gThreadConfig.NoEntryDev);
+  param.Add('passtime', passtime);
   param.Add('platecolor', '1');
   param.Add('vehicletype', '2');
   param.Add('platetype', '8 102');
@@ -160,10 +161,12 @@ begin
     begin
       for veh in vehList do
       begin
-        if Trim(veh.imagepath) = Trim(tp1) then
-          continue;
-        Result := veh.imagepath;
-        Result := Result.Replace('&amp;', '&');
+        if Trim(veh.imagepath) <> Trim(tp1) then
+        begin
+          Result := veh.imagepath;
+          Result := Result.Replace('&amp;', '&');
+          break;
+        end;
       end;
       vehList.Free;
     end;

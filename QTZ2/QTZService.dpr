@@ -40,7 +40,8 @@ uses
   uMoreLikeThisHBase in 'hik\uMoreLikeThisHBase.pas',
   uHikHBase in 'hik\uHikHBase.pas',
   uAnalysisExtra in 'hik\uAnalysisExtra.pas',
-  itfUploadVioToJcpt in 'itfUploadVioToJcpt.pas';
+  itfUploadVioToJcpt in 'itfUploadVioToJcpt.pas',
+  VioSurveil in 'rm\intf\VioSurveil.pas';
 
 {$R *.RES}
 

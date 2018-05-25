@@ -29,7 +29,8 @@ uses
   uJKDefine in 'rm\impl\uJKDefine.pas',
   TmriOutNewAccess in 'rm\intf\TmriOutNewAccess.pas',
   uWSManager in 'uWSManager.pas',
-  TmriOutAccess1 in 'rm\intf\TmriOutAccess1.pas';
+  TmriOutAccess1 in 'rm\intf\TmriOutAccess1.pas',
+  VioSurveil in 'rm\intf\VioSurveil.pas';
 
 {$R *.res}
 

@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{78E923A3-A075-47D7-A5FC-B6B9541520CB}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Test\Out.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Test\ProjectIn.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BDRC\BDRC.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BDRS\BDRS.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Out">
+        <MSBuild Projects="Test\Out.dproj"/>
+    </Target>
+    <Target Name="Out:Clean">
+        <MSBuild Projects="Test\Out.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Out:Make">
+        <MSBuild Projects="Test\Out.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProjectIn">
+        <MSBuild Projects="Test\ProjectIn.dproj"/>
+    </Target>
+    <Target Name="ProjectIn:Clean">
+        <MSBuild Projects="Test\ProjectIn.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProjectIn:Make">
+        <MSBuild Projects="Test\ProjectIn.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BDRC">
+        <MSBuild Projects="BDRC\BDRC.dproj"/>
+    </Target>
+    <Target Name="BDRC:Clean">
+        <MSBuild Projects="BDRC\BDRC.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BDRC:Make">
+        <MSBuild Projects="BDRC\BDRC.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BDRS">
+        <MSBuild Projects="BDRS\BDRS.dproj"/>
+    </Target>
+    <Target Name="BDRS:Clean">
+        <MSBuild Projects="BDRS\BDRS.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BDRS:Make">
+        <MSBuild Projects="BDRS\BDRS.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Out;ProjectIn;BDRC;BDRS"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Out:Clean;ProjectIn:Clean;BDRC:Clean;BDRS:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Out:Make;ProjectIn:Make;BDRC:Make;BDRS:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

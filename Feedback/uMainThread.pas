@@ -682,8 +682,8 @@ procedure TMainThread.DownloadAlarmVehicle;
     FSQLHelper.ExecuteSQL(s);
 
     s := 'insert into T_KK_ALARM(BKXH,BKJG,BKR,CJJG,HPHM,HPZL,ZT,VIOURL,BKLX,BKZL,CLPP,CLLX,CSYS,KDBH,GXSJ,UploadStatus) ';
-    s := s + 'select a.GCXH,''445200000000'',''Service'',''445200000000'',a.HPHM,a.HPZL,1,a.URL,';
-    s := s + 'case when XYLX=''01'' then ''03'' else ''02'' end as BKLX,''JCPT'',CLPPXH,a.CLLX,a.CSYS,c.SBBH,a.GCSJ,2 ';
+    s := s + 'select a.GCXH,''445200000000'',''SYSTEM'',''445200000000'',a.HPHM,a.HPZL,1,a.URL,';
+    s := s + 'case when XYLX=''01'' then ''03'' else ''02'' end as BKLX,''集成平台'',CLPPXH,a.CLLX,a.CSYS,c.SBBH,a.GCSJ,2 ';
     s := s + 'from ' + tmpTable + ' as a ';
     s := s + 'left join T_KK_ALARM b on a.HPHM=b.HPHM and a.HPZL=b.HPZL ';
     s := s + 'left join (select JCPTBABH, max(SBBH) as SBBH from S_DEVICE group by JCPTBABH) C on c.JCPTBABH=a.KKBH ';
