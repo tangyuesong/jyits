@@ -9,10 +9,11 @@ uses
 type
   T2To5NoEntry = class(TThread)
   private
-    gvioVeh: TStrings;
+    gvioVeh: TDictionary<string, boolean>;
     function GetVioSQLs(vehList: TList<TK08VehInfo>; kssj, jssj: string)
       : TStrings;
     function GetTp2(hphm, tp1, kssj, jssj: string): String;
+    procedure LoadWhiteVeh;
   protected
     procedure Execute; override;
   end;
@@ -51,7 +52,8 @@ begin
     exit;
   end;
 
-  gvioVeh := TStringList.Create;
+  gvioVeh := TDictionary<string, boolean>.Create;
+  LoadWhiteVeh;
   SQLs := TStringList.Create;
 
   minDate := TCommon.StringToDT(gThreadConfig.LC25NoEntryStartDate + ' 00:00:00');
@@ -193,7 +195,7 @@ function T2To5NoEntry.GetVioSQLs(vehList: TList<TK08VehInfo>;
   kssj, jssj: String): TStrings;
 var
   veh: TK08VehInfo;
-  s, tp1, tp2, hphm: String;
+  s, tp1, tp2, hphm, hpzl: String;
   dt: TDateTime;
 begin
   Result := TStringList.Create;
@@ -203,7 +205,9 @@ begin
     begin
       dt := DateUtils.IncMilliSecond(25569.3333333333, StrToInt64(veh.PassTime));
       hphm := veh.plateinfo + '_' + FormatDatetime('yyyymmdd', dt);
-      if gvioVeh.IndexOf(hphm) >= 0 then
+      if not gHpzlList.ContainsKey(veh.vehicletype) then continue;
+      hpzl := gHpzlList[veh.vehicletype];
+      if gvioVeh.ContainsKey(hphm+hpzl) then
         continue;
       tp1 := veh.imagepath;
       tp1 := tp1.Replace('&amp;', '&');
@@ -217,13 +221,22 @@ begin
       tp2 := TIDURI.URLDecode(tp2);
       s := ' insert into T_VIO_TEMP(CJJG, HPHM, HPZL, WFDD, WFXW, WFSJ, CD, PHOTOFILE1, PHOTOFILE2, BJ) values ('
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
-        veh.plateinfo.QuotedString + ',' + gHpzlList[veh.vehicletype]
+        veh.plateinfo.QuotedString + ',' + hpzl
         .QuotedString + ',' + gDevList[veh.crossingid].SBBH.QuotedString +
         ',''1344'',' + FormatDateTime('yyyy-mm-dd hh:nn:ss', dt).QuotedString + ',' + veh.laneno.QuotedString
         + ',' + tp1.QuotedString + ',' + tp2.QuotedString + ',''111'')';
       Result.Add(s);
-      gvioVeh.Add(hphm);
+      gvioVeh.Add(hphm+hpzl, true);
     end;
+  end;
+end;
+
+procedure T2To5NoEntry.LoadWhiteVeh;
+begin
+  with gSQLHelper.Query('select hphm+hpzl from T_Veh_JinXing_White') do
+  begin
+    if not gvioVeh.ContainsKey(Fields[0].AsString) then
+      gvioVeh.Add(Fields[0].AsString, true);
   end;
 end;
 

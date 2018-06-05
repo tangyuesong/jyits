@@ -109,9 +109,6 @@ begin
     begin
       if gSQLHelper.ExecuteSqlTran(SQLs) then
       begin
-        currentTime := currentTime + DateUtils.OneSecond;
-        gThreadConfig.NoEntryStartTime := FormatDatetime('yyyy-mm-dd hh:mm:ss', currentTime);
-        TCommon.SaveConfig('Task', 'NoEntryStartTime', gThreadConfig.NoEntryStartTime);
         gLogger.Info('[NoEntry] Save NoEntry Vio Count: ' + IntToStr(SQLs.Count));
       end
       else
@@ -121,6 +118,9 @@ begin
     else
       gLogger.Info('[NoEntry] Save NoEntry Vio Count: 0');
     param.Free;
+    currentTime := currentTime + DateUtils.OneSecond;
+    gThreadConfig.NoEntryStartTime := FormatDatetime('yyyy-mm-dd hh:mm:ss', currentTime);
+    TCommon.SaveConfig('Task', 'NoEntryStartTime', gThreadConfig.NoEntryStartTime);
     Sleep(10 * 60000);
   end;
   gLogger.Info('[NoEntry] NoEntryThread Stop');
@@ -136,7 +136,8 @@ var
   totalPage, currentPage: Integer;
   vehList: TList<TK08VehInfo>;
   veh: TK08VehInfo;
-  passtime: string;
+  passtime, s: string;
+  time: TDateTime;
 begin
   Result := '';
   passtime := FormatDatetime('yyyy-mm-dd hh:nn:ss', dt)
@@ -161,6 +162,9 @@ begin
     begin
       for veh in vehList do
       begin
+        time := DateUtils.IncMilliSecond(25569.3333333333, StrToInt64(veh.PassTime));
+        s := formatdatetime('hh:nn', time);
+        if not(('07:15' < s)and(s < '21:45')) then continue;
         if Trim(veh.imagepath) <> Trim(tp1) then
         begin
           Result := veh.imagepath;
@@ -190,6 +194,8 @@ begin
     if gDevList.ContainsKey(veh.crossingid) then
     begin
       dt := DateUtils.IncMilliSecond(25569.3333333333, StrToInt64(veh.PassTime));
+      s := formatdatetime('hh:nn', dt);
+      if not(('07:15' < s)and(s < '21:45')) then continue;
       hphm := veh.plateinfo + '_' + FormatDatetime('yyyymmdd', dt);
       if gVioVeh.IndexOf(hphm) >= 0 then
         continue;
