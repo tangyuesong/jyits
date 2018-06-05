@@ -504,7 +504,7 @@ begin
   FObj := nil;
   InitControl;
   ClearVioList;
-  Param := 'count=30&yhbh=' + gUser.DWDM + '&ip=' + gClientIp;
+  Param := 'count=30&cjjg=' + gUser.DWDM + '&ip=' + gClientIp;
   if FWfdd <> '' then
     Param := Param + '&wfdd=' + FWfdd;
   if FWfxw <> '' then

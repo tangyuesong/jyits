@@ -30,7 +30,7 @@ uses
   uFrameYXQZFeedback, uFrameJianYiFeedback, UDcwfSearch, uFrameWFCSJETJ,
   uFramZBGL, uFrameFeedbackResult, uFrameYJLKPH, uFrameDrvLog, uPicSearch,
   UdxGridQDZ, uFrameNtzlist, uFrameGCPD, uFrameFirstEnterManager, uVideoSearch,
-  uFrameTjWfcl,UFrameSDCLList;
+  uFrameTjWfcl, UFrameSDCLList, uFrameVioShaiXuan;
 
 class procedure TRegisterFrame.RegisterFrames();
 begin
@@ -49,7 +49,7 @@ begin
     TDcwfSearch, TFrameFeedbackResult, TFrameYJLKPH, TFrameDrvLog,
     TFramePicSearch, TFToolJSRYQZ, TFrameFineFeedback, TFrameQDZ, TFrameSendSms,
     TFrameZBGL, TFrameNtzlist, TFrameGCPD, TFrameWFTJ, TFrameVideoSearch,
-    TFrameTjWfcl,TFrameSDCLList]);
+    TFrameTjWfcl, TFrameSDCLList, TFrameVioShaiXuan]);
 end;
 
 end.
