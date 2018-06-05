@@ -72,6 +72,7 @@ type
     function GetPic(picServer, picfile, sfilename: string): Boolean;
     function DownloadPic(): Boolean;
     function GetFlag(): String;
+    function IsHave1340(): Boolean;
   public
     property VioFlag: String read GetFlag;
     function InitVio(vio: String): String;
@@ -105,6 +106,22 @@ begin
   except
   end;
   qy.Free;
+end;
+
+function TDealLockVioClass.IsHave1340: Boolean;
+var
+  s: String;
+begin
+  Result := False;
+  s := ' select 1 from T_VIO_HIS where hphm = ' + FLockVio.hphm.QuotedString +
+    ' and hpzl = ' + FLockVio.hpzl.QuotedString +
+    ' and ZT=''8'' and convert(varchar(7), wfsj, 120) = ''' +
+    LeftStr(FLockVio.wfsj, 7) + ''' ';
+  with gSQLHelper.Query(s) do
+  begin
+    Result := RecordCount > 0;
+    Free;
+  end;
 end;
 
 function TDealLockVioClass.CheckTzcp1(hphm, hpzl, wfsj, wfdz: String): Boolean;
@@ -412,23 +429,25 @@ begin
     exit;
   end;
 
-  // 潮州 韩江大桥
-  // if FLockVio.wfdd = '60682' then
+  if FLockVio.wfxw = '1344' then
   begin
-    ct := RightStr(FLockVio.wfsj, 4);
-    if (not((ct >= '1100') and (ct < '1230'))) and
-      (not((ct >= '0730') and (ct < '0900'))) and
-      (not((ct >= '1700') and (ct < '1900'))) then
-      if CheckTzcp1(FLockVio.hphm, FLockVio.hpzl, FLockVio.wfsj, FLockVio.wfdz)
-      then
-      begin
-        Result := '{"head":{"code":"1", "msg1":"上传成功B"}}';
-        exit;
-      end;
+    if CheckTzcp1(FLockVio.hphm, FLockVio.hpzl, FLockVio.wfsj, FLockVio.wfdz)
+    then
+    begin
+      Result := '{"head":{"code":"1", "msg1":"上传成功B"}}';
+      exit;
+    end;
+  end
+  else if FLockVio.wfxw = '1340' then // 每月只抓一次未年检
+  begin
+    if IsHave1340 then
+    begin
+      Result := '{"head":{"code":"1", "msg1":"重复录入"}}';
+      exit;
+    end;
   end;
 
   try
-
     // 用于潮州
     // if IsCZWhite(FLockVio.hphm, FLockVio.hpzl, FLockVio.wfsj) then
     // begin

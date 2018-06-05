@@ -63,8 +63,8 @@ begin
 
  //s:= 'http://10.43.255.8:10088/Query?jkid=04C03&hpzl=02&hphm=‘¡U99858'
  //s:= 'http://10.43.255.8:10088/GetVehInfo?hpzl=02&hphm=‘¡U99858'
- s:= 'http://127.0.0.1:20086/GETK08PASSLIST?passtime=2018-03-25 16:12:02,2018-03-26 16:12:02&currentPage=1&pageSize=30&vehiclelogo=1053&token='+s;
-
+ s:= 'http://127.0.0.1:20086/GETK08PASSLIST?passtime=2018-05-20 19:13:18,2018-05-23 19:13:18&currentPage=1&pageSize=30&plateno=‘¡VGV132'
+ +'&token='+s;
    s := IdHTTP1.Get(TIdURI.URLEncode(s));
 
   // s := IdHTTP1.Get

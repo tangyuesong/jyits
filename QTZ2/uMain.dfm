@@ -17,7 +17,7 @@ object frmMain: TfrmMain
   TextHeight = 13
   object Button1: TButton
     Left = 583
-    Top = 8
+    Top = 7
     Width = 75
     Height = 32
     Caption = 'Button1'

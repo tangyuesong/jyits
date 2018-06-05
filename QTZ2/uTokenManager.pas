@@ -47,7 +47,7 @@ uses
 constructor TTokenManager.Create;
 begin
   FSessionDic := TDictionary<string, TToken>.Create;
-  SessionTimeOut := OneMinute * 30;
+  SessionTimeOut := OneMinute * 60;
 end;
 
 destructor TTokenManager.Destroy;
