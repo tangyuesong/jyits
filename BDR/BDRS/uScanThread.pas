@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes, ActiveX, DB, System.Generics.Collections, System.NetEncoding,
-  uCommon, uEntity, uBllThread;
+  SysUtils, uCommon, uEntity, uBllThread;
 
 type
   TScanThread = class(TThread)
@@ -47,13 +47,14 @@ var
   stream: TStream;
 begin
   list := TList<TRequest>.Create;
-  with SQLHelper.Query('SELECT SYSID,DOCUMENT,HTTP_METHOD,PARAMS,PARAMS_BLOB,POST_STREAM,IS_STREAM FROM T_REQUEST WHERE RKSJ>SYSDATE-0.2') do  // 3分钟内
+  with SQLHelper.Query('SELECT SYSID,DOCUMENT,HTTP_METHOD,PARAMS,PARAMS_BLOB,POST_STREAM,IS_STREAM,APP_NAME FROM T_REQUEST WHERE RKSJ>SYSDATE-0.2') do  // 3分钟内
   begin
     while not Eof do
     begin
       request.SYSID := Fields[0].AsString;
       request.DOCUMENT := Fields[1].AsString;
       request.HTTP_METHOD := Fields[2].AsInteger;
+      request.PARAMS := '';
       if not Fields[3].IsNull then
         request.PARAMS := Fields[3].AsString;
       if not Fields[4].IsNull then
@@ -66,11 +67,13 @@ begin
       request.POST_STREAM := nil;
       if not Fields[5].IsNull then
       begin
-        stream := TStringStream.Create;
+        stream := TMemoryStream.Create;
         TBlobField(Fields[5]).SaveToStream(stream);
         request.POST_STREAM := stream;
       end;
       request.IS_STREAM := Fields[6].AsInteger = 1;
+      request.AppName := Fields[7].AsString;
+      request.AppName := request.AppName.ToUpper;
 
       list.Add(request);
       logger.Info(request.SYSID + request.PARAMS);

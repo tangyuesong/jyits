@@ -3,12 +3,12 @@ unit uCommon;
 interface
 
 uses
-  uSQLHelper, uLogger;
+  System.Generics.Collections, IniFiles, uSQLHelper, uLogger;
 
 var
   SQLHelper: TSQLHelper;
   logger: TLogger;
-  QTZHost: string;
+  Apps: TDictionary<string, string>;
 
 implementation
 

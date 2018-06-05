@@ -9,7 +9,7 @@ uses
   FireDAC.Phys, FireDAC.Phys.Oracle, IdBaseComponent, IdComponent,
   FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.VCLUI.Wait,
-  Data.DB, FireDAC.Comp.Client;
+  Data.DB, FireDAC.Comp.Client, Generics.Collections;
 
 type
   TBDRSSvc = class(TService)
@@ -49,10 +49,11 @@ procedure TBDRSSvc.ServiceStart(Sender: TService; var Started: Boolean);
 var
   ini: TIniFile;
   oraHost, oraPort, oraSID, oraUser, oraPwd: string;
+  strings: TStrings;
+  s: string;
 begin
   logger := TLogger.Create(ExtractFilePath(ParamStr(0)) + 'border.log');
   ini := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'config.ini');
-  QTZHost := ini.ReadString('sys', 'QTZ', '');
   logger.Level := ini.ReadInteger('sys', 'logLevel', 2);
   oraHost := ini.ReadString('ORA', 'Host', '');
   oraPort := ini.ReadString('ORA', 'Port', '');
@@ -73,6 +74,17 @@ begin
   SQLHelper := TSQLHelper.Create;
   SQLHelper.Connection := FOraConn;
   SQLHelper.OnError := self.SQLError;
+
+  Apps := TDictionary<string, string>.Create;
+  strings := TStringList.Create;
+  ini.ReadSection('APP', strings);
+  for s in strings do
+  begin
+    if not Apps.ContainsKey(s.ToUpper) then
+      Apps.Add(s.ToUpper, ini.ReadString('APP', s, ''));
+  end;
+  strings.Free;
+
   ini.Free;
   FScanThread := TScanThread.Create;
   logger.Info('start');

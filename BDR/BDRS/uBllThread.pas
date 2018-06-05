@@ -36,6 +36,8 @@ begin
   ActiveX.CoInitialize(nil);
   CoInitializeEx(Nil, COINIT_MULTITHREADED);
   response := DoAction;
+  if response.ERROR_MESSAGE.Contains('10054') then
+    response := DoAction;
   SaveResult(response);
 end;
 
@@ -46,13 +48,21 @@ var
 begin
   result.CONTENT_TEXT := '';
   result.CONTENT_STREAM := nil;
+  result.ERROR_Message := '';
+  if not Apps.ContainsKey(FRequest.AppName) then
+  begin
+    logger.Error('Invalid AppName: ' + FRequest.AppName);
+    result.CONTENT_TEXT := 'Invalid AppName';
+    exit;
+  end;
   if FRequest.IS_STREAM then
     result.CONTENT_STREAM := TMemoryStream.Create;
 
-  url := QTZHost+FRequest.DOCUMENT;
+  url := Apps[FRequest.AppName] +FRequest.DOCUMENT;
   if FRequest.PARAMS <> '' then
     url := url + '?' + FRequest.PARAMS;
   http := TIdHttp.Create(nil);
+  http.HandleRedirects := true;
   try
     if FRequest.HTTP_METHOD = Ord(hcGET) then
     begin
@@ -74,6 +84,7 @@ begin
     on e: exception do
     begin
       logger.Error(e.Message + url);
+      result.ERROR_Message := e.Message;
       result.CONTENT_STREAM.Free;
       result.CONTENT_STREAM := nil;
     end;

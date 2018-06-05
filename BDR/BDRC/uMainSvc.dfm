@@ -7,7 +7,6 @@ object BDRCSvc: TBDRCSvc
   Width = 280
   object IdHTTPServer1: TIdHTTPServer
     Bindings = <>
-    OnCreatePostStream = IdHTTPServer1CreatePostStream
     OnCommandGet = IdHTTPServer1CommandGet
     Left = 64
     Top = 38
