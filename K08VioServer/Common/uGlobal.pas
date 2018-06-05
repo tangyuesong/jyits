@@ -38,6 +38,8 @@ type
     PilotsafebeltDev: String;
     NoEntryDev: String;
     LC25NoEntryDev: String;
+    UPhoneThreadRun: Boolean;
+    UPhoneStartTime: String;
   End;
 
 var

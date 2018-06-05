@@ -126,8 +126,12 @@ begin
     gThreadConfig.NoEntryThreadRun := ReadString('Task', 'NoEntryActive', '0') = '1';
     gThreadConfig.LC25NoEntryThreadRun := ReadString('Task', 'LC25NoEntryActive', '0') = '1';
     gThreadConfig.PilotsafebeltStartTime := ReadString('Task', 'PilotsafebeltStartTime', '2017-01-01 00:00:00');
-    gThreadConfig.NoEntryStartTime := ReadString('Task', 'NoEntryStartTime', '2017-01-0 00:00:00');
+    gThreadConfig.NoEntryStartTime := ReadString('Task', 'NoEntryStartTime', '2017-01-01 00:00:00');
     gThreadConfig.LC25NoEntryStartDate := ReadString('Task', 'LC25NoEntryStartDate', '2018-04-26');
+
+    gThreadConfig.UPhoneThreadRun := ReadString('Task', 'UPhoneActive', '0') = '1';
+    gThreadConfig.UPhoneStartTime:= ReadString('Task', 'UPhoneStartTime', '2017-01-01 00:00:00');
+
 
     gHeartbeatUrl := ReadString('Heartbeat', 'Url', 'http://127.0.0.1:20090/');
     gHeartbeatInterval := ReadInteger('Heartbeat', 'Interval', 3);

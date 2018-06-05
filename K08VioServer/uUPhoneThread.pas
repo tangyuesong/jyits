@@ -1,15 +1,15 @@
-unit uNoEntryThread;
+unit uUPhoneThread;
 
 interface
 
 uses
   System.Classes, Generics.Collections, IdHTTP, SysUtils, uGlobal, uCommon,
-  uDecodeHikResult, DateUtils, ActiveX, wininet, uHik, IDURI;
+  uDecodeHikResult, DateUtils, ActiveX, wininet, uHik, IDURI, StrUtils;
 
 type
-  TNoEntryThread = class(TThread)
+  TUPhoneThread = class(TThread)
   private
-    gVioVeh: TStrings; // 防止重复写入，主键为 hphm_yyyymmdd, 只保存5000条
+    gVioVeh: TStrings;
     function GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
     function GetTp2(dt: TDateTime; hphm, tp1: string): String;
   protected
@@ -18,9 +18,9 @@ type
 
 implementation
 
-{ TNoEntryThread }
+{ TUPhoneThread }
 
-procedure TNoEntryThread.Execute;
+procedure TUPhoneThread.Execute;
 var
   Params, SQLs, tmpSQLs: TStrings;
   EndTime: String;
@@ -29,27 +29,20 @@ var
   vehList: TList<TK08VehInfo>;
   param: TDictionary<string, String>;
 begin
-  gLogger.Info('[NoEntry] NoEntryThread Start');
-  if gThreadConfig.NoEntryDev = '' then
-  begin
-    gLogger.Info('[NoEntry] 未配置限行抓拍设备');
-    gLogger.Info('[NoEntry] NoEntryThread Stop');
-    exit;
-  end;
+  gLogger.Info('[UPhone] UPhoneThread Start');
   ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
   gVioVeh := TStringList.Create;
   SQLs := TStringList.Create;
   while True do
   begin
     param := TDictionary<string, String>.Create;
-    param.Add('crossingid', gThreadConfig.NoEntryDev);
-    param.Add('passtime', gThreadConfig.NoEntryStartTime + ',' +
+    param.Add('passtime', gThreadConfig.UPhoneStartTime + ',' +
       formatdatetime('yyyy-mm-dd hh:nn:ss', Now()));
 
     maxPasstime := THik.GetMaxPassTime(param);
     if maxPasstime = 0 then
     begin
-      gLogger.Error('[NoEntry] 访问K08失败');
+      gLogger.Error('[UPhone] 访问K08失败');
       Sleep(10 * 60000);
       continue;
     end;
@@ -61,19 +54,14 @@ begin
     EndTime := formatdatetime('yyyy-mm-dd hh:nn:ss', currentTime);
 
     param.Clear;
-    param.Add('crossingid', gThreadConfig.NoEntryDev);
-    param.Add('passtime', gThreadConfig.NoEntryStartTime + ',' + EndTime);
-    param.Add('platecolor', '1');
-    param.Add('vehicletype', '2');
-    // param.Add('platetype', '8 102');
-    param.Add('platestate', '0');
-
+    param.Add('passtime', gThreadConfig.UPhoneStartTime + ',' + EndTime);
+    param.Add('uphone', '1');
     totalPage := 1;
     currentPage := 1;
     while currentPage <= totalPage do
     begin
-      gLogger.Info('[NoEntry] Get NoEntry StartTime:' +
-        gThreadConfig.NoEntryStartTime + ', EndTime:' + EndTime + ', Page:' +
+      gLogger.Info('[UPhone] Get UPhone StartTime:' +
+        gThreadConfig.UPhoneStartTime + ', EndTime:' + EndTime + ', Page:' +
         IntToStr(currentPage) + ', TotalPage:' + IntToStr(totalPage));
 
       try
@@ -93,7 +81,7 @@ begin
         end
         else
         begin
-          gLogger.Error('[NoEntry] vehList is null');
+          gLogger.Error('[UPhone] vehList is null');
           SQLs.Clear;
           break;
         end;
@@ -111,29 +99,28 @@ begin
       if gSQLHelper.ExecuteSqlTran(SQLs) then
       begin
         currentTime := currentTime + DateUtils.OneSecond;
-        gThreadConfig.NoEntryStartTime := formatdatetime('yyyy-mm-dd hh:mm:ss',
+        gThreadConfig.UPhoneStartTime := formatdatetime('yyyy-mm-dd hh:mm:ss',
           currentTime);
-        TCommon.SaveConfig('Task', 'NoEntryStartTime',
-          gThreadConfig.NoEntryStartTime);
-        gLogger.Info('[NoEntry] Save NoEntry Vio Count: ' +
-          IntToStr(SQLs.Count));
+        TCommon.SaveConfig('Task', 'UPhoneStartTime',
+          gThreadConfig.UPhoneStartTime);
+        gLogger.Info('[UPhone] Save UPhone Vio Count: ' + IntToStr(SQLs.Count));
       end
       else
-        gLogger.Error('[NoEntry] Save NoEntry Vio Error');
+        gLogger.Error('[UPhone] Save UPhone Vio Error');
       SQLs.Clear;
     end
     else
-      gLogger.Info('[NoEntry] Save NoEntry Vio Count: 0');
+      gLogger.Info('[UPhone] Save UPhone Vio Count: 0');
     param.Free;
     Sleep(10 * 60000);
   end;
-  gLogger.Info('[NoEntry] NoEntryThread Stop');
+  gLogger.Info('[UPhone] UPhoneThread Stop');
   SQLs.Free;
   gVioVeh.Free;
   ActiveX.CoUninitialize;
 end;
 
-function TNoEntryThread.GetTp2(dt: TDateTime; hphm, tp1: string): String;
+function TUPhoneThread.GetTp2(dt: TDateTime; hphm, tp1: string): String;
 var
   Params: TStrings;
   param: TDictionary<string, String>;
@@ -146,12 +133,8 @@ begin
   passtime := formatdatetime('yyyy-mm-dd 00:00:00', dt) + ',' +
     formatdatetime('yyyy-mm-dd 00:00:00', dt + 1);
   param := TDictionary<string, String>.Create;
-  // param.Add('crossingid', gThreadConfig.NoEntryDev);
+
   param.Add('passtime', passtime);
-  param.Add('platecolor', '1');
-  param.Add('vehicletype', '2');
-  // param.Add('platetype', '8 102');
-  param.Add('platestate', '0');
   param.Add('plateno', hphm);
 
   totalPage := 1;
@@ -176,16 +159,16 @@ begin
   except
     on e: exception do
     begin
-      gLogger.Error('[NoEntry] ' + e.Message);
+      gLogger.Error('[UPhone] ' + e.Message);
     end;
   end;
   param.Free;
 end;
 
-function TNoEntryThread.GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
+function TUPhoneThread.GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
 var
   veh: TK08VehInfo;
-  s, tp1, Tp2, hphm, hhnn: String;
+  s, tp1, Tp2, hphm: String;
   dt: TDateTime;
 begin
   Result := TStringList.Create;
@@ -193,11 +176,11 @@ begin
   begin
     if gDevList.ContainsKey(veh.crossingid) then
     begin
+      if LeftStr(gDevList[veh.crossingid].CJJG, 6) = '445281' then
+        continue;
+
       dt := DateUtils.IncMilliSecond(25569.3333333333,
         StrToInt64(veh.passtime));
-      hhnn := formatdatetime('hhnn', dt);
-      if (hhnn < '0715') or (hhnn > '2145') then
-        continue;
 
       hphm := veh.plateinfo + '_' + formatdatetime('yyyymmdd', dt);
       if gVioVeh.IndexOf(hphm) >= 0 then
@@ -207,7 +190,7 @@ begin
       Tp2 := GetTp2(dt, veh.plateinfo, tp1);
       if Tp2 = '' then
       begin
-        gLogger.Info('[NoEntry] not found Photofile2');
+        gLogger.Info('[UPhone] not found Photofile2');
         continue;
       end;
       tp1 := tp1.Replace('&amp;', '&');
@@ -218,7 +201,7 @@ begin
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
         veh.plateinfo.QuotedString + ',' + gHpzlList[veh.vehicletype]
         .QuotedString + ',' + gDevList[veh.crossingid].SBBH.QuotedString +
-        ',''1344'',' + formatdatetime('yyyy-mm-dd hh:mm:ss', dt).QuotedString +
+        ',''1223'',' + formatdatetime('yyyy-mm-dd hh:mm:ss', dt).QuotedString +
         ',' + veh.laneno.QuotedString + ',' + tp1.QuotedString + ',' +
         Tp2.QuotedString + ',''0'')';
       Result.Add(s);

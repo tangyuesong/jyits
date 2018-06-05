@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.SvcMgr, Vcl.Dialogs, uCommon, uGlobal,
   uPilotsafebeltThread, IdBaseComponent, IdComponent, uNoEntryThread,
-  IdTCPConnection, IdTCPClient, IdHTTP, Vcl.ExtCtrls, u2To5NoEntry;
+  IdTCPConnection, IdTCPClient, IdHTTP, Vcl.ExtCtrls, u2To5NoEntry,
+  uUPhoneThread;
 
 type
   TItsK08VioService = class(TService)
@@ -46,9 +47,11 @@ procedure TItsK08VioService.ServiceStart(Sender: TService;
 begin
   TCommon.ProgramInit;
   if gThreadConfig.PilotsafebeltThreadRun then
-    TPilotsafebeltThread.Create;
+    TPilotsafebeltThread.Create(False);
   if gThreadConfig.NoEntryThreadRun then
-    TNoEntryThread.Create;
+    TNoEntryThread.Create(False);;
+  if gThreadConfig.UPhoneThreadRun then
+    TUPhoneThread.Create(False);;
   Timer1.Interval := gHeartbeatInterval * 60000;
   Timer1Timer(nil);
   Timer1.Enabled := True;

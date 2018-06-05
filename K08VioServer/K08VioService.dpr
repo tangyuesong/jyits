@@ -15,7 +15,8 @@ uses
   qrbtree in 'Common\qrbtree.pas',
   QString in 'Common\QString.pas',
   u2To5NoEntry in 'u2To5NoEntry.pas',
-  uNoEntryThread in 'uNoEntryThread.pas';
+  uNoEntryThread in 'uNoEntryThread.pas',
+  uUPhoneThread in 'uUPhoneThread.pas';
 
 {$R *.RES}
 
