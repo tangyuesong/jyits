@@ -1,19 +1,19 @@
 inherited ToolVioGZGL: TToolVioGZGL
-  Width = 844
+  Width = 775
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 844
+    Width = 775
     Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 818
-      Height = 191
+      Width = 787
+      Height = 174
       TabOrder = 7
       ExplicitTop = 45
-      ExplicitWidth = 818
-      ExplicitHeight = 191
+      ExplicitWidth = 787
+      ExplicitHeight = 174
       inherited GridView: TcxGridDBTableView
         OptionsData.Editing = False
       end
@@ -76,38 +76,38 @@ inherited ToolVioGZGL: TToolVioGZGL
       OnClick = BtnExport2Click
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 243
+      Top = 226
       TabOrder = 8
-      ExplicitTop = 243
+      ExplicitTop = 226
     end
     inherited btnFirstPage: TcxButton
-      Top = 243
+      Top = 226
       TabOrder = 9
-      ExplicitTop = 243
+      ExplicitTop = 226
     end
     inherited btnPriorPage: TcxButton
-      Top = 243
+      Top = 226
       TabOrder = 10
-      ExplicitTop = 243
+      ExplicitTop = 226
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 243
+      Top = 226
       TabOrder = 11
-      ExplicitTop = 243
+      ExplicitTop = 226
     end
     inherited btnnextPage: TcxButton
-      Top = 243
+      Top = 226
       TabOrder = 12
-      ExplicitTop = 243
+      ExplicitTop = 226
     end
     inherited btnLastPage: TcxButton
-      Top = 243
+      Top = 226
       TabOrder = 13
-      ExplicitTop = 243
+      ExplicitTop = 226
     end
     inherited lbCount: TcxLabel
-      Top = 271
-      ExplicitTop = 271
+      Top = 254
+      ExplicitTop = 254
     end
     object edtNum: TcxTextEdit [13]
       Left = 371

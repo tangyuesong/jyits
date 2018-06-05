@@ -208,7 +208,7 @@ procedure TToolVioGZGL.btnExportClick(Sender: TObject);
 var
   wfsj: TDateTime;
   y, m, d, h, n, ss, ms: word;
-  yy, mm, dd: String;
+  // yy, mm, dd: String;
   b: Boolean;
 begin
   if not FDMemTable1.Active or (FDMemTable1.RecordCount = 0) then
@@ -217,9 +217,11 @@ begin
     Exit;
   end;
   b := true;
-  yy := FormatDateTime('yyyy', now());
-  mm := FormatDateTime('mm', now());
-  dd := FormatDateTime('dd', now());
+  {
+    yy := FormatDateTime('yyyy', now());
+    mm := FormatDateTime('mm', now());
+    dd := FormatDateTime('dd', now());
+  }
 
   FDMemTable1.DisableControls;
   FDMemTable1.First;
@@ -238,7 +240,7 @@ begin
     TfrxMemoView(frxReport1.FindObject('Memo3')).Memo.Text :=
       FDMemTable1.FieldByName('HPZLMC').AsString;
 
-    wfsj := VartoDateTime(FDMemTable1.FieldByName('WFSJ').AsString);
+    wfsj := VarToDateTime(FDMemTable1.FieldByName('WFSJ').AsString);
 
     DateUtils.DecodeDateTime(wfsj, y, m, d, h, n, ss, ms);
 
@@ -263,9 +265,9 @@ begin
       FDMemTable1.FieldByName('JE').AsString;
     TfrxMemoView(frxReport1.FindObject('Memo15')).Memo.Text :=
       FDMemTable1.FieldByName('JF').AsString;
-    TfrxMemoView(frxReport1.FindObject('Memo16')).Memo.Text := yy;
-    TfrxMemoView(frxReport1.FindObject('Memo17')).Memo.Text := mm;
-    TfrxMemoView(frxReport1.FindObject('Memo18')).Memo.Text := dd;
+    TfrxMemoView(frxReport1.FindObject('Memo16')).Memo.Text := IntToStr(y);
+    TfrxMemoView(frxReport1.FindObject('Memo17')).Memo.Text := IntToStr(m);
+    TfrxMemoView(frxReport1.FindObject('Memo18')).Memo.Text := IntToStr(d);
 
     self.frxReport1.PrepareReport(true);
     self.frxReport1.PrintOptions.ShowDialog := b; // 第一次显示打印设置窗口
