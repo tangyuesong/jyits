@@ -113,7 +113,6 @@ procedure TBDRCSvc.IdHTTPServer1CommandGet(AContext: TIdContext;
   end;
 var
   ip, action, params, id: string;
-  stream: TStream;
   response: TResponse;
   request: TRequest;
 begin
@@ -135,13 +134,14 @@ begin
   if request.AppName = '' then
     request.AppName := 'DSJ';
 
-  logger.Info('[' + ip + ']' + request.DOCUMENT + request.PARAMS);
+  logger.Debug('[' + ip + ']' + request.DOCUMENT + request.PARAMS);
   if InsertToDB(request) then
   begin
     response := GetResponse(request.SYSID);
     AResponseInfo.ContentType := response.CONTENT_TYPE;
     AResponseInfo.CharSet := response.CharSet;
     AResponseInfo.CustomHeaders.Text := response.CustomHeaders;
+    AResponseInfo.FreeContentStream := true;
     if response.CONTENT_STREAM <> nil then
       AResponseInfo.ContentStream := response.CONTENT_STREAM
     else if response.CONTENT_TEXT <> '' then
@@ -196,6 +196,7 @@ begin
     params.Add('PARAMS', request.PARAMS);
     request.POST_STREAM.Position := 0;
     params.Add('POST_STREAM', '').LoadFromStream(request.POST_STREAM, TFieldType.ftBlob);
+    request.POST_STREAM.Free;
   end;
   result := SQLHelper.ExecuteSql1(SQL, params);
   params.Free;
@@ -243,9 +244,9 @@ begin
       Connection.Close;
       Connection.Free;
       Free;
-      if (result.CONTENT_TEXT<>'') or (result.CONTENT_STREAM <> nil) then
-        break;
     end;
+    if (result.CONTENT_TEXT<>'') or (result.CONTENT_STREAM <> nil) then
+      break;
   end;
 end;
 

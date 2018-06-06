@@ -4,7 +4,8 @@ interface
 
 uses
   System.Classes, SysUtils, ActiveX, HttpApp, JSON, IdHttp, IdCustomHTTPServer,
-  FireDAC.Stan.Param, Data.DB, uCommon, uEntity;
+  FireDAC.Stan.Param, Data.DB, uCommon, uEntity, System.Net.URLClient,
+  System.Net.HttpClient, System.Net.HttpClientComponent;
 
 type
   TBllThread = class(TThread)
@@ -12,6 +13,7 @@ type
     FRequest: TRequest;
     procedure SaveResult(response: TResponse);
     function DoAction: TResponse;
+    function DoAction1: TResponse;
   protected
     procedure Execute; override;
   public
@@ -38,7 +40,70 @@ begin
   response := DoAction;
   if response.ERROR_MESSAGE.Contains('10054') then
     response := DoAction;
+  if Assigned(FRequest.POST_STREAM) then
+    FRequest.POST_STREAM.Free;
   SaveResult(response);
+end;
+
+function TBllThread.DoAction1: TResponse;
+var
+  url: string;
+  http: TNetHTTPClient;
+  ss: TStringStream;
+  res: IHTTPResponse;
+begin
+  result.CONTENT_TEXT := '';
+  result.CONTENT_STREAM := nil;
+  result.ERROR_Message := '';
+  if not Apps.ContainsKey(FRequest.AppName) then
+  begin
+    logger.Error('Invalid AppName: ' + FRequest.AppName);
+    result.CONTENT_TEXT := 'Invalid AppName';
+    exit;
+  end;
+  if FRequest.IS_STREAM then
+    result.CONTENT_STREAM := TMemoryStream.Create;
+
+  url := Apps[FRequest.AppName] +FRequest.DOCUMENT;
+  if FRequest.PARAMS <> '' then
+    url := url + '?' + FRequest.PARAMS;
+  http:= TNetHTTPClient.Create(nil);
+  http.UserAgent := 'Mozilla/3.0 (compatible; Indy Library)';
+  http.Accept := 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
+  try
+    if FRequest.HTTP_METHOD = Ord(hcGET) then
+    begin
+      if FRequest.IS_STREAM then
+        res := http.Get(url, result.CONTENT_STREAM)
+      else begin
+        res := http.Get(url);
+        result.CONTENT_TEXT := res.ContentAsString;
+      end;
+    end
+    else begin
+      if FRequest.IS_STREAM then
+      begin
+        res := http.Post(url, FRequest.POST_STREAM, result.CONTENT_STREAM);
+      end
+      else begin
+        res := http.Post(url, FRequest.POST_STREAM);
+        result.CONTENT_TEXT := res.ContentAsString;
+      end;
+    end;
+    result.CONTENT_TYPE := res.MimeType;
+    result.CharSet := res.ContentCharSet;
+  except
+    on e: exception do
+    begin
+      logger.Error(e.Message + url);
+      result.ERROR_Message := e.Message;
+      result.CONTENT_STREAM.Free;
+      result.CONTENT_STREAM := nil;
+    end;
+  end;
+  http.Free;
+  if Assigned(FRequest.POST_STREAM) then
+    FRequest.POST_STREAM.Free;
 end;
 
 function TBllThread.DoAction: TResponse;
@@ -90,8 +155,6 @@ begin
     end;
   end;
   http.Free;
-  if Assigned(FRequest.POST_STREAM) then
-    FRequest.POST_STREAM.Free;
 end;
 
 procedure TBllThread.SaveResult(response: TResponse);
