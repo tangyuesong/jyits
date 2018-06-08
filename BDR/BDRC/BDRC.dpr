@@ -5,8 +5,8 @@ uses
   uMainSvc in 'uMainSvc.pas' {BDRCSvc: TService},
   uCommon in 'uCommon.pas',
   uLogger in 'uLogger.pas',
-  uSQLHelper in 'uSQLHelper.pas',
-  uEntity in 'uEntity.pas';
+  uEntity in 'uEntity.pas',
+  uDM in 'uDM.pas' {DM: TDataModule};
 
 {$R *.RES}
 

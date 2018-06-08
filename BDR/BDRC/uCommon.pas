@@ -3,10 +3,9 @@ unit uCommon;
 interface
 
 uses
-  DateUtils, uSQLHelper, uLogger;
+  DateUtils, uLogger;
 
 var
-  SQLHelper: TSQLHelper;
   logger: TLogger;
 
   ClientTimeOut: Double = OneSecond * 10;

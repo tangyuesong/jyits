@@ -11,8 +11,4 @@ object BDRCSvc: TBDRCSvc
     Left = 64
     Top = 38
   end
-  object FDPhysOracleDriverLink1: TFDPhysOracleDriverLink
-    Left = 64
-    Top = 112
-  end
 end

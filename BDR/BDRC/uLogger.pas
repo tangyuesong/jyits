@@ -17,7 +17,6 @@ type
     cs: TCriticalSection;
     procedure DoBackup;
     function FindFiles(path: String): TStrings;
-    procedure ProcessMessages;
   public
     constructor Create(ALogFile: string);
     destructor Destroy; override;
@@ -190,17 +189,6 @@ begin
   FLogStream.WriteBuffer(Buffer, Length(Buffer));
 
   cs.Leave;
-end;
-
-procedure TLogger.ProcessMessages;
-var
-  Msg: TMsg;
-begin
-  while PeekMessage(Msg, 0, 0, 0, PM_REMOVE) do
-  begin
-    TranslateMessage(Msg);
-    DispatchMessage(Msg);
-  end;
 end;
 
 end.

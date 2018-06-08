@@ -6,9 +6,9 @@ uses
   uCommon in 'uCommon.pas',
   uScanThread in 'uScanThread.pas',
   uLogger in '..\BDRC\uLogger.pas',
-  uSQLHelper in '..\BDRC\uSQLHelper.pas',
   uBllThread in 'uBllThread.pas',
-  uEntity in '..\BDRC\uEntity.pas';
+  uEntity in '..\BDRC\uEntity.pas',
+  uDM in '..\BDRC\uDM.pas' {DM: TDataModule};
 
 {$R *.RES}
 

@@ -11,18 +11,16 @@ uses
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef,
   FireDAC.VCLUI.Wait, Data.DB, FireDAC.Comp.Client, FireDAC.Phys.OracleDef,
-  FireDAC.Phys.Oracle, uSQLHelper, uLogger, uCommon, uEntity;
+  FireDAC.Phys.Oracle, uOraHelper, uLogger, uCommon, uEntity;
 
 type
   TBDRCSvc = class(TService)
     IdHTTPServer1: TIdHTTPServer;
-    FDPhysOracleDriverLink1: TFDPhysOracleDriverLink;
     procedure ServiceStart(Sender: TService; var Started: Boolean);
     procedure ServiceStop(Sender: TService; var Stopped: Boolean);
     procedure IdHTTPServer1CommandGet(AContext: TIdContext;
       ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
   private
-    FOraConn: TFDConnection;
     FIPs: string;
     function InsertToDB(request: TRequest): boolean;
     function GetResponse(sysid: string): TResponse;
@@ -39,7 +37,7 @@ var
 implementation
 
 uses
-  HttpApp;
+  HttpApp, uDM;
 
 {$R *.dfm}
 
@@ -56,33 +54,15 @@ end;
 procedure TBDRCSvc.ServiceStart(Sender: TService; var Started: Boolean);
 var
   ini: TIniFile;
-  oraHost, oraPort, oraSID, oraUser, oraPwd: string;
 begin
   logger := TLogger.Create(ExtractFilePath(ParamStr(0)) + 'border.log');
   ini := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'config.ini');
-  oraHost := ini.ReadString('ORA', 'Host', '');
-  oraPort := ini.ReadString('ORA', 'Port', '');
-  oraSID := ini.ReadString('ORA', 'SID', '');
-  oraUser := ini.ReadString('ORA', 'User', '');
-  oraPwd := ini.ReadString('ORA', 'Pwd', '');
-  FOraConn := TFDConnection.Create(nil);
-  FOraConn.FetchOptions.Mode := fmAll;
-  FOraConn.Params.Add('DriverID=Ora');
-  FOraConn.Params.Add
-    (Format('Database=(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = %s)(PORT = %s)))'
-    + '(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = %s)))',
-    [oraHost, oraPort, oraSID]));
-  FOraConn.Params.Add(Format('User_Name=%s', [oraUser]));
-  FOraConn.Params.Add(Format('Password=%s', [oraPwd]));
-  FOraConn.Params.Add('CharacterSet=UTF8'); // 否则中文乱码
-  FOraConn.LoginPrompt := false;
-  SQLHelper := TSQLHelper.Create;
-  SQLHelper.Connection := FOraConn;
-  SQLHelper.OnError := self.SQLError;
+  logger.Level := ini.ReadInteger('sys', 'logLevel', 2);
+  Application.CreateForm(TDM, DM);
+  DM.OnError := self.SQLError;
 
   ClientTimeOut := ini.ReadInteger('sys', 'ClientTimeOut', 10) * OneSecond;
   FIPs := ini.ReadString('sys', 'IP', '');
-  logger.Level := ini.ReadInteger('sys', 'logLevel', 2);
 
   IdHTTPServer1.Bindings.Clear;
   IdHTTPServer1.DefaultPort := ini.ReadInteger('sys', 'Port', 18088);
@@ -112,7 +92,7 @@ procedure TBDRCSvc.IdHTTPServer1CommandGet(AContext: TIdContext;
     Result := '{"head":{"code":"0","message":"' + msg + '"}';
   end;
 var
-  ip, action, params, id: string;
+  ip: string;
   response: TResponse;
   request: TRequest;
 begin
@@ -127,7 +107,7 @@ begin
   request.SYSID := TGuid.NewGuid.ToString;
   request.DOCUMENT := ARequestInfo.Document.Substring(1);
   request.PARAMS := ARequestInfo.UnparsedParams;
-  request.POST_STREAM := ARequestInfo.PostStream;
+  request.POST_STREAM := ARequestInfo.PostStream;         // IdHTTPServer1CommandGet结束后，ARequestInfo.PostStream会自动释放
   request.HTTP_METHOD := Ord(ARequestInfo.CommandType);
   request.IS_STREAM :=  request.PARAMS.ToUpper.Contains('ISSTREAM=1');
   request.AppName := ARequestInfo.Params.Values['appName'];
@@ -196,9 +176,8 @@ begin
     params.Add('PARAMS', request.PARAMS);
     request.POST_STREAM.Position := 0;
     params.Add('POST_STREAM', '').LoadFromStream(request.POST_STREAM, TFieldType.ftBlob);
-    request.POST_STREAM.Free;
   end;
-  result := SQLHelper.ExecuteSql1(SQL, params);
+  result := DM.ExecuteSql1(SQL, params);
   params.Free;
 end;
 
@@ -216,7 +195,7 @@ begin
   while now - time < ClientTimeOut do
   begin
     Sleep(100);
-    with SQLHelper.Query(SQL) do
+    with DM.Query(SQL) do
     begin
       if not EOF then
       begin
