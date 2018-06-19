@@ -703,8 +703,8 @@ end;
 
 procedure TFrameJCBK.SpVoice(s: string);
 begin
-//  WinExec(PAnsiChar(AnsiString(ExtractFilePath(ParamStr(0)) + 'SpVoice.exe ' +
-//    s)), SW_Hide);
+  WinExec(PAnsiChar(AnsiString(ExtractFilePath(ParamStr(0)) + 'SpVoice.exe ' +
+    s)), SW_Hide);
 end;
 
 procedure TFrameJCBK.dxTileControl2Item1Click(Sender: TdxTileControlItem);
