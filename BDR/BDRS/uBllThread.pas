@@ -55,7 +55,7 @@ begin
   if not Apps.ContainsKey(FRequest.AppName) then
   begin
     logger.Error('Invalid AppName: ' + FRequest.AppName);
-    result.CONTENT_TEXT := 'Invalid AppName';
+    result.ERROR_Message := 'Invalid AppName(' + FRequest.AppName + ')';
     exit;
   end;
   if FRequest.IS_STREAM then
@@ -101,8 +101,10 @@ var
   stream: TStringStream;
   params: TFDParams;
 begin
-  if (response.CONTENT_TEXT = '') and (response.CONTENT_STREAM = nil) then
-    response.CONTENT_TEXT := '{"head":{"code":"0","message":"Request Failed(ERROR: 50510)"}';
+  if (response.ERROR_Message <> '') then
+  begin
+    response.CONTENT_TEXT := '{"head":{"code":"0","message":"Request Failed(ERROR: 50510):' + response.ERROR_Message + '"}';
+  end;
 
   params := TFDParams.Create;
   params.Add('SYSID', FRequest.SYSID);

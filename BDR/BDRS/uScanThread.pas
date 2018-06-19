@@ -76,7 +76,7 @@ begin
       request.AppName := request.AppName.ToUpper;
 
       list.Add(request);
-      logger.Debug(request.SYSID + request.PARAMS);
+      logger.Debug(request.DOCUMENT + request.PARAMS);
       Next;
     end;
     Close;

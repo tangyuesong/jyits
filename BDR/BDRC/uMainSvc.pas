@@ -76,7 +76,7 @@ end;
 procedure TBDRCSvc.ServiceStop(Sender: TService; var Stopped: Boolean);
 begin
   IdHTTPServer1.Active := false;
-  logger.Info('Service Start');
+  logger.Info('Service Stop');
   logger.Free;
 end;
 
@@ -225,7 +225,10 @@ begin
       Free;
     end;
     if (result.CONTENT_TEXT<>'') or (result.CONTENT_STREAM <> nil) then
+    begin
+      DM.ExecuteSql('DELETE FROM T_RESPONSE WHERE SYSID=''' + sysid + '''');
       break;
+    end;
   end;
 end;
 

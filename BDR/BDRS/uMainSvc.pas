@@ -54,6 +54,7 @@ begin
 
   ini := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'config.ini');
   logger.Level := ini.ReadInteger('sys', 'logLevel', 2);
+  logger.Info('logger.Level = ' + logger.Level.ToString);
 
   Application.CreateForm(TDM, DM);
   DM.OnError := self.SQLError;
