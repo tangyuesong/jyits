@@ -68,8 +68,8 @@ uses
 procedure TForm9.Button1Click(Sender: TObject);
 begin
   uCommon.Initialize;
-  TaskManager := TTaskManager.Create;
-  TaskManager.CreateThreads;
+  //TaskManager := TTaskManager.Create;
+  //TaskManager.CreateThreads;
 end;
 
 procedure TForm9.Button2Click(Sender: TObject);
