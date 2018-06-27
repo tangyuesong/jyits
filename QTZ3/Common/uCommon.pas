@@ -494,9 +494,8 @@ begin
       jk.JDID := FieldByName('JDID').AsString;
       jk.XLH := FieldByName('XLH').AsString;
       jk.WSDL := FieldByName('WSDL').AsString;
-
+      jk.CJSQBH := FieldByName('CJSQBH').AsString;
       JKDic.add(jk.jkid, jk);
-
       Next;
     end;
     Free;
@@ -1165,7 +1164,7 @@ end;
 class procedure TCommon.SaveVehInfo(AJSON: String);
 var
   qj: TQJson;
-  s, hphm, hpzl, fzjg, gxsj: String;
+  s, hphm, hpzl, fzjg, gxsj, djrq, hbdbqk, bxzzrq: String;
   ts: TStrings;
 begin
   if AJSON = '' then
@@ -1174,6 +1173,13 @@ begin
   qj := TQJson.Create;
   try
     qj.Parse(AJSON);
+    if (qj.ItemByName('hphm') = nil) or (qj.ItemByName('hpzl') = nil) or
+      (qj.ItemByName('fzjg') = nil) then
+    begin
+      ts.Free;
+      qj.Free;
+      exit;
+    end;
     hphm := qj.ItemByName('hphm').value;
     hpzl := qj.ItemByName('hpzl').value;
     fzjg := qj.ItemByName('fzjg').value;
@@ -1188,9 +1194,24 @@ begin
       ts.add('delete from ' + cDBName + '.dbo.T_VIO_VEHICLE where hphm=' +
         hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString);
 
+      if qj.ItemByName('djrq') <> nil then
+        djrq := qj.ItemByName('djrq').value
+      else
+        djrq := '';
+
+      if qj.ItemByName('hbdbqk') <> nil then
+        hbdbqk := qj.ItemByName('hbdbqk').value
+      else
+        hbdbqk := '';
+
+      if qj.ItemByName('bxzzrq') <> nil then
+        bxzzrq := qj.ItemByName('bxzzrq').value
+      else
+        bxzzrq := '';
+
       s := 'insert into ' + cDBName +
         '.dbo.T_VIO_VEHICLE(hpzl ,hphm ,clpp1 ,clxh ,gcjk ,zzg ,zzcmc ,clsbdh ,fdjh ,cllx ,csys ,syxz ,sfzmhm ,sfzmmc ,syr '
-        + ',ccdjrq ,djrq ,yxqz ,qzbfqz ,fzjg  ,bxzzrq ,dabh ,zt  ,hbdbqk, gxsj) values ('''
+        + ',ccdjrq ,djrq ,yxqz ,qzbfqz ,fzjg  ,bxzzrq ,zt  ,hbdbqk, gxsj) values ('''
         + hpzl + ''',''' + hphm + ''',''' + qj.ItemByName('clpp1').value +
         ''',''' + qj.ItemByName('clxh').value + ''',''' + qj.ItemByName('gcjk')
         .value + ''',''' + qj.ItemByName('zzg').value + ''',''' +
@@ -1199,17 +1220,17 @@ begin
         .value + ''',''' + qj.ItemByName('csys').value + ''',''' +
         qj.ItemByName('syxz').value + ''',''' + qj.ItemByName('sfzmhm').value +
         ''',''' + qj.ItemByName('sfzmmc').value + ''',''' + qj.ItemByName('syr')
-        .value + ''',''' + qj.ItemByName('ccdjrq').value + ''',''' +
-        qj.ItemByName('djrq').value + ''',''' + qj.ItemByName('yxqz').value +
-        ''',''' + qj.ItemByName('qzbfqz').value + ''',''' +
-        qj.ItemByName('fzjg').value + ''',''' + qj.ItemByName('bxzzrq').value +
-        ''',''' + qj.ItemByName('dabh').value + ''',''' + qj.ItemByName('zt')
-        .value + ''',''' + qj.ItemByName('hbdbqk').value + ''',' +
-        gxsj.QuotedString + ')';
+        .value + ''',''' + qj.ItemByName('ccdjrq').value + ''',''' + djrq +
+        ''',''' + qj.ItemByName('yxqz').value + ''',''' +
+        qj.ItemByName('qzbfqz').value + ''',''' + qj.ItemByName('fzjg').value +
+        ''',''' + bxzzrq + ''',''' + qj.ItemByName('zt').value + ''',''' +
+        hbdbqk + ''',' + gxsj.QuotedString + ')';
       ts.add(s);
       gSQLHelper.ExecuteSqlTran(ts);
     end;
   except
+    on e: Exception do
+      gLogger.Error(e.Message);
   end;
   qj.Free;
   ts.Free;

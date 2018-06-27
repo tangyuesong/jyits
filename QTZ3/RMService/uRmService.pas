@@ -45,12 +45,14 @@ type
     class procedure ApplyWSBH(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
     class function IsReVio(params: TStrings; lx: Integer): Boolean;
+
   public
     class function GetVehInfo(token: TToken; hphm, hpzl: String): String;
     class function GetDrvInfo(token: TToken; params: TStrings): String;
     class function GetVioInfoByDrv(token: TToken; params: TStrings): String;
     class procedure DoRM(action, tokenKey: String; params: TStrings;
       isExport: Boolean; AResponseInfo: TIdHTTPResponseInfo);
+    class procedure CheckForceParam(params: TStrings);
   end;
 
 var
@@ -93,7 +95,9 @@ var
 begin
   wslb := params.Values['wslb'];
   num := params.Values['num'];
-  xzqh := LeftStr(token.User.DWDM, 6);
+  xzqh := params.Values['xzqh'];
+  if xzqh = '' then
+    xzqh := LeftStr(token.User.DWDM, 6);
   if wslb = '6' then
   begin
     wslb := '1';
@@ -584,6 +588,214 @@ begin
   condition.Free;
 end;
 
+class procedure TRmService.CheckForceParam(params: TStrings);
+var
+  wfxw1, wfxw2, wfxw3, wfxw4, wfxw5: String;
+  n: Integer;
+begin
+  wfxw1 := params.Values['wfxw1'];
+  wfxw2 := params.Values['wfxw2'];
+  wfxw3 := params.Values['wfxw3'];
+  wfxw4 := params.Values['wfxw4'];
+  wfxw5 := params.Values['wfxw5'];
+  // 去重
+  if wfxw5 <> '' then
+  begin
+    if (wfxw5 = wfxw1) or (wfxw5 = wfxw2) or (wfxw5 = wfxw3) or (wfxw5 = wfxw4)
+    then
+      wfxw5 := '';
+  end;
+  if wfxw4 <> '' then
+  begin
+    if (wfxw4 = wfxw1) or (wfxw4 = wfxw2) or (wfxw4 = wfxw3) then
+      wfxw4 := '';
+  end;
+  if wfxw3 <> '' then
+  begin
+    if (wfxw3 = wfxw1) or (wfxw3 = wfxw2) then
+      wfxw3 := '';
+  end;
+  if (wfxw2 <> '') and (wfxw2 = wfxw1) then
+    wfxw2 := '';
+
+  // 挪动
+  if wfxw1 = '' then
+  begin
+    if wfxw2 <> '' then
+    begin
+      wfxw1 := wfxw2;
+      wfxw2 := '';
+    end
+    else if wfxw3 <> '' then
+    begin
+      wfxw1 := wfxw3;
+      wfxw3 := '';
+    end
+    else if wfxw4 <> '' then
+    begin
+      wfxw1 := wfxw4;
+      wfxw4 := '';
+    end
+    else if wfxw5 <> '' then
+    begin
+      wfxw1 := wfxw5;
+      wfxw5 := '';
+    end;
+  end;
+
+  if wfxw2 = '' then
+  begin
+    if wfxw3 <> '' then
+    begin
+      wfxw2 := wfxw3;
+      wfxw3 := '';
+    end
+    else if wfxw4 <> '' then
+    begin
+      wfxw2 := wfxw4;
+      wfxw4 := '';
+    end
+    else if wfxw5 <> '' then
+    begin
+      wfxw2 := wfxw5;
+      wfxw5 := '';
+    end;
+  end;
+
+  if wfxw3 = '' then
+  begin
+    if wfxw4 <> '' then
+    begin
+      wfxw3 := wfxw4;
+      wfxw4 := '';
+    end
+    else if wfxw5 <> '' then
+    begin
+      wfxw3 := wfxw5;
+      wfxw5 := '';
+    end;
+  end;
+
+  if (wfxw4 = '') and (wfxw5 <> '') then
+  begin
+    wfxw4 := wfxw5;
+    wfxw5 := '';
+  end;
+
+  //
+  n := params.IndexOfName('wfxw1');
+  if wfxw1 = '' then
+  begin
+    if n >= 0 then
+    begin
+      params.Delete(n);
+      n := params.IndexOfName('scz1');
+      if n >= 0 then
+        params.Delete(n);
+      n := params.IndexOfName('bzz1');
+      if n >= 0 then
+        params.Delete(n);
+    end;
+  end
+  else
+  begin
+    if n >= 0 then
+      params.Values['wfxw1'] := wfxw1
+    else
+    begin
+      params.Add('wfxw1=' + wfxw1);
+    end;
+  end;
+
+  n := params.IndexOfName('wfxw2');
+  if wfxw2 = '' then
+  begin
+    if n >= 0 then
+    begin
+      params.Delete(n);
+      n := params.IndexOfName('scz2');
+      if n >= 0 then
+        params.Delete(n);
+      n := params.IndexOfName('bzz2');
+      if n >= 0 then
+        params.Delete(n);
+    end;
+  end
+  else
+  begin
+    if n >= 0 then
+      params.Values['wfxw2'] := wfxw2
+    else
+      params.Add('wfxw2=' + wfxw2);
+  end;
+
+  n := params.IndexOfName('wfxw3');
+  if wfxw3 = '' then
+  begin
+    if n >= 0 then
+    begin
+      params.Delete(n);
+      n := params.IndexOfName('scz3');
+      if n >= 0 then
+        params.Delete(n);
+      n := params.IndexOfName('bzz3');
+      if n >= 0 then
+        params.Delete(n);
+    end;
+  end
+  else
+  begin
+    if n >= 0 then
+      params.Values['wfxw3'] := wfxw3
+    else
+      params.Add('wfxw3=' + wfxw3);
+  end;
+
+  n := params.IndexOfName('wfxw4');
+  if wfxw4 = '' then
+  begin
+    if n >= 0 then
+    begin
+      params.Delete(n);
+      n := params.IndexOfName('scz4');
+      if n >= 0 then
+        params.Delete(n);
+      n := params.IndexOfName('bzz4');
+      if n >= 0 then
+        params.Delete(n);
+    end;
+  end
+  else
+  begin
+    if n >= 0 then
+      params.Values['wfxw4'] := wfxw4
+    else
+      params.Add('wfxw4=' + wfxw4);
+  end;
+
+  n := params.IndexOfName('wfxw5');
+  if wfxw5 = '' then
+  begin
+    if n >= 0 then
+    begin
+      params.Delete(n);
+      n := params.IndexOfName('scz5');
+      if n >= 0 then
+        params.Delete(n);
+      n := params.IndexOfName('bzz5');
+      if n >= 0 then
+        params.Delete(n);
+    end;
+  end
+  else
+  begin
+    if n >= 0 then
+      params.Values['wfxw5'] := wfxw5
+    else
+      params.Add('wfxw5=' + wfxw5);
+  end;
+end;
+
 class procedure TRmService.SaveForceVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
@@ -596,6 +808,7 @@ begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('重复录入');
     exit;
   end;
+  CheckForceParam(params);
   params.Add('JKID=04C55');
   json := DoWrite(token, params);
   gLogger.Info(json);

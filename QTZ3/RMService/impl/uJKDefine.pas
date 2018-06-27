@@ -11,6 +11,7 @@ type
     XLH: string;
     WSDL: string;
     JDID: string;
+    CJSQBH: string;
   end;
 
 var
