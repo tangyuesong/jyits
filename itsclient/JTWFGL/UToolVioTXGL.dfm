@@ -1,20 +1,19 @@
 inherited FToolVIOTXGL: TFToolVIOTXGL
-  Width = 828
-  Height = 413
+  Width = 820
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 828
-    Height = 413
+    Width = 820
+    Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 802
-      Height = 327
+      Width = 794
+      Height = 191
       TabOrder = 7
       ExplicitTop = 45
-      ExplicitWidth = 802
-      ExplicitHeight = 327
+      ExplicitWidth = 794
+      ExplicitHeight = 191
     end
     object DtKSSJ: TcxDateEdit [1]
       Left = 67
@@ -80,7 +79,7 @@ inherited FToolVIOTXGL: TFToolVIOTXGL
       OnClick = btnSearchClick
     end
     object btnAdd: TcxButton [7]
-      Left = 785
+      Left = 777
       Top = 13
       Width = 30
       Height = 25
@@ -92,34 +91,38 @@ inherited FToolVIOTXGL: TFToolVIOTXGL
       OnClick = btnAddClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 379
+      Top = 243
       TabOrder = 8
-      ExplicitTop = 379
+      ExplicitTop = 243
     end
     inherited btnFirstPage: TcxButton
-      Top = 379
+      Top = 243
       TabOrder = 9
-      ExplicitTop = 379
+      ExplicitTop = 243
     end
     inherited btnPriorPage: TcxButton
-      Top = 379
+      Top = 243
       TabOrder = 10
-      ExplicitTop = 379
+      ExplicitTop = 243
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 379
+      Top = 243
       TabOrder = 11
-      ExplicitTop = 379
+      ExplicitTop = 243
     end
     inherited btnnextPage: TcxButton
-      Top = 379
+      Top = 243
       TabOrder = 12
-      ExplicitTop = 379
+      ExplicitTop = 243
     end
     inherited btnLastPage: TcxButton
-      Top = 379
+      Top = 243
       TabOrder = 13
-      ExplicitTop = 379
+      ExplicitTop = 243
+    end
+    inherited lbCount: TcxLabel
+      Top = 271
+      ExplicitTop = 271
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal

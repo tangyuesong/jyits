@@ -30,7 +30,8 @@ uses
   FireDAC.Comp.Client, cxGridLevel, cxGridCustomView, cxGridCustomTableView,
   cxGridTableView, cxGridDBTableView, cxGrid, dxLayoutControl, dxFrame,
   dxDialogBase, UFrameTXGL, udictionary, uCommon, uJsonUtils, uEntity,
-  uRequestItf, cxEditRepositoryItems, sDialogs, System.Actions, Vcl.ActnList;
+  uRequestItf, cxEditRepositoryItems, sDialogs, System.Actions, Vcl.ActnList,
+  cxLabel;
 
 type
   TFToolVIOTXGL = class(TToolGridFrame)

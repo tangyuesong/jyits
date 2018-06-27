@@ -391,11 +391,13 @@ var
   ID: string;
 begin
   inherited;
-  if Fdmemtable1.FieldByName('zt').AsString <> '0' then
-  begin
+  {
+    if Fdmemtable1.FieldByName('zt').AsString <> '0' then
+    begin
     Application.MessageBox('该数据已经通过审核', '提示', MB_OK + MB_ICONSTOP);
     Exit;
-  end;
+    end;
+  }
   if not Fdmemtable1.IsEmpty then
   begin
     if Application.MessageBox('是否删除数据,请确认', '提示',
