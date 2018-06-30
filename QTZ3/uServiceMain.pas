@@ -77,6 +77,7 @@ begin
 
   params := TStringList.Create;
   params.Delimiter := '&';
+  params.StrictDelimiter := True;
   try
     if UpperCase(ARequestInfo.Command) = 'POST' then
     begin
@@ -159,11 +160,15 @@ begin
   if action = 'LOGIN' then
     TCommon.SaveQtzLog(token, yhbh, clientIP, ARequestInfo.Document,
       params.Values['user'], params.Values['id'])
-  else if (TCommon.SaUsers.IndexOf(yhbh) < 0) and
-    (UpperCase(ARequestInfo.Command) <> 'POST') then
-    // 后台访问的日志太多，不用记录, post数据太长
-    TCommon.SaveQtzLog(token, yhbh, clientIP, ARequestInfo.Document,
-      params.DelimitedText);
+  else if (TCommon.SaUsers.IndexOf(yhbh) < 0) then
+  // 后台访问的日志太多，不用记录, post数据太长，去掉参数
+  begin
+    if UpperCase(ARequestInfo.Command) = 'POST' then
+      s := ''
+    else
+      s := params.DelimitedText;
+    TCommon.SaveQtzLog(token, yhbh, clientIP, ARequestInfo.Document, s);
+  end;
   gLogger.Info('[' + clientIP + ']' + ARequestInfo.Document + ' OK');
   params.Free;
 end;
@@ -203,10 +208,10 @@ begin
   TCommon.ProgramInit;
   httpServer.Bindings.Clear;
   httpServer.DefaultPort := gConfig.HttpServerPort;
-  httpServer.Active := true;
+  httpServer.Active := True;
   Timer1.Interval := gConfig.HeartbeatInterval * 60000;
   Timer1Timer(nil);
-  Timer1.Enabled := true;
+  Timer1.Enabled := True;
   gLogger.logging('Service Started', 2);
 end;
 
