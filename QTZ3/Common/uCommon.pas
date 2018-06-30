@@ -494,6 +494,7 @@ begin
       jk.JDID := FieldByName('JDID').AsString;
       jk.XLH := FieldByName('XLH').AsString;
       jk.WSDL := FieldByName('WSDL').AsString;
+      jk.CJSQBH := FieldByName('CJSQBH').AsString;
 
       JKDic.add(jk.jkid, jk);
 

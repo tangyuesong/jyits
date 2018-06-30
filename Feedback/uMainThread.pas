@@ -39,6 +39,7 @@ type
     FLastUploadTime: double;
     FMaxRKSJ: double;
     FMaxRKSJ1: double;
+    FMaxRKSJVehicle: double;
     FStoped: boolean;
     FOraConn: TFDConnection;
     FOraQuery: TFDQuery;
@@ -85,6 +86,7 @@ begin
   FStoped := false;
   FMaxRKSJ := now - OneHour;
   FMaxRKSJ1 := now - 1;
+  FMaxRKSJVehicle := now - 1;
   FLastUploadTime := now;
   inherited Create(false);
 end;
@@ -701,19 +703,25 @@ procedure TMainThread.DownloadAlarmVehicle;
 
 var
   ss: TStrings;
+  maxTime: string;
 begin
   ss := TStringList.Create;
+  maxTime := FormatDateTime('yyyy-mm-dd hh:mm', FMaxRKSJVehicle);
   with FOraQuery do
   begin
     Close;
     SQL.Clear;
-    SQL.Add('select HPHM,HPZL,GCXH,XYLX,CLPPXH,CLLX,CSYS,KKBH,GCSJ,TPLJ||TP1 as URL ');
-    SQL.Add('from RECG_SUSP_RESULT where (XYLX=''01'' or XYLX=''02'') and QRBJ<>0');
+    SQL.Add('select HPHM,HPZL,GCXH,XYLX,CLPPXH,CLLX,CSYS,KKBH,GCSJ,TPLJ||TP1 as URL,RKSJ ');
+    SQL.Add('from RECG_SUSP_RESULT where (XYLX=''01'' or XYLX=''02'') and QRBJ<>0 ');
+    SQL.Add('and RKSJ>to_date(''' + maxTime + ''',''yyyy-mm-dd hh24:mi'') ');
+    SQL.Add('order by RKSJ desc');
     try
       if not FOraConn.Connected then
         FOraConn.Open;
       Open;
       DisableControls;
+      if not EOF then
+        FMaxRKSJVehicle := FieldByName('RKSJ').AsDateTime;
       while not EOF do
       begin
         ss.Add('(' + FieldByName('HPHM').AsString.QuotedString + ',' +

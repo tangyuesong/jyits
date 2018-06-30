@@ -36,7 +36,7 @@ var
 implementation
 
 uses
-  uCommon, uGlobal, uRmService, uDbService, uSPService;
+  uCommon, uGlobal, uRmService, uDbService, uSPService, uExamService;
 
 {$R *.dfm}
 
@@ -181,6 +181,10 @@ begin
     TDBService.DoDB(action, tokenKey, params, isExport, AResponseInfo)
   else if TSpService.Actions.Contains(',' + action + ',') then
     TSpService.DoSP(action, tokenKey, params, isExport, AResponseInfo)
+  else if action = 'GETEXAMDATA' then
+  begin
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(TExamService.GetExamData);
+  end
   else
     TRMService.DoRM(action, tokenKey, params, isExport, AResponseInfo);
   if (AResponseInfo.ContentText = '') and (AResponseInfo.ContentStream = nil)
