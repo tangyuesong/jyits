@@ -146,13 +146,15 @@ begin
     exit;
     end;
   }
-
+  {
+  //hxs要求，
   if IsReVio(vio.hphm, vio.hpzl, vio.wfsj, vio.cjjg) then
   begin
     UpdateVioState(AId, '11', '机动车录入重复');
     AResponseInfo.ContentText := '上传失败[机动车录入重复]';
     exit;
   end;
+  }
 
   if not DownloadVioPic(vio) then
   begin
