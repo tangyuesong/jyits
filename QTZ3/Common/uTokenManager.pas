@@ -14,6 +14,7 @@ type
     LoginTime: Double;
     UpdateTime: Double;
     User: TUser;
+    IsSys: Boolean;
   end;
 
   TTokenManager = class
@@ -26,7 +27,7 @@ type
     constructor Create;
     destructor Destroy;
     function NewToken(Login, IP: string): TToken;
-    function CheckToken(Key, IP: string): boolean;
+    function CheckToken(Key, IP: string): Boolean;
     function GetToken(Key: String): TToken;
   published
     property SessionTimeOut: Double read FSessionTimeOut write FSessionTimeOut;
@@ -35,12 +36,24 @@ type
 implementation
 
 uses
-  uCommon;
+  uCommon, uGlobal;
 
 constructor TTokenManager.Create;
+var
+  token: TToken;
 begin
   FSessionDic := TDictionary<string, TToken>.Create;
   SessionTimeOut := OneMinute * 30;
+  token := TToken.Create;
+  token.Login := 'sjtb20180629';
+  token.IP := '127.0.0.1';
+  token.Key := '9CC0E31FD9F648519AC79239B018F1A6';
+  token.LoginTime := Now;
+  token.UpdateTime := Now;
+  token.User.DWDM := gConfig.DWDM;
+  token.User.YHXM := 'admin';
+  token.IsSys := True;
+  FSessionDic.Add(token.Key, token);
 end;
 
 destructor TTokenManager.Destroy;
@@ -56,7 +69,7 @@ begin
   for Key in FSessionDic.Keys do
   begin
     token := FSessionDic[Key];
-    if now - token.UpdateTime > SessionTimeOut then
+    if (not token.IsSys) and (Now - token.UpdateTime > SessionTimeOut) then
     begin
       FSessionDic.Remove(Key);
       token.Free;
@@ -97,24 +110,27 @@ begin
     result := TToken.Create;
     result.Key := TGuid.NewGuid.ToString.Replace('{', '').Replace('}', '')
       .Replace('-', '');
-    result.LoginTime := now;
+    result.LoginTime := Now;
 
     result.Login := Login;
     result.IP := IP;
+    result.IsSys := False;
     FSessionDic.Add(result.Key, result);
   end;
-  result.UpdateTime := now;
+  result.UpdateTime := Now;
 end;
 
-function TTokenManager.CheckToken(Key, IP: string): boolean;
+function TTokenManager.CheckToken(Key, IP: string): Boolean;
 begin
   result := FSessionDic.ContainsKey(Key);
-  result := result and ((FSessionDic[Key].IP = IP) or
-    (TCommon.SaUsers.IndexOf(FSessionDic[Key].Login) >= 0));
   if result then
   begin
-    FSessionDic[Key].UpdateTime := now;
+    if not FSessionDic[Key].IsSys then
+      result := (FSessionDic[Key].IP = IP) or
+        (TCommon.SaUsers.IndexOf(FSessionDic[Key].Login) >= 0);
   end;
+  if result then
+    FSessionDic[Key].UpdateTime := Now;
 end;
 
 end.

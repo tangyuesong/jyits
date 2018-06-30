@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uSMS, EncdDecd, uHik,
   uLockVio, uVehPass, uAnalysisPic, uImportVio, uRmService, qjson, uSurveilVio,
-  Generics.Collections, StrUtils, uTokenManager, ActiveX;
+  Generics.Collections, StrUtils, uTokenManager, ActiveX, uExamService;
 
 type
   TSPService = Class
@@ -34,7 +34,7 @@ implementation
 class function TSPService.GetActions: String;
 begin
   Result := ',LOCKVIO,GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,'
-    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,';
+    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,';
 end;
 
 class function TSPService.GetCCLZRQ(token: TToken; Params: TStrings): String;
@@ -233,7 +233,11 @@ begin
   else if action = 'GETJFS' then
   begin
     GetJFS(token, Params, AResponseInfo);
-  end;
+  end
+  else if action = UpperCase('GetExamData') then
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+      (TExamService.GetExamData);
+
   ActiveX.CoUninitialize;
 end;
 

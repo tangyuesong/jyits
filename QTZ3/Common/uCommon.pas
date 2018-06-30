@@ -414,6 +414,10 @@ begin
       else
         Result.SH := '0';
       Result.role := FieldByName('role').AsString;
+      if FieldByName('IsMJ').AsBoolean then
+        Result.MJ := '1'
+      else
+        Result.MJ := '0';
     end;
     Free;
   end;
@@ -568,6 +572,8 @@ begin
         dev.CZDW := FieldByName('CZDW').AsString;
         dev.AddSY := FieldByName('AddSY').AsBoolean;
         dev.ID := FieldByName('ID').AsString;
+        dev.AutoUpload := FieldByName('AutoUpload').AsBoolean;
+        dev.UploadJCPT := FieldByName('UploadJCPT').AsBoolean;
         if not FDicDevice.ContainsKey(dev.SBBH) then
           FDicDevice.add(dev.SBBH, dev);
         Next;
@@ -935,6 +941,7 @@ begin
   Result := True;
   with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
   begin
+    gConfig.DWDM := ReadString('SYS', 'DWDM', '445100000000');
     gConfig.DBServer := ReadString('DB', 'Server', '.');
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
     gConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
@@ -1081,7 +1088,7 @@ begin
         token.User.yhxm + '","zw":"' + token.User.ZW + '","sjhm":"' +
         token.User.SJHM + '","sh":"' + token.User.SH + '","fh":"' +
         token.User.FH + '","manager":"' + token.User.Manager + '","role":"' +
-        token.User.role + '"';
+        token.User.role + '","mj":"' + token.User.MJ + '"';
       ud := GetZHPTUserDevice(token.User.yhbh);
       Result := Result + ',"zhpt_zfjly":"' + ud.zfjly + '","zhpt_yj":"' + ud.yj
         + '","zhpt_bkq":"' + ud.bkq + '","zhpt_tq":"' + ud.tq + '"}';

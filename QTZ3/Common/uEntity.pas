@@ -54,6 +54,7 @@ type
   end;
 
   TConfig = Record
+    DWDM: String;
     DBServer: String;
     DBPort: Integer;
     DBUser: String;
@@ -209,6 +210,8 @@ type
     CZDW: string;
     ID: String;
     AddSY: Boolean;
+    AutoUpload: Boolean;
+    UploadJCPT: Boolean;
   end;
 
   TUser = record
@@ -233,6 +236,7 @@ type
     Manager: String;
     SH: String;
     role: String;
+    MJ: String;
   end;
 
   TDept = record
