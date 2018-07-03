@@ -124,7 +124,7 @@ begin
      while not qy.EOF do
       begin
         Result := Result +
-          Format(',{"KCDM":"%s","ZRS":"%s","HG":"%s","BHG":"%s"}',
+          Format(',{"kcdm":"%s","zrs":"%s","hg":"%s","bhg":"%s"}',
           [qy.Fields[0].AsString, qy.Fields[1].AsString, qy.Fields[2].AsString, qy.Fields[3].AsString]);
         qy.Next;
       end;
