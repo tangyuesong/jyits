@@ -1,7 +1,10 @@
 inherited fVioTZCLGL: TfVioTZCLGL
+  Width = 830
+  Height = 509
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Height = 305
+    Width = 830
+    Height = 509
     ExplicitTop = 0
     ExplicitHeight = 305
     object btnSearch: TcxButton [0]
@@ -39,12 +42,12 @@ inherited fVioTZCLGL: TfVioTZCLGL
     end
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 500
-      Height = 174
+      Width = 804
+      Height = 395
       TabOrder = 6
       ExplicitTop = 45
-      ExplicitWidth = 500
-      ExplicitHeight = 174
+      ExplicitWidth = 804
+      ExplicitHeight = 395
     end
     object cbbhpzl: TcxComboBox [4]
       Left = 229
@@ -67,7 +70,7 @@ inherited fVioTZCLGL: TfVioTZCLGL
       Width = 68
     end
     object Btnadd: TcxButton [6]
-      Left = 483
+      Left = 787
       Top = 13
       Width = 30
       Height = 25
@@ -79,34 +82,38 @@ inherited fVioTZCLGL: TfVioTZCLGL
       OnClick = BtnaddClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 226
+      Top = 447
       TabOrder = 7
-      ExplicitTop = 226
+      ExplicitTop = 447
     end
     inherited btnFirstPage: TcxButton
-      Top = 226
+      Top = 447
       TabOrder = 8
-      ExplicitTop = 226
+      ExplicitTop = 447
     end
     inherited btnPriorPage: TcxButton
-      Top = 226
+      Top = 447
       TabOrder = 9
-      ExplicitTop = 226
+      ExplicitTop = 447
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 226
+      Top = 447
       TabOrder = 10
-      ExplicitTop = 226
+      ExplicitTop = 447
     end
     inherited btnnextPage: TcxButton
-      Top = 226
+      Top = 447
       TabOrder = 11
-      ExplicitTop = 226
+      ExplicitTop = 447
     end
     inherited btnLastPage: TcxButton
-      Top = 226
+      Top = 447
       TabOrder = 12
-      ExplicitTop = 226
+      ExplicitTop = 447
+    end
+    inherited lbCount: TcxLabel
+      Top = 475
+      ExplicitTop = 475
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
