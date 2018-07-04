@@ -81,7 +81,7 @@ begin
     result := '"' + node.NodeName + '":"' + strValue + '"';
     exit;
   end;
-
+  lastNode := false;
   InArray := ((node.NextSibling <> nil) and
     (node.NextSibling.NodeName = node.NodeName)) or
     ((node.PreviousSibling <> nil) and

@@ -1116,17 +1116,20 @@ end;
 
 class procedure TCommon.SaveDrvInfo(AJSON: String);
 var
-  qj: TQJson;
+  qj, item: TQJson;
   s, sfzmhm, gxsj: String;
   ts: TStrings;
 begin
   if AJSON = '' then
     exit;
+  sfzmhm := '';
   ts := TStringList.Create;
   qj := TQJson.Create;
   try
     qj.Parse(AJSON);
-    sfzmhm := qj.ItemByName('sfzmhm').value;
+    item := qj.ItemByName('sfzmhm');
+    if item<> nil then
+      sfzmhm := item.value;
     if sfzmhm <> '' then
     begin
       gxsj := gSQLHelper.GetSinge('select max(gxsj) from ' + cDBName +

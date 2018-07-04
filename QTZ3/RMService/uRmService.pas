@@ -491,9 +491,11 @@ class function TRmService.GetDrvInfo(token: TToken; params: TStrings): String;
 var
   json: String;
 begin
-  params.Add('JKID=02C26');
+  params.Add('JKID=02C06');
+  //params.Add('JKID=02C26');
   json := DoQeury(token, params);
-  result := TCommon.GetJsonNode('drv', json);
+  result := TCommon.GetJsonNode('DrvPerson', json);
+  //result := TCommon.GetJsonNode('Drv', json);
   if result = json then
     result := '-1'
   else
