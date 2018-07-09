@@ -45,6 +45,7 @@ type
     class procedure ApplyWSBH(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
     class function IsReVio(params: TStrings; lx: Integer): Boolean;
+    class function GetZQMJ(oldZqmj: string): string; static;
 
   public
     class function GetVehInfo(token: TToken; hphm, hpzl: String): String;
@@ -590,6 +591,17 @@ begin
   condition.Free;
 end;
 
+class function TRmService.GetZQMJ(oldZqmj: string): string;
+var
+  newZqmj: string;
+begin
+  newZqmj := gSQLHelper.GetSinge('select ZQMJ2 from ' + cDBName
+    + '.dbo.T_ZQMJ_MAP where ZQMJ1=''' + oldZqmj + '''');
+  if newZQMJ = '' then
+    newZQMJ := oldZQMJ;
+  result := newZQMJ;
+end;
+
 class procedure TRmService.CheckForceParam(params: TStrings);
 var
   wfxw1, wfxw2, wfxw3, wfxw4, wfxw5: String;
@@ -811,6 +823,7 @@ begin
     exit;
   end;
   CheckForceParam(params);
+  params.Values['zqmj'] := GetZQMJ(params.Values['zqmj']);
   params.Add('JKID=04C55');
   json := DoWrite(token, params);
   gLogger.Info(json);
