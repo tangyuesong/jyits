@@ -565,15 +565,15 @@ begin
         dev.TPXZ := FieldByName('TPXZ').AsBoolean;
         dev.XSZB := FieldByName('XYSB').AsBoolean;
         dev.AQDSB := FieldByName('AQDSB').AsBoolean;
-        dev.HBCZB := FieldByName('HBCZB').AsBoolean;
+        //dev.HBCZB := FieldByName('HBCZB').AsBoolean;
         dev.XXZB := FieldByName('XXZB').AsBoolean;
         dev.DCXXZB := FieldByName('DCXXZB').AsBoolean;
         dev.YSXZB := FieldByName('YSXZB').AsBoolean;
         dev.CZDW := FieldByName('CZDW').AsString;
         dev.AddSY := FieldByName('AddSY').AsBoolean;
         dev.ID := FieldByName('ID').AsString;
-        dev.AutoUpload := FieldByName('AutoUpload').AsBoolean;
-        dev.UploadJCPT := FieldByName('UploadJCPT').AsBoolean;
+        // dev.AutoUpload := FieldByName('AutoUpload').AsBoolean;
+        // dev.UploadJCPT := FieldByName('UploadJCPT').AsBoolean;
         if not FDicDevice.ContainsKey(dev.SBBH) then
           FDicDevice.add(dev.SBBH, dev);
         Next;
@@ -941,7 +941,7 @@ begin
   Result := True;
   with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
   begin
-    gConfig.DWDM := ReadString('SYS', 'DWDM', '445100000000');
+    gConfig.dwdm := ReadString('SYS', 'DWDM', '445100000000');
     gConfig.DBServer := ReadString('DB', 'Server', '.');
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
     gConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
@@ -1128,7 +1128,7 @@ begin
   try
     qj.Parse(AJSON);
     item := qj.ItemByName('sfzmhm');
-    if item<> nil then
+    if item <> nil then
       sfzmhm := item.value;
     if sfzmhm <> '' then
     begin
