@@ -63,7 +63,7 @@ begin
 
  //s:= 'http://10.43.255.8:10088/Query?jkid=04C03&hpzl=02&hphm=ิมU99858'
  //s:= 'http://10.43.255.8:10088/GetVehInfo?hpzl=02&hphm=ิมU99858'
- s:= 'http://127.0.0.1:20086/UploadVio?systemid=309C2BDF-D511-49AD-8472-70F75F12630B'
+ s:= 'http://127.0.0.1:20086/UploadVio?systemid=02F40C2A-34EF-43BC-ADB2-BF754B6A87B8'
  +'&token='+s;
    s := IdHTTP1.Get(TIdURI.URLEncode(s));
 

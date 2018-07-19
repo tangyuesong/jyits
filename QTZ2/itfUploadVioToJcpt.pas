@@ -147,13 +147,13 @@ begin
     end;
   }
   {
-  //hxs要求，
-  if IsReVio(vio.hphm, vio.hpzl, vio.wfsj, vio.cjjg) then
-  begin
+    //hxs要求，
+    if IsReVio(vio.hphm, vio.hpzl, vio.wfsj, vio.cjjg) then
+    begin
     UpdateVioState(AId, '11', '机动车录入重复');
     AResponseInfo.ContentText := '上传失败[机动车录入重复]';
     exit;
-  end;
+    end;
   }
 
   if not DownloadVioPic(vio) then
@@ -165,10 +165,10 @@ begin
 
   json := GetVioUploadStr(vio);
   json := TRminf.surscreen(json);
+  gLogger.Info(json);
   AnalysisVioUploadResult(json, code, msg);
   if code = '1' then
   begin
-
     UpdateVioState(AId, '8', '成功');
     AResponseInfo.ContentText := '成功';
   end
@@ -376,7 +376,7 @@ begin
       Result := True;
     except
       on e: exception do
-        glogger.Error(e.Message);
+        gLogger.Error(e.Message);
     end;
     idHttp.Free;
     ms.Free;
@@ -401,7 +401,7 @@ begin
   end;
   if (zpsl = '2') and (vio.zpstr3 <> '') then
   begin
-    Result := Result + '"zpstr3:"' + vio.zpstr3 + '",';
+    Result := Result + '"zpstr3":"' + vio.zpstr3 + '",';
     zpsl := '3';
   end;
 
