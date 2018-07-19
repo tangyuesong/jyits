@@ -202,7 +202,7 @@ type
     TPXZ: Boolean;
     XSZB: Boolean;
     AQDSB: Boolean;
-    HBCZB: Boolean;
+    HBCZB: Integer;
     XXZB: Boolean;
     DCXXZB: Boolean;
     YSXZB: Boolean;
@@ -237,6 +237,10 @@ type
     SH: String;
     role: String;
     MJ: String;
+    LastLoginTime: String;
+    LastTokenError: String;
+    ValidDay: String;
+    PasswordValidDay: String;
   end;
 
   TDept = record

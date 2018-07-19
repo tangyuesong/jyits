@@ -7,7 +7,7 @@ uses
   System.JSON, FireDAC.Comp.Client, uTokenManager, QJson,
   Data.DB, uEntity, System.Generics.Collections, DateUtils, QBAES, IdFtp,
   IdFtpCommon, IdGlobal, System.Variants, httpApp, uTmri, uJKDefine, uWSManager,
-  StrUtils, System.NetEncoding;
+  StrUtils, System.NetEncoding, System.Math;
 
 type
 
@@ -38,7 +38,7 @@ type
     class function GetDepts(): TDictionary<string, TDept>; static;
     class function GetColDef(): TDictionary<string, string>; static;
     class function GetWfxw(): TDictionary<string, string>; static;
-    class function GetUserInfo(userid, pwd: String): TUser;
+    class function GetUserInfo(userid, pwd, ip: String; var msg: String): TUser;
     class procedure InitLHY_JK; static;
     class function GetZHPTUserDevice(yhbh: String): TZHPTUserDevice;
   public
@@ -54,9 +54,10 @@ type
     class function RecordToJSON<T>(rec: Pointer): string; static;
     class procedure ProgramInit;
     class procedure ProgramDestroy;
-    class function Login(ip: String; params: TStrings): String;
-    class procedure SaveQtzLog(token, yhbh, ip, action, param: String;
-      deviceId: String = '');
+    class function Login(ip: String; params: TStrings;
+      var valid: String): String;
+    class procedure SaveQtzLog(token, yhbh, ip, action, param, valid,
+      msg: String; deviceId: String = '');
     class function GetK08Hpzl(): TDictionary<String, TStrings>;
     class function GetHpzl(): TDictionary<String, String>;
     class function GetK08Clpp(): TDictionary<String, String>;
@@ -371,55 +372,101 @@ begin
   Result := DateUtils.IncMilliSecond(FBaseTime, AMilliSecond);
 end;
 
-class function TCommon.GetUserInfo(userid, pwd: String): TUser;
+class function TCommon.GetUserInfo(userid, pwd, ip: String;
+  var msg: String): TUser;
+var
+  hhnnss, mm, m1, m2: String;
+  dt: TDatetime;
 begin
-  Result.dwdm := '';
-  Result.yhbh := '';
-  Result.yhxm := '';
-  Result.FH := '';
-  Result.Manager := '';
-  Result.SH := '';
+  hhnnss := Formatdatetime('hhnnss', now);
+  msg := '';
+  // with gSQLHelper.Query('select * from ' + cDBName + '.dbo.S_USER where YHBH = '
+  // + userid.QuotedString + ' and mm = ' + pwd.QuotedString) do
   with gSQLHelper.Query('select * from ' + cDBName + '.dbo.S_USER where YHBH = '
-    + userid.QuotedString + ' and mm = ' + pwd.QuotedString) do
+    + userid.QuotedString) do
   begin
     if not Eof then
     begin
-      Result.SystemID := FieldByName('SystemID').AsString;
-      Result.dwdm := FieldByName('DWDM').AsString;
-      Result.yhbh := FieldByName('yhbh').AsString;
-      Result.ZW := FieldByName('ZW').AsString;
-      Result.yhxm := FieldByName('YHXM').AsString;
-      Result.XL := FieldByName('XL').AsString;
-      Result.SJHM := FieldByName('SJHM').AsString;
-      Result.SFZHM := FieldByName('SFZHM').AsString;
-      Result.MM := FieldByName('MM').AsString;
-      Result.IPKS := FieldByName('IPKS').AsString;
-      Result.IPJS := FieldByName('IPJS').AsString;
-      Result.MAC := FieldByName('MAC').AsString;
-      if FieldByName('FH').AsBoolean then
-        Result.FH := '1'
+      mm := FieldByName('mm').AsString;
+      m1 := Trim(AesDecrypt(AnsiString(mm), AnsiString(cUserKey)));
+      m2 := Trim(AesDecrypt(AnsiString(pwd), AnsiString(cUserKey)));
+      if m1 = m2 then
+      begin
+        Result.SystemID := FieldByName('SystemID').AsString;
+        Result.dwdm := FieldByName('DWDM').AsString;
+        Result.yhbh := FieldByName('yhbh').AsString;
+        Result.ZW := FieldByName('ZW').AsString;
+        Result.yhxm := FieldByName('YHXM').AsString;
+        Result.XL := FieldByName('XL').AsString;
+        Result.SJHM := FieldByName('SJHM').AsString;
+        Result.SFZHM := FieldByName('SFZHM').AsString;
+        Result.mm := FieldByName('MM').AsString;
+        Result.IPKS := FieldByName('IPKS').AsString;
+        Result.IPJS := FieldByName('IPJS').AsString;
+        Result.MAC := FieldByName('MAC').AsString;
+        if FieldByName('FH').AsBoolean then
+          Result.FH := '1'
+        else
+          Result.FH := '0';
+        Result.zt := FieldByName('zt').AsString;
+        Result.bz := FieldByName('bz').AsString;
+        Result.QX := FieldByName('QX').AsString;
+        Result.gxsj := FieldByName('gxsj').AsString;
+        Result.lrr := FieldByName('lrr').AsString;
+        if FieldByName('Manager').AsBoolean then
+          Result.Manager := '1'
+        else
+          Result.Manager := '0';
+        if FieldByName('SH').AsBoolean then
+          Result.SH := '1'
+        else
+          Result.SH := '0';
+        Result.role := FieldByName('role').AsString;
+        if FieldByName('IsMJ').AsBoolean then
+          Result.MJ := '1'
+        else
+          Result.MJ := '0';
+        Result.ValidDay :=
+          IntToStr(Ceil(FieldByName('ValidDate').AsDateTime - now));
+        Result.PasswordValidDay :=
+          IntToStr(Ceil(FieldByName('PasswordValidDate').AsDateTime - now));
+        if FieldByName('ValidDate').AsDateTime < now then
+          msg := '用户已超过有效期'
+        else if FieldByName('PasswordValidDate').AsDateTime < now then
+          msg := '密码已超过有效期'
+        else if (hhnnss < FieldByName('LoginTimeBegin').AsString) or
+          (hhnnss > FieldByName('LoginTimeEnd').AsString) then
+          msg := '该时间段不允许登录'
+        else if (ip < FieldByName('IPKS').AsString) or
+          (hhnnss > FieldByName('IPJS').AsString) then
+          msg := '该IP不允许登录';
+      end
       else
-        Result.FH := '0';
-      Result.zt := FieldByName('zt').AsString;
-      Result.bz := FieldByName('bz').AsString;
-      Result.QX := FieldByName('QX').AsString;
-      Result.gxsj := FieldByName('gxsj').AsString;
-      Result.lrr := FieldByName('lrr').AsString;
-      if FieldByName('Manager').AsBoolean then
-        Result.Manager := '1'
-      else
-        Result.Manager := '0';
-      if FieldByName('SH').AsBoolean then
-        Result.SH := '1'
-      else
-        Result.SH := '0';
-      Result.role := FieldByName('role').AsString;
-      if FieldByName('IsMJ').AsBoolean then
-        Result.MJ := '1'
-      else
-        Result.MJ := '0';
-    end;
+        msg := '用户名或者密码错误';
+    end
+    else
+      msg := '用户名或者密码错误';
     Free;
+  end;
+  if msg = '' then
+  begin
+    with gSQLHelper.Query
+      ('select top 1 gxsj from S_QTZ_LOG where action = ''/login'' and param=' +
+      userid.QuotedString + ' and valid = 1 order by gxsj desc') do
+    begin
+      if not Eof then
+        Result.LastLoginTime := Formatdatetime('yyyy-mm-dd hh:nn:ss',
+          Fields[0].AsDateTime);
+      Free;
+    end;
+    with gSQLHelper.Query('select top 1 gxsj from S_QTZ_LOG where yhbh=' +
+      userid.QuotedString + ' and valid = 0 order by gxsj desc') do
+    begin
+      if not Eof then
+        Result.LastTokenError := Formatdatetime('yyyy-mm-dd hh:nn:ss',
+          Fields[0].AsDateTime);
+      Free;
+    end;
   end;
 end;
 
@@ -565,15 +612,15 @@ begin
         dev.TPXZ := FieldByName('TPXZ').AsBoolean;
         dev.XSZB := FieldByName('XYSB').AsBoolean;
         dev.AQDSB := FieldByName('AQDSB').AsBoolean;
-        //dev.HBCZB := FieldByName('HBCZB').AsBoolean;
+        dev.HBCZB := FieldByName('HBCZB').AsInteger;
         dev.XXZB := FieldByName('XXZB').AsBoolean;
         dev.DCXXZB := FieldByName('DCXXZB').AsBoolean;
         dev.YSXZB := FieldByName('YSXZB').AsBoolean;
         dev.CZDW := FieldByName('CZDW').AsString;
         dev.AddSY := FieldByName('AddSY').AsBoolean;
         dev.ID := FieldByName('ID').AsString;
-        // dev.AutoUpload := FieldByName('AutoUpload').AsBoolean;
-        // dev.UploadJCPT := FieldByName('UploadJCPT').AsBoolean;
+        dev.AutoUpload := FieldByName('AutoUpload').AsBoolean;
+        dev.UploadJCPT := FieldByName('UploadJCPT').AsBoolean;
         if not FDicDevice.ContainsKey(dev.SBBH) then
           FDicDevice.add(dev.SBBH, dev);
         Next;
@@ -1055,23 +1102,25 @@ begin
   gWSManager.Free;
 end;
 
-class function TCommon.Login(ip: String; params: TStrings): String;
+class function TCommon.Login(ip: String; params: TStrings;
+  var valid: String): String;
 var
   yhbh, pwd: String;
   User: TUser;
   token: TToken;
   ud: TZHPTUserDevice;
+  msg: String;
 begin
-  Result := '0';
+  valid := '0';
   yhbh := params.Values['user'];
   pwd := params.Values['pwd'];
   if (SaUsers.IndexOf(yhbh) >= 0) and (pwd = cSaPwd) then
     Result := '"' + gTokenManager.NewToken(yhbh, ip).key + '"'
   else
   begin
-    pwd := String(AesEncrypt(AnsiString(yhbh + pwd), AnsiString(cUserKey)));
-    User := GetUserInfo(yhbh, pwd);
-    if User.yhbh <> '' then
+    // pwd := String(AesEncrypt(AnsiString(yhbh + pwd), AnsiString(cUserKey)));
+    User := GetUserInfo(yhbh, pwd, ip, msg);
+    if msg = '' then
     begin
       token := gTokenManager.NewToken(yhbh, ip);
       token.User := User;
@@ -1088,23 +1137,34 @@ begin
         token.User.yhxm + '","zw":"' + token.User.ZW + '","sjhm":"' +
         token.User.SJHM + '","sh":"' + token.User.SH + '","fh":"' +
         token.User.FH + '","manager":"' + token.User.Manager + '","role":"' +
-        token.User.role + '","mj":"' + token.User.MJ + '"';
+        token.User.role + '","mj":"' + token.User.MJ + '","lastlogintime":"' +
+        token.User.LastLoginTime + '","lasttokenerror":"' +
+        token.User.LastTokenError + '","validday":"' + token.User.ValidDay +
+        '","passwordvalidday":"' + token.User.PasswordValidDay + '"';
       ud := GetZHPTUserDevice(token.User.yhbh);
       Result := Result + ',"zhpt_zfjly":"' + ud.zfjly + '","zhpt_yj":"' + ud.yj
         + '","zhpt_bkq":"' + ud.bkq + '","zhpt_tq":"' + ud.tq + '"}';
-    end;
+      Result := TCommon.AssembleSuccessHttpResult(Result);
+      valid := '1';
+    end
+    else
+      Result := TCommon.AssembleFailedHttpResult(msg);
   end;
 end;
 
-class procedure TCommon.SaveQtzLog(token, yhbh, ip, action, param: String;
-  deviceId: String);
+class procedure TCommon.SaveQtzLog(token, yhbh, ip, action, param, valid,
+  msg: String; deviceId: String);
 var
   s: String;
 begin
-  s := 'insert into S_QTZ_LOG(token, yhbh, ip, action, param, DeviceId) values ('
+  if length(msg) < 8000 then
+    msg := copy(msg, 1, 8000);
+
+  s := 'insert into S_QTZ_LOG(token, yhbh, ip, action, param, DeviceId, valid, result) values ('
     + token.QuotedString + ',' + yhbh.QuotedString + ',' + ip.QuotedString + ','
     + action.QuotedString + ',' + param.QuotedString + ',' +
-    deviceId.QuotedString + ')';
+    deviceId.QuotedString + ',' + valid.QuotedString + ',' +
+    msg.QuotedString + ')';
   gSQLHelper.ExecuteSql(s);
 end;
 

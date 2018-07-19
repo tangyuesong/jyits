@@ -53,7 +53,7 @@ end;
 procedure TItsQTZ3Service.httpServerCommandGet(AContext: TIdContext;
   ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 var
-  action, token: String;
+  action, token, valid: String;
   params: TStrings;
   i: integer;
   clientIP, s, yhbh: String;
@@ -128,12 +128,7 @@ begin
 
     if action = 'LOGIN' then
     begin
-      s := TCommon.Login(clientIP, params);
-      if s = '0' then
-        AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
-          ('username or password is wrong')
-      else
-        AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(s);
+      AResponseInfo.ContentText := TCommon.Login(clientIP, params, valid);
     end
     else
     begin
@@ -143,11 +138,15 @@ begin
           ' invalid token');
         AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
           ('invalid token');
-        params.Free;
-        exit;
+        yhbh := '';
+        valid := '0';
+      end
+      else
+      begin
+        yhbh := gTokenManager.GetToken(token).Login;
+        DoHttpRequest(action, token, params, isExport, AResponseInfo);
+        valid := '1';
       end;
-      yhbh := gTokenManager.GetToken(token).Login;
-      DoHttpRequest(action, token, params, isExport, AResponseInfo);
     end;
   except
     on e: Exception do
@@ -159,7 +158,8 @@ begin
   end;
   if action = 'LOGIN' then
     TCommon.SaveQtzLog(token, yhbh, clientIP, ARequestInfo.Document,
-      params.Values['user'], params.Values['id'])
+      params.Values['user'], valid, AResponseInfo.ContentText,
+      params.Values['id'])
   else if (TCommon.SaUsers.IndexOf(yhbh) < 0) then
   // 后台访问的日志太多，不用记录, post数据太长，去掉参数
   begin
@@ -167,7 +167,8 @@ begin
       s := ''
     else
       s := params.DelimitedText;
-    TCommon.SaveQtzLog(token, yhbh, clientIP, ARequestInfo.Document, s);
+    TCommon.SaveQtzLog(token, yhbh, clientIP, ARequestInfo.Document, s, valid,
+      AResponseInfo.ContentText);
   end;
   gLogger.Info('[' + clientIP + ']' + ARequestInfo.Document + ' OK');
   params.Free;

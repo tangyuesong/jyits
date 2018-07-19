@@ -45,8 +45,11 @@ type
     class procedure ApplyWSBH(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
     class function IsReVio(params: TStrings; lx: Integer): Boolean;
+    class function CheckForceInput(token: TToken; params: TStrings): String;
     class function GetZQMJ(oldZqmj: string): string; static;
-
+    class procedure GetVioCount(token: TToken; params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo);
+    class function GetVioInfoByVeh(token: TToken; params: TStrings): String;
   public
     class function GetVehInfo(token: TToken; hphm, hpzl: String): String;
     class function GetDrvInfo(token: TToken; params: TStrings): String;
@@ -402,18 +405,24 @@ begin
   end
   else if action = Uppercase('GetVioInfoByVeh') then
   begin
-    params.Add('JKID=04C03');
-    sjson := DoQeury(token, params);
-    gLogger.Info(sjson);
-    json := TCommon.GetJsonNode('viosurveil', sjson);
-    if json = '' then
-    begin
+    {
+      params.Add('JKID=04C03');
+      sjson := DoQeury(token, params);
+      json := TCommon.GetJsonNode('viosurveil', sjson);
+      if json = '' then
+      begin
       gLogger.Info(sjson);
       json := '[]';
-    end
-    else
+      end
+      else
       json := TCommon.AddWfxwmc(json);
-    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(json);
+    }
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+      (GetVioInfoByVeh(token, params));
+  end
+  else if action = Uppercase('GetVioCount') then
+  begin
+    GetVioCount(token, params, AResponseInfo);
   end
   else if action = Uppercase('WriteVio') then
   begin
@@ -492,11 +501,11 @@ class function TRmService.GetDrvInfo(token: TToken; params: TStrings): String;
 var
   json: String;
 begin
-  params.Add('JKID=02C06');
-  //params.Add('JKID=02C26');
+  // params.Add('JKID=02C06');
+  params.Add('JKID=02C26');
   json := DoQeury(token, params);
-  result := TCommon.GetJsonNode('DrvPerson', json);
-  //result := TCommon.GetJsonNode('Drv', json);
+  // result := TCommon.GetJsonNode('DrvPerson', json);
+  result := TCommon.GetJsonNode('Drv', json);
   if result = json then
     result := '-1'
   else
@@ -528,6 +537,25 @@ begin
   params.Free;
 end;
 
+class procedure TRmService.GetVioCount(token: TToken; params: TStrings;
+  AResponseInfo: TIdHTTPResponseInfo);
+var
+  s, c: String;
+  json: TQJson;
+begin
+  s := GetVioInfoByVeh(token, params);
+  json := TQJson.Create;
+  try
+    json.Parse(s);
+    c := json.Count.ToString;
+  except
+    c := '0';
+  end;
+  json.Free;
+  AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+    ('{"count":"' + c + '"}');
+end;
+
 class function TRmService.GetVioInfoByDrv(token: TToken;
   params: TStrings): String;
 var
@@ -543,6 +571,23 @@ begin
   end
   else
     result := TCommon.AddWfxwmc(result);
+end;
+
+class function TRmService.GetVioInfoByVeh(token: TToken;
+  params: TStrings): String;
+var
+  json: String;
+begin
+  params.Add('JKID=04C03');
+  json := DoQeury(token, params);
+  result := TCommon.GetJsonNode('viosurveil', json);
+  if json = '' then
+  begin
+    gLogger.Info(json);
+    json := '[]';
+  end
+  else
+    json := TCommon.AddWfxwmc(result);
 end;
 
 class procedure TRmService.GetViolationInfo(token: TToken; params: TStrings;
@@ -595,11 +640,11 @@ class function TRmService.GetZQMJ(oldZqmj: string): string;
 var
   newZqmj: string;
 begin
-  newZqmj := gSQLHelper.GetSinge('select ZQMJ2 from ' + cDBName
-    + '.dbo.T_ZQMJ_MAP where ZQMJ1=''' + oldZqmj + '''');
-  if newZQMJ = '' then
-    newZQMJ := oldZQMJ;
-  result := newZQMJ;
+  newZqmj := gSQLHelper.GetSinge('select ZQMJ2 from ' + cDBName +
+    '.dbo.T_ZQMJ_MAP where ZQMJ1=''' + oldZqmj + '''');
+  if newZqmj = '' then
+    newZqmj := oldZqmj;
+  result := newZqmj;
 end;
 
 class procedure TRmService.CheckForceParam(params: TStrings);
@@ -813,13 +858,14 @@ end;
 class procedure TRmService.SaveForceVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, wfsj, pzbh: String;
+  json, code, wfsj, pzbh, checkStr: String;
   tmriParam: TTmriParam;
   n: Integer;
 begin
-  if IsReVio(params, 2) then
+  checkStr := CheckForceInput(token, params);
+  if checkStr <> '' then
   begin
-    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('重复录入');
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(checkStr);
     exit;
   end;
   CheckForceParam(params);
@@ -995,6 +1041,36 @@ begin
   end
   else
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+end;
+
+class function TRmService.CheckForceInput(token: TToken;
+  params: TStrings): String;
+var
+  ryfl, jszh, json: String;
+  ts: TStrings;
+begin
+  result := '';
+  if IsReVio(params, 2) then
+  begin
+    result := '重复录入';
+  end
+  else
+  begin
+    ryfl := params.Values['ryfl'];
+    jszh := params.Values['jszh'];
+    if ryfl = '9' then
+    begin
+      ts := TStringList.Create;
+      ts.Add('sfzmhm=' + jszh);
+      json := GetDrvInfo(token, ts);
+      if (json <> '-1') and (json <> '') then
+      begin
+        result := '输入的驾驶证存在，人员分类不能选择[其他]';
+        gLogger.Debug(result + ' ' + params.Text);
+      end;
+      ts.Free;
+    end;
+  end;
 end;
 
 class function TRmService.IsReVio(params: TStrings; lx: Integer): Boolean;
