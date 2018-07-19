@@ -224,7 +224,7 @@ type
     procedure ShowFrameWait();
     procedure FreeFrameWait();
     procedure AddSY(obj: TVio);
-    function AddPicText(sourcePic, targetPic: String; vio: TViotemp): Boolean;
+    function AddPicText(sourcePic, targetPic: String; vio: TVio): Boolean;
     procedure FillDevCommbox();
   public
     procedure LoadVioList();
@@ -237,7 +237,7 @@ implementation
 {$R *.dfm}
 
 function TFrameVioInput.AddPicText(sourcePic, targetPic: String;
-  vio: TViotemp): Boolean;
+  vio: TVio): Boolean;
 var
   LogFont: TLogFont;
   img: TImageEnView;
@@ -265,12 +265,14 @@ begin
       LogFont.lfQuality := 3;
       Font.Handle := CreateFontIndirect(LogFont);
       Brush.Style := bsClear;
-      TextOut(10, 10, '违法时间: ' + formatDatetime('yyyy-mm-dd hh:nn:ss', vio.wfsj)
-        + ' 号牌号码: ' + vio.HPHM + ' 号牌种类: ' + vio.HPZL);
-      TextOut(10, 10 + w, '设备编号: ' + vio.wfdd + ' 车道: ' + vio.CD);
+      TextOut(10, 10, '违法时间: ' + formatDatetime('yyyy-mm-dd hh:nn:ss',
+        vio.VioRecord.wfsj) + ' 号牌号码: ' + vio.VehInfo.HPHM + ' 号牌种类: ' +
+        vio.VehInfo.HPZL);
+      TextOut(10, 10 + w, '设备编号: ' + vio.VioRecord.wfdd + ' 车道: ' +
+        vio.VioRecord.CD);
       TextOut(10, 10 + w * 2, '设备名称: ' + TLZDictionary.gDicDev[2]
-        [vio.wfdd].SBDDMC);
-      TextOut(10, 10 + w * 3, '违法代码: ' + vio.wfxw + '  防伪码: ' +
+        [vio.VioRecord.wfdd].SBDDMC);
+      TextOut(10, 10 + w * 3, '违法代码: ' + vio.VioRecord.wfxw + '  防伪码: ' +
         copy(string(AesEncrypt(AnsiString(sourcePic), AnsiString(Key))
         ), 1, 20));
     end;
@@ -302,24 +304,24 @@ begin
   if FileExists(gSetup.DirSave + '\' + FObj.systemid + '_1.jpg') then
   begin
     fn := gSetup.DirSave + '\' + obj.VioRecord.PHOTOFILE1;
-    if AddPicText(gSetup.DirSave + '\' + FObj.systemid + '_1.jpg', fn,
-      obj.VioRecord) and FileExists(fn) then
+    if AddPicText(gSetup.DirSave + '\' + FObj.systemid + '_1.jpg', fn, obj) and
+      FileExists(fn) then
       TCommon.FtpPutFile(gSetup.FtpHost, gSetup.FtpUser, gSetup.FtpPwd, fn,
         ftpdir + obj.VioRecord.PHOTOFILE1, gSetup.FtpPort);
   end;
   if FileExists(gSetup.DirSave + '\' + FObj.systemid + '_2.jpg') then
   begin
     fn := gSetup.DirSave + '\' + obj.VioRecord.PHOTOFILE2;
-    if AddPicText(gSetup.DirSave + '\' + FObj.systemid + '_2.jpg', fn,
-      obj.VioRecord) and FileExists(fn) then
+    if AddPicText(gSetup.DirSave + '\' + FObj.systemid + '_2.jpg', fn, obj) and
+      FileExists(fn) then
       TCommon.FtpPutFile(gSetup.FtpHost, gSetup.FtpUser, gSetup.FtpPwd, fn,
         ftpdir + obj.VioRecord.PHOTOFILE1, gSetup.FtpPort);
   end;
   if FileExists(gSetup.DirSave + '\' + FObj.systemid + '_3.jpg') then
   begin
     fn := gSetup.DirSave + '\' + obj.VioRecord.PHOTOFILE3;
-    if AddPicText(gSetup.DirSave + '\' + FObj.systemid + '_3.jpg', fn,
-      obj.VioRecord) and FileExists(fn) then
+    if AddPicText(gSetup.DirSave + '\' + FObj.systemid + '_3.jpg', fn, obj) and
+      FileExists(fn) then
       TCommon.FtpPutFile(gSetup.FtpHost, gSetup.FtpUser, gSetup.FtpPwd, fn,
         ftpdir + obj.VioRecord.PHOTOFILE1, gSetup.FtpPort);
   end;

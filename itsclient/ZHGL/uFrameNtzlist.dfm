@@ -1,89 +1,57 @@
 inherited FrameNtzlist: TFrameNtzlist
-  Width = 734
+  Width = 904
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 734
+    Width = 904
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 836
-      Height = 202
-      TabOrder = 8
+      Width = 878
+      Height = 219
+      TabOrder = 7
       ExplicitTop = 45
-      ExplicitWidth = 836
-      ExplicitHeight = 202
+      ExplicitWidth = 878
+      ExplicitHeight = 219
       inherited GridView: TcxGridDBTableView
         OptionsCustomize.ColumnSorting = True
       end
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 254
-      TabOrder = 9
-      ExplicitTop = 254
+      TabOrder = 8
     end
     inherited btnFirstPage: TcxButton
-      Top = 254
-      TabOrder = 10
-      ExplicitTop = 254
+      TabOrder = 9
     end
     inherited btnPriorPage: TcxButton
-      Top = 254
-      TabOrder = 11
-      ExplicitTop = 254
+      TabOrder = 10
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 254
-      TabOrder = 12
-      ExplicitTop = 254
+      TabOrder = 11
     end
     inherited btnnextPage: TcxButton
-      Top = 254
-      TabOrder = 13
-      ExplicitTop = 254
+      TabOrder = 12
     end
     inherited btnLastPage: TcxButton
-      Top = 254
-      TabOrder = 14
-      ExplicitTop = 254
+      TabOrder = 13
     end
-    object cxDateEdit1: TcxDateEdit [7]
-      Left = 67
+    object edtHphm: TcxTextEdit [7]
+      Left = 208
       Top = 13
       AutoSize = False
-      Properties.View = cavClassic
-      Style.HotTrack = False
-      TabOrder = 0
-      Height = 21
-      Width = 121
-    end
-    object cxDateEdit2: TcxDateEdit [8]
-      Left = 213
-      Top = 13
-      AutoSize = False
-      Properties.View = cavClassic
       Style.HotTrack = False
       TabOrder = 1
       Height = 21
-      Width = 121
-    end
-    object edtHphm: TcxTextEdit [9]
-      Left = 395
-      Top = 13
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 2
-      Height = 21
       Width = 94
     end
-    object cxButton1: TcxButton [10]
-      Left = 496
+    object cxButton1: TcxButton [8]
+      Left = 309
       Top = 13
       Width = 75
       Height = 25
       Caption = #26597#35810
-      TabOrder = 3
+      TabOrder = 2
       OnClick = cxButton1Click
     end
-    object cxButton2: TcxButton [11]
-      Left = 824
+    object cxButton2: TcxButton [9]
+      Left = 866
       Top = 13
       Width = 25
       Height = 25
@@ -91,59 +59,55 @@ inherited FrameNtzlist: TFrameNtzlist
       OptionsImage.Images = DM.ilBarSmall
       SpeedButtonOptions.CanBeFocused = False
       SpeedButtonOptions.Transparent = True
-      TabOrder = 5
+      TabOrder = 4
       OnClick = cxButton2Click
     end
-    object cxButton3: TcxButton [12]
-      Left = 660
+    object cxButton3: TcxButton [10]
+      Left = 473
       Top = 13
       Width = 75
       Height = 25
       Caption = #20462#25913
-      TabOrder = 6
+      TabOrder = 5
       OnClick = cxButton3Click
     end
-    object cxButton4: TcxButton [13]
-      Left = 742
+    object cxButton4: TcxButton [11]
+      Left = 555
       Top = 13
       Width = 75
       Height = 25
       Caption = #21024#38500
-      TabOrder = 7
+      TabOrder = 6
       OnClick = cxButton4Click
     end
-    object cxButton5: TcxButton [14]
-      Left = 578
+    object cxButton5: TcxButton [12]
+      Left = 391
       Top = 13
       Width = 75
       Height = 25
       Caption = #23548#20986
-      TabOrder = 4
+      TabOrder = 3
       OnClick = cxButton5Click
+    end
+    object cmbValid: TcxComboBox [13]
+      Left = 67
+      Top = 13
+      AutoSize = False
+      Properties.DropDownListStyle = lsFixedList
+      Properties.Items.Strings = (
+        ''
+        #26377#25928
+        #26080#25928)
+      Style.HotTrack = False
+      TabOrder = 0
+      Height = 21
+      Width = 80
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
     end
     inherited dxLayoutGroupPage: TdxLayoutGroup
       Visible = False
-    end
-    object dxLayoutItem1: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #26102#38388#33539#22260
-      Control = cxDateEdit1
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem2: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #33267
-      Control = cxDateEdit2
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 1
     end
     object dxLayoutItem4: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -152,7 +116,7 @@ inherited FrameNtzlist: TFrameNtzlist
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 94
       ControlOptions.ShowBorder = False
-      Index = 2
+      Index = 1
     end
     object dxLayoutItem5: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -162,7 +126,7 @@ inherited FrameNtzlist: TFrameNtzlist
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 3
+      Index = 2
     end
     object dxLayoutItem6: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -173,7 +137,7 @@ inherited FrameNtzlist: TFrameNtzlist
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 25
       ControlOptions.ShowBorder = False
-      Index = 5
+      Index = 4
     end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -184,7 +148,7 @@ inherited FrameNtzlist: TFrameNtzlist
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 6
+      Index = 5
     end
     object dxLayoutItem8: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -195,7 +159,7 @@ inherited FrameNtzlist: TFrameNtzlist
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 7
+      Index = 6
     end
     object dxLayoutItem9: TdxLayoutItem
       Parent = dxLayoutGroup2
@@ -205,7 +169,16 @@ inherited FrameNtzlist: TFrameNtzlist
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 4
+      Index = 3
+    end
+    object dxLayoutItem1: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #26159#21542#26377#25928
+      Control = cmbValid
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 80
+      ControlOptions.ShowBorder = False
+      Index = 0
     end
   end
   inherited cxdtrpstry1: TcxEditRepository

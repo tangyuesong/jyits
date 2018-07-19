@@ -35,10 +35,6 @@ uses
 
 type
   TFrameNtzlist = class(TdxGridFrame)
-    cxDateEdit1: TcxDateEdit;
-    dxLayoutItem1: TdxLayoutItem;
-    cxDateEdit2: TcxDateEdit;
-    dxLayoutItem2: TdxLayoutItem;
     edtHphm: TcxTextEdit;
     dxLayoutItem4: TdxLayoutItem;
     cxButton1: TcxButton;
@@ -51,6 +47,8 @@ type
     dxLayoutItem8: TdxLayoutItem;
     cxButton5: TcxButton;
     dxLayoutItem9: TdxLayoutItem;
+    cmbValid: TcxComboBox;
+    dxLayoutItem1: TdxLayoutItem;
     procedure cxButton1Click(Sender: TObject);
     procedure cxButton4Click(Sender: TObject);
     procedure cxButton2Click(Sender: TObject);
@@ -91,8 +89,6 @@ end;
 procedure TFrameNtzlist.AfterConstruction;
 begin
   inherited;
-  cxDateEdit1.Date := VarToDateTime(FormatDateTime('yyyy-mm-dd', now));
-  cxDateEdit2.Date := VarToDateTime(FormatDateTime('yyyy-mm-dd', now + 30));
   GridColumns := 'HPHM,HPZL,KSSJ,JSSJ,BZ,LRR,GXSJ,²Ù×÷';
   GridView.Columns[7].Options.ShowEditButtons := isebAlways;
   GridView.Columns[7].RepositoryItem := cxdtrpstry1ButtonItem1;
@@ -233,12 +229,15 @@ var
   s, Param: string;
 begin
   ShowFrameWait;
-  Param := 'Enabled=1&begin_kssj=' + FormatDateTime('yyyy/mm/dd',
-    cxDateEdit1.Date) + '&end_jssj=' + FormatDateTime('yyyy/mm/dd',
-    cxDateEdit2.Date + 1);
+  Param := 'Enabled=1';
+  if cmbValid.ItemIndex = 1 then
+    Param := Param + '&end_kssj=' + FormatDateTime('yyyy/mm/dd hh:nn:ss', now) +
+      '&begin_jssj=' + FormatDateTime('yyyy/mm/dd hh:nn:ss', now)
+  else if cmbValid.ItemIndex = 2 then
+    Param := Param + '&end_jssj=' + FormatDateTime('yyyy/mm/dd hh:nn:ss', now);
   if Trim(edtHphm.Text) <> '' then
     Param := Param + '&like_HPHM=' + Trim(edtHphm.Text);
-  s := TRequestItf.pDbQuery('GetT_Ntzlist', Param);
+  s := TRequestItf.DbQuery('GetT_Ntzlist', Param);
   TJSONUtils.JSONToDataSet(s, FDMemTable1, '');
   FreeFrameWait;
 end;
