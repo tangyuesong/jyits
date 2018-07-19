@@ -11,7 +11,7 @@ type
   private
     gVioVeh: TStrings;
     function GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
-    function GetTp2(dt: TDateTime; hphm, tp1: string): String;
+    function GetTp2(dt: TDateTime; hphm, vehType, tp1: string): String;
   protected
     procedure Execute; override;
   end;
@@ -52,66 +52,69 @@ begin
 
     currentTime := maxPasstime - DateUtils.OneHour;
     EndTime := formatdatetime('yyyy-mm-dd hh:nn:ss', currentTime);
-
-    param.Clear;
-    param.Add('passtime', gThreadConfig.UPhoneStartTime + ',' + EndTime);
-    param.Add('uphone', '1');
-    totalPage := 1;
-    currentPage := 1;
-    while currentPage <= totalPage do
+    if gThreadConfig.UPhoneStartTime < EndTime then
     begin
-      gLogger.Info('[UPhone] Get UPhone StartTime:' +
-        gThreadConfig.UPhoneStartTime + ', EndTime:' + EndTime + ', Page:' +
-        IntToStr(currentPage) + ', TotalPage:' + IntToStr(totalPage));
+      param.Clear;
+      param.Add('passtime', gThreadConfig.UPhoneStartTime + ',' + EndTime);
+      param.Add('uphone', '1');
+      totalPage := 1;
+      currentPage := 1;
+      while currentPage <= totalPage do
+      begin
+        gLogger.Info('[UPhone] Get UPhone StartTime:' +
+          gThreadConfig.UPhoneStartTime + ', EndTime:' + EndTime + ', Page:' +
+          IntToStr(currentPage) + ', TotalPage:' + IntToStr(totalPage));
 
-      try
-        Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '100');
-        gLogger.Debug(Params.Text);
-        vehList := THik.GetK08PassList(Params, totalPage, currentPage);
-        Params.Free;
-        if vehList <> nil then
-        begin
-          gLogger.Debug(vehList.Count.ToString);
-          tmpSQLs := GetVioSQLs(vehList);
-          if tmpSQLs.Count > 0 then
-            SQLs.AddStrings(tmpSQLs);
-          tmpSQLs.Free;
-          vehList.Free;
-          inc(currentPage);
-        end
-        else
-        begin
-          gLogger.Error('[UPhone] vehList is null');
-          SQLs.Clear;
-          break;
-        end;
-      except
-        on e: exception do
-        begin
-          gLogger.Error(e.Message);
-          SQLs.Clear;
-          break;
+        try
+          Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '100');
+          gLogger.Debug(Params.Text);
+          vehList := THik.GetK08PassList(Params, totalPage, currentPage);
+          Params.Free;
+          if vehList <> nil then
+          begin
+            gLogger.Debug(vehList.Count.ToString);
+            tmpSQLs := GetVioSQLs(vehList);
+            if tmpSQLs.Count > 0 then
+              SQLs.AddStrings(tmpSQLs);
+            tmpSQLs.Free;
+            vehList.Free;
+            inc(currentPage);
+          end
+          else
+          begin
+            gLogger.Error('[UPhone] vehList is null');
+            SQLs.Clear;
+            break;
+          end;
+        except
+          on e: exception do
+          begin
+            gLogger.Error(e.Message);
+            SQLs.Clear;
+            break;
+          end;
         end;
       end;
-    end;
-    if SQLs.Count > 0 then
-    begin
-      if gSQLHelper.ExecuteSqlTran(SQLs) then
+      if SQLs.Count > 0 then
       begin
-        currentTime := currentTime + DateUtils.OneSecond;
-        gThreadConfig.UPhoneStartTime := formatdatetime('yyyy-mm-dd hh:mm:ss',
-          currentTime);
-        TCommon.SaveConfig('Task', 'UPhoneStartTime',
-          gThreadConfig.UPhoneStartTime);
-        gLogger.Info('[UPhone] Save UPhone Vio Count: ' + IntToStr(SQLs.Count));
+        if gSQLHelper.ExecuteSqlTran(SQLs) then
+        begin
+          currentTime := currentTime + DateUtils.OneSecond;
+          gThreadConfig.UPhoneStartTime := formatdatetime('yyyy-mm-dd hh:mm:ss',
+            currentTime);
+          TCommon.SaveConfig('Task', 'UPhoneStartTime',
+            gThreadConfig.UPhoneStartTime);
+          gLogger.Info('[UPhone] Save UPhone Vio Count: ' +
+            IntToStr(SQLs.Count));
+        end
+        else
+          gLogger.Error('[UPhone] Save UPhone Vio Error');
+        SQLs.Clear;
       end
       else
-        gLogger.Error('[UPhone] Save UPhone Vio Error');
-      SQLs.Clear;
-    end
-    else
-      gLogger.Info('[UPhone] Save UPhone Vio Count: 0');
-    param.Free;
+        gLogger.Info('[UPhone] Save UPhone Vio Count: 0');
+      param.Free;
+    end;
     Sleep(10 * 60000);
   end;
   gLogger.Info('[UPhone] UPhoneThread Stop');
@@ -120,7 +123,8 @@ begin
   ActiveX.CoUninitialize;
 end;
 
-function TUPhoneThread.GetTp2(dt: TDateTime; hphm, tp1: string): String;
+function TUPhoneThread.GetTp2(dt: TDateTime;
+  hphm, vehType, tp1: string): String;
 var
   Params: TStrings;
   param: TDictionary<string, String>;
@@ -136,6 +140,7 @@ begin
 
   param.Add('passtime', passtime);
   param.Add('plateno', hphm);
+  param.Add('vehicletype', vehType);
 
   totalPage := 1;
   currentPage := 1;
@@ -187,7 +192,7 @@ begin
         continue;
 
       tp1 := veh.imagepath;
-      Tp2 := GetTp2(dt, veh.plateinfo, tp1);
+      Tp2 := GetTp2(dt, veh.plateinfo, veh.vehicletype, tp1);
       if Tp2 = '' then
       begin
         gLogger.Info('[UPhone] not found Photofile2');

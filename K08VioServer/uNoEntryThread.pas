@@ -212,8 +212,6 @@ begin
       end;
       tp1 := tp1.Replace('&amp;', '&');
       Tp2 := Tp2.Replace('&amp;', '&');
-      tp1 := TIDURI.URLDecode(tp1);
-      Tp2 := TIDURI.URLDecode(Tp2);
       s := ' insert into T_VIO_TEMP(CJJG, HPHM, HPZL, WFDD, WFXW, WFSJ, CD, PHOTOFILE1, PHOTOFILE2, BJ) values ('
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
         veh.plateinfo.QuotedString + ',' + gHpzlList[veh.vehicletype]
