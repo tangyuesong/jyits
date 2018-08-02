@@ -656,15 +656,16 @@ begin
   str := TStringList.Create;
   str.Sort;
   str.Sorted := True;
-  if TLZDictionary.gDicDept.ContainsKey(gUser.DWDM) and TLZDictionary.gDicDept
-    [gUser.DWDM].IsJX then // 机巡中队可以录全大队的，机巡大队可以录全中队的，民警抓拍
-  begin
+  //if TLZDictionary.gDicDept.ContainsKey(gUser.DWDM) and TLZDictionary.gDicDept
+  //  [gUser.DWDM].IsJX then // 机巡中队可以录全大队的，机巡大队可以录全中队的，民警抓拍
+  //begin
     for s in TLZDictionary.gDicDev[1].Keys do
     begin
       if (TLZDictionary.gDicDev[1][s].sblx = '1') or
         (TLZDictionary.gDicDev[1][s].sblx = '2') then
         str.Add(TLZDictionary.gDicDev[1][s].SBDDMC);
     end;
+    {
   end
   else
   begin
@@ -677,6 +678,7 @@ begin
         str.Add(TLZDictionary.gDicDev[1][s].SBDDMC);
     end;
   end;
+  }
   cbbwfdd.Properties.Items.Clear;
   cbbwfdd.Properties.Items.AddStrings(str);
   str.Free;
