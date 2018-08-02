@@ -165,7 +165,7 @@ begin
     begin
       for veh in vehList do
       begin
-        if Trim(veh.imagepath) <> Trim(tp1) then
+        if veh.imagepath <> tp1 then
         begin
           Result := veh.imagepath;
           break;
@@ -185,7 +185,7 @@ end;
 function TNoEntryThread.GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
 var
   veh: TK08VehInfo;
-  s, tp1, Tp2, hphm, hhnn: String;
+  s, tp1, tp2, hphm, hhnn: String;
   dt: TDateTime;
 begin
   Result := TStringList.Create;
@@ -204,21 +204,23 @@ begin
         continue;
 
       tp1 := veh.imagepath;
-      Tp2 := GetTp2(dt, veh.plateinfo, tp1);
-      if Tp2 = '' then
+      tp2 := GetTp2(dt, veh.plateinfo, tp1);
+      if tp2 = '' then
       begin
         gLogger.Info('[NoEntry] not found Photofile2');
         continue;
       end;
       tp1 := tp1.Replace('&amp;', '&');
-      Tp2 := Tp2.Replace('&amp;', '&');
+      tp2 := tp2.Replace('&amp;', '&');
+      tp1 := TIDURI.URLDecode(tp1);
+      tp2 := TIDURI.URLDecode(tp2);
       s := ' insert into T_VIO_TEMP(CJJG, HPHM, HPZL, WFDD, WFXW, WFSJ, CD, PHOTOFILE1, PHOTOFILE2, BJ) values ('
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
         veh.plateinfo.QuotedString + ',' + gHpzlList[veh.vehicletype]
         .QuotedString + ',' + gDevList[veh.crossingid].SBBH.QuotedString +
         ',''1344'',' + formatdatetime('yyyy-mm-dd hh:mm:ss', dt).QuotedString +
         ',' + veh.laneno.QuotedString + ',' + tp1.QuotedString + ',' +
-        Tp2.QuotedString + ',''0'')';
+        tp2.QuotedString + ',''0'')';
       Result.Add(s);
       gVioVeh.Add(hphm);
     end;
