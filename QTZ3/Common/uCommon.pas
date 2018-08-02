@@ -38,7 +38,8 @@ type
     class function GetDepts(): TDictionary<string, TDept>; static;
     class function GetColDef(): TDictionary<string, string>; static;
     class function GetWfxw(): TDictionary<string, string>; static;
-    class function GetUserInfo(userid, pwd, ip: String; var msg: String): TUser;
+    class function GetUserInfo(userid, pwd, ip: String; var msg: String;
+      isWxLogin: Boolean): TUser;
     class procedure InitLHY_JK; static;
     class function GetZHPTUserDevice(yhbh: String): TZHPTUserDevice;
   public
@@ -54,8 +55,8 @@ type
     class function RecordToJSON<T>(rec: Pointer): string; static;
     class procedure ProgramInit;
     class procedure ProgramDestroy;
-    class function Login(ip: String; params: TStrings;
-      var valid: String): String;
+    class function Login(ip: String; params: TStrings; var valid: String;
+      isWxLogin: Boolean = False): String;
     class procedure SaveQtzLog(token, yhbh, ip, action, param, valid,
       msg: String; deviceId: String = '');
     class function GetK08Hpzl(): TDictionary<String, TStrings>;
@@ -372,13 +373,34 @@ begin
   Result := DateUtils.IncMilliSecond(FBaseTime, AMilliSecond);
 end;
 
-class function TCommon.GetUserInfo(userid, pwd, ip: String;
-  var msg: String): TUser;
+class function TCommon.GetUserInfo(userid, pwd, ip: String; var msg: String;
+  isWxLogin: Boolean): TUser;
 var
   hhnnss, mm, m1, m2: String;
   dt: TDatetime;
+
+  function CheckPwd(m1, m2: String): Boolean;
+  var
+    s, tmpUser: String;
+  begin
+    Result := False;
+    if not isWxLogin and (m1 = m2) then
+      Result := True
+    else if isWxLogin then
+    begin
+      tmpUser := copy(m2, 1, length(userid));
+      if userid = tmpUser then
+      begin
+        s := copy(m2, length(userid) + 1, length(m2));
+        if DateUtils.SecondsBetween(Now,
+          TCommon.GetRealDatetime(StrToInt64Def(s, 0))) < 60 then
+          Result := True;
+      end;
+    end;
+  end;
+
 begin
-  hhnnss := Formatdatetime('hhnnss', now);
+  hhnnss := Formatdatetime('hhnnss', Now);
   msg := '';
   // with gSQLHelper.Query('select * from ' + cDBName + '.dbo.S_USER where YHBH = '
   // + userid.QuotedString + ' and mm = ' + pwd.QuotedString) do
@@ -390,7 +412,7 @@ begin
       mm := FieldByName('mm').AsString;
       m1 := Trim(AesDecrypt(AnsiString(mm), AnsiString(cUserKey)));
       m2 := Trim(AesDecrypt(AnsiString(pwd), AnsiString(cUserKey)));
-      if m1 = m2 then
+      if CheckPwd(m1, m2) then
       begin
         Result.SystemID := FieldByName('SystemID').AsString;
         Result.dwdm := FieldByName('DWDM').AsString;
@@ -427,12 +449,12 @@ begin
         else
           Result.MJ := '0';
         Result.ValidDay :=
-          IntToStr(Ceil(FieldByName('ValidDate').AsDateTime - now));
+          IntToStr(Ceil(FieldByName('ValidDate').AsDateTime - Now));
         Result.PasswordValidDay :=
-          IntToStr(Ceil(FieldByName('PasswordValidDate').AsDateTime - now));
-        if FieldByName('ValidDate').AsDateTime < now then
+          IntToStr(Ceil(FieldByName('PasswordValidDate').AsDateTime - Now));
+        if FieldByName('ValidDate').AsDateTime < Now then
           msg := '用户已超过有效期'
-        else if FieldByName('PasswordValidDate').AsDateTime < now then
+        else if FieldByName('PasswordValidDate').AsDateTime < Now then
           msg := '密码已超过有效期'
         else if (hhnnss < FieldByName('LoginTimeBegin').AsString) or
           (hhnnss > FieldByName('LoginTimeEnd').AsString) then
@@ -1102,8 +1124,8 @@ begin
   gWSManager.Free;
 end;
 
-class function TCommon.Login(ip: String; params: TStrings;
-  var valid: String): String;
+class function TCommon.Login(ip: String; params: TStrings; var valid: String;
+  isWxLogin: Boolean = False): String;
 var
   yhbh, pwd: String;
   User: TUser;
@@ -1119,7 +1141,7 @@ begin
   else
   begin
     // pwd := String(AesEncrypt(AnsiString(yhbh + pwd), AnsiString(cUserKey)));
-    User := GetUserInfo(yhbh, pwd, ip, msg);
+    User := GetUserInfo(yhbh, pwd, ip, msg, isWxLogin);
     if msg = '' then
     begin
       token := gTokenManager.NewToken(yhbh, ip);
@@ -1195,7 +1217,7 @@ begin
       gxsj := gSQLHelper.GetSinge('select max(gxsj) from ' + cDBName +
         '.dbo.T_VIO_DRIVINGLICENSE');
       if gxsj = '' then
-        gxsj := Formatdatetime('yyyy-MM-dd hh:nn:ss', now() - 2);
+        gxsj := Formatdatetime('yyyy-MM-dd hh:nn:ss', Now() - 2);
       // 复制库更新是根据gxsj，防止影响复制库更新
       ts.add('delete from ' + cDBName +
         '.dbo.T_VIO_DRIVINGLICENSE where sfzmhm=' + sfzmhm.QuotedString);
@@ -1259,7 +1281,7 @@ begin
       gxsj := gSQLHelper.GetSinge('select max(gxsj) from ' + cDBName +
         '.dbo.T_VIO_VEHICLE');
       if gxsj = '' then
-        gxsj := Formatdatetime('yyyy-MM-dd hh:nn:ss', now() - 2);
+        gxsj := Formatdatetime('yyyy-MM-dd hh:nn:ss', Now() - 2);
       // 复制库更新是根据gxsj，防止影响复制库更新
       ts.add('delete from ' + cDBName + '.dbo.T_VIO_VEHICLE where hphm=' +
         hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString);

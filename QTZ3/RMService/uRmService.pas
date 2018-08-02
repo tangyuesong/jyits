@@ -47,6 +47,7 @@ type
     class function IsReVio(params: TStrings; lx: Integer): Boolean;
     class function CheckForceInput(token: TToken; params: TStrings): String;
     class function GetZQMJ(oldZqmj: string): string; static;
+    class function GetDwdm(zqmj: String): String;
     class procedure GetVioCount(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
     class function GetVioInfoByVeh(token: TToken; params: TStrings): String;
@@ -512,6 +513,12 @@ begin
     TCommon.SaveDrvInfo(json);
 end;
 
+class function TRmService.GetDwdm(zqmj: String): String;
+begin
+  result := gSQLHelper.GetSinge('select dwdm from ' + cDBName +
+    '.dbo.S_User where yhbh=''' + zqmj + '''');
+end;
+
 class function TRmService.GetVehInfo(token: TToken; hphm, hpzl: String): String;
 var
   sf, json: string;
@@ -858,7 +865,7 @@ end;
 class procedure TRmService.SaveForceVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, wfsj, pzbh, checkStr: String;
+  json, code, wfsj, pzbh, checkStr, oldMj, newMj: String;
   tmriParam: TTmriParam;
   n: Integer;
 begin
@@ -869,7 +876,13 @@ begin
     exit;
   end;
   CheckForceParam(params);
-  params.Values['zqmj'] := GetZQMJ(params.Values['zqmj']);
+  oldMj := params.Values['zqmj'];
+  newMj := GetZQMJ(oldMj);
+  if oldMj <> newMj then
+  begin
+    params.Values['zqmj'] := newMj;
+    params.Values['fxjg'] := GetDwdm(newMj);
+  end;
   params.Add('JKID=04C55');
   json := DoWrite(token, params);
   gLogger.Info(json);

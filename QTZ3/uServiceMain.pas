@@ -7,7 +7,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.SvcMgr, Vcl.Dialogs, IdTCPConnection,
   IdTCPClient, IdHTTP, Vcl.ExtCtrls, IdBaseComponent, IdComponent,
   IdCustomTCPServer, IdCustomHTTPServer, IdHTTPServer, IdContext, IDURI,
-  IdHeaderList, QJson, StrUtils, HttpApp;
+  IdHeaderList, QJson, StrUtils, HttpApp, DateUtils;
 
 type
   TItsQTZ3Service = class(TService)
@@ -119,16 +119,25 @@ begin
 
     if UpperCase(ARequestInfo.Command) = 'POST' then
       gLogger.Info('[' + clientIP + ']' + ARequestInfo.Document)
-    else if action = 'LOGIN' then // 不在日志中写密码
+    else if (action = 'LOGIN') or (action = 'WXLOGIN') then // 不在日志中写密码
       gLogger.Info('[' + clientIP + ']' + ARequestInfo.Document + '?' +
         params.Values['user'])
     else
       gLogger.Info('[' + clientIP + ']' + ARequestInfo.Document + '?' +
         params.DelimitedText);
 
-    if action = 'LOGIN' then
+    if action = 'GETSERVERDATETIME' then
+    begin
+      AResponseInfo.ContentText :=
+        IntToStr(DateUtils.MilliSecondsBetween(Now, 25569.3333333333));;
+    end
+    else if action = 'LOGIN' then
     begin
       AResponseInfo.ContentText := TCommon.Login(clientIP, params, valid);
+    end
+    else if action = 'WXLOGIN' then
+    begin
+      AResponseInfo.ContentText := TCommon.Login(clientIP, params, valid, True);
     end
     else
     begin
@@ -156,7 +165,7 @@ begin
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(e.Message);
     end;
   end;
-  if action = 'LOGIN' then
+  if (action = 'LOGIN') or (action = 'WXLOGIN') then
     TCommon.SaveQtzLog(token, yhbh, clientIP, ARequestInfo.Document,
       params.Values['user'], valid, AResponseInfo.ContentText,
       params.Values['id'])
