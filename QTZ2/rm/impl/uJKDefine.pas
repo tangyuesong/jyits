@@ -11,6 +11,7 @@ type
     XLH: string;
     WSDL: string;
     JDID: string;
+    CJSQBH: string;    // ≥°æ∞…Í«Î±‡∫≈
     NumPerDay: integer;
     Flag: integer;
   end;

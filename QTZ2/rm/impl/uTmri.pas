@@ -11,7 +11,12 @@ uses
 type
 
   TTmriParam = record
-    jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs: string;
+    jkid,              // 接口ID
+    yhbz,              // 用户标识
+    dwmc,              // 单位名称
+    dwjgdm,            // 单位机构代码
+    yhxm,              // 用户姓名
+    zdbs: string;      // 终端标识
   end;
 
   TTmri = class
@@ -57,9 +62,11 @@ begin
   WSIServer := GetTmriJaxRpcOutNewAccess(true, JKDic[jkid].WSDL, Rio);
   try
     if write then
-      WSResult := WSIServer.writeObjectOut(xtlb, JKDic[jkid].XLH, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs, UTF8XmlDoc)
+      WSResult := WSIServer.writeObjectOutNew(xtlb, JKDic[jkid].XLH, jkid, JKDic[jkid].CJSQBH, dwjgdm,
+        dwmc, yhbz, yhxm, zdbs, UTF8XmlDoc)
     else
-      WSResult := WSIServer.queryObjectOut(xtlb, JKDic[jkid].XLH, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs, UTF8XmlDoc);
+      WSResult := WSIServer.queryObjectOutNew(xtlb, JKDic[jkid].XLH, jkid, JKDic[jkid].CJSQBH, dwjgdm,
+        dwmc, yhbz, yhxm, zdbs, UTF8XmlDoc);
     try
       WSResult := HTTPDecode(WSResult);
     except
