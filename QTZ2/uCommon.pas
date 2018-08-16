@@ -383,6 +383,7 @@ begin
       jk.WSDL := FieldByName('WSDL').AsString;
       jk.Flag := FieldByName('Flag').AsInteger;
       jk.NumPerDay := FieldByName('NumPerDay').AsInteger;
+      jk.CJSQBH := FieldByName('CJSQBH').AsString;
       JKDic.Add(jk.JKID, jk);
       JKCounterDic.Add(jk.JKID, 0);
 
