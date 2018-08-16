@@ -42,7 +42,7 @@ begin
 
   param := TDictionary<string, String>.Create;
   param.Add('crossingid', gThreadConfig.LC25NoEntryDev);
-  param.Add('passtime', gThreadConfig.LC25NoEntryStartDate + ',' +
+  param.Add('passtime', gThreadConfig.LC25NoEntryStartDate + ' 00:00:00,' +
     formatdatetime('yyyy-mm-dd hh:nn:ss', Now()));
   maxDate := THik.GetMaxPassTime(param);
   if maxDate = 0 then
@@ -82,12 +82,12 @@ begin
     currentPage := 1;
     while currentPage <= totalPage do
     begin
-      gLogger.Info('[2To5NoEntry] Get 2To5NoEntry Date:' +
-        formatdatetime('yyyy/mm/dd', currentDate) + ', Page:' +
+      gLogger.Info('[2To5NoEntry] Get 2To5NoEntry Date:' + kssj + ', Page:' +
         IntToStr(currentPage) + ', TotalPage:' + IntToStr(totalPage));
 
       try
         Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '100');
+        gLogger.Info(Params.Text);
         vehList := THik.GetK08PassList(Params, totalPage, currentPage);
         Params.Free;
         if vehList <> nil then
@@ -222,16 +222,16 @@ begin
         continue;
       end;
       tp1 := tp1.Replace('&amp;', '&');
-      Tp2 := Tp2.Replace('&amp;', '&');
+      tp2 := tp2.Replace('&amp;', '&');
       tp1 := TIDURI.URLDecode(tp1);
-      Tp2 := TIDURI.URLDecode(Tp2);
+      tp2 := TIDURI.URLDecode(tp2);
       s := ' insert into T_VIO_TEMP(CJJG, HPHM, HPZL, WFDD, WFXW, WFSJ, CD, PHOTOFILE1, PHOTOFILE2, BJ) values ('
         + gDevList[veh.crossingid].CJJG.QuotedString + ',' +
         veh.plateinfo.QuotedString + ',' + hpzl.QuotedString + ',' +
         gDevList[veh.crossingid].SBBH.QuotedString + ',''1344'',' +
         formatdatetime('yyyy-mm-dd hh:nn:ss', dt).QuotedString + ',' +
         veh.laneno.QuotedString + ',' + tp1.QuotedString + ',' +
-        tp2.QuotedString + ',''111'')';
+        tp2.QuotedString + ',''0'')';
       Result.Add(s);
       gvioVeh.Add(hphm + hpzl, true);
     end;

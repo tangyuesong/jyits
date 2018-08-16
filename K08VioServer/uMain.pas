@@ -84,7 +84,7 @@ end;
 
 procedure TItsK08VioService.Timer2Timer(Sender: TObject);
 begin
-  if FormatDatetime('hhnn', Now()) = '1125' then
+  if FormatDatetime('hhnn', Now()) = '1637' then
     T2To5NoEntry.Create(False);
 end;
 
