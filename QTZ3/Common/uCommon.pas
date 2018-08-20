@@ -1187,7 +1187,7 @@ class procedure TCommon.SaveQtzLog(token, yhbh, ip, action, param, valid,
 var
   s: String;
 begin
-  if length(msg) < 8000 then
+  if length(msg) > 8000 then
     msg := copy(msg, 1, 8000);
 
   s := 'insert into S_QTZ_LOG(token, yhbh, ip, action, param, DeviceId, valid, result) values ('
