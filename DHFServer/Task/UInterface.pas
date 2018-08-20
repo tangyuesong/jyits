@@ -114,7 +114,7 @@ class procedure Tmypint.DoAlarm(pass: TPass);
     begin
       alarm := gDicAlarmJTP[pass.HPHM + pass.HPZL];
       hhmm := FormatDatetime('hhmm', now);
-      if (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm)
+      if (alarm.SJHM <> '')and(alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm)
         and ((alarm.KDBH='') or alarm.KDBH.Contains(pass.KDBH)) then
       begin
         s := '【假套牌】' + pass.hphm + gDicHPZL[pass.hpzl] + #13#10 + alarm.CLPP;
@@ -136,10 +136,10 @@ class procedure Tmypint.DoAlarm(pass: TPass);
     for sdcl in gListAlarmSDCL do
     begin
       key := pass.HPHM + pass.HPZL;
-      if sdcl.KDBH.Contains(pass.kdbh)
-        and ((sdcl.HPHM = '') or pass.HPHM.Contains(sdcl.HPHM))    // 发证机关
-        and ((sdcl.HPZL = '') or (pass.HPZL = sdcl.HPZL))
-        and ((sdcl.BKLX = '') or (gDicAlarm.ContainsKey(key) and (sdcl.BKLX.Contains(gDicAlarm[key].BKLX))))
+      if (sdcl.SJHM <> '') and sdcl.KDBH.Contains(pass.kdbh)                             // 布控路口 包含 该过车记录的路口
+        and ((sdcl.HPHM = '') or pass.HPHM.Contains(sdcl.HPHM))    // 并且 (发证机关为空 或者 车牌包含发证机关)
+        and ((sdcl.HPZL = '') or (pass.HPZL = sdcl.HPZL))          // 并且 (布控的HPZL为空 或者 HPZL相等)
+        and ((sdcl.BKLX = '') or (gDicAlarm.ContainsKey(key) and (sdcl.BKLX.Contains(gDicAlarm[key].BKLX))))  // 并且(布控类型为空 或者 这个车是该布控类型的嫌疑车)
       then
       begin
         hhmm := FormatDatetime('hhmm', now);
@@ -598,6 +598,7 @@ var
 begin
   if smsUrl <> '' then
   begin
+    if sj.Length < 11 then exit;
     logger.Info('[SMS]' + sj + content);
     token := getToken;
     url := Format(smsUrl, [token, sj.Replace(';', ','), HTTPEncode(content)]);

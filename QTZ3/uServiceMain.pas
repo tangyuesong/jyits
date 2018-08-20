@@ -7,13 +7,15 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.SvcMgr, Vcl.Dialogs, IdTCPConnection,
   IdTCPClient, IdHTTP, Vcl.ExtCtrls, IdBaseComponent, IdComponent,
   IdCustomTCPServer, IdCustomHTTPServer, IdHTTPServer, IdContext, IDURI,
-  IdHeaderList, QJson, StrUtils, HttpApp, DateUtils;
+  IdHeaderList, QJson, StrUtils, HttpApp, DateUtils, FireDAC.Phys.OracleDef,
+  FireDAC.Stan.Intf, FireDAC.Phys, FireDAC.Phys.Oracle;
 
 type
   TItsQTZ3Service = class(TService)
     httpServer: TIdHTTPServer;
     Timer1: TTimer;
     httpClient: TIdHTTP;
+    FDPhysOracleDriverLink1: TFDPhysOracleDriverLink;
     procedure Timer1Timer(Sender: TObject);
     procedure ServiceStart(Sender: TService; var Started: Boolean);
     procedure ServiceStop(Sender: TService; var Stopped: Boolean);

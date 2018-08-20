@@ -49,6 +49,7 @@ begin
         dwmc, yhbz, yhxm, zdbs, UTF8XmlDoc);
     try
       WSResult := HTTPDecode(WSResult);
+      logger.Trace('[TTmri.CallWebService]' + wsresult);
     except
       on e: exception do
         logger.Error('[CallWebService1]' + e.Message + ' ' + WSResult);

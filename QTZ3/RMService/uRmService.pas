@@ -8,7 +8,7 @@ uses
   IdBaseComponent, IdComponent, IdCustomTCPServer, IdCustomHTTPServer,
   IdHTTPServer, IniFiles, IdContext, uLogger, HTTPApp, uTmri, uRmweb,
   uRminf, uTrans, ActiveX, IdURI, IdHttp, StrUtils, uLockVio, DateUtils,
-  IdSSLOpenSSL, uTokenManager, uGlobal, uCommon, QJson, uWSManager;
+  IdSSLOpenSSL, uTokenManager, uGlobal, uCommon, QJson, uWSManager, uJKDefine;
 
 type
 
@@ -502,11 +502,17 @@ class function TRmService.GetDrvInfo(token: TToken; params: TStrings): String;
 var
   json: String;
 begin
-  // params.Add('JKID=02C06');
-  params.Add('JKID=02C26');
-  json := DoQeury(token, params);
-  // result := TCommon.GetJsonNode('DrvPerson', json);
-  result := TCommon.GetJsonNode('Drv', json);
+  if JKDic.ContainsKey('02C26') then
+  begin
+    params.Add('JKID=02C26');
+    json := DoQeury(token, params);
+    result := TCommon.GetJsonNode('Drv', json);
+  end
+  else begin
+    params.Add('JKID=02C06');
+    json := DoQeury(token, params);
+    result := TCommon.GetJsonNode('DrvPerson', json);
+  end;
   if result = json then
     result := '-1'
   else
