@@ -65,6 +65,7 @@ begin
   if FRequest.PARAMS <> '' then
     url := url + '?' + FRequest.PARAMS;
   http := TIdHttp.Create(nil);
+  http.Request.CustomHeaders.Text := FRequest.Header;
   http.HandleRedirects := true;
   try
     if FRequest.HTTP_METHOD = Ord(hcGET) then

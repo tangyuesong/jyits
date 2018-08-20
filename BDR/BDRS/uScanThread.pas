@@ -47,7 +47,7 @@ var
   stream: TStream;
 begin
   list := TList<TRequest>.Create;
-  with DM.Query('SELECT SYSID,DOCUMENT,HTTP_METHOD,PARAMS,PARAMS_BLOB,POST_STREAM,IS_STREAM,APP_NAME FROM T_REQUEST WHERE RKSJ>SYSDATE-0.2') do  // 3分钟内
+  with DM.Query('SELECT SYSID,DOCUMENT,HTTP_METHOD,PARAMS,PARAMS_BLOB,POST_STREAM,IS_STREAM,APP_NAME,HEADER FROM T_REQUEST WHERE RKSJ>SYSDATE-0.2') do  // 3分钟内
   begin
     while not Eof do
     begin
@@ -74,9 +74,9 @@ begin
       request.IS_STREAM := Fields[6].AsInteger = 1;
       request.AppName := Fields[7].AsString;
       request.AppName := request.AppName.ToUpper;
-
+      request.Header := Fields[8].AsString;
       list.Add(request);
-      logger.Debug(request.DOCUMENT + request.PARAMS);
+      //logger.Debug(request.DOCUMENT + request.PARAMS + request.Header);
       Next;
     end;
     Close;
@@ -89,6 +89,7 @@ begin
   begin
     TBllThread.Create(request);
     DM.ExecuteSql('DELETE FROM T_REQUEST WHERE SYSID=''' + request.SYSID + '''');
+    //DM.ExecuteSql('update T_REQUEST set RKSJ = SYSDATE-1 WHERE SYSID=''' + request.SYSID + '''');
   end;
   list.Free;
 end;
