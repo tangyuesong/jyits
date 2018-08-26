@@ -1011,6 +1011,7 @@ begin
   with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
   begin
     gConfig.dwdm := ReadString('SYS', 'DWDM', '445100000000');
+    gLogger.Level := ReadInteger('SYS', 'LogLevel', 0);
     gConfig.DBServer := ReadString('DB', 'Server', '.');
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
     gConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
@@ -1040,6 +1041,13 @@ begin
     gConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
 
     gConfig.SMSUrl := ReadString('SMS', 'SMSUrl', '');
+
+    gConfig.PassOra.IP := ReadString('PassOra', 'IP', '');
+    gConfig.PassOra.Port := ReadString('PassOra', 'Port', '');
+    gConfig.PassOra.SID := ReadString('PassOra', 'SID', '');
+    gConfig.PassOra.ServiceName := ReadString('PassOra', 'ServiceName', '');
+    gConfig.PassOra.User := ReadString('PassOra', 'User', '');
+    gConfig.PassOra.Pwd := ReadString('PassOra', 'Pwd', '');
 
     gConfig.HeartbeatUrl := ReadString('Heartbeat', 'Url',
       'http://127.0.0.1:20090/');
@@ -1096,10 +1104,10 @@ end;
 class procedure TCommon.ProgramInit;
 begin
   FBaseTime := 25569.3333333333;
-  ReadConfig();
   gLogger := TLogger.Create(ExtractFilePath(ParamStr(0)) + 'log\QTZ3.log');
   logger := gLogger;
   gLogger.MaxBackupIndex := 100;
+  ReadConfig();
   gSQLHelper := TSQLHelper.Create;
   gSQLHelper.DBServer := gConfig.DBServer;
   gSQLHelper.DBName := gConfig.DBName;
@@ -1179,7 +1187,7 @@ class procedure TCommon.SaveQtzLog(token, yhbh, ip, action, param, valid,
 var
   s: String;
 begin
-  if length(msg) < 8000 then
+  if length(msg) > 8000 then
     msg := copy(msg, 1, 8000);
 
   s := 'insert into S_QTZ_LOG(token, yhbh, ip, action, param, DeviceId, valid, result) values ('

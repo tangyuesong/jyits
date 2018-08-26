@@ -103,8 +103,8 @@ var
 begin
   s := 'select distinct a.hphm,a.hpzl,b.sjhm,b.smsTimeBegin,b.smsTimeEnd,b.CLPP,b.CSYS,b.KDBH,b.BZ '
      + 'from T_KK_ALARM a inner join T_KK_ALARM_JTP b '
-     + 'on ((a.CLPP like ''%'' + b.CLPP + ''%'') or(a.hpzl=b.hpzl) '
-     + 'or(b.FZJG like  ''%'' + left(a.HPHM,1) + ''%'' and b.FZJG like ''%'' + substring(a.HPHM,2,1)+''%''))'
+     + 'on ((a.CLPP like ''%'' + b.CLPP + ''%'') and(isnull(b.hpzl, '''')='''' or a.hpzl=b.hpzl) '
+     + 'and(isnull(b.FZJG,'''')='''' or (b.FZJG like  ''%'' + left(a.HPHM,1) + ''%'' and b.FZJG like ''%'' + substring(a.HPHM,2,1)+''%'')))'
      + 'left join T_KK_ALARM_JTP_Except c on a.HPHM=c.HPHM and a.HPZL=c.HPZL '
      + 'where a.zt=1 and b.zt=1 and (a.BKLX=''02'' or a.BKLX=''03'') and c.HPHM is null';
   tmp := TDictionary<string, TAlarm>.Create;

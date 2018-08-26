@@ -91,10 +91,28 @@ procedure TBDRCSvc.IdHTTPServer1CommandGet(AContext: TIdContext;
   begin
     Result := '{"head":{"code":"0","message":"' + msg + '"}';
   end;
+  function RemoveStr(str, subStr: string): string;
+  var
+    i, j: integer;
+  begin
+    result := str;
+    i := str.ToUpper.IndexOf(subStr.ToUpper);
+    if i >= 0 then
+    begin
+      j := i + length(subStr);
+      if str[i] = '&' then
+        i := i - 1
+      else if str[j + 1] = '&' then
+        j := j + 1;
+
+      result := str.Substring(0, i) + str.Substring(j);
+    end;
+  end;
 var
-  ip: string;
+  ip, s: string;
   response: TResponse;
   request: TRequest;
+  i, j: integer;
 begin
   ip := AContext.Connection.Socket.Binding.PeerIP;
   if not CheckIP(ip) then
@@ -109,10 +127,18 @@ begin
   request.PARAMS := ARequestInfo.UnparsedParams;
   request.POST_STREAM := ARequestInfo.PostStream;         // IdHTTPServer1CommandGet结束后，ARequestInfo.PostStream会自动释放
   request.HTTP_METHOD := Ord(ARequestInfo.CommandType);
+  request.Header := ARequestInfo.RawHeaders.Text;
   request.IS_STREAM :=  request.PARAMS.ToUpper.Contains('ISSTREAM=1');
   request.AppName := ARequestInfo.Params.Values['appName'];
   if request.AppName = '' then
-    request.AppName := 'DSJ';
+    request.AppName := 'DSJ'
+  else
+    request.PARAMS := RemoveStr(request.PARAMS, 'appName=' + request.AppName);
+
+  if request.IS_STREAM then
+  begin
+    request.PARAMS := RemoveStr(request.PARAMS, 'ISSTREAM=1');
+  end;
 
   logger.Debug('[' + ip + ']' + request.DOCUMENT + request.PARAMS);
   if InsertToDB(request) then
@@ -149,6 +175,7 @@ begin
   params.Add('DOCUMENT', request.DOCUMENT);
   params.Add('HTTP_METHOD', request.HTTP_METHOD);
   params.Add('APP_NAME', request.AppName);
+  params.Add('HEADER', request.Header);
   if request.IS_STREAM then
     params.Add('IS_STREAM', 1)
   else
@@ -157,13 +184,13 @@ begin
   begin
     if request.PARAMS.Length < 4000 then
     begin
-      SQL := 'INSERT INTO T_REQUEST(SYSID,DOCUMENT,HTTP_METHOD,PARAMS,IS_STREAM,APP_NAME)'
-        + 'VALUES(:SYSID,:DOCUMENT,:HTTP_METHOD,:PARAMS,:IS_STREAM,:APP_NAME)';
+      SQL := 'INSERT INTO T_REQUEST(SYSID,DOCUMENT,HTTP_METHOD,HEADER,PARAMS,IS_STREAM,APP_NAME)'
+        + 'VALUES(:SYSID,:DOCUMENT,:HTTP_METHOD,:HEADER,:PARAMS,:IS_STREAM,:APP_NAME)';
       params.Add('PARAMS', request.PARAMS);
     end
     else begin
-      SQL := 'INSERT INTO T_REQUEST(SYSID,DOCUMENT,HTTP_METHOD,PARAMS_BLOB,IS_STREAM,APP_NAME)'
-        + 'VALUES(:SYSID,:DOCUMENT,:HTTP_METHOD,:PARAMS_BLOB,:IS_STREAM,:APP_NAME)';
+      SQL := 'INSERT INTO T_REQUEST(SYSID,DOCUMENT,HTTP_METHOD,HEADER,PARAMS_BLOB,IS_STREAM,APP_NAME)'
+        + 'VALUES(:SYSID,:DOCUMENT,:HTTP_METHOD,:HEADER,:PARAMS_BLOB,:IS_STREAM,:APP_NAME)';
       stream := TStringStream.Create(request.PARAMS);
       stream.Position := 0;
       params.Add('PARAMS_BLOB', '').LoadFromStream(stream, TFieldType.ftBlob);
@@ -171,8 +198,8 @@ begin
     end
   end
   else begin
-    SQL := 'INSERT INTO T_REQUEST(SYSID,DOCUMENT,HTTP_METHOD,PARAMS,POST_STREAM,IS_STREAM,APP_NAME)'
-        + 'VALUES(:SYSID,:DOCUMENT,:HTTP_METHOD,:PARAMS,:POST_STREAM,:IS_STREAM,:APP_NAME)';
+    SQL := 'INSERT INTO T_REQUEST(SYSID,DOCUMENT,HTTP_METHOD,HEADER,PARAMS,POST_STREAM,IS_STREAM,APP_NAME)'
+        + 'VALUES(:SYSID,:DOCUMENT,:HTTP_METHOD,:HEADER,:PARAMS,:POST_STREAM,:IS_STREAM,:APP_NAME)';
     params.Add('PARAMS', request.PARAMS);
     request.POST_STREAM.Position := 0;
     params.Add('POST_STREAM', '').LoadFromStream(request.POST_STREAM, TFieldType.ftBlob);

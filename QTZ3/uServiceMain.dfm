@@ -36,4 +36,8 @@ object ItsQTZ3Service: TItsQTZ3Service
     Left = 200
     Top = 48
   end
+  object FDPhysOracleDriverLink1: TFDPhysOracleDriverLink
+    Left = 184
+    Top = 144
+  end
 end

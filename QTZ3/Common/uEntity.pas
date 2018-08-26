@@ -53,6 +53,15 @@ type
     zt: string; // ״̬
   end;
 
+  TOraConfig = Record
+    IP: string;
+    Port: string;
+    SID: string;
+    ServiceName: string;
+    User: string;
+    Pwd: string;
+  End;
+
   TConfig = Record
     DWDM: String;
     DBServer: String;
@@ -72,6 +81,7 @@ type
     ImportVioHome: String;
     // hik config
     HaveK08: Boolean;
+    PassOra: TOraConfig;
     K08SearchURL: String;
     K08SaveUrl: String;
     DFUrl: String;

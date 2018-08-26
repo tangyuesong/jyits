@@ -13,6 +13,7 @@ type
     PARAMS: string;              // PARAMS太长的话用BLOB传递
     POST_STREAM: TStream;
     IS_STREAM: boolean;          // String: 0; Stream: 1
+    Header: string;
     AppName: string;
   end;
 
