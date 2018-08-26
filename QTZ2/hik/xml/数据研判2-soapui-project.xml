@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="9ce8ac0c-1bdc-4988-9451-afbe96319fff" activeEnvironment="Default" name="数据研判2" resourceRoot="" soapui-version="5.1.3" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="ee1a5945-95d7-465d-bdd6-987f9fcaf55f" wsaVersion="NONE" name="AnalysisExtraServiceSoapBinding" type="wsdl" bindingName="{http://www.hikvision.com/traffic/ws/}AnalysisExtraServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://10.46.177.139:8181/traffic/ws/analysisExtra?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://10.46.177.139:8181/traffic/ws/analysisExtra?wsdl"><con:part><con:url>http://10.46.177.139:8181/traffic/ws/analysisExtra?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="AnalysisExtraService" targetNamespace="http://www.hikvision.com/traffic/ws/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.hikvision.com/traffic/ws/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http">
+  <wsdl:types>
+    <xs:schema targetNamespace="http://www.hikvision.com/traffic/ws/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="CollectResponseInfo" type="tns:collectResponseInfo"/>
+      <xs:complexType name="collectResponseInfo">
+        <xs:sequence>
+          <xs:element name="resultCode" type="xs:int"/>
+          <xs:element name="msg" type="xs:string"/>
+          <xs:element name="timeConsuming" type="xs:long"/>
+          <xs:element minOccurs="0" name="errorDetails" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="firstEnterCityAnalysis3">
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleLogo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="recallTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="exceptPlateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateSingleVehicleBestTimePoliceResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="firstEnterCityAnalysis">
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleLogo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="recallTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="exceptPlateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="falsePlateAnalysis">
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startDate" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endDate" type="xsd:string"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="checkResult" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="resType" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="fakePlateAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="checkFalsePlate">
+    <wsdl:part name="falseids" type="xsd:string"></wsdl:part>
+    <wsdl:part name="checkResult" type="xsd:string"></wsdl:part>
+    <wsdl:part name="reason" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="newfakePlateAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="checkFakePlateResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getVehicleBestTimePolice">
+    <wsdl:part name="startCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="endCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="argumentTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="operator" type="xsd:string"></wsdl:part>
+    <wsdl:part name="isUsed" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateSingleVehicleBestTimePolice">
+    <wsdl:part name="startCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="endCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="customTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="isUsed" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="newFootHoldsByTrack">
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateSingleVehicleBestTimeResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getVehicleBestTimeResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="newfakePlateAnalysis">
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startDate" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endDate" type="xsd:string"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="checkResult" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="fakePlateAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateMoreVehicleUsed">
+    <wsdl:part name="startCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="endCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="argumentTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="operator" type="xsd:int"></wsdl:part>
+    <wsdl:part name="isUsed" type="xsd:int"></wsdl:part>
+    <wsdl:part name="flag" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="checkFakePlate">
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="fakeids" type="xsd:string"></wsdl:part>
+    <wsdl:part name="checkResult" type="xsd:string"></wsdl:part>
+    <wsdl:part name="reason" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="footHoldsByTrackResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listModelControl">
+    <wsdl:part name="threshold" type="xsd:string"></wsdl:part>
+    <wsdl:part name="controlId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleLogo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleSublogo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="delModelControlResponse">
+    <wsdl:part name="return" type="tns:collectResponseInfo"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateMoreVehicleUsedResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="checkFalsePlateResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="firstEnterCityAnalysis3Response">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="newFirstEnterCityAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateSingleVehicleBestTime">
+    <wsdl:part name="startCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="endCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="customTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="isUsed" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getVehicleBestTime">
+    <wsdl:part name="startCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="endCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="argumentTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="operator" type="xsd:int"></wsdl:part>
+    <wsdl:part name="isUsed" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="newFootHoldsByTrackResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="falsePlateAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getVehicleBestTimePoliceResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="delModelControl">
+    <wsdl:part name="controlId" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setGroupFirstEnterCity">
+    <wsdl:part name="crossAndDirections" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addModelControl">
+    <wsdl:part name="datajson" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setGroupFirstEnterCityResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateMoreVehicleUsedPolice">
+    <wsdl:part name="startCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="endCrossingId" type="xsd:int"></wsdl:part>
+    <wsdl:part name="argumentTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="operator" type="xsd:string"></wsdl:part>
+    <wsdl:part name="isUsed" type="xsd:string"></wsdl:part>
+    <wsdl:part name="flag" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addModelControlResponse">
+    <wsdl:part name="return" type="tns:collectResponseInfo"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="firstEnterCityAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="newFirstEnterCityAnalysis">
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleLogo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleSubLogo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="recallTime" type="xsd:int"></wsdl:part>
+    <wsdl:part name="exceptPlateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateMoreVehicleUsedPoliceResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="footHoldsByTrack">
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listModelControlResponse">
+    <wsdl:part name="return" type="tns:collectResponseInfo"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="analysisExtra">
+    <wsdl:operation name="setGroupFirstEnterCity">
+      <wsdl:input message="tns:setGroupFirstEnterCity" name="setGroupFirstEnterCity"></wsdl:input>
+      <wsdl:output message="tns:setGroupFirstEnterCityResponse" name="setGroupFirstEnterCityResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateSingleVehicleBestTimePolice">
+      <wsdl:input message="tns:updateSingleVehicleBestTimePolice" name="updateSingleVehicleBestTimePolice"></wsdl:input>
+      <wsdl:output message="tns:updateSingleVehicleBestTimePoliceResponse" name="updateSingleVehicleBestTimePoliceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateSingleVehicleBestTime">
+      <wsdl:input message="tns:updateSingleVehicleBestTime" name="updateSingleVehicleBestTime"></wsdl:input>
+      <wsdl:output message="tns:updateSingleVehicleBestTimeResponse" name="updateSingleVehicleBestTimeResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addModelControl">
+      <wsdl:input message="tns:addModelControl" name="addModelControl"></wsdl:input>
+      <wsdl:output message="tns:addModelControlResponse" name="addModelControlResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVehicleBestTimePolice">
+      <wsdl:input message="tns:getVehicleBestTimePolice" name="getVehicleBestTimePolice"></wsdl:input>
+      <wsdl:output message="tns:getVehicleBestTimePoliceResponse" name="getVehicleBestTimePoliceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="newFirstEnterCityAnalysis">
+      <wsdl:input message="tns:newFirstEnterCityAnalysis" name="newFirstEnterCityAnalysis"></wsdl:input>
+      <wsdl:output message="tns:newFirstEnterCityAnalysisResponse" name="newFirstEnterCityAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listModelControl">
+      <wsdl:input message="tns:listModelControl" name="listModelControl"></wsdl:input>
+      <wsdl:output message="tns:listModelControlResponse" name="listModelControlResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="fakePlateAnalysis">
+      <wsdl:input message="tns:fakePlateAnalysis" name="fakePlateAnalysis"></wsdl:input>
+      <wsdl:output message="tns:fakePlateAnalysisResponse" name="fakePlateAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateMoreVehicleUsed">
+      <wsdl:input message="tns:updateMoreVehicleUsed" name="updateMoreVehicleUsed"></wsdl:input>
+      <wsdl:output message="tns:updateMoreVehicleUsedResponse" name="updateMoreVehicleUsedResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="checkFakePlate">
+      <wsdl:input message="tns:checkFakePlate" name="checkFakePlate"></wsdl:input>
+      <wsdl:output message="tns:checkFakePlateResponse" name="checkFakePlateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="firstEnterCityAnalysis">
+      <wsdl:input message="tns:firstEnterCityAnalysis" name="firstEnterCityAnalysis"></wsdl:input>
+      <wsdl:output message="tns:firstEnterCityAnalysisResponse" name="firstEnterCityAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="falsePlateAnalysis">
+      <wsdl:input message="tns:falsePlateAnalysis" name="falsePlateAnalysis"></wsdl:input>
+      <wsdl:output message="tns:falsePlateAnalysisResponse" name="falsePlateAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="newfakePlateAnalysis">
+      <wsdl:input message="tns:newfakePlateAnalysis" name="newfakePlateAnalysis"></wsdl:input>
+      <wsdl:output message="tns:newfakePlateAnalysisResponse" name="newfakePlateAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="firstEnterCityAnalysis3">
+      <wsdl:input message="tns:firstEnterCityAnalysis3" name="firstEnterCityAnalysis3"></wsdl:input>
+      <wsdl:output message="tns:firstEnterCityAnalysis3Response" name="firstEnterCityAnalysis3Response"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateMoreVehicleUsedPolice">
+      <wsdl:input message="tns:updateMoreVehicleUsedPolice" name="updateMoreVehicleUsedPolice"></wsdl:input>
+      <wsdl:output message="tns:updateMoreVehicleUsedPoliceResponse" name="updateMoreVehicleUsedPoliceResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="checkFalsePlate">
+      <wsdl:input message="tns:checkFalsePlate" name="checkFalsePlate"></wsdl:input>
+      <wsdl:output message="tns:checkFalsePlateResponse" name="checkFalsePlateResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVehicleBestTime">
+      <wsdl:input message="tns:getVehicleBestTime" name="getVehicleBestTime"></wsdl:input>
+      <wsdl:output message="tns:getVehicleBestTimeResponse" name="getVehicleBestTimeResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="newFootHoldsByTrack">
+      <wsdl:input message="tns:newFootHoldsByTrack" name="newFootHoldsByTrack"></wsdl:input>
+      <wsdl:output message="tns:newFootHoldsByTrackResponse" name="newFootHoldsByTrackResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="delModelControl">
+      <wsdl:input message="tns:delModelControl" name="delModelControl"></wsdl:input>
+      <wsdl:output message="tns:delModelControlResponse" name="delModelControlResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="footHoldsByTrack">
+      <wsdl:input message="tns:footHoldsByTrack" name="footHoldsByTrack"></wsdl:input>
+      <wsdl:output message="tns:footHoldsByTrackResponse" name="footHoldsByTrackResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="AnalysisExtraServiceSoapBinding" type="tns:analysisExtra">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="setGroupFirstEnterCity">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="setGroupFirstEnterCity">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="setGroupFirstEnterCityResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addModelControl">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="addModelControl">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="addModelControlResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateSingleVehicleBestTime">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="updateSingleVehicleBestTime">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateSingleVehicleBestTimeResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateSingleVehicleBestTimePolice">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="updateSingleVehicleBestTimePolice">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateSingleVehicleBestTimePoliceResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVehicleBestTimePolice">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="getVehicleBestTimePolice">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getVehicleBestTimePoliceResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="listModelControl">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="listModelControl">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listModelControlResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="newFirstEnterCityAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="newFirstEnterCityAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="newFirstEnterCityAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="fakePlateAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="fakePlateAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="fakePlateAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateMoreVehicleUsed">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="updateMoreVehicleUsed">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateMoreVehicleUsedResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="checkFakePlate">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="checkFakePlate">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="checkFakePlateResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="firstEnterCityAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="firstEnterCityAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="firstEnterCityAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="falsePlateAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="falsePlateAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="falsePlateAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="newfakePlateAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="newfakePlateAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="newfakePlateAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="firstEnterCityAnalysis3">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="firstEnterCityAnalysis3">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="firstEnterCityAnalysis3Response">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="checkFalsePlate">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="checkFalsePlate">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="checkFalsePlateResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateMoreVehicleUsedPolice">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="updateMoreVehicleUsedPolice">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateMoreVehicleUsedPoliceResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVehicleBestTime">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="getVehicleBestTime">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getVehicleBestTimeResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="delModelControl">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="delModelControl">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="delModelControlResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="newFootHoldsByTrack">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="newFootHoldsByTrack">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="newFootHoldsByTrackResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="footHoldsByTrack">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="footHoldsByTrack">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="footHoldsByTrackResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AnalysisExtraService">
+    <wsdl:port binding="tns:AnalysisExtraServiceSoapBinding" name="analysisExtraPort">
+      <soap:address location="http://10.46.177.139:8181/traffic/ws/analysisExtra"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint></con:endpoints><con:operation id="95f5e6ad-f750-4051-b1b4-1873bc3aac5a" isOneWay="false" action="" name="addModelControl" bindingOperationName="addModelControl" type="Request-Response" outputName="addModelControlResponse" inputName="addModelControl" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="53e418b6-d441-4faa-a47e-2b56235fd59e" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:addModelControl>\r
+         <datajson>?</datajson>\r
+      </ws:addModelControl>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/addModelControl"/></con:call></con:operation><con:operation id="bc857ee5-4b7a-4738-80b0-5db14b5d3916" isOneWay="false" action="" name="checkFakePlate" bindingOperationName="checkFakePlate" type="Request-Response" outputName="checkFakePlateResponse" inputName="checkFakePlate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2ebbcd44-3527-44a4-b142-742c9eba3a9c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:checkFakePlate>\r
+         <plateNo>?</plateNo>\r
+         <fakeids>?</fakeids>\r
+         <checkResult>?</checkResult>\r
+         <reason>?</reason>\r
+      </ws:checkFakePlate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/checkFakePlate"/></con:call></con:operation><con:operation id="40dbeb5a-d30e-453a-b931-a66199b539a6" isOneWay="false" action="" name="checkFalsePlate" bindingOperationName="checkFalsePlate" type="Request-Response" outputName="checkFalsePlateResponse" inputName="checkFalsePlate" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d2cd298f-9c2f-4dd8-a49d-2799d7d9f45a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:checkFalsePlate>\r
+         <falseids>?</falseids>\r
+         <checkResult>?</checkResult>\r
+         <reason>?</reason>\r
+      </ws:checkFalsePlate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/checkFalsePlate"/></con:call></con:operation><con:operation id="e5e7792c-8554-4858-b523-a8f9bda9d090" isOneWay="false" action="" name="delModelControl" bindingOperationName="delModelControl" type="Request-Response" outputName="delModelControlResponse" inputName="delModelControl" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="242c6f5a-56e5-4d3c-aff4-fb7e8ca6776c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:delModelControl>\r
+         <controlId>?</controlId>\r
+      </ws:delModelControl>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/delModelControl"/></con:call></con:operation><con:operation id="7c776359-2707-434b-8d1a-876ca9b2a3f6" isOneWay="false" action="" name="fakePlateAnalysis" bindingOperationName="fakePlateAnalysis" type="Request-Response" outputName="fakePlateAnalysisResponse" inputName="fakePlateAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="97cc8f6c-fba8-45bc-8885-e4082db2a437" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:fakePlateAnalysis>\r
+         <taskId>?</taskId>\r
+         <plateNo>?</plateNo>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:fakePlateAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/fakePlateAnalysis"/></con:call></con:operation><con:operation id="bad9c937-38ee-470b-920d-6bdee4b38b61" isOneWay="false" action="" name="falsePlateAnalysis" bindingOperationName="falsePlateAnalysis" type="Request-Response" outputName="falsePlateAnalysisResponse" inputName="falsePlateAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d34fd8c7-1567-4b15-9592-7be16c37f6dd" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:falsePlateAnalysis>\r
+         <plateNo>?</plateNo>\r
+         <startDate>?</startDate>\r
+         <endDate>?</endDate>\r
+         <threshold>?</threshold>\r
+         <checkResult>?</checkResult>\r
+         <plateColor>?</plateColor>\r
+         <resType>?</resType>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:falsePlateAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/falsePlateAnalysis"/></con:call></con:operation><con:operation id="764970e7-2c0b-4c51-9d8f-5a7433051b99" isOneWay="false" action="" name="firstEnterCityAnalysis" bindingOperationName="firstEnterCityAnalysis" type="Request-Response" outputName="firstEnterCityAnalysisResponse" inputName="firstEnterCityAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="31c62e9a-0f86-4fcd-b824-a19301141bf9" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:firstEnterCityAnalysis>\r
+         <plateNo>?</plateNo>\r
+         <vehicleLogo>?</vehicleLogo>\r
+         <plateColor>?</plateColor>\r
+         <plateType>?</plateType>\r
+         <vehicleType>?</vehicleType>\r
+         <vehicleColor>?</vehicleColor>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <recallTime>?</recallTime>\r
+         <exceptPlateNo>?</exceptPlateNo>\r
+         <taskId>?</taskId>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:firstEnterCityAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/firstEnterCityAnalysis"/></con:call></con:operation><con:operation id="00fdd3cd-4884-42ce-9936-2a84f554e6b5" isOneWay="false" action="" name="firstEnterCityAnalysis3" bindingOperationName="firstEnterCityAnalysis3" type="Request-Response" outputName="firstEnterCityAnalysis3Response" inputName="firstEnterCityAnalysis3" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="41d47db7-5613-4089-84e2-540294649123" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:firstEnterCityAnalysis3>\r
+         <plateNo>?</plateNo>\r
+         <vehicleLogo>?</vehicleLogo>\r
+         <plateColor>?</plateColor>\r
+         <plateType>?</plateType>\r
+         <vehicleType>?</vehicleType>\r
+         <vehicleColor>?</vehicleColor>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <recallTime>?</recallTime>\r
+         <exceptPlateNo>?</exceptPlateNo>\r
+         <taskId>?</taskId>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:firstEnterCityAnalysis3>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/firstEnterCityAnalysis3"/></con:call></con:operation><con:operation id="01d4613c-b524-4aa4-a4af-53db843e730e" isOneWay="false" action="" name="footHoldsByTrack" bindingOperationName="footHoldsByTrack" type="Request-Response" outputName="footHoldsByTrackResponse" inputName="footHoldsByTrack" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="274c8ff3-23bb-458d-9cc3-086fae5c3c42" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:footHoldsByTrack>\r
+         <plateNo>?</plateNo>\r
+         <plateColor>?</plateColor>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <taskId>?</taskId>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:footHoldsByTrack>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/footHoldsByTrack"/></con:call></con:operation><con:operation id="437e1835-4b12-4a4e-b391-3f776a9ec17b" isOneWay="false" action="" name="getVehicleBestTime" bindingOperationName="getVehicleBestTime" type="Request-Response" outputName="getVehicleBestTimeResponse" inputName="getVehicleBestTime" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="fb324c54-b9b2-4471-9836-d33a1036db03" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:getVehicleBestTime>\r
+         <startCrossingId>?</startCrossingId>\r
+         <endCrossingId>?</endCrossingId>\r
+         <argumentTime>?</argumentTime>\r
+         <operator>?</operator>\r
+         <isUsed>?</isUsed>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:getVehicleBestTime>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/getVehicleBestTime"/></con:call></con:operation><con:operation id="6f127d61-c718-4deb-9fce-9a6b74d6abe5" isOneWay="false" action="" name="getVehicleBestTimePolice" bindingOperationName="getVehicleBestTimePolice" type="Request-Response" outputName="getVehicleBestTimePoliceResponse" inputName="getVehicleBestTimePolice" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="74764046-b77e-4b05-9de5-c3644873562b" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:getVehicleBestTimePolice>\r
+         <startCrossingId>?</startCrossingId>\r
+         <endCrossingId>?</endCrossingId>\r
+         <argumentTime>?</argumentTime>\r
+         <operator>?</operator>\r
+         <isUsed>?</isUsed>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:getVehicleBestTimePolice>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/getVehicleBestTimePolice"/></con:call></con:operation><con:operation id="bce5372f-723b-4152-8852-f4e4788df924" isOneWay="false" action="" name="listModelControl" bindingOperationName="listModelControl" type="Request-Response" outputName="listModelControlResponse" inputName="listModelControl" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="75608aac-ce49-402f-b9f2-e86c35b8977a" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listModelControl>\r
+         <threshold>?</threshold>\r
+         <controlId>?</controlId>\r
+         <vehicleLogo>?</vehicleLogo>\r
+         <vehicleSublogo>?</vehicleSublogo>\r
+         <vehicleType>?</vehicleType>\r
+         <vehicleColor>?</vehicleColor>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:listModelControl>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/listModelControl"/></con:call></con:operation><con:operation id="c6678b09-cf0d-452b-858c-017ecd218ecc" isOneWay="false" action="" name="newfakePlateAnalysis" bindingOperationName="newfakePlateAnalysis" type="Request-Response" outputName="newfakePlateAnalysisResponse" inputName="newfakePlateAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d8259771-c010-4bbc-8c0c-e68c4a12c453" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:newfakePlateAnalysis>\r
+         <plateNo>?</plateNo>\r
+         <startDate>?</startDate>\r
+         <endDate>?</endDate>\r
+         <threshold>?</threshold>\r
+         <checkResult>?</checkResult>\r
+         <plateColor>?</plateColor>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:newfakePlateAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/newfakePlateAnalysis"/></con:call></con:operation><con:operation id="c8a41734-43d5-4e49-96c5-7041fc1416bc" isOneWay="false" action="" name="newFirstEnterCityAnalysis" bindingOperationName="newFirstEnterCityAnalysis" type="Request-Response" outputName="newFirstEnterCityAnalysisResponse" inputName="newFirstEnterCityAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="37eb8e63-3406-4761-8ac0-66f73b130114" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:newFirstEnterCityAnalysis>\r
+         <plateNo>?</plateNo>\r
+         <vehicleLogo>?</vehicleLogo>\r
+         <vehicleSubLogo>?</vehicleSubLogo>\r
+         <plateColor>?</plateColor>\r
+         <plateType>?</plateType>\r
+         <vehicleType>?</vehicleType>\r
+         <vehicleColor>?</vehicleColor>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <recallTime>?</recallTime>\r
+         <exceptPlateNo>?</exceptPlateNo>\r
+         <taskId>?</taskId>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:newFirstEnterCityAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/newFirstEnterCityAnalysis"/></con:call></con:operation><con:operation id="9e051044-6cb9-48fb-a953-850fc3378c3c" isOneWay="false" action="" name="newFootHoldsByTrack" bindingOperationName="newFootHoldsByTrack" type="Request-Response" outputName="newFootHoldsByTrackResponse" inputName="newFootHoldsByTrack" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ce607e7a-03ca-443e-9f26-3b780cb32218" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:newFootHoldsByTrack>\r
+         <plateNo>?</plateNo>\r
+         <plateColor>?</plateColor>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <threshold>?</threshold>\r
+         <taskId>?</taskId>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:newFootHoldsByTrack>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/newFootHoldsByTrack"/></con:call></con:operation><con:operation id="ea8481c2-82cf-4504-a2dc-22be7dbaf2f1" isOneWay="false" action="" name="setGroupFirstEnterCity" bindingOperationName="setGroupFirstEnterCity" type="Request-Response" outputName="setGroupFirstEnterCityResponse" inputName="setGroupFirstEnterCity" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="f94bf432-483b-47a2-9363-be9b96cecaae" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:setGroupFirstEnterCity>\r
+         <crossAndDirections>?</crossAndDirections>\r
+      </ws:setGroupFirstEnterCity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/setGroupFirstEnterCity"/></con:call></con:operation><con:operation id="e46b00eb-afa3-4e2b-92f5-49ab45371112" isOneWay="false" action="" name="updateMoreVehicleUsed" bindingOperationName="updateMoreVehicleUsed" type="Request-Response" outputName="updateMoreVehicleUsedResponse" inputName="updateMoreVehicleUsed" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="58f0bbba-b660-4a14-86f3-ab30a35ee620" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateMoreVehicleUsed>\r
+         <startCrossingId>?</startCrossingId>\r
+         <endCrossingId>?</endCrossingId>\r
+         <argumentTime>?</argumentTime>\r
+         <operator>?</operator>\r
+         <isUsed>?</isUsed>\r
+         <flag>?</flag>\r
+      </ws:updateMoreVehicleUsed>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/updateMoreVehicleUsed"/></con:call></con:operation><con:operation id="92895f69-f921-4bba-957b-227afef59e7c" isOneWay="false" action="" name="updateMoreVehicleUsedPolice" bindingOperationName="updateMoreVehicleUsedPolice" type="Request-Response" outputName="updateMoreVehicleUsedPoliceResponse" inputName="updateMoreVehicleUsedPolice" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="601da148-92ec-4708-9703-efc6aac0b57f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateMoreVehicleUsedPolice>\r
+         <startCrossingId>?</startCrossingId>\r
+         <endCrossingId>?</endCrossingId>\r
+         <argumentTime>?</argumentTime>\r
+         <operator>?</operator>\r
+         <isUsed>?</isUsed>\r
+         <flag>?</flag>\r
+      </ws:updateMoreVehicleUsedPolice>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/updateMoreVehicleUsedPolice"/></con:call></con:operation><con:operation id="25721d9d-a8be-4f92-a6c5-9564275f0347" isOneWay="false" action="" name="updateSingleVehicleBestTime" bindingOperationName="updateSingleVehicleBestTime" type="Request-Response" outputName="updateSingleVehicleBestTimeResponse" inputName="updateSingleVehicleBestTime" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="44a11c70-44aa-4e7c-a47a-99f967fd58d1" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateSingleVehicleBestTime>\r
+         <startCrossingId>?</startCrossingId>\r
+         <endCrossingId>?</endCrossingId>\r
+         <customTime>?</customTime>\r
+         <isUsed>?</isUsed>\r
+      </ws:updateSingleVehicleBestTime>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/updateSingleVehicleBestTime"/></con:call></con:operation><con:operation id="c89752c3-59ad-4478-b014-d192c74b636c" isOneWay="false" action="" name="updateSingleVehicleBestTimePolice" bindingOperationName="updateSingleVehicleBestTimePolice" type="Request-Response" outputName="updateSingleVehicleBestTimePoliceResponse" inputName="updateSingleVehicleBestTimePolice" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="b5a1408d-0184-4a67-80d5-64fd12e9c1cc" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/analysisExtra</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateSingleVehicleBestTimePolice>\r
+         <startCrossingId>?</startCrossingId>\r
+         <endCrossingId>?</endCrossingId>\r
+         <customTime>?</customTime>\r
+         <isUsed>?</isUsed>\r
+      </ws:updateSingleVehicleBestTimePolice>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/analysisExtra/updateSingleVehicleBestTimePolice"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>

@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="37909165-0ec8-465c-aec0-c6a1778a7e69" activeEnvironment="Default" name="数据研判" resourceRoot="" soapui-version="5.1.3" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="0b6e5866-3938-4a40-b504-5c4e57fb6fe8" wsaVersion="NONE" name="DataAnalysisWebServiceServiceSoapBinding" type="wsdl" bindingName="{http://www.hikvision.com/traffic/ws/}DataAnalysisWebServiceServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://10.46.177.139:8181/traffic/ws/dataAnalysis?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://10.46.177.139:8181/traffic/ws/dataAnalysis?wsdl"><con:part><con:url>http://10.46.177.139:8181/traffic/ws/dataAnalysis?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="DataAnalysisWebServiceService" targetNamespace="http://www.hikvision.com/traffic/ws/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.hikvision.com/traffic/ws/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http">
+  <wsdl:message name="crossAggregationAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="districts" type="xsd:string"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="trackerAssociateAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="timeInterval" type="xsd:int"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="trackDetectionAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="abnormalTrackAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="inStartTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="inEndTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="outStartTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="outEndTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="shortTimePassAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="hiddenVehicleAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="beforeTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="afterTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="beforeVal" type="xsd:int"></wsdl:part>
+    <wsdl:part name="afterVal" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="crossAggregationAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="frequencyCrossAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="freSet" type="xsd:int"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="newHiddenVehicleAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setGroupFirstEnterCity">
+    <wsdl:part name="crossAndDirections" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="specTimePassAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="frequencyCrossAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="trackerAlikeAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateNos" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="timeThreshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="crossThreshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="trackerAssociateAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setGroupFirstEnterCityResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="frequencyCrossStatisticByCrossIdAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="freSet" type="xsd:int"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="trackerAlikeAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="shortTimePassAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crossRef" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="threshold" type="xsd:long"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="abnormalTrackAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="specTimePassAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="frequencyCrossStatisticByCrossIdAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="hiddenVehicleAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="newHiddenVehicleAnalysis">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="gear" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="trackDetectionAnalysisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="dataAnalysis">
+    <wsdl:operation name="specTimePassAnalysis">
+      <wsdl:input message="tns:specTimePassAnalysis" name="specTimePassAnalysis"></wsdl:input>
+      <wsdl:output message="tns:specTimePassAnalysisResponse" name="specTimePassAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setGroupFirstEnterCity">
+      <wsdl:input message="tns:setGroupFirstEnterCity" name="setGroupFirstEnterCity"></wsdl:input>
+      <wsdl:output message="tns:setGroupFirstEnterCityResponse" name="setGroupFirstEnterCityResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="frequencyCrossStatisticByCrossIdAnalysis">
+      <wsdl:input message="tns:frequencyCrossStatisticByCrossIdAnalysis" name="frequencyCrossStatisticByCrossIdAnalysis"></wsdl:input>
+      <wsdl:output message="tns:frequencyCrossStatisticByCrossIdAnalysisResponse" name="frequencyCrossStatisticByCrossIdAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="hiddenVehicleAnalysis">
+      <wsdl:input message="tns:hiddenVehicleAnalysis" name="hiddenVehicleAnalysis"></wsdl:input>
+      <wsdl:output message="tns:hiddenVehicleAnalysisResponse" name="hiddenVehicleAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="shortTimePassAnalysis">
+      <wsdl:input message="tns:shortTimePassAnalysis" name="shortTimePassAnalysis"></wsdl:input>
+      <wsdl:output message="tns:shortTimePassAnalysisResponse" name="shortTimePassAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="crossAggregationAnalysis">
+      <wsdl:input message="tns:crossAggregationAnalysis" name="crossAggregationAnalysis"></wsdl:input>
+      <wsdl:output message="tns:crossAggregationAnalysisResponse" name="crossAggregationAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="abnormalTrackAnalysis">
+      <wsdl:input message="tns:abnormalTrackAnalysis" name="abnormalTrackAnalysis"></wsdl:input>
+      <wsdl:output message="tns:abnormalTrackAnalysisResponse" name="abnormalTrackAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="trackerAlikeAnalysis">
+      <wsdl:input message="tns:trackerAlikeAnalysis" name="trackerAlikeAnalysis"></wsdl:input>
+      <wsdl:output message="tns:trackerAlikeAnalysisResponse" name="trackerAlikeAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="newHiddenVehicleAnalysis">
+      <wsdl:input message="tns:newHiddenVehicleAnalysis" name="newHiddenVehicleAnalysis"></wsdl:input>
+      <wsdl:output message="tns:newHiddenVehicleAnalysisResponse" name="newHiddenVehicleAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="trackDetectionAnalysis">
+      <wsdl:input message="tns:trackDetectionAnalysis" name="trackDetectionAnalysis"></wsdl:input>
+      <wsdl:output message="tns:trackDetectionAnalysisResponse" name="trackDetectionAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="trackerAssociateAnalysis">
+      <wsdl:input message="tns:trackerAssociateAnalysis" name="trackerAssociateAnalysis"></wsdl:input>
+      <wsdl:output message="tns:trackerAssociateAnalysisResponse" name="trackerAssociateAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="frequencyCrossAnalysis">
+      <wsdl:input message="tns:frequencyCrossAnalysis" name="frequencyCrossAnalysis"></wsdl:input>
+      <wsdl:output message="tns:frequencyCrossAnalysisResponse" name="frequencyCrossAnalysisResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DataAnalysisWebServiceServiceSoapBinding" type="tns:dataAnalysis">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="setGroupFirstEnterCity">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="setGroupFirstEnterCity">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="setGroupFirstEnterCityResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="specTimePassAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="specTimePassAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="specTimePassAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="frequencyCrossStatisticByCrossIdAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="frequencyCrossStatisticByCrossIdAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="frequencyCrossStatisticByCrossIdAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="hiddenVehicleAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="hiddenVehicleAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="hiddenVehicleAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="shortTimePassAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="shortTimePassAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="shortTimePassAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="abnormalTrackAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="abnormalTrackAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="abnormalTrackAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="crossAggregationAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="crossAggregationAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="crossAggregationAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="newHiddenVehicleAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="newHiddenVehicleAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="newHiddenVehicleAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="trackerAlikeAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="trackerAlikeAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="trackerAlikeAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="trackDetectionAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="trackDetectionAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="trackDetectionAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="trackerAssociateAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="trackerAssociateAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="trackerAssociateAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="frequencyCrossAnalysis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="frequencyCrossAnalysis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="frequencyCrossAnalysisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DataAnalysisWebServiceService">
+    <wsdl:port binding="tns:DataAnalysisWebServiceServiceSoapBinding" name="dataAnalysisPort">
+      <soap:address location="http://10.46.177.139:8181/traffic/ws/dataAnalysis"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint></con:endpoints><con:operation id="bbe6a068-07e0-415b-94db-fc06d6f2e49e" isOneWay="false" action="" name="abnormalTrackAnalysis" bindingOperationName="abnormalTrackAnalysis" type="Request-Response" outputName="abnormalTrackAnalysisResponse" inputName="abnormalTrackAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="225f18b6-bb23-417a-be20-e2c1026f8765" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:abnormalTrackAnalysis>\r
+         <taskId>?</taskId>\r
+         <plateNo>?</plateNo>\r
+         <crosses>?</crosses>\r
+         <inStartTime>?</inStartTime>\r
+         <inEndTime>?</inEndTime>\r
+         <outStartTime>?</outStartTime>\r
+         <outEndTime>?</outEndTime>\r
+         <threshold>?</threshold>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:abnormalTrackAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/abnormalTrackAnalysis"/></con:call></con:operation><con:operation id="cce10e98-c39d-4463-95fa-7077c35e7a3a" isOneWay="false" action="" name="crossAggregationAnalysis" bindingOperationName="crossAggregationAnalysis" type="Request-Response" outputName="crossAggregationAnalysisResponse" inputName="crossAggregationAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d4b6df4f-1c01-4250-9916-3019a3d05d9d" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:crossAggregationAnalysis>\r
+         <taskId>?</taskId>\r
+         <districts>?</districts>\r
+         <threshold>?</threshold>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+         <plateColor>?</plateColor>\r
+      </ws:crossAggregationAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/crossAggregationAnalysis"/></con:call></con:operation><con:operation id="6c7136d6-5981-4bbb-8a4f-f23812f17856" isOneWay="false" action="" name="frequencyCrossAnalysis" bindingOperationName="frequencyCrossAnalysis" type="Request-Response" outputName="frequencyCrossAnalysisResponse" inputName="frequencyCrossAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="94b36947-0b55-4e8e-a965-a2f9fc67ef2f" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:frequencyCrossAnalysis>\r
+         <taskId>?</taskId>\r
+         <crosses>?</crosses>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <freSet>?</freSet>\r
+         <threshold>?</threshold>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:frequencyCrossAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/frequencyCrossAnalysis"/></con:call></con:operation><con:operation id="ccb85f58-2a36-4316-bfa8-5367a1225418" isOneWay="false" action="" name="frequencyCrossStatisticByCrossIdAnalysis" bindingOperationName="frequencyCrossStatisticByCrossIdAnalysis" type="Request-Response" outputName="frequencyCrossStatisticByCrossIdAnalysisResponse" inputName="frequencyCrossStatisticByCrossIdAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5a7642c7-ce60-462b-96c7-3cdf93b8da73" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:frequencyCrossStatisticByCrossIdAnalysis>\r
+         <taskId>?</taskId>\r
+         <crosses>?</crosses>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <freSet>?</freSet>\r
+         <threshold>?</threshold>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:frequencyCrossStatisticByCrossIdAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/frequencyCrossStatisticByCrossIdAnalysis"/></con:call></con:operation><con:operation id="b42a0c41-152a-4c84-b351-a9c8baf72645" isOneWay="false" action="" name="hiddenVehicleAnalysis" bindingOperationName="hiddenVehicleAnalysis" type="Request-Response" outputName="hiddenVehicleAnalysisResponse" inputName="hiddenVehicleAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="bb57488b-6cfe-40f6-a193-d8c4c0f08eb3" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:hiddenVehicleAnalysis>\r
+         <taskId>?</taskId>\r
+         <plateNo>?</plateNo>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <crosses>?</crosses>\r
+         <vehicleColor>?</vehicleColor>\r
+         <vehicleType>?</vehicleType>\r
+         <plateColor>?</plateColor>\r
+         <plateType>?</plateType>\r
+         <beforeTime>?</beforeTime>\r
+         <afterTime>?</afterTime>\r
+         <beforeVal>?</beforeVal>\r
+         <afterVal>?</afterVal>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:hiddenVehicleAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/hiddenVehicleAnalysis"/></con:call></con:operation><con:operation id="c4638377-51b5-4bb3-9a88-275424b9513f" isOneWay="false" action="" name="newHiddenVehicleAnalysis" bindingOperationName="newHiddenVehicleAnalysis" type="Request-Response" outputName="newHiddenVehicleAnalysisResponse" inputName="newHiddenVehicleAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="67bce1b3-20a8-48a4-9c93-d33b7f2734c7" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:newHiddenVehicleAnalysis>\r
+         <taskId>?</taskId>\r
+         <plateNo>?</plateNo>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <crosses>?</crosses>\r
+         <vehicleColor>?</vehicleColor>\r
+         <vehicleType>?</vehicleType>\r
+         <plateColor>?</plateColor>\r
+         <plateType>?</plateType>\r
+         <gear>?</gear>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:newHiddenVehicleAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/newHiddenVehicleAnalysis"/></con:call></con:operation><con:operation id="6b6ed8e1-9555-4c6a-8f2c-3e16d91c2021" isOneWay="false" action="" name="setGroupFirstEnterCity" bindingOperationName="setGroupFirstEnterCity" type="Request-Response" outputName="setGroupFirstEnterCityResponse" inputName="setGroupFirstEnterCity" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="d813b436-e48d-42ab-b18a-96d09e615afb" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:setGroupFirstEnterCity>\r
+         <crossAndDirections>?</crossAndDirections>\r
+      </ws:setGroupFirstEnterCity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/setGroupFirstEnterCity"/></con:call></con:operation><con:operation id="c325e822-2a9e-48f1-b922-0c84495bd2c1" isOneWay="false" action="" name="shortTimePassAnalysis" bindingOperationName="shortTimePassAnalysis" type="Request-Response" outputName="shortTimePassAnalysisResponse" inputName="shortTimePassAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="c4ae5af1-13cb-428b-84f1-50f00c4999fc" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:shortTimePassAnalysis>\r
+         <taskId>?</taskId>\r
+         <crossRef>?</crossRef>\r
+         <crosses>?</crosses>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <threshold>?</threshold>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:shortTimePassAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/shortTimePassAnalysis"/></con:call></con:operation><con:operation id="c62162ed-10cf-4350-9261-39c49afd38fd" isOneWay="false" action="" name="specTimePassAnalysis" bindingOperationName="specTimePassAnalysis" type="Request-Response" outputName="specTimePassAnalysisResponse" inputName="specTimePassAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ed54c730-021c-430e-8adb-dbd1926d99fb" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:specTimePassAnalysis>\r
+         <taskId>?</taskId>\r
+         <crosses>?</crosses>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:specTimePassAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/specTimePassAnalysis"/></con:call></con:operation><con:operation id="fafec6e0-776a-40c1-b7f0-792f87c1be04" isOneWay="false" action="" name="trackDetectionAnalysis" bindingOperationName="trackDetectionAnalysis" type="Request-Response" outputName="trackDetectionAnalysisResponse" inputName="trackDetectionAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="620ca113-00c6-4097-8ab7-1adbd705cd91" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:trackDetectionAnalysis>\r
+         <taskId>?</taskId>\r
+         <plateNo>?</plateNo>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <vehicleType>?</vehicleType>\r
+         <vehicleColor>?</vehicleColor>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:trackDetectionAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/trackDetectionAnalysis"/></con:call></con:operation><con:operation id="8baf4d5c-5333-4d5e-8c1e-81251e409ae7" isOneWay="false" action="" name="trackerAlikeAnalysis" bindingOperationName="trackerAlikeAnalysis" type="Request-Response" outputName="trackerAlikeAnalysisResponse" inputName="trackerAlikeAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="14c59a8a-d189-423b-b532-ca710bdfdee1" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:trackerAlikeAnalysis>\r
+         <taskId>?</taskId>\r
+         <plateNos>?</plateNos>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <timeThreshold>?</timeThreshold>\r
+         <crossThreshold>?</crossThreshold>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:trackerAlikeAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/trackerAlikeAnalysis"/></con:call></con:operation><con:operation id="1116f62a-1bf0-4abb-9309-83e39484102b" isOneWay="false" action="" name="trackerAssociateAnalysis" bindingOperationName="trackerAssociateAnalysis" type="Request-Response" outputName="trackerAssociateAnalysisResponse" inputName="trackerAssociateAnalysis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a0d511ba-413f-41fd-940a-e7ea5e998032" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataAnalysis</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:trackerAssociateAnalysis>\r
+         <taskId>?</taskId>\r
+         <plateNo>?</plateNo>\r
+         <crosses>?</crosses>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <timeInterval>?</timeInterval>\r
+         <threshold>?</threshold>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:trackerAssociateAnalysis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataAnalysis/trackerAssociateAnalysis"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

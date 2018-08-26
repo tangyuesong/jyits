@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="af147b56-de97-4455-91d4-1a7df94077bc" activeEnvironment="Default" name="数据统计" resourceRoot="" soapui-version="5.1.3" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="051fd619-0de7-43e8-87e0-c1236c76f467" wsaVersion="NONE" name="DataStatisticsWebServiceServiceSoapBinding" type="wsdl" bindingName="{http://www.hikvision.com/traffic/ws/}DataStatisticsWebServiceServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://10.46.177.139:8181/traffic/ws/dataStatistics?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://10.46.177.139:8181/traffic/ws/dataStatistics?wsdl"><con:part><con:url>http://10.46.177.139:8181/traffic/ws/dataStatistics?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="DataStatisticsWebServiceService" targetNamespace="http://www.hikvision.com/traffic/ws/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.hikvision.com/traffic/ws/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http">
+  <wsdl:types>
+    <xs:schema targetNamespace="http://www.hikvision.com/traffic/ws/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="StatisticsResults" type="tns:statisticsResults"/>
+      <xs:element name="StatisticsResultsNoTime" type="tns:statisticsResultsNoTime"/>
+      <xs:complexType name="statisticsResults">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="results" type="xs:string"/>
+          <xs:element minOccurs="0" name="sumResults" type="xs:string"/>
+          <xs:element name="timeconsuming" type="xs:long"/>
+          <xs:element minOccurs="0" name="msg" type="xs:string"/>
+          <xs:element name="ret" type="xs:int"/>
+          <xs:element minOccurs="0" name="version" type="xs:string"/>
+          <xs:element name="totalRecords" type="xs:long"/>
+          <xs:element name="crossingId" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="statisticsResultsNoTime">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="results" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="rs" type="xs:string"/>
+          <xs:element name="timeconsuming" type="xs:long"/>
+          <xs:element minOccurs="0" name="msg" type="xs:string"/>
+          <xs:element name="ret" type="xs:int"/>
+          <xs:element minOccurs="0" name="version" type="xs:string"/>
+          <xs:element name="totalRecords" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="vehicleAlarmProcessSummary">
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crossIds" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColorDepth" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="laneNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="directionIndex" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="propertiesStatisticsResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleAlarmSummaryByActionResponse">
+    <wsdl:part name="return" type="tns:statisticsResultsNoTime"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehiclePassSpecTimeSummaryResponse">
+    <wsdl:part name="return" type="tns:statisticsResults"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleAlarmSummaryByAction">
+    <wsdl:part name="crossIds" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="violativeAction" type="xsd:string"></wsdl:part>
+    <wsdl:part name="reportType" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehiclePassCompare">
+    <wsdl:part name="crossIds" type="xsd:string"></wsdl:part>
+    <wsdl:part name="directionIndex" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleBelong" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="setTime" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleAlarmSummaryResponse">
+    <wsdl:part name="return" type="tns:statisticsResultsNoTime"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleAlarmProcessSummaryByAction">
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crossIds" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColorDepth" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="laneNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="directionIndex" type="xsd:string"></wsdl:part>
+    <wsdl:part name="violativeAction" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehiclePassSpecTimeSummary">
+    <wsdl:part name="crossIds" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="setTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleBelong" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="directionIndex" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehiclePassSummaryResponse">
+    <wsdl:part name="return" type="tns:statisticsResults"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehiclePassCompareResponse">
+    <wsdl:part name="return" type="tns:statisticsResults"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleAlarmSummary">
+    <wsdl:part name="crossIds" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="reportType" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleTrackSummaryResponse">
+    <wsdl:part name="return" type="tns:statisticsResults"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleTrackSummary">
+    <wsdl:part name="crossIds" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="timeLists" type="xsd:string"></wsdl:part>
+    <wsdl:part name="statisticsType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleBelong" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleSpeed" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleLen" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColorDepth" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleAlarmProcessSummaryByActionResponse">
+    <wsdl:part name="return" type="tns:statisticsResultsNoTime"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="propertiesStatistics">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="sort" type="xsd:string"></wsdl:part>
+    <wsdl:part name="statisticsType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehiclePassSummary">
+    <wsdl:part name="startTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="endTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crossIds" type="xsd:string"></wsdl:part>
+    <wsdl:part name="directionIndex" type="xsd:string"></wsdl:part>
+    <wsdl:part name="reportType" type="xsd:int"></wsdl:part>
+    <wsdl:part name="statisticsType" type="xsd:int"></wsdl:part>
+    <wsdl:part name="vehicleBelong" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleAlarmProcessSummaryResponse">
+    <wsdl:part name="return" type="tns:statisticsResultsNoTime"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="dataStatistics">
+    <wsdl:operation name="vehiclePassCompare">
+      <wsdl:input message="tns:vehiclePassCompare" name="vehiclePassCompare"></wsdl:input>
+      <wsdl:output message="tns:vehiclePassCompareResponse" name="vehiclePassCompareResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehiclePassSummary">
+      <wsdl:input message="tns:vehiclePassSummary" name="vehiclePassSummary"></wsdl:input>
+      <wsdl:output message="tns:vehiclePassSummaryResponse" name="vehiclePassSummaryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleAlarmSummaryByAction">
+      <wsdl:input message="tns:vehicleAlarmSummaryByAction" name="vehicleAlarmSummaryByAction"></wsdl:input>
+      <wsdl:output message="tns:vehicleAlarmSummaryByActionResponse" name="vehicleAlarmSummaryByActionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleTrackSummary">
+      <wsdl:input message="tns:vehicleTrackSummary" name="vehicleTrackSummary"></wsdl:input>
+      <wsdl:output message="tns:vehicleTrackSummaryResponse" name="vehicleTrackSummaryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleAlarmProcessSummaryByAction">
+      <wsdl:input message="tns:vehicleAlarmProcessSummaryByAction" name="vehicleAlarmProcessSummaryByAction"></wsdl:input>
+      <wsdl:output message="tns:vehicleAlarmProcessSummaryByActionResponse" name="vehicleAlarmProcessSummaryByActionResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleAlarmProcessSummary">
+      <wsdl:input message="tns:vehicleAlarmProcessSummary" name="vehicleAlarmProcessSummary"></wsdl:input>
+      <wsdl:output message="tns:vehicleAlarmProcessSummaryResponse" name="vehicleAlarmProcessSummaryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="propertiesStatistics">
+      <wsdl:input message="tns:propertiesStatistics" name="propertiesStatistics"></wsdl:input>
+      <wsdl:output message="tns:propertiesStatisticsResponse" name="propertiesStatisticsResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleAlarmSummary">
+      <wsdl:input message="tns:vehicleAlarmSummary" name="vehicleAlarmSummary"></wsdl:input>
+      <wsdl:output message="tns:vehicleAlarmSummaryResponse" name="vehicleAlarmSummaryResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehiclePassSpecTimeSummary">
+      <wsdl:input message="tns:vehiclePassSpecTimeSummary" name="vehiclePassSpecTimeSummary"></wsdl:input>
+      <wsdl:output message="tns:vehiclePassSpecTimeSummaryResponse" name="vehiclePassSpecTimeSummaryResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DataStatisticsWebServiceServiceSoapBinding" type="tns:dataStatistics">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="vehiclePassCompare">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehiclePassCompare">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehiclePassCompareResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehiclePassSummary">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehiclePassSummary">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehiclePassSummaryResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleAlarmSummaryByAction">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehicleAlarmSummaryByAction">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehicleAlarmSummaryByActionResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleTrackSummary">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehicleTrackSummary">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehicleTrackSummaryResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleAlarmProcessSummaryByAction">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehicleAlarmProcessSummaryByAction">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehicleAlarmProcessSummaryByActionResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleAlarmProcessSummary">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehicleAlarmProcessSummary">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehicleAlarmProcessSummaryResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="propertiesStatistics">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="propertiesStatistics">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="propertiesStatisticsResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleAlarmSummary">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehicleAlarmSummary">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehicleAlarmSummaryResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehiclePassSpecTimeSummary">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehiclePassSpecTimeSummary">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehiclePassSpecTimeSummaryResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DataStatisticsWebServiceService">
+    <wsdl:port binding="tns:DataStatisticsWebServiceServiceSoapBinding" name="dataStatisticsPort">
+      <soap:address location="http://10.46.177.139:8181/traffic/ws/dataStatistics"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint></con:endpoints><con:operation id="be9d714c-3f76-4223-9b82-7da14a3e0777" isOneWay="false" action="" name="propertiesStatistics" bindingOperationName="propertiesStatistics" type="Request-Response" outputName="propertiesStatisticsResponse" inputName="propertiesStatistics" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="2391df70-c737-4655-afac-2d159c1d92ea" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:propertiesStatistics>\r
+         <taskId>?</taskId>\r
+         <sort>?</sort>\r
+         <statisticsType>?</statisticsType>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:propertiesStatistics>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/propertiesStatistics"/></con:call></con:operation><con:operation id="314ec790-9998-4258-a769-a5e062c88aee" isOneWay="false" action="" name="vehicleAlarmProcessSummary" bindingOperationName="vehicleAlarmProcessSummary" type="Request-Response" outputName="vehicleAlarmProcessSummaryResponse" inputName="vehicleAlarmProcessSummary" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1deb543a-6d3e-4db9-9238-aa48a5478928" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehicleAlarmProcessSummary>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <crossIds>?</crossIds>\r
+         <plateType>?</plateType>\r
+         <vehicleColorDepth>?</vehicleColorDepth>\r
+         <vehicleType>?</vehicleType>\r
+         <plateColor>?</plateColor>\r
+         <vehicleColor>?</vehicleColor>\r
+         <laneNo>?</laneNo>\r
+         <directionIndex>?</directionIndex>\r
+      </ws:vehicleAlarmProcessSummary>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/vehicleAlarmProcessSummary"/></con:call></con:operation><con:operation id="3b7eb79b-7e2d-46ff-ac14-3cf24c8b6993" isOneWay="false" action="" name="vehicleAlarmProcessSummaryByAction" bindingOperationName="vehicleAlarmProcessSummaryByAction" type="Request-Response" outputName="vehicleAlarmProcessSummaryByActionResponse" inputName="vehicleAlarmProcessSummaryByAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="f368f3d9-0185-4c5f-9adc-3c565cdbcc94" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehicleAlarmProcessSummaryByAction>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <crossIds>?</crossIds>\r
+         <plateType>?</plateType>\r
+         <vehicleColorDepth>?</vehicleColorDepth>\r
+         <vehicleType>?</vehicleType>\r
+         <plateColor>?</plateColor>\r
+         <vehicleColor>?</vehicleColor>\r
+         <laneNo>?</laneNo>\r
+         <directionIndex>?</directionIndex>\r
+         <violativeAction>?</violativeAction>\r
+      </ws:vehicleAlarmProcessSummaryByAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/vehicleAlarmProcessSummaryByAction"/></con:call></con:operation><con:operation id="2523e8ca-b577-4c26-aa3c-312b52d2e0a6" isOneWay="false" action="" name="vehicleAlarmSummary" bindingOperationName="vehicleAlarmSummary" type="Request-Response" outputName="vehicleAlarmSummaryResponse" inputName="vehicleAlarmSummary" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ac26a05b-f1d8-4868-8f7c-d8c0b2e997a0" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehicleAlarmSummary>\r
+         <crossIds>?</crossIds>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <vehicleType>?</vehicleType>\r
+         <reportType>?</reportType>\r
+      </ws:vehicleAlarmSummary>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/vehicleAlarmSummary"/></con:call></con:operation><con:operation id="c13d4cad-ff3a-40e0-9a03-b67e0f70c5aa" isOneWay="false" action="" name="vehicleAlarmSummaryByAction" bindingOperationName="vehicleAlarmSummaryByAction" type="Request-Response" outputName="vehicleAlarmSummaryByActionResponse" inputName="vehicleAlarmSummaryByAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="5f6f9ba4-57d9-404a-80db-0ba1a524a5d1" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehicleAlarmSummaryByAction>\r
+         <crossIds>?</crossIds>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <violativeAction>?</violativeAction>\r
+         <reportType>?</reportType>\r
+      </ws:vehicleAlarmSummaryByAction>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/vehicleAlarmSummaryByAction"/></con:call></con:operation><con:operation id="fc877ebb-46aa-4f7e-a521-2c6c33f07073" isOneWay="false" action="" name="vehiclePassCompare" bindingOperationName="vehiclePassCompare" type="Request-Response" outputName="vehiclePassCompareResponse" inputName="vehiclePassCompare" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="ae31cad2-14e3-4f3e-8ee6-6bd8361ba5ba" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehiclePassCompare>\r
+         <crossIds>?</crossIds>\r
+         <directionIndex>?</directionIndex>\r
+         <vehicleBelong>?</vehicleBelong>\r
+         <vehicleType>?</vehicleType>\r
+         <setTime>?</setTime>\r
+      </ws:vehiclePassCompare>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/vehiclePassCompare"/></con:call></con:operation><con:operation id="ae4e7416-3e5d-446c-ab65-53e63fc7450e" isOneWay="false" action="" name="vehiclePassSpecTimeSummary" bindingOperationName="vehiclePassSpecTimeSummary" type="Request-Response" outputName="vehiclePassSpecTimeSummaryResponse" inputName="vehiclePassSpecTimeSummary" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="482b13e3-3e1d-42ec-80a4-dd6540a1ea86" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehiclePassSpecTimeSummary>\r
+         <crossIds>?</crossIds>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <setTime>?</setTime>\r
+         <vehicleBelong>?</vehicleBelong>\r
+         <vehicleType>?</vehicleType>\r
+         <directionIndex>?</directionIndex>\r
+      </ws:vehiclePassSpecTimeSummary>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/vehiclePassSpecTimeSummary"/></con:call></con:operation><con:operation id="db96b580-77bd-4cac-98a5-455c03f6a902" isOneWay="false" action="" name="vehiclePassSummary" bindingOperationName="vehiclePassSummary" type="Request-Response" outputName="vehiclePassSummaryResponse" inputName="vehiclePassSummary" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="dd568c98-336e-4539-92c1-79831f25cb40" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehiclePassSummary>\r
+         <startTime>?</startTime>\r
+         <endTime>?</endTime>\r
+         <crossIds>?</crossIds>\r
+         <directionIndex>?</directionIndex>\r
+         <reportType>?</reportType>\r
+         <statisticsType>?</statisticsType>\r
+         <vehicleBelong>?</vehicleBelong>\r
+         <vehicleType>?</vehicleType>\r
+      </ws:vehiclePassSummary>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/vehiclePassSummary"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="2e8b116a-3043-41f1-9034-3ad3a98598bf" isOneWay="false" action="" name="vehicleTrackSummary" bindingOperationName="vehicleTrackSummary" type="Request-Response" outputName="vehicleTrackSummaryResponse" inputName="vehicleTrackSummary" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="1856a388-3a38-4f2b-90f8-56ac7a7fe666" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/dataStatistics</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehicleTrackSummary>\r
+         <crossIds>?</crossIds>\r
+         <plateColor>?</plateColor>\r
+         <plateType>?</plateType>\r
+         <timeLists>?</timeLists>\r
+         <statisticsType>?</statisticsType>\r
+         <vehicleType>?</vehicleType>\r
+         <vehicleBelong>?</vehicleBelong>\r
+         <vehicleSpeed>?</vehicleSpeed>\r
+         <vehicleLen>?</vehicleLen>\r
+         <vehicleColorDepth>?</vehicleColorDepth>\r
+         <vehicleColor>?</vehicleColor>\r
+      </ws:vehicleTrackSummary>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/dataStatistics/vehicleTrackSummary"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

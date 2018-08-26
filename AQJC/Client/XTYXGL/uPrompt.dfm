@@ -1,0 +1,51 @@
+object FrmPrompt: TFrmPrompt
+  Left = 0
+  Top = 0
+  BorderStyle = bsNone
+  Caption = 'FrmPrompt'
+  ClientHeight = 55
+  ClientWidth = 509
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  FormStyle = fsStayOnTop
+  OldCreateOrder = False
+  Position = poMainFormCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object spnl1: TsPanel
+    Left = 0
+    Top = 0
+    Width = 509
+    Height = 55
+    Align = alClient
+    TabOrder = 0
+    SkinData.SkinSection = 'PANEL'
+    object spnl2: TsPanel
+      Left = 1
+      Top = 1
+      Width = 507
+      Height = 53
+      Align = alClient
+      BevelOuter = bvLowered
+      Caption = '1'
+      TabOrder = 0
+      SkinData.SkinSection = 'PANEL_LOW'
+      object imgLogo: TsImage
+        Left = 9
+        Top = 14
+        Width = 40
+        Height = 34
+        Picture.Data = {07544269746D617000000000}
+        Visible = False
+        SkinData.SkinSection = 'CHECKBOX'
+      end
+    end
+  end
+end

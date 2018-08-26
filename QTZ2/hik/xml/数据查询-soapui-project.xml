@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="2134c65c-6a87-447a-9e51-ef4ffd3025f8" activeEnvironment="Default" name="数据查询" resourceRoot="" soapui-version="5.1.3" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="51c47118-cac2-4dc7-87c2-adb3caf94397" wsaVersion="NONE" name="MoreLikeThisHBaseWebServiceServiceSoapBinding" type="wsdl" bindingName="{http://www.hikvision.com/traffic/ws/}MoreLikeThisHBaseWebServiceServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase?wsdl"><con:part><con:url>http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="MoreLikeThisHBaseWebServiceService" targetNamespace="http://www.hikvision.com/traffic/ws/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.hikvision.com/traffic/ws/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http">
+  <wsdl:types>
+    <xs:schema targetNamespace="http://www.hikvision.com/traffic/ws/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="mltClientHRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="beanId" type="xs:string"/>
+          <xs:element minOccurs="0" name="currentPage" type="xs:int"/>
+          <xs:element minOccurs="0" name="cursorMark" type="xs:string"/>
+          <xs:element name="cursorNum" type="xs:int"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="fieldOptions" nillable="true" type="tns:mltClientFieldOption"/>
+          <xs:element minOccurs="0" name="fq" type="xs:string"/>
+          <xs:element minOccurs="0" name="hbaseTableName" type="xs:string"/>
+          <xs:element minOccurs="0" name="pageSize" type="xs:int"/>
+          <xs:element minOccurs="0" name="q" type="xs:string"/>
+          <xs:element minOccurs="0" name="sortColumn" type="xs:string"/>
+          <xs:element minOccurs="0" name="sortMethod" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="mltClientFieldOption">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="filedName" type="xs:string"/>
+          <xs:element minOccurs="0" name="keyWords" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="vehicleTrackSearchResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleSearchByYYMMPassId">
+    <wsdl:part name="yymm" type="xsd:string"></wsdl:part>
+    <wsdl:part name="passId" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="moreLikeThisResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleSearchByYYMMPassIdResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleSearchByPassId">
+    <wsdl:part name="passId" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleSearchByPassIdResponse">
+    <wsdl:part name="return" type="xsd:string"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="vehicleTrackSearch">
+    <wsdl:part name="taskId" type="xsd:string"></wsdl:part>
+    <wsdl:part name="platePattern" type="xsd:string"></wsdl:part>
+    <wsdl:part name="crosses" type="xsd:string"></wsdl:part>
+    <wsdl:part name="passTime" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColorDepth" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateType" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleSpeed" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleLen" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateNos" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="plateColor" type="xsd:string"></wsdl:part>
+    <wsdl:part name="laneNo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="directionIndex" type="xsd:string"></wsdl:part>
+    <wsdl:part name="vehicleLogo" type="xsd:string"></wsdl:part>
+    <wsdl:part name="pageSize" type="xsd:int"></wsdl:part>
+    <wsdl:part name="pageNo" type="xsd:int"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="moreLikeThis">
+    <wsdl:part name="arg0" type="tns:mltClientHRequest"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="moreLikeThisHBaseWs">
+    <wsdl:operation name="moreLikeThis">
+      <wsdl:input message="tns:moreLikeThis" name="moreLikeThis"></wsdl:input>
+      <wsdl:output message="tns:moreLikeThisResponse" name="moreLikeThisResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleTrackSearch">
+      <wsdl:input message="tns:vehicleTrackSearch" name="vehicleTrackSearch"></wsdl:input>
+      <wsdl:output message="tns:vehicleTrackSearchResponse" name="vehicleTrackSearchResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleSearchByYYMMPassId">
+      <wsdl:input message="tns:vehicleSearchByYYMMPassId" name="vehicleSearchByYYMMPassId"></wsdl:input>
+      <wsdl:output message="tns:vehicleSearchByYYMMPassIdResponse" name="vehicleSearchByYYMMPassIdResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleSearchByPassId">
+      <wsdl:input message="tns:vehicleSearchByPassId" name="vehicleSearchByPassId"></wsdl:input>
+      <wsdl:output message="tns:vehicleSearchByPassIdResponse" name="vehicleSearchByPassIdResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MoreLikeThisHBaseWebServiceServiceSoapBinding" type="tns:moreLikeThisHBaseWs">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="moreLikeThis">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="moreLikeThis">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="moreLikeThisResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleTrackSearch">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehicleTrackSearch">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehicleTrackSearchResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleSearchByYYMMPassId">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehicleSearchByYYMMPassId">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehicleSearchByYYMMPassIdResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vehicleSearchByPassId">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input name="vehicleSearchByPassId">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="vehicleSearchByPassIdResponse">
+        <soap:body namespace="http://www.hikvision.com/traffic/ws/" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MoreLikeThisHBaseWebServiceService">
+    <wsdl:port binding="tns:MoreLikeThisHBaseWebServiceServiceSoapBinding" name="moreLikeThisHBaseWsPort">
+      <soap:address location="http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase</con:endpoint></con:endpoints><con:operation id="5990d366-8d2b-4a56-84ed-df03958fdc4d" isOneWay="false" action="" name="moreLikeThis" bindingOperationName="moreLikeThis" type="Request-Response" outputName="moreLikeThisResponse" inputName="moreLikeThis" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="3b6e8913-2247-4f2c-b192-6ba4e26235be" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:moreLikeThis>\r
+         <arg0>\r
+            <!--Optional:-->\r
+            <beanId>?</beanId>\r
+            <!--Optional:-->\r
+            <currentPage>?</currentPage>\r
+            <!--Optional:-->\r
+            <cursorMark>?</cursorMark>\r
+            <cursorNum>?</cursorNum>\r
+            <!--Zero or more repetitions:-->\r
+            <fieldOptions>\r
+               <!--Optional:-->\r
+               <filedName>?</filedName>\r
+               <!--Optional:-->\r
+               <keyWords>?</keyWords>\r
+            </fieldOptions>\r
+            <!--Optional:-->\r
+            <fq>?</fq>\r
+            <!--Optional:-->\r
+            <hbaseTableName>?</hbaseTableName>\r
+            <!--Optional:-->\r
+            <pageSize>?</pageSize>\r
+            <!--Optional:-->\r
+            <q>?</q>\r
+            <!--Optional:-->\r
+            <sortColumn>?</sortColumn>\r
+            <!--Optional:-->\r
+            <sortMethod>?</sortMethod>\r
+         </arg0>\r
+      </ws:moreLikeThis>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/moreLikeThisHBaseWs/moreLikeThis"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="27de9b3c-77fc-42aa-b2c2-1989ca6f4101" isOneWay="false" action="" name="vehicleSearchByPassId" bindingOperationName="vehicleSearchByPassId" type="Request-Response" outputName="vehicleSearchByPassIdResponse" inputName="vehicleSearchByPassId" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="82fe7796-07ce-4517-9fab-03393c0a8db5" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehicleSearchByPassId>\r
+         <passId>?</passId>\r
+      </ws:vehicleSearchByPassId>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/moreLikeThisHBaseWs/vehicleSearchByPassId"/></con:call></con:operation><con:operation id="6b199f71-19e4-44ce-9dc8-9ff76cea3302" isOneWay="false" action="" name="vehicleSearchByYYMMPassId" bindingOperationName="vehicleSearchByYYMMPassId" type="Request-Response" outputName="vehicleSearchByYYMMPassIdResponse" inputName="vehicleSearchByYYMMPassId" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="814a6a69-ed56-467f-ab1b-5aa7607a7a3c" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehicleSearchByYYMMPassId>\r
+         <yymm>?</yymm>\r
+         <passId>?</passId>\r
+      </ws:vehicleSearchByYYMMPassId>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/moreLikeThisHBaseWs/vehicleSearchByYYMMPassId"/></con:call></con:operation><con:operation id="9da2785a-498d-4fbf-8155-b35b6e19e9e6" isOneWay="false" action="" name="vehicleTrackSearch" bindingOperationName="vehicleTrackSearch" type="Request-Response" outputName="vehicleTrackSearchResponse" inputName="vehicleTrackSearch" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="a6bf2f81-140f-4624-bede-e15f1a9a4043" name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://10.46.177.139:8181/traffic/ws/moreLikeThisHBase</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:vehicleTrackSearch>\r
+         <taskId>?</taskId>\r
+         <platePattern>?</platePattern>\r
+         <crosses>?</crosses>\r
+         <passTime>?</passTime>\r
+         <vehicleType>?</vehicleType>\r
+         <vehicleColorDepth>?</vehicleColorDepth>\r
+         <plateType>?</plateType>\r
+         <vehicleSpeed>?</vehicleSpeed>\r
+         <vehicleLen>?</vehicleLen>\r
+         <plateNos>?</plateNos>\r
+         <vehicleColor>?</vehicleColor>\r
+         <plateColor>?</plateColor>\r
+         <laneNo>?</laneNo>\r
+         <directionIndex>?</directionIndex>\r
+         <vehicleLogo>?</vehicleLogo>\r
+         <pageSize>?</pageSize>\r
+         <pageNo>?</pageNo>\r
+      </ws:vehicleTrackSearch>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.hikvision.com/traffic/ws/moreLikeThisHBaseWs/vehicleTrackSearch"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
