@@ -180,7 +180,7 @@ object FrameVioInput: TFrameVioInput
       Height = 21
       Width = 103
     end
-    object edtclpp2: TcxTextEdit
+    object edtHZ: TcxTextEdit
       Left = 981
       Top = 579
       AutoSize = False
@@ -2071,8 +2071,8 @@ object FrameVioInput: TFrameVioInput
     end
     object dxLayoutItem23: TdxLayoutItem
       Parent = dxLayoutGroup7
-      CaptionOptions.Text = #33521#25991#21697#29260
-      Control = edtclpp2
+      CaptionOptions.Text = #26680#36733
+      Control = edtHZ
       ControlOptions.MinHeight = 17
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 70

@@ -394,6 +394,8 @@ type
     SJHM: string;
     lxdh: string;
     zt: string; // 状态
+    hdzzl: string; // 核定载重量
+    hdzk: string; // 核定载客数
   end;
 
   TJSRYQZ = record

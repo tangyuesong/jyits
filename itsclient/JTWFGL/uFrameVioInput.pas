@@ -109,7 +109,7 @@ type
     edtcd: TcxTextEdit;
     edtcllx: TcxTextEdit;
     edtclpp1: TcxTextEdit;
-    edtclpp2: TcxTextEdit;
+    edtHZ: TcxTextEdit;
     edtclxh: TcxTextEdit;
     edtcs: TcxTextEdit;
     edtcsys: TcxTextEdit;
@@ -416,7 +416,7 @@ begin
   edtcs.Text := '';
   edtsyr.Text := '';
   edtclpp1.Text := '';
-  edtclpp2.Text := '';
+  edthz.Text := '';
   edtclxh.Text := '';
   edtcllx.Text := '';
   edtcsys.Text := '';
@@ -780,8 +780,8 @@ begin
     veh := TCommon.GetVehInfo(HPHM, HPZL, '');
   end;
   edtsyr.Text := veh.syr;
-  edtclpp1.Text := veh.clpp1;
-  edtclpp2.Text := veh.clpp2;
+  edtclpp1.Text := veh.clpp1 + veh.clpp2;
+  edthz.Text := veh.hdzzl + veh.hdzk;
   edtclxh.Text := veh.clxh;
   if TLZDictionary.gDicMain['CLLX'].ContainsKey(veh.cllx) then
     edtcllx.Text := veh.cllx + ':' + TLZDictionary.gDicMain['CLLX'][veh.cllx]
@@ -1014,7 +1014,7 @@ begin
   FObj.VehInfo.csys := TLZDictionary.StrtoDicInfo(Trim(edtcsys.Text)).dm;
   FObj.VehInfo.clxh := edtclxh.Text;
   FObj.VehInfo.clpp1 := edtclpp1.Text;
-  FObj.VehInfo.clpp2 := edtclpp2.Text;
+  FObj.VehInfo.clpp2 := '';
   FObj.VehInfo.cllx := TLZDictionary.StrtoDicInfo(Trim(edtcllx.Text)).dm;
   FObj.VehInfo.syr := edtsyr.Text;
   FObj.VehInfo.clsbdh := edtclsbdh.Text;
