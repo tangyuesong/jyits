@@ -12,6 +12,7 @@ type
     DBUser: String;
     DBPwd: String;
     DBName: String;
+    DBNamePass: string;
   end;
 
   TDevice = Record

@@ -123,51 +123,22 @@ begin
   ActiveX.CoUninitialize;
 end;
 
-function TUPhoneThread.GetTp2(dt: TDateTime;
-  hphm, vehType, tp1: string): String;
+function TUPhoneThread.GetTp2(dt: TDateTime; hphm, vehType, tp1: string): String;
 var
-  Params: TStrings;
-  param: TDictionary<string, String>;
-  totalPage, currentPage: Integer;
-  vehList: TList<TK08VehInfo>;
-  veh: TK08VehInfo;
-  passtime: string;
+  SQL: string;
 begin
   Result := '';
-  passtime := formatdatetime('yyyy-mm-dd 00:00:00', dt) + ',' +
-    formatdatetime('yyyy-mm-dd 00:00:00', dt + 1);
-  param := TDictionary<string, String>.Create;
-
-  param.Add('passtime', passtime);
-  param.Add('plateno', hphm);
-  param.Add('vehicletype', vehType);
-
-  totalPage := 1;
-  currentPage := 1;
-
-  try
-    Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '5');
-    vehList := THik.GetK08PassList(Params, totalPage, currentPage);
-    Params.Free;
-    if (vehList <> nil) and (vehList.Count > 0) then
+  SQL := 'select GCSJ,FWQDZ+TP1 as tp from ' + gDbConfig.DBNamePass + 'dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',dt) +
+    ' where hphm=' + hphm.QuotedString + ' and GCSJ > ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', dt + OneMinute).QuotedString +
+    ' order by GCSJ';
+  with gSQLHelper.Query(SQL) do
+  begin
+    if not Eof then
     begin
-      for veh in vehList do
-      begin
-        if Trim(veh.imagepath) <> Trim(tp1) then
-        begin
-          Result := veh.imagepath;
-          break;
-        end;
-      end;
-      vehList.Free;
+      result := Fields[1].AsString;
     end;
-  except
-    on e: exception do
-    begin
-      gLogger.Error('[UPhone] ' + e.Message);
-    end;
+    Free;
   end;
-  param.Free;
 end;
 
 function TUPhoneThread.GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
@@ -195,7 +166,7 @@ begin
       Tp2 := GetTp2(dt, veh.plateinfo, veh.vehicletype, tp1);
       if Tp2 = '' then
       begin
-        gLogger.Info('[UPhone] not found Photofile2');
+        gLogger.Info('[UPhone] not found Photofile2' + hphm);
         continue;
       end;
       tp1 := tp1.Replace('&amp;', '&');

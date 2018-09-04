@@ -115,6 +115,7 @@ begin
     gDBConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
     gDBConfig.DBPwd := ReadString('DB', 'Pwd', 'lgm1224,./');
     gDBConfig.DBName := ReadString('DB', 'Name', 'YjItsDB');
+    gDBConfig.DBNamePass := ReadString('DB', 'PassName', 'passdb');
 
     gHikConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL', '');  //http://10.43.255.16:8080/kms/services/ws/vehicleSearch
     gHikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl', ''); //http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl

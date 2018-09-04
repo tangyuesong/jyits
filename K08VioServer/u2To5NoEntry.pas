@@ -12,7 +12,7 @@ type
     gvioVeh: TDictionary<string, boolean>;
     function GetVioSQLs(vehList: TList<TK08VehInfo>; kssj, jssj: string)
       : TStrings;
-    function GetTp2(hphm, tp1, kssj, jssj: string): String;
+    function GetTp2(hphm, tp1: string; dt: TDatetime): String;
     procedure LoadWhiteVeh;
   protected
     procedure Execute; override;
@@ -139,59 +139,22 @@ begin
   ActiveX.CoUninitialize;
 end;
 
-function T2To5NoEntry.GetTp2(hphm, tp1, kssj, jssj: string): String;
+function T2To5NoEntry.GetTp2(hphm, tp1: string; dt: tdatetime): String;
 var
-  Params: TStrings;
-  tp2: String;
-  totalPage, currentPage: Integer;
-  vehList: TList<TK08VehInfo>;
-  veh: TK08VehInfo;
-  param: TDictionary<string, String>;
+  SQL: string;
 begin
   Result := '';
-  tp2 := tp1.Replace('1.jpg', '2.jpg');
-  if tp1 <> tp2 then
+  SQL := 'select GCSJ,FWQDZ+TP1 as tp from ' + gDbConfig.DBNamePass + 'dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',dt) +
+    ' where hphm=' + hphm.QuotedString + ' and GCSJ > ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', dt + OneMinute).QuotedString +
+    ' order by GCSJ';
+  with gSQLHelper.Query(SQL) do
   begin
-    if InternetCheckConnection(PChar(tp2), 1, 0) then
+    if not Eof then
     begin
-      Result := tp2;
-      exit;
+      result := Fields[1].AsString;
     end;
+    Free;
   end;
-
-  param := TDictionary<string, String>.Create;
-  param.Add('crossingid', gThreadConfig.LC25NoEntryDev);
-  param.Add('passtime', kssj + ',' + jssj);
-  param.Add('vehiclehead', '1');
-  param.Add('platestate', '0');
-  param.Add('vehicletype', '1');
-  param.Add('platecolor', '1');
-  param.Add('plateno', hphm);
-
-  totalPage := 1;
-  currentPage := 1;
-
-  try
-    Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '100');
-    vehList := THik.GetK08PassList(Params, totalPage, currentPage);
-    Params.Free;
-    if (vehList <> nil) and (vehList.Count > 0) then
-    begin
-      for veh in vehList do
-      begin
-        if Trim(veh.imagepath) = Trim(tp1) then
-          continue;
-        Result := veh.imagepath;
-      end;
-      vehList.Free;
-    end;
-  except
-    on e: exception do
-    begin
-      gLogger.Error('[2To5NoEntry] ' + e.Message);
-    end;
-  end;
-  param.Free;
 end;
 
 function T2To5NoEntry.GetVioSQLs(vehList: TList<TK08VehInfo>;
@@ -215,10 +178,10 @@ begin
       if gvioVeh.ContainsKey(hphm + hpzl) then
         continue;
       tp1 := veh.imagepath;
-      tp2 := GetTp2(veh.plateinfo, tp1, kssj, jssj);
+      tp2 := GetTp2(veh.plateinfo, tp1, dt);
       if tp2 = '' then
       begin
-        gLogger.Info('[2To5NoEntry] not found Photofile2');
+        gLogger.Info('[2To5NoEntry] not found Photofile2' + hphm);
         continue;
       end;
       tp1 := tp1.Replace('&amp;', '&');

@@ -222,10 +222,10 @@ begin
   if iTotal > start then
   begin
     totalNum := iTotal - start;
-    s := 'select * from ( '
+    s := 'select a1.*,a2.KDMC from ( '
       + ' select '''' as CJJG, GCXH, KDBH, CDBH, HPZL, GCSJ, CLSD, HPHM,CSYS,CLPP,'''' as FWQDZ, TP1,TP2,TP3 '
       + ' from V_VEH_PASSREC ' + where
-      + ' order by GCSJ desc) a1 where rownum >=' + IntToStr(start) + ' and rownum<' + IntToStr(start + pagesize);
+      + ' order by GCSJ desc) a1,V_CODE_GATE a2 where a1.KDBH=a2.KDBH and rownum >=' + IntToStr(start) + ' and rownum<' + IntToStr(start + pagesize);
     Query(s);
     with FOraQuery do
     begin
@@ -246,11 +246,7 @@ begin
         pass := pass + ',"tp1":"' + Fields[11].AsString + '"';
         pass := pass + ',"tp2":"' + Fields[12].AsString + '"';
         pass := pass + ',"tp3":"' + Fields[13].AsString + '"';
-        //if TCommon.DicDevice.ContainsKey(Fields[2].AsString) then
-        //  pass := pass + ',"sbddmc":"' + TCommon.DicDevice[Fields[2].AsString]
-        //    .SBDDMC + '"'
-        //else
-          pass := pass + ',"sbddmc":""';
+        pass := pass + ',"sbddmc":"' + Fields[14].AsString + '"';
         if TCommon.DicHpzlmc.ContainsKey(Fields[4].AsString) then
           pass := pass + ',"hpzlmc":"' + TCommon.DicHpzlmc
             [Fields[4].AsString] + '"'

@@ -49,7 +49,7 @@ begin
         dwmc, yhbz, yhxm, zdbs, UTF8XmlDoc);
     try
       WSResult := HTTPDecode(WSResult);
-      logger.Trace('[TTmri.CallWebService]' + wsresult);
+      logger.Trace('[TTmri.CallWebService]' + UTF8XmlDoc + #10#13 + wsresult);
     except
       on e: exception do
         logger.Error('[CallWebService1]' + e.Message + ' ' + WSResult);
@@ -79,8 +79,10 @@ begin
     result := CallWebService(Copy(param.jkid, 1, 2), param.jkid, param.yhbz,
       param.dwmc, param.dwjgdm, param.yhxm, param.zdbs, xml, false);
   end
-  else
+  else begin
+    logger.Warn('JKID is not Exists!' + param.jkid );
     result := '';
+  end;
 end;
 
 class function TTmri.write(param: TTmriParam; JSON: string): string;
@@ -93,8 +95,10 @@ begin
     result := CallWebService(Copy(param.jkid, 1, 2), param.jkid, param.yhbz,
       param.dwmc, param.dwjgdm, param.yhxm, param.zdbs, xml, true);
   end
-  else
+  else begin
+    logger.Warn('JKID is not Exists!' + param.jkid );
     result := '';
+  end;
 end;
 
 end.

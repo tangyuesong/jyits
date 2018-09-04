@@ -55,7 +55,7 @@ implementation
 procedure TPilotsafebeltThread.Execute;
 var
   Params, SQLs, tmpSQLs: TStrings;
-  s, EndTime: String;
+  EndTime: String;
   maxPasstime: TDateTime;
   totalPage, currentPage: Integer;
   currentTime: TDateTime;
@@ -175,39 +175,20 @@ end;
 function TPilotsafebeltThread.GetSecondPic(hphm, hpzl, url, wfxw: String;
   wfsj: TDateTime): String;
 var
-  param: TDictionary<string, String>;
-  Params: TStrings;
-  vehList: TList<TK08VehInfo>;
-  veh: TK08VehInfo;
-  c, t: Integer;
+  SQL: string;
 begin
   Result := '';
-  param := TDictionary<string, String>.Create;
-  param.Add('passtime', formatdatetime('yyyy-mm-dd', wfsj) + ' 00:00:00,' +
-    formatdatetime('yyyy-mm-dd', wfsj + 1) + ' 00:00:00');
-  param.Add('plateno', hphm);
-  param.Add('vehicletype', hpzl);
-  if wfxw = '6011' then
-    param.Add('pilotsafebelt', '1')
-  else
-    param.Add('vicepilotsafebelt', '1');
-
-  Params := THik.GetK08SearchParam(param, '1', '2');
-  vehList := THik.GetK08PassList(Params, c, t);
-  if (vehList <> nil) and (vehList.Count > 0) then
+  SQL := 'select GCSJ,FWQDZ+TP1 as tp from ' + gDbConfig.DBNamePass + 'dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',wfsj) +
+    ' where hphm=' + hphm.QuotedString + ' and GCSJ > ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', wfsj + OneMinute).QuotedString +
+    ' order by GCSJ';
+  with gSQLHelper.Query(SQL) do
   begin
-    for veh in vehList do
+    if not Eof then
     begin
-      if veh.imagepath <> url then
-      begin
-        Result := veh.imagepath;
-        break;
-      end;
+      result := Fields[1].AsString;
     end;
-    vehList.Free;
+    Free;
   end;
-  param.Free;
-  Params.Free;
 end;
 
 function TPilotsafebeltThread.GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
@@ -239,7 +220,7 @@ begin
       if tp2 = '' then
       begin
         gLogger.Info('[Pilotsafebelt]' + veh.plateinfo +
-          ' not found Photofile2');
+          ' not found Photofile2' + hphm);
         continue;
       end;
 

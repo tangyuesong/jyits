@@ -66,7 +66,6 @@ begin
       param.Add('passtime', gThreadConfig.NoEntryStartTime + ',' + EndTime);
       param.Add('platecolor', '1');
       param.Add('vehicletype', '2');
-      // param.Add('platetype', '8 102');
       param.Add('platestate', '0');
 
       totalPage := 1;
@@ -137,51 +136,20 @@ end;
 
 function TNoEntryThread.GetTp2(dt: TDateTime; hphm, tp1: string): String;
 var
-  Params: TStrings;
-  param: TDictionary<string, String>;
-  totalPage, currentPage: Integer;
-  vehList: TList<TK08VehInfo>;
-  veh: TK08VehInfo;
-  passtime: string;
+  SQL: string;
 begin
   Result := '';
-  passtime := formatdatetime('yyyy-mm-dd 00:00:00', dt) + ',' +
-    formatdatetime('yyyy-mm-dd 00:00:00', dt + 1);
-  param := TDictionary<string, String>.Create;
-  // param.Add('crossingid', gThreadConfig.NoEntryDev);
-  param.Add('passtime', passtime);
-  param.Add('platecolor', '1');
-  param.Add('vehicletype', '2');
-  // param.Add('platetype', '8 102');
-  param.Add('platestate', '0');
-  param.Add('plateno', hphm);
-
-  totalPage := 1;
-  currentPage := 1;
-
-  try
-    Params := THik.GetK08SearchParam(param, IntToStr(currentPage), '5');
-    vehList := THik.GetK08PassList(Params, totalPage, currentPage);
-    Params.Free;
-    if (vehList <> nil) and (vehList.Count > 0) then
+  SQL := 'select GCSJ,FWQDZ+TP1 as tp from ' + gDbConfig.DBNamePass + 'dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',dt) +
+    ' where hphm=' + hphm.QuotedString + ' and HPZL=''01'' and GCSJ > ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', dt + OneMinute).QuotedString +
+    ' order by GCSJ';
+  with gSQLHelper.Query(SQL) do
+  begin
+    if not Eof then
     begin
-      for veh in vehList do
-      begin
-        if veh.imagepath <> tp1 then
-        begin
-          Result := veh.imagepath;
-          break;
-        end;
-      end;
-      vehList.Free;
+      result := Fields[1].AsString;
     end;
-  except
-    on e: exception do
-    begin
-      gLogger.Error('[NoEntry] ' + e.Message);
-    end;
+    Free;
   end;
-  param.Free;
 end;
 
 function TNoEntryThread.GetVioSQLs(vehList: TList<TK08VehInfo>): TStrings;
@@ -209,7 +177,7 @@ begin
       tp2 := GetTp2(dt, veh.plateinfo, tp1);
       if tp2 = '' then
       begin
-        gLogger.Info('[NoEntry] not found Photofile2');
+        gLogger.Info('[NoEntry] not found Photofile2 ' + hphm);
         continue;
       end;
       tp1 := tp1.Replace('&amp;', '&');

@@ -58,7 +58,14 @@ begin
       dt := StrToDatetime(gStartTime, FDateTimeFormat) +
         DateUtils.OneMinute * 5;
       if dt > Now then
-        dt := Now;
+        dt := Now
+      else if Now - dt > OneHour * 2 then
+      begin
+        gLogger.Warn('入K08数据积压,舍弃数据:' + gStartTime + ' - ' + FormatDatetime('yyyy/MM/dd hh:nn:ss.zzz', now - OneHour * 2));
+        gStartTime := FormatDatetime('yyyy/MM/dd hh:nn:ss.zzz', now - OneHour * 2);
+        dt := now - OneHour * 2 + DateUtils.OneMinute * 5;
+      end;
+
       jssj := FormatDatetime('yyyy/MM/dd hh:nn:ss.zzz', dt);
 
       s := 'select a.HPHM, a.GCXH, a.KDBH, a.CDBH, a.GCSJ, a.FWQDZ, a.TP1 from T_KK_VEH_PASSREC a '
@@ -67,7 +74,7 @@ begin
         jssj.QuotedString +
         ' and a.hpzl<>''07'' and a.hpzl>'''' and left(FWQDZ, 4) = ''http'' ';
       FQy := gSQLHelper.Query(s);
-      gLogger.Info('PassCount:' + FQy.RecordCount.ToString);
+      gLogger.Info('StartTime: ' + gStartTime + ', PassCount:' + FQy.RecordCount.ToString);
       gStartTime := jssj;
     end;
 
