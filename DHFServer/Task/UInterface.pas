@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, System.SysUtils, Winapi.Messages, vcl.forms, System.IOUtils,
   System.Variants, System.Types, vcl.Dialogs, System.StrUtils, System.Classes,
-  System.JSON, uTypes, IdFTP, IdFTPCommon, IdGlobal, IdHTTP, IdTCPClient,
+  System.JSON, uTypes, IdFTP, IdFTPCommon, IdGlobal, IdHTTP, IdTCPClient, IdURI,
   FireDAC.Comp.Client, Generics.Collections, uGlobal, uCommon, DateUtils,
   MessageDigest_5;
 
@@ -19,6 +19,8 @@ type
     //class procedure SaveToK08(list: Tlist<TPass>); static;
     class function SaveToDFS(passList: TList<TPass>): boolean;
     class procedure FtpUpload(list: Tlist<TPass>; ftp: TFtpConfig); static;
+    class procedure SaveAlarm2PHP(systemid, bkr, bklx, hphm, hpzl, gcsj, sbddmc,
+      bz: String); static;
   public
     class function getSpeedtoWFXW(hpzl: string; iclsd, ixzsd: Integer): string;
     class function WriteVehicleInfo(pass: TPass;  device: TDevice): Boolean; overload;
@@ -105,6 +107,39 @@ begin
 end;
 
 class procedure Tmypint.DoAlarm(pass: TPass);
+  procedure Save(alarm: TAlarm; title: string);
+  var
+    s, sql, id: string;
+  begin
+    id := TGUID.NewGuid.ToString;
+    sql := 'insert into T_KK_ALARMRESULT(systemid,bz,bkzl,wfcs,gcxh,gcsj,hphm,hpzl,cd,clsd,viourl,kdbh,bklx)values('
+      + id.QuotedString + ','
+      + alarm.BZ.QuotedString + ','
+      + alarm.bkzl.QuotedString + ','
+      + alarm.wfcs.QuotedString + ','
+      + pass.GCXH.QuotedString + ','
+      + pass.GCSJ.QuotedString + ','
+      + pass.hphm.QuotedString+ ','
+      + pass.hpzl.QuotedString + ','
+      + pass.cdbh + ','
+      + pass.CLSD.QuotedString + ','
+      + (pass.FWQDZ + pass.tp1).QuotedString + ','
+      + pass.kdbh.QuotedString  + ','
+      + alarm.BKLX.QuotedString + ')';
+    sqlhelper.ExecuteSql(SQL);
+
+    if alarm.SJHM.Length > Length(alarm.SJHM.Split([',']))*7 then
+    begin
+      s := '【' + title + '】' + pass.hphm + gDicHPZL[pass.hpzl]
+        + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + alarm.BZ;
+      if SMSUrl = '' then
+        uCommon.AddSMS('【' + title + '】', alarm.SJHM, s)
+      else
+        Tmypint.SendSMS(alarm.SJHM, s);
+    end
+    else
+      SaveAlarm2PHP(id,alarm.SJHM,alarm.BKLX,pass.HPHM,gDicHPZL[pass.hpzl],pass.gcsj,gDicDevice[pass.kdbh].SBDDMC,alarm.BZ);
+  end;
   procedure DoJTP;       // 假套牌车辆预警
   var
     alarm: TAlarm;
@@ -117,40 +152,28 @@ class procedure Tmypint.DoAlarm(pass: TPass);
       if (alarm.SJHM <> '')and(alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm)
         and ((alarm.KDBH='') or alarm.KDBH.Contains(pass.KDBH)) then
       begin
-        s := '【假套牌】' + pass.hphm + gDicHPZL[pass.hpzl] + #13#10 + alarm.CLPP;
-        if alarm.CSYS <> '' then
-           s := s + ' ' + alarm.CSYS;
-        s := s + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + alarm.BZ;
-        if SMSUrl = '' then
-          uCommon.AddSMS('【缉查布控】', alarm.SJHM, s)
-        else
-          Tmypint.SendSMS(alarm.SJHM, s);
+        Save(alarm, '特定区域');
       end;
     end;
   end;
   procedure DoSDCL;        // 涉毒车辆预警
   var
-    sdcl: TAlarm;
+    alarm: TAlarm;
     key, s, hhmm: string;
   begin
-    for sdcl in gListAlarmSDCL do
+    for alarm in gListAlarmSDCL do
     begin
       key := pass.HPHM + pass.HPZL;
-      if (sdcl.SJHM <> '') and sdcl.KDBH.Contains(pass.kdbh)                             // 布控路口 包含 该过车记录的路口
-        and ((sdcl.HPHM = '') or pass.HPHM.Contains(sdcl.HPHM))    // 并且 (发证机关为空 或者 车牌包含发证机关)
-        and ((sdcl.HPZL = '') or (pass.HPZL = sdcl.HPZL))          // 并且 (布控的HPZL为空 或者 HPZL相等)
-        and ((sdcl.BKLX = '') or (gDicAlarm.ContainsKey(key) and (sdcl.BKLX.Contains(gDicAlarm[key].BKLX))))  // 并且(布控类型为空 或者 这个车是该布控类型的嫌疑车)
+      if (alarm.SJHM <> '') and alarm.KDBH.Contains(pass.kdbh)                             // 布控路口 包含 该过车记录的路口
+        and ((alarm.HPHM = '') or pass.HPHM.Contains(alarm.HPHM))    // 并且 (发证机关为空 或者 车牌包含发证机关)
+        and ((alarm.HPZL = '') or (pass.HPZL = alarm.HPZL))          // 并且 (布控的HPZL为空 或者 HPZL相等)
+        and ((alarm.BKLX = '') or (gDicAlarm.ContainsKey(key) and (alarm.BKLX.Contains(gDicAlarm[key].BKLX))))  // 并且(布控类型为空 或者 这个车是该布控类型的嫌疑车)
       then
       begin
         hhmm := FormatDatetime('hhmm', now);
-        if (sdcl.smsBeginTime < hhmm) and (sdcl.smsEndTime > hhmm) then
+        if (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm) then
         begin
-          s := '【特定区域】' + pass.hphm + gDicHPZL[pass.hpzl]
-            + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + sdcl.BZ;
-          if SMSUrl = '' then
-            uCommon.AddSMS('【缉查布控】', sdcl.SJHM, s)
-          else
-            Tmypint.SendSMS(sdcl.SJHM, s);
+          Save(alarm, '特定嫌疑车');
         end;
       end;
     end;
@@ -168,13 +191,7 @@ class procedure Tmypint.DoAlarm(pass: TPass);
       begin
         if now - vartodatetime(pass.gcsj) < OneMinute * 3 then
         begin
-          bz := #13#10'号牌号码' + pass.hphm + gDicHPZL[pass.hpzl]
-            + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC
-            + #13#10 + alarm.BZ;
-          if SMSUrl = '' then
-            uCommon.AddSMS('【缉查布控】', alarm.SJHM, BZ)
-          else
-            Tmypint.SendSMS(alarm.SJHM, bz);
+          Save(alarm, '缉查布控');
         end;
       end;
 
@@ -617,6 +634,33 @@ begin
     http.Free;
     stream.Free;
   end;
+end;
+
+class procedure Tmypint.SaveAlarm2PHP(systemid, bkr, bklx, hphm, hpzl, gcsj,
+  sbddmc,bz: String);
+var
+  http: TIdHttp;
+  s: String;
+begin
+  if PhpUrl = '' then
+    exit;
+
+  http := TIdHttp.Create(nil);
+  http.Request.UserAgent :=
+    'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)';
+  s := PhpUrl + 'saveAlarmData?systemid=' + systemid + '&hphm=' + hphm +
+    '&hpzl=' + hpzl + '&gcsj=' + gcsj + '&sbddmc=' + sbddmc + '&bkr=' + bkr +
+    '&bklx=' + bklx;
+  try
+    s := TIdURI.URLEncode(s);
+    http.Get(s);
+  except
+    on e: exception do
+    begin
+      logger.Error('SaveAlarm2PHP Error ' + s + #13#10 + s);
+    end;
+  end;
+  http.Free;
 end;
 
 end.

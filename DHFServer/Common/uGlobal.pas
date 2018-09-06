@@ -54,6 +54,7 @@ var
   gDLMUrl: string;
   gAsynchronous: boolean;
   gPicturePathMap: TDictionary<string, TKKPictureConfig>;
+  PhpUrl: String; //预警信息推送到php
 
 implementation
 

@@ -467,6 +467,7 @@ begin
   DCXXZP := ini.ReadString('sys', 'DCXXZP', ''); // 大车限行抓拍设备编号
   gDLMUrl := ini.ReadString('sys', 'DLMUrl', 'http://10.46.177.136:8888/Download?');
   gAsynchronous := ini.ReadInteger('sys', 'Asyn', 0) = 1;
+  PhpUrl := ini.ReadString('sys', 'PhpUrl', '');
 
   ini.Free;
   gDicDevice := nil;
