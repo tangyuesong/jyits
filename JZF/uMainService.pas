@@ -90,9 +90,9 @@ var
 begin
   if gZBDX and (FormatDateTime('hhnn', Now()) = gZBDXTime) then
     TZBDXThread.Create(False);
-  if gUploadHisCfg.ACTIVATE and
-    (FormatDateTime('hhnn', Now()) = gUploadHisCfg.TIME) then
-    TUploadVioThread.Create(False);
+  // if gUploadHisCfg.ACTIVATE and
+  // (FormatDateTime('hhnn', Now()) = gUploadHisCfg.TIME) then
+  // TUploadVioThread.Create(False);
 
   if FormatDateTime('hhnn', Now()) = '1056' then
     TDelExpiredVioThread.Create(False);
@@ -120,6 +120,9 @@ begin
 
   if gJTP and (Min mod 5 = 0) and (not JTPRunning) then
     TJTPThread.Create;
+
+  if gUploadHisCfg.ACTIVATE and (Min = 0) then
+    TUploadVioThread.Create(False);
 end;
 
 end.
