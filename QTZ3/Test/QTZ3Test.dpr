@@ -39,7 +39,9 @@ uses
   TmriOutNewAccess in '..\RMService\intf\TmriOutNewAccess.pas',
   uJKDefine in '..\RMService\impl\uJKDefine.pas',
   uSurveilVio in '..\SPService\uSurveilVio.pas',
-  uExamService in '..\ExamService\uExamService.pas';
+  uExamService in '..\ExamService\uExamService.pas',
+  uHikDSJ in '..\Hik\uHikDSJ.pas',
+  uHikJZF in '..\Hik\uHikJZF.pas';
 
 {$R *.res}
 

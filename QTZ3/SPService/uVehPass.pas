@@ -15,8 +15,9 @@ type
     class function GetDBPassList(kssj, jssj: Double; kdbh, hphm, hpzl: String;
       currentpage, pagesize: Integer; var totalNum, currentNum: Integer;
       var minGCSJ: Double): string; static;
-    class function GetPassListFromOra(kssj, jssj: Double; kdbh, hphm,
-      hpzl: String; currentpage, pagesize: Integer; var totalNum: Integer): string; static;
+    class function GetPassListFromOra(kssj, jssj: Double;
+      kdbh, hphm, hpzl: String; currentpage, pagesize: Integer;
+      var totalNum: Integer): string; static;
   public
     class procedure GetPassList(kssj, jssj: Double;
       kdbh, hphm, hpzl, vehlogo, vehsublogo, vehcolor, pilotsafebelt,
@@ -60,7 +61,7 @@ begin
       kdbh, vehlogo, vehcolor, vehsublogo, pilotsafebelt, vicepilotsafebelt,
       vehiclesunvisor, vicepilotsunvisor, pendant, currentpage,
       pagesize, totalNum)
-  else if gConfig.PassOra.IP <> '' then
+  else if gConfig.HikConfig.PassOra.IP <> '' then
     s := GetPassListFromOra(kssj, jssj, kdbh, hphm, hpzl,
       StrToIntDef(currentpage, 0), StrToIntDef(pagesize, 30), totalNum)
   else
@@ -164,7 +165,7 @@ var
   procedure Query(sql: string);
   begin
     FOraQuery.Close;
-    FOraQuery.SQL.Text := sql;
+    FOraQuery.sql.Text := sql;
     try
       if not FOraConn.Connected then
         FOraConn.Open;
@@ -173,26 +174,30 @@ var
     except
       on e: exception do
       begin
-        gLogger.Error('[TVehPass.GetPassListFromOra.Query]' + e.Message + ' ' + s);
+        gLogger.Error('[TVehPass.GetPassListFromOra.Query]' + e.Message
+          + ' ' + s);
       end;
     end;
   end;
+
 begin
   FOraConn := TFDConnection.Create(nil);
   FOraConn.FetchOptions.Mode := fmAll;
   FOraConn.Params.Add('DriverID=Ora');
-  if gConfig.PassOra.ServiceName <> '' then
+  if gConfig.HikConfig.PassOra.ServiceName <> '' then
     FOraConn.Params.Add
       (Format('Database=(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = %s)(PORT = %s)))'
       + '(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = %s)))',
-      [gConfig.PassOra.IP, gConfig.PassOra.Port, gConfig.PassOra.ServiceName]))
+      [gConfig.HikConfig.PassOra.IP, gConfig.HikConfig.PassOra.Port,
+      gConfig.HikConfig.PassOra.ServiceName]))
   else
     FOraConn.Params.Add
       (Format('Database=(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = %s)(PORT = %s)))'
       + '(CONNECT_DATA = (SERVER = DEDICATED)(SID = %s)))',
-      [gConfig.PassOra.IP, gConfig.PassOra.Port, gConfig.PassOra.SID]));
-  FOraConn.Params.Add(Format('User_Name=%s', [gConfig.PassOra.User]));
-  FOraConn.Params.Add(Format('Password=%s', [gConfig.PassOra.Pwd]));
+      [gConfig.HikConfig.PassOra.IP, gConfig.HikConfig.PassOra.Port,
+      gConfig.HikConfig.PassOra.SID]));
+  FOraConn.Params.Add(Format('User_Name=%s', [gConfig.HikConfig.PassOra.User]));
+  FOraConn.Params.Add(Format('Password=%s', [gConfig.HikConfig.PassOra.Pwd]));
   FOraConn.Params.Add('CharacterSet=UTF8'); // 否则中文乱码
   FOraConn.LoginPrompt := false;
 
@@ -205,9 +210,9 @@ begin
   start := currentpage * pagesize;
 
   where := ' where GCSJ >to_date(' + FormatDateTime('yyyy-mm-dd hh:nn:ss', kssj)
-    .QuotedString + ',''yyyy-mm-dd hh24:mi:ss'') '
-    + ' and GCSJ <to_date(' + FormatDateTime('yyyy-mm-dd hh:nn:ss', jssj)
-    .QuotedString + ',''yyyy-mm-dd hh24:mi:ss'')';
+    .QuotedString + ',''yyyy-mm-dd hh24:mi:ss'') ' + ' and GCSJ <to_date(' +
+    FormatDateTime('yyyy-mm-dd hh:nn:ss', jssj).QuotedString +
+    ',''yyyy-mm-dd hh24:mi:ss'')';
   if kdbh <> '' then
     where := where + ' and KDBH = ' + kdbh.QuotedString;
   if hphm <> '' then
@@ -216,16 +221,18 @@ begin
     where := where + ' and HPZL=' + hpzl.QuotedString;
   Query('select count(1) from V_VEH_PASSREC ' + where);
   iTotal := 0;
-  if FOraQuery.Active and (not FOraQuery.IsEmpty) and (not FOraQuery.Fields[0].IsNull) then
+  if FOraQuery.Active and (not FOraQuery.IsEmpty) and
+    (not FOraQuery.Fields[0].IsNull) then
     iTotal := StrToIntDef(FOraQuery.Fields[0].AsString, 0);
 
   if iTotal > start then
   begin
     totalNum := iTotal - start;
-    s := 'select a1.*,a2.KDMC from ( '
-      + ' select '''' as CJJG, GCXH, KDBH, CDBH, HPZL, GCSJ, CLSD, HPHM,CSYS,CLPP,'''' as FWQDZ, TP1,TP2,TP3 '
-      + ' from V_VEH_PASSREC ' + where
-      + ' order by GCSJ desc) a1,V_CODE_GATE a2 where a1.KDBH=a2.KDBH and rownum >=' + IntToStr(start) + ' and rownum<' + IntToStr(start + pagesize);
+    s := 'select a1.*,a2.KDMC from ( ' +
+      ' select '''' as CJJG, GCXH, KDBH, CDBH, HPZL, GCSJ, CLSD, HPHM,CSYS,CLPP,'''' as FWQDZ, TP1,TP2,TP3 '
+      + ' from V_VEH_PASSREC ' + where +
+      ' order by GCSJ desc) a1,V_CODE_GATE a2 where a1.KDBH=a2.KDBH and rownum >='
+      + IntToStr(start) + ' and rownum<' + IntToStr(start + pagesize);
     Query(s);
     with FOraQuery do
     begin
@@ -295,8 +302,8 @@ begin
   rownum := dbTotal;
   if currentNum < pagesize then
   begin
-    lines := TSolr.GetPassContent(kssj, jssj, kdbh, hphm, hpzl, currentpage, pagesize,
-      solrTotal);
+    lines := TSolr.GetPassContent(kssj, jssj, kdbh, hphm, hpzl, currentpage,
+      pagesize, solrTotal);
     for s in lines do
     begin
       pass := TSolr.StrToPassjson(s);

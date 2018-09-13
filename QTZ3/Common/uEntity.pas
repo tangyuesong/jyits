@@ -62,6 +62,23 @@ type
     Pwd: string;
   End;
 
+  THikConfig = Record
+    LYUrl: String; // ¡‘”•URL
+    LYUser: String;
+    LYPwd: String;
+    LYHttpConverter: string;
+    K08SearchURL: String;
+    K08SaveUrl: String;
+    PicAnalysis: String;
+    CarFace: String;
+    analysisExtra: String;
+    dataAnalysis: String;
+    DFUrl: String;
+    DFUser: String;
+    DFPwd: String;
+    PassOra: TOraConfig;
+  End;
+
   TConfig = Record
     DWDM: String;
     DBServer: String;
@@ -79,14 +96,17 @@ type
     ImportVioUser: String;
     ImportVioPassword: String;
     ImportVioHome: String;
-    // hik config
     HaveK08: Boolean;
-    PassOra: TOraConfig;
-    K08SearchURL: String;
-    K08SaveUrl: String;
-    DFUrl: String;
-    DFUser: String;
-    DFPwd: String;
+    // hik config
+    {
+      PassOra: TOraConfig;
+      K08SearchURL: String;
+      K08SaveUrl: String;
+      DFUrl: String;
+      DFUser: String;
+      DFPwd: String;
+    }
+    HikConfig: THikConfig;
     // SMS
     SMSUrl: String;
     // Heartbeat

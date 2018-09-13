@@ -12,7 +12,7 @@ uses
   IdCustomTCPServer, IdHTTPServer, Vcl.StdCtrls, IdHeaderList, QJson, uTmri,
   IdStrings, QBAES,
   FireDAC.Phys.OracleDef, FireDAC.Stan.Intf, FireDAC.Phys, FireDAC.Phys.Oracle,
-  IdTime, IdUnixTime;
+  IdTime, IdUnixTime, uHikJZF;
 
 type
   TForm1 = class(TForm)
@@ -52,6 +52,8 @@ var
   Form1: TForm1;
 
 implementation
+uses
+  uHikDSJ;
 
 {$R *.dfm}
 
@@ -100,13 +102,12 @@ begin
   // TCommon.SaveVehInfo(s);
 
 
- // mm:= AesEncrypt('2528711532935680000', AnsiString(cUserKey));
-
+  // mm:= AesEncrypt('2528711532935680000', AnsiString(cUserKey));
 
   s := httpClient.Get
     (TIdURI.URLEncode
-    ('http://127.0.0.1:17115/Login?user=210678&pwd=88834C224158870B4B4098D564DEA434')
-    //('http://127.0.0.1:17115/wxLogin?user=252871&pwd=0D6B629FB5553B325FB1A7C359A180E9207EA79CEBD39BC03C80317F55832924')
+    ('http://127.0.0.1:7115/Login?user=250688&pwd=E14B236263F88BB55354B247CEE47C29')
+    // ('http://127.0.0.1:17115/wxLogin?user=252871&pwd=0D6B629FB5553B325FB1A7C359A180E9207EA79CEBD39BC03C80317F55832924')
     );
   token := TCommon.GetJsonNode('token', s);
   if token = '' then
@@ -116,8 +117,8 @@ begin
   end;
 
   Memo1.Text := httpClient.Get
-    //(TIdURI.URLEncode('http://10.43.255.8:17115/GetVioinfoByVeh?hphm=‘¡YHU567&hpzl=02&token='
-    (TIdURI.URLEncode('http://127.0.0.1:17115/GetPassList?kssj=1534584098000&jssj=1534587441000&currentpage=0&pagesize=30&hpzl=02&token='
+    (TIdURI.URLEncode('http://127.0.0.1:7115/GetAlarmSDCL?kssj=1514736000000&jssj=1538323200000&token='
+    // (TIdURI.URLEncode('http://127.0.0.1:17115/WriteSG?token='
     // ('http://127.0.0.1:17115/GetDrvInfo?sfzmhm=342921198309063411&token='
     + token));
 
@@ -323,8 +324,9 @@ procedure TForm1.Button5Click(Sender: TObject);
 var
   params: TStrings;
 begin
+
   params := TStringList.Create;
-  params.Add('wfxw1=1234');
+{  params.Add('wfxw1=1234');
   // Params.Add('wfxw2=1234');
   // Params.Add('wfxw3=1234');
   params.Add('wfxw4=1235');
@@ -332,7 +334,15 @@ begin
   TRmService.CheckForceParam(params);
   Memo1.Text := params.Text;
 
-  params.Free;
+  params.Free;  }
+params.LoadFromFile('d:\ss.txt');
+THikDSJ.DecodefootHoldsResult(params.Text);
+
+
+
+
+
+
 end;
 
 procedure TForm1.DoHttpRequest(Action, tokenKey: String; params: TStrings;
@@ -342,6 +352,8 @@ begin
     TDBService.DoDB(Action, tokenKey, params, isExport, AResponseInfo)
   else if TSpService.Actions.Contains(',' + Action + ',') then
     TSpService.DoSP(Action, tokenKey, params, isExport, AResponseInfo)
+  else if THikJZFService.Actions.Contains(',' + Action + ',') then
+    THikJZFService.DoJZF(Action, tokenKey, params, AResponseInfo)
   else
     TRmService.DoRM(Action, tokenKey, params, isExport, AResponseInfo);
   if (AResponseInfo.ContentText = '') and (AResponseInfo.ContentStream = nil)
@@ -450,8 +462,7 @@ begin
     begin
       AResponseInfo.ContentText := TCommon.Login(clientIP, params, valid);
     end
-    else
-    if Action = 'WXLOGIN' then
+    else if Action = 'WXLOGIN' then
     begin
       AResponseInfo.ContentText := TCommon.Login(clientIP, params, valid, True);
     end

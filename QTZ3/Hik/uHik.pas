@@ -61,7 +61,7 @@ var
 begin
   Result := nil;
   ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
-  if not DFLogin(gConfig.DFUser, gConfig.DFPwd, s) then
+  if not DFLogin(gConfig.HikConfig.DFUser, gConfig.HikConfig.DFPwd, s) then
     exit;
   if s = '' then
     exit;
@@ -84,7 +84,7 @@ begin
   Params.Add('      </wsdl:PicAnalysisReq>');
   Params.Add('   </soap:Body>');
   Params.Add('</soap:Envelope>');
-  if HttPPost(gConfig.DFUrl, Params, s) then
+  if HttPPost(gConfig.HikConfig.DFUrl, Params, s) then
   begin
     Result := TDecodeHikResult.DecodeDFAnalysisOnePicResult(s);
   end
@@ -111,7 +111,7 @@ begin
     KDBH := veh.crossingid;
 
   Result := Result + ',"kdbh":"' + KDBH + '"';
-  Result := Result + ',"cdbh":"' + veh.laneid + '"';
+  Result := Result + ',"cdbh":"' + veh.laneno + '"';
 
   if TYHpzl.ContainsKey(veh.vehicletype) then
     hpzl := TYHpzl[veh.vehicletype]
@@ -121,22 +121,22 @@ begin
   Result := Result + ',"hpzl":"' + hpzl + '"';
   Result := Result + ',"gcsj":"' + veh.PassTime + '"';
   Result := Result + ',"clsd":"' + veh.vehiclespeed + '"';
-  Result := Result + ',"hphm": " ' + veh.plateinfono + '"';
+  Result := Result + ',"hphm": " ' + veh.plateno + '"';
 
   if K08Csys.ContainsKey(veh.vehiclecolor) then
     Result := Result + ',"csys":"' + K08Csys[veh.vehiclecolor] + '"'
   else
     Result := Result + ',"csys":"' + veh.vehiclecolor + '"';
 
-  if K08Clpp.ContainsKey(veh.vehiclesublogoall) then
-    Result := Result + ',"clpp":"' + K08Clpp[veh.vehiclesublogoall] + '"'
+  if K08Clpp.ContainsKey(veh.vehiclesublogo) then
+    Result := Result + ',"clpp":"' + K08Clpp[veh.vehiclesublogo] + '"'
   else if K08Clpp.ContainsKey(veh.vehiclelogo + '-0') then
     Result := Result + ',"clpp":"' + K08Clpp[veh.vehiclelogo + '-0'] + '"'
   else
-    Result := Result + ',"clpp":"' + veh.vehiclesublogoall + '"';
+    Result := Result + ',"clpp":"' + veh.vehiclesublogo + '"';
 
   Result := Result + ',"fwqdz":""';
-  Result := Result + ',"tp1":"' + veh.picvehicle + '"';
+  Result := Result + ',"tp1":"' + veh.imagepath + '"';
   Result := Result + ',"tp2":""';
   Result := Result + ',"tp3":""';
   if TCommon.DicDevice.ContainsKey(KDBH) then
@@ -167,9 +167,9 @@ begin
       veh := ls[i];
       logo := ls[i].nMainLogo + '-' + ls[i].nSubLogo;
       if K08Clpp.ContainsKey(logo) then
-        veh.clpp := K08Clpp[logo]
+        veh.nMainLogo := K08Clpp[logo]
       else
-        veh.clpp := logo;
+        veh.nMainLogo := logo;
       ls1.Add(veh);
     end;
     Result := TCommon.RecordListToJSON<TDFVehInfo>(ls1);
@@ -186,7 +186,7 @@ var
 begin
   Result := False;
   ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
-  if not DFLogin(gConfig.DFUser, gConfig.DFPwd, s) then
+  if not DFLogin(gConfig.HikConfig.DFUser, gConfig.HikConfig.DFPwd, s) then
     exit;
   if s = '' then
     exit;
@@ -214,8 +214,8 @@ begin
   Params.Add('            <ivms:algorithmType>770</ivms:algorithmType>');
   Params.Add('            <!--1 or more repetitions:-->');
   Params.Add('            <ivms:destinationInfos>');
-  Params.Add('               <ivms:destinationUrl>' + gConfig.K08SaveUrl +
-    '</ivms:destinationUrl>');
+  Params.Add('               <ivms:destinationUrl>' +
+    gConfig.HikConfig.K08SaveUrl + '</ivms:destinationUrl>');
   Params.Add('               <ivms:destinationType>17</ivms:destinationType>');
   Params.Add('            </ivms:destinationInfos>');
   Params.Add('            <ivms:streamInfo>');
@@ -240,7 +240,7 @@ begin
   Params.Add('      </wsdl:SubmitJobReq>');
   Params.Add('   </soap:Body>');
   Params.Add('</soap:Envelope>');
-  Result := HttPPost(gConfig.DFUrl, Params, s);
+  Result := HttPPost(gConfig.HikConfig.DFUrl, Params, s);
   DFLogout(token);
   glogger.Debug(s);
   Params.Free;
@@ -265,7 +265,7 @@ begin
   Params.Add('      </wsdl:LoginReq>');
   Params.Add('   </soap:Body>');
   Params.Add('</soap:Envelope>');
-  if HttPPost(gConfig.DFUrl, Params, token) then
+  if HttPPost(gConfig.HikConfig.DFUrl, Params, token) then
   begin
     if pos('<token>', token) > 0 then
       token := copy(token, pos('<token>', token) + 7, Length(token));
@@ -296,7 +296,7 @@ begin
   Params.Add('      </wsdl:LogoutReq>');
   Params.Add('   </soap:Body>');
   Params.Add('</soap:Envelope>');
-  HttPPost(gConfig.DFUrl, Params, s);
+  HttPPost(gConfig.HikConfig.DFUrl, Params, s);
   Params.Free;
 end;
 
@@ -410,11 +410,11 @@ begin
 
   Params := GetK08SearchParam(param, page, pageSize);
 
-  if HttPPost(gConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
+  if HttPPost(gConfig.HikConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
   begin
     try
       vehList := TDecodeHikResult.DecodeK08SearchResult(s, totalPage,
-        currentPage, totalNum);
+        currentPage);
     except
       glogger.Error(s);
     end;
@@ -450,18 +450,18 @@ begin
 
   Params := GetK08SearchParam(param, '1', '1');
 
-  if HttPPost(gConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
+  if HttPPost(gConfig.HikConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
   begin
-    vehList := TDecodeHikResult.DecodeK08SearchResult(s, totalPage, currentPage,
-      totalNum);
+    vehList := TDecodeHikResult.DecodeK08SearchResult(s, totalPage,
+      currentPage);
     if (vehList <> nil) and (vehList.Count > 0) then
     begin
-      if K08Clpp.ContainsKey(vehList[0].vehiclesublogoall) then
-        Result := '"CLPP":"' + K08Clpp[vehList[0].vehiclesublogoall] + '"'
+      if K08Clpp.ContainsKey(vehList[0].vehiclesublogo) then
+        Result := '"CLPP":"' + K08Clpp[vehList[0].vehiclesublogo] + '"'
       else if K08Clpp.ContainsKey(vehList[0].vehiclelogo + '-0') then
         Result := 'CLPP:"' + K08Clpp[vehList[0].vehiclelogo + '-0'] + '"'
       else
-        Result := '"CLPP":"' + vehList[0].vehiclesublogoall + '"';
+        Result := '"CLPP":"' + vehList[0].vehiclesublogo + '"';
       if K08Csys.ContainsKey(vehList[0].vehiclecolor) then
         Result := Result + ',"CSYS":"' + K08Csys[vehList[0].vehiclecolor] + '"'
       else

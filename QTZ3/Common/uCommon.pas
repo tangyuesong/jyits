@@ -28,6 +28,10 @@ type
     class var FBaseTime: TDatetime;
     class var FDepts: TDictionary<string, TDept>;
     class function ReadConfig(): Boolean;
+    class procedure InitK08Hpzl();
+    class procedure InitK08Clpp();
+    class procedure InitK08Csys();
+    class procedure InitDevice();
     class function AssembleHttpResult(code, msg, body: String;
       totalnum: String = '0'; currentpage: String = '1';
       pagesize: String = '1'): String;
@@ -553,6 +557,78 @@ begin
   end;
 end;
 
+class procedure TCommon.InitDevice;
+var
+  hikid: String;
+begin
+  gDevKDBH := TDictionary<String, String>.Create;
+  gDevID := TDictionary<String, String>.Create;
+  gHikID := TDictionary<String, String>.Create;
+  with gSQLHelper.Query('select SBBH, ID, HikID from ' + cDBName +
+    '.dbo.S_Device ') do
+  begin
+    while not Eof do
+    begin
+      gDevKDBH.add(FieldByName('SBBH').AsString, FieldByName('ID').AsString);
+      gDevID.add(FieldByName('ID').AsString, FieldByName('SBBH').AsString);
+      hikid := FieldByName('HikID').AsString;
+      if (hikid <> '') and (not gHikID.ContainsKey(hikid)) then
+        gHikID.add(hikid, FieldByName('SBBH').AsString);
+      Next;
+    end;
+    Free;
+  end;
+end;
+
+class procedure TCommon.InitK08Clpp;
+begin
+  gK08Clpp := TDictionary<String, String>.Create;
+  with gSQLHelper.Query('select * from ' + cDBName + '.dbo.D_K08_CLPP ') do
+  begin
+    while not Eof do
+    begin
+      gK08Clpp.add(FieldByName('vehiclelogo').AsString + '-' +
+        FieldByName('Vehiclesublogo').AsString, FieldByName('MC').AsString);
+      Next;
+    end;
+    Free;
+  end;
+end;
+
+class procedure TCommon.InitK08Csys;
+begin
+  gK08Csys := TDictionary<String, String>.Create;
+  with gSQLHelper.Query('select * from ' + cDBName +
+    '.dbo.D_K08 where FLBH=''CSYS'' ') do
+  begin
+    while not Eof do
+    begin
+      gK08Csys.add(FieldByName('DM').AsString, FieldByName('MC').AsString);
+      Next;
+    end;
+    Free;
+  end;
+end;
+
+class procedure TCommon.InitK08Hpzl;
+begin
+  gK08Hpzl := TDictionary<String, TStrings>.Create;
+  gHpzl := TDictionary<String, String>.Create;
+  with gSQLHelper.Query('select * from ' + cDBName +
+    '.dbo.D_K08 where FLBH=''HPZL'' order by MineKey ') do
+  begin
+    while not Eof do
+    begin
+      if not gK08Hpzl.ContainsKey(FieldByName('MineKey').AsString) then
+        gK08Hpzl.add(FieldByName('MineKey').AsString, TStringList.Create);
+      gK08Hpzl[FieldByName('MineKey').AsString].add(FieldByName('DM').AsString);
+      gHpzl.add(FieldByName('DM').AsString, FieldByName('MineKey').AsString);
+      Next;
+    end;
+    Free;
+  end;
+end;
+
 class procedure TCommon.InitLHY_JK;
 var
   jk: TJK;
@@ -996,7 +1072,8 @@ begin
       action.SQL := FieldByName('SQL').AsString;
       action.params := TList<TDBActionParam>.Create;
       action.ReturnGroups := TStringList.Create;
-      Result.add(UpperCase(action.action), action);
+      if not Result.ContainsKey(UpperCase(action.action)) then
+        Result.add(UpperCase(action.action), action);
       Next;
     end;
     Free;
@@ -1032,22 +1109,29 @@ begin
     gConfig.ImportVioHome := ReadString('ImportVio', 'Home', '');
 
     gConfig.HaveK08 := ReadString('Hik', 'Enabled', '0') = '1';
-    gConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL',
+    gConfig.HikConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL',
       'http://10.43.255.16:8080/kms/services/ws/vehicleSearch');
-    gConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
+    gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
       'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
-    gConfig.DFUrl := ReadString('Hik', 'DFUrl', 'http://10.43.255.20:18010');
-    gConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
-    gConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
+    gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
+      'http://10.43.255.20:18010');
+    gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
+    gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
+
+    gConfig.HikConfig.PicAnalysis := ReadString('Hik', 'PicAnalysis', '');
+    gConfig.HikConfig.CarFace := ReadString('Hik', 'CarFace', '');
+    gConfig.HikConfig.analysisExtra := ReadString('Hik', 'analysisExtra', '');
+    gConfig.HikConfig.dataAnalysis := ReadString('Hik', 'dataAnalysis', '');
 
     gConfig.SMSUrl := ReadString('SMS', 'SMSUrl', '');
 
-    gConfig.PassOra.IP := ReadString('PassOra', 'IP', '');
-    gConfig.PassOra.Port := ReadString('PassOra', 'Port', '');
-    gConfig.PassOra.SID := ReadString('PassOra', 'SID', '');
-    gConfig.PassOra.ServiceName := ReadString('PassOra', 'ServiceName', '');
-    gConfig.PassOra.User := ReadString('PassOra', 'User', '');
-    gConfig.PassOra.Pwd := ReadString('PassOra', 'Pwd', '');
+    gConfig.HikConfig.PassOra.ip := ReadString('PassOra', 'IP', '');
+    gConfig.HikConfig.PassOra.port := ReadString('PassOra', 'Port', '');
+    gConfig.HikConfig.PassOra.SID := ReadString('PassOra', 'SID', '');
+    gConfig.HikConfig.PassOra.ServiceName :=
+      ReadString('PassOra', 'ServiceName', '');
+    gConfig.HikConfig.PassOra.User := ReadString('PassOra', 'User', '');
+    gConfig.HikConfig.PassOra.pwd := ReadString('PassOra', 'Pwd', '');
 
     gConfig.HeartbeatUrl := ReadString('Heartbeat', 'Url',
       'http://127.0.0.1:20090/');
@@ -1120,6 +1204,11 @@ begin
   FSaUsers.add('sa');
   FSaUsers.add('su');
   InitLHY_JK;
+
+  InitK08Hpzl();
+  InitK08Clpp();
+  InitK08Csys();
+  InitDevice();
 end;
 
 class procedure TCommon.ProgramDestroy;

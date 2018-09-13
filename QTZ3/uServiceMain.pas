@@ -8,7 +8,7 @@ uses
   IdTCPClient, IdHTTP, Vcl.ExtCtrls, IdBaseComponent, IdComponent,
   IdCustomTCPServer, IdCustomHTTPServer, IdHTTPServer, IdContext, IDURI,
   IdHeaderList, QJson, StrUtils, HttpApp, DateUtils, FireDAC.Phys.OracleDef,
-  FireDAC.Stan.Intf, FireDAC.Phys, FireDAC.Phys.Oracle;
+  FireDAC.Stan.Intf, FireDAC.Phys, FireDAC.Phys.Oracle, uHikJZF;
 
 type
   TItsQTZ3Service = class(TService)
@@ -198,6 +198,8 @@ begin
     TDBService.DoDB(action, tokenKey, params, isExport, AResponseInfo)
   else if TSpService.Actions.Contains(',' + action + ',') then
     TSpService.DoSP(action, tokenKey, params, isExport, AResponseInfo)
+  else if THikJZFService.Actions.Contains(',' + action + ',') then
+    THikJZFService.DoJZF(action, tokenKey, params, AResponseInfo)
   else
     TRMService.DoRM(action, tokenKey, params, isExport, AResponseInfo);
   if (AResponseInfo.ContentText = '') and (AResponseInfo.ContentStream = nil)
