@@ -448,10 +448,7 @@ begin
         else
           Result.SH := '0';
         Result.role := FieldByName('role').AsString;
-        if FieldByName('IsMJ').AsBoolean then
-          Result.MJ := '1'
-        else
-          Result.MJ := '0';
+        Result.MJ := FieldByName('IsMJ').AsString;
         Result.ValidDay :=
           IntToStr(Ceil(FieldByName('ValidDate').AsDateTime - Now));
         Result.PasswordValidDay :=

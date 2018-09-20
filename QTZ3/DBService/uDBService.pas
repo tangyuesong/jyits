@@ -492,7 +492,12 @@ begin
     body := TCommon.QueryToJsonString(s, ts, totalNum);
 
     if currentpage <> '' then
-      totalNum := gSQLHelper.GetRecordCount(ss);
+    begin
+      if Action = 'GETALARMRESULT' then // 太慢
+        totalNum := 500
+      else
+        totalNum := gSQLHelper.GetRecordCount(ss);
+    end;
   end
   else if Actions[Action].actionType = 'Q' then
   begin
