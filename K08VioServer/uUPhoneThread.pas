@@ -128,7 +128,9 @@ var
   SQL: string;
 begin
   Result := '';
-  SQL := 'select GCSJ,FWQDZ+TP1 as tp from ' + gDbConfig.DBNamePass + 'dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',dt) +
+  SQL := 'select GCSJ,FWQDZ+TP1 as tp from ' + gDbConfig.DBNamePass + '.dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',dt) +
+    ' where hphm=' + hphm.QuotedString + ' and GCSJ > ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', dt + OneMinute).QuotedString +
+    ' union select GCSJ,FWQDZ+TP1 as tp from T_KK_VEH_PASSREC' +
     ' where hphm=' + hphm.QuotedString + ' and GCSJ > ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', dt + OneMinute).QuotedString +
     ' order by GCSJ';
   with gSQLHelper.Query(SQL) do
@@ -166,7 +168,7 @@ begin
       Tp2 := GetTp2(dt, veh.plateinfo, veh.vehicletype, tp1);
       if Tp2 = '' then
       begin
-        gLogger.Info('[UPhone] not found Photofile2' + hphm);
+        gLogger.Info('[UPhone] not found Photofile2' + veh.plateinfo);
         continue;
       end;
       tp1 := tp1.Replace('&amp;', '&');

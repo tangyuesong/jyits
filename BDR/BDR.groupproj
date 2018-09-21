@@ -15,6 +15,9 @@
         <Projects Include="BDRS\BDRS.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="D:\its\ChaYan\SPW\ChaYan.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -59,14 +62,23 @@
     <Target Name="BDRS:Make">
         <MSBuild Projects="BDRS\BDRS.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ChaYan">
+        <MSBuild Projects="D:\its\ChaYan\SPW\ChaYan.dproj"/>
+    </Target>
+    <Target Name="ChaYan:Clean">
+        <MSBuild Projects="D:\its\ChaYan\SPW\ChaYan.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ChaYan:Make">
+        <MSBuild Projects="D:\its\ChaYan\SPW\ChaYan.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Out;ProjectIn;BDRC;BDRS"/>
+        <CallTarget Targets="Out;ProjectIn;BDRC;BDRS;ChaYan"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Out:Clean;ProjectIn:Clean;BDRC:Clean;BDRS:Clean"/>
+        <CallTarget Targets="Out:Clean;ProjectIn:Clean;BDRC:Clean;BDRS:Clean;ChaYan:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Out:Make;ProjectIn:Make;BDRC:Make;BDRS:Make"/>
+        <CallTarget Targets="Out:Make;ProjectIn:Make;BDRC:Make;BDRS:Make;ChaYan:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

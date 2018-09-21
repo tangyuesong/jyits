@@ -15,7 +15,8 @@ uses
   uSQLHelper in 'Common\uSQLHelper.pas',
   uDecodeHikResult in 'Hik\uDecodeHikResult.pas',
   uHik in 'Hik\uHik.pas',
-  uJTPThread in 'JTP\uJTPThread.pas';
+  uJTPThread in 'JTP\uJTPThread.pas',
+  Ehlservice in 'D:\ÏîÄ¿\»ÝÖÝ\Source\QTZ3\RMService\intf\Ehlservice.pas';
 
 {$R *.res}
 

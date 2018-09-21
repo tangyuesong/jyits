@@ -178,7 +178,9 @@ var
   SQL: string;
 begin
   Result := '';
-  SQL := 'select GCSJ,FWQDZ+TP1 as tp from ' + gDbConfig.DBNamePass + 'dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',wfsj) +
+  SQL := 'select GCSJ,FWQDZ+TP1 as tp from ' + gDbConfig.DBNamePass + '.dbo.T_KK_VEH_PASSREC_' + FormatDatetime('yyyymmdd',wfsj) +
+    ' where hphm=' + hphm.QuotedString + ' and GCSJ > ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', wfsj + OneMinute).QuotedString +
+    ' union select GCSJ,FWQDZ+TP1 as tp from T_KK_VEH_PASSREC' +
     ' where hphm=' + hphm.QuotedString + ' and GCSJ > ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', wfsj + OneMinute).QuotedString +
     ' order by GCSJ';
   with gSQLHelper.Query(SQL) do
@@ -220,7 +222,7 @@ begin
       if tp2 = '' then
       begin
         gLogger.Info('[Pilotsafebelt]' + veh.plateinfo +
-          ' not found Photofile2' + hphm);
+          ' not found Photofile2');
         continue;
       end;
 

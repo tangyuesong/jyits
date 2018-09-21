@@ -127,23 +127,28 @@ class procedure Tmypint.DoAlarm(pass: TPass);
       + pass.kdbh.QuotedString  + ','
       + alarm.BKLX.QuotedString + ')';
     sqlhelper.ExecuteSql(SQL);
-
-    if alarm.SJHM.Length > Length(alarm.SJHM.Split([',']))*7 then
+    if alarm.SJHM.Length > 5 then
     begin
-      s := '¡¾' + title + '¡¿' + pass.hphm + gDicHPZL[pass.hpzl]
-        + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + alarm.BZ;
-      if SMSUrl = '' then
-        uCommon.AddSMS('¡¾' + title + '¡¿', alarm.SJHM, s)
+      //logger.Info('SJHM:' + alarm.SJHM + ' alarm.SJHM.Length:' + alarm.SJHM.Length.ToString + ' alarm.SJHM.Split.Length:' + IntToStr((Length(alarm.SJHM.Split([',']))*7)));
+      if alarm.SJHM.Length > Length(alarm.SJHM.Split([',']))*7 then
+      begin
+        s := '¡¾' + title + '¡¿' + pass.hphm + gDicHPZL[pass.hpzl]
+          + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + alarm.BZ;
+
+        logger.Info('SendSMS: ' + s);
+        if SMSUrl = '' then
+          uCommon.AddSMS('¡¾' + title + '¡¿', alarm.SJHM, s)
+        else
+          Tmypint.SendSMS(alarm.SJHM, s);
+      end
       else
-        Tmypint.SendSMS(alarm.SJHM, s);
-    end
-    else
-      SaveAlarm2PHP(id,alarm.SJHM,alarm.BKLX,pass.HPHM,gDicHPZL[pass.hpzl],pass.gcsj,gDicDevice[pass.kdbh].SBDDMC,alarm.BZ);
+        SaveAlarm2PHP(id,alarm.SJHM,alarm.BKLX,pass.HPHM,gDicHPZL[pass.hpzl],pass.gcsj,gDicDevice[pass.kdbh].SBDDMC,title + ' ' + alarm.BZ);
+    end;
   end;
   procedure DoJTP;       // ¼ÙÌ×ÅÆ³µÁ¾Ô¤¾¯
   var
     alarm: TAlarm;
-    s, hhmm: string;
+    hhmm: string;
   begin
     if gDicAlarmJTP.ContainsKey(pass.HPHM + pass.HPZL) then
     begin
@@ -159,7 +164,7 @@ class procedure Tmypint.DoAlarm(pass: TPass);
   procedure DoSDCL;        // Éæ¶¾³µÁ¾Ô¤¾¯
   var
     alarm: TAlarm;
-    key, s, hhmm: string;
+    key, hhmm: string;
   begin
     for alarm in gListAlarmSDCL do
     begin
@@ -616,7 +621,7 @@ begin
   if smsUrl <> '' then
   begin
     if sj.Length < 11 then exit;
-    logger.Info('[SMS]' + sj + content);
+
     token := getToken;
     url := Format(smsUrl, [token, sj.Replace(';', ','), HTTPEncode(content)]);
     http := TIdHttp.Create(nil);
@@ -643,21 +648,25 @@ var
   s: String;
 begin
   if PhpUrl = '' then
+  begin
+    logger.Warn('SaveAlarm2PHP: PhpUrl is empty ' + hphm);
     exit;
+  end;
 
   http := TIdHttp.Create(nil);
   http.Request.UserAgent :=
     'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)';
   s := PhpUrl + 'saveAlarmData?systemid=' + systemid + '&hphm=' + hphm +
     '&hpzl=' + hpzl + '&gcsj=' + gcsj + '&sbddmc=' + sbddmc + '&bkr=' + bkr +
-    '&bklx=' + bklx;
+    '&bklx=' + bklx + '&bz=' + bz;
+  logger.Info('SaveAlarm2PHP: ' + s);
   try
     s := TIdURI.URLEncode(s);
     http.Get(s);
   except
     on e: exception do
     begin
-      logger.Error('SaveAlarm2PHP Error ' + s + #13#10 + s);
+      logger.Error('SaveAlarm2PHP Error ' + e.Message + #13#10 + s);
     end;
   end;
   http.Free;
