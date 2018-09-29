@@ -30,7 +30,7 @@ var
 begin
   cs.Enter;
   FList.Add(pass);
-  if (FList.Count >= 999)or(now - FLastTime > OneSecond * 20) then
+  if (FList.Count >= 1000)or(now - FLastTime > OneSecond * 20) then
   begin
     FLastTime := now;
     tmp := FList;

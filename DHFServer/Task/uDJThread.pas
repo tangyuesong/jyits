@@ -202,7 +202,7 @@ end;
 procedure TDJThread.SaveVIO(pass: TPass);
 begin
   FVioList.Add(pass);
-  if (FVioList.Count >= 999)or(now - FTime > OneMinute) then
+  if (FVioList.Count >= 1000)or(now - FTime > OneMinute) then
   begin
     Tmypint.SaveVio(FVioList);
     FVioList.Clear;

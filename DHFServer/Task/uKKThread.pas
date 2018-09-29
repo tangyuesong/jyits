@@ -170,7 +170,6 @@ end;
 function TKKThread.GetPass: TPass;
 var
   device: TDevice;
-  path: string;
 begin
   result.gcxh := FQuery.FieldByName('gcxh').AsString;
   result.lkbh := FQuery.FieldByName('kdbh').AsString;
@@ -240,11 +239,22 @@ begin
     result.hpzl := '44';
   if result.HPZL = '99' then
     result.HPZL := '44';
-
-  result.fwqdz := TPath.GetDirectoryName(result.tp1) + '/';
-  result.tp1 := TPath.GetFileName(result.tp1);
-  result.tp2 := TPath.GetFileName(result.tp2);
-  result.tp3 := TPath.GetFileName(result.tp3);
+  try
+    if result.tp1 <> '' then
+      result.fwqdz := TPath.GetDirectoryName(result.tp1) + '/'
+    else if result.tp2 <> '' then
+      result.fwqdz := TPath.GetDirectoryName(result.tp2) + '/'
+    else if result.tp3 <> '' then
+      result.fwqdz := TPath.GetDirectoryName(result.tp3) + '/'
+    else
+      result.fwqdz := '';
+    result.tp1 := TPath.GetFileName(result.tp1);
+    result.tp2 := TPath.GetFileName(result.tp2);
+    result.tp3 := TPath.GetFileName(result.tp3);
+  except
+    on e: exception do
+      logger.Error('[TKKThread.GetPass]' + e.Message + result.tp1);
+  end;
 end;
 
 procedure TKKThread.NetHTTPClient1RequestCompleted(const Sender: TObject;
