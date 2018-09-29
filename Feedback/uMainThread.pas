@@ -567,27 +567,23 @@ procedure TMainThread.DownloadAlarms;
     s := 'create table ' + tmpTable;
     s := s + '(bklx varchar(2),gcxh varchar(50),HPHM varchar(20),HPZL varchar(2),'
       + 'GCSJ datetime,CLSD int, CD int,SBBH varchar(50),FXLX varchar(50),' +
-      'URL varchar(255),BKZL varchar(50))';
+      'URL varchar(255),CLPP varchar(50),CSYS varchar(50),BKZL varchar(50))';
     FSQLHelper.ExecuteSQL(s);
 
     s := ss.Text;
     s := copy(s, 1, length(s) - 3); // 回车换行
     s := 'insert into ' + tmpTable +
-      '(BKLX,GCXH,HPHM,HPZL,GCSJ,CLSD,CD,SBBH,FXLX,URL,BKZL)values' + s;
+      '(BKLX,GCXH,HPHM,HPZL,GCSJ,CLSD,CD,SBBH,FXLX,URL,CLPP,CSYS,BKZL)values' + s;
     FSQLHelper.ExecuteSQL(s);
 
-    // 去掉无效预警：未报废、已年捡 等
-    // s := 'delete t from ' + tmpTable + ' t, T_VIO_VEHICLE s '
-    // + 'where t.hphm=s.hphm and t.hpzl=s.hpzl and (t.bklx=''05'' and s.ZT not like ''%P%'' and s.ZT not like ''%M%'')';
-    // FSQLHelper.ExecuteSql(s);
     s := 'delete s from ' + tmpTable +
       ' s inner join T_KK_ALARMRESULT t on s.GCXH=t.GCXH and t.bkzl = ''自动同步'' ';
 
-    s := s + 'insert into T_KK_ALARMRESULT(BKLX,GCXH,HPHM,HPZL,GCSJ,CLSD,CD,KDBH,KDMC,VIOURL,BKZL) ';
-    s := s + 'select a.BKLX,a.GCXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CD,Min(c.SBBH) SBBH,a.FXLX,a.URL,a.BKZL ';
+    s := s + 'insert into T_KK_ALARMRESULT(BKLX,GCXH,HPHM,HPZL,GCSJ,CLSD,CD,KDBH,KDMC,VIOURL,CLPP,CSYS,BKZL) ';
+    s := s + 'select a.BKLX,a.GCXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CD,Min(c.SBBH) SBBH,a.FXLX,a.URL,A.CLPP,A.CSYS,a.BKZL ';
     s := s + 'from ' + tmpTable + ' as a ';
     s := s + 'inner join S_DEVICE c on a.SBBH=c.JCPTBABH and a.FXLX = c.JCPTBAFX ';
-    s := s + 'group by a.BKLX,a.GCXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CD,a.FXLX,a.URL,a.BKZL ';
+    s := s + 'group by a.BKLX,a.GCXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CD,a.FXLX,a.URL,A.CLPP,A.CSYS,a.BKZL ';
 
     s := s + 'insert into T_VIO_TEMP(CJJG, HPHM,HPZL,WFSJ,WFDD,WFXW,CD,PHOTOFILE1,BJ) ';
     s := s + ' select c.CJJG, a.HPHM,a.HPZL,a.GCSJ,Min(c.SBBH) SBBH,''1340'' as WFXW, a.CD, a.URL,''0'' ';
@@ -609,14 +605,14 @@ begin
   begin
     Close;
     SQL.Clear;
-    SQL.Add('select a.BKLX,a.YJXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CDH,a.SBBH,a.FXLX,a.RKSJ,b.TPLJ||b.TP1 as URL ');
+    SQL.Add('select a.BKLX,a.YJXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CDH,a.SBBH,a.FXLX,a.RKSJ,b.TPLJ||b.TP1 as URL,a.CLPP,a.CSYS ');
     SQL.Add('from VMC_ALARM_PASS a ');
     SQL.Add('inner join TFC_PASS b on a.GCXH=b.GCXH ');
     SQL.Add('where a.QSBJ=0 and a.RKSJ > to_date(''' +
       FormatDateTime('yyyy-mm-dd hh:mm', FMaxRKSJ - 0.01) +
       ''',''yyyy-mm-dd hh24:mi'') ');
     SQL.Add('UNION ');
-    SQL.Add('select a.BKLX,a.YJXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CDH,a.SBBH,a.FXLX,a.RKSJ,b.TPLJ||b.TP1 as URL ');
+    SQL.Add('select a.BKLX,a.YJXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CDH,a.SBBH,a.FXLX,a.RKSJ,b.TPLJ||b.TP1 as URL,a.CLPP,a.CSYS ');
     SQL.Add('from VMC_ALARM a ');
     SQL.Add('inner join TFC_PASS b on a.GCXH=b.GCXH ');
     SQL.Add('where a.QSBJ=0 and a.RKSJ > to_date(''' +
@@ -641,6 +637,8 @@ begin
           .AsString.QuotedString + ',' + FieldByName('SBBH')
           .AsString.QuotedString + ',' + FieldByName('FXLX')
           .AsString.QuotedString + ',' + FieldByName('URL')
+          .AsString.QuotedString + ',' + FieldByName('CLPP')
+          .AsString.QuotedString + ',' + FieldByName('CSYS')
           .AsString.QuotedString + ',''自动同步''),');
         if ss.Count = 999 then
         begin
