@@ -24,6 +24,7 @@ var
   gHikID: TDictionary<String, String>;
   gDevKDBH: TDictionary<String, String>;
   gDevID: TDictionary<String, String>;
+  gSpotWfxw: TDictionary<String, String>;
 
 implementation
 

@@ -48,9 +48,9 @@ type
     class function CheckForceInput(token: TToken; params: TStrings): String;
     class function GetZQMJ(oldZqmj: string): string; static;
     class function GetDwdm(zqmj: String): String;
+    class function GetVioInfoByVeh(token: TToken; params: TStrings): String;
     class procedure GetVioCount(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
-    class function GetVioInfoByVeh(token: TToken; params: TStrings): String;
   public
     class function GetVehInfo(token: TToken; hphm, hpzl: String): String;
     class function GetDrvInfo(token: TToken; params: TStrings): String;
@@ -58,6 +58,7 @@ type
     class procedure DoRM(action, tokenKey: String; params: TStrings;
       isExport: Boolean; AResponseInfo: TIdHTTPResponseInfo);
     class procedure CheckForceParam(params: TStrings);
+    class function DoGetVioCount(token: TToken; params: TStrings): Integer;
   end;
 
 var
@@ -560,23 +561,55 @@ begin
   params.Free;
 end;
 
-class procedure TRmService.GetVioCount(token: TToken; params: TStrings;
-  AResponseInfo: TIdHTTPResponseInfo);
+class function TRmService.DoGetVioCount(token: TToken;
+  params: TStrings): Integer;
 var
-  s, c: String;
+  s: String;
   json: TQJson;
+  clbj, jkbj: String;
+  c, n: Integer;
+  isAll: Boolean;
 begin
+  n := params.IndexOfName('clbj');
+  if n >= 0 then
+  begin
+    isAll := false;
+    clbj := params.Values['clbj'];
+    params.Delete(n);
+  end
+  else
+    isAll := True;
+
   s := GetVioInfoByVeh(token, params);
   json := TQJson.Create;
   try
     json.Parse(s);
-    c := json.Count.ToString;
+    if isAll then
+      c := json.Count
+    else
+    begin
+      c := 0;
+      for n := 0 to json.Count - 1 do
+      begin
+        if TCommon.GetJsonNode('jkbj', json.Items[n].ToString) = clbj then
+          inc(c);
+      end;
+    end;
   except
-    c := '0';
+    c := 0;
   end;
   json.Free;
+  result := c;
+end;
+
+class procedure TRmService.GetVioCount(token: TToken; params: TStrings;
+  AResponseInfo: TIdHTTPResponseInfo);
+var
+  c: Integer;
+begin
+  c := DoGetVioCount(token, params);
   AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
-    ('{"count":"' + c + '"}');
+    ('{"count":"' + c.ToString + '"}');
 end;
 
 class function TRmService.GetVioInfoByDrv(token: TToken;

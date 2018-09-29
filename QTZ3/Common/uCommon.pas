@@ -22,6 +22,7 @@ type
   private
     class var FColDef: TDictionary<string, string>;
     class var FDicWfxw: TDictionary<string, string>;
+    class var FDicSpotWfxw: TDictionary<string, string>;
     class var FDicHpzlMC: TDictionary<string, string>;
     class var FDicDevice: TDictionary<string, TDevice>;
     class var FSaUsers: TStrings;
@@ -46,6 +47,7 @@ type
       isWxLogin: Boolean): TUser;
     class procedure InitLHY_JK; static;
     class function GetZHPTUserDevice(yhbh: String): TZHPTUserDevice;
+    class function GetSpotWfxw(): TDictionary<string, String>; static;
   public
     class property DicHpzlMC: TDictionary<string, string> read GetHpzlmc;
     class property DicDevice: TDictionary<string, TDevice> read GetDevice;
@@ -53,6 +55,7 @@ type
     class property ColDef: TDictionary<string, string> read GetColDef;
     class property SaUsers: TStrings read FSaUsers;
     class property Depts: TDictionary<string, TDept> read GetDepts;
+    class property DicSpotWfxw: TDictionary<string, String> read GetSpotWfxw;
     class function QueryToJsonString(ASql: String; AGroups: TStrings;
       var ATotal: Integer): String;
     class function RecordListToJSON<T>(list: TList<T>): string; static;
@@ -375,6 +378,26 @@ end;
 class function TCommon.GetRealDatetime(AMilliSecond: Int64): TDatetime;
 begin
   Result := DateUtils.IncMilliSecond(FBaseTime, AMilliSecond);
+end;
+
+class function TCommon.GetSpotWfxw: TDictionary<string, String>;
+begin
+  if FDicSpotWfxw = nil then
+  begin
+    FDicSpotWfxw := TDictionary<string, string>.Create;
+    with gSQLHelper.Query('select CLZT, WFXW from ' + cDBName +
+      '.dbo.T_Spot_Wfxw') do
+    begin
+      while not Eof do
+      begin
+        if not FDicSpotWfxw.ContainsKey(Fields[0].AsString) then
+          FDicSpotWfxw.add(Fields[0].AsString, Fields[1].AsString);
+        Next;
+      end;
+      Free;
+    end;
+  end;
+  Result := FDicSpotWfxw;
 end;
 
 class function TCommon.GetUserInfo(userid, pwd, ip: String; var msg: String;

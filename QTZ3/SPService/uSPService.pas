@@ -23,6 +23,8 @@ type
       AResponseInfo: TIdHTTPResponseInfo);
     class procedure GetJFS(token: TToken; Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
+    class procedure GetWfXwByVeh(token: TToken; Params: TStrings;
+      AResponseInfo: TIdHTTPResponseInfo);
   public
     class property Actions: String read GetActions;
     class procedure DoSP(action, tokenKey: String; Params: TStrings;
@@ -34,7 +36,7 @@ implementation
 class function TSPService.GetActions: String;
 begin
   Result := ',LOCKVIO,GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,'
-    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,';
+    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,';
 end;
 
 class function TSPService.GetCCLZRQ(token: TToken; Params: TStrings): String;
@@ -91,6 +93,65 @@ begin
       gLogger.Error(e.Message);
   end;
   qjson.Free;
+end;
+
+class procedure TSPService.GetWfXwByVeh(token: TToken; Params: TStrings;
+  AResponseInfo: TIdHTTPResponseInfo);
+var
+  hphm, hpzl, wslb, json, clzt, wfxw, qzcslx: String;
+  ts: TStrings;
+  c: Integer;
+begin
+  hphm := Params.Values['hphm'];
+  hpzl := Params.Values['hpzl'];
+  wslb := Params.Values['wslb'];
+
+  wfxw := '';
+
+  json := TRmService.GetVehinfo(token, hphm, hpzl);
+  if json = '' then
+  begin
+    if TCommon.DicSpotWfxw.ContainsKey('JP') then
+      wfxw := TCommon.DicSpotWfxw['JP'];
+  end
+  else if json <> '-1' then
+  begin
+    clzt := TCommon.GetJsonNode('zt', json);
+    if TCommon.DicSpotWfxw.ContainsKey(clzt) then
+      wfxw := TCommon.DicSpotWfxw[clzt]
+    else if clzt = 'G' then
+    begin
+      ts := TStringList.Create;
+      ts.Add('hphm=' + hphm);
+      ts.Add('hpzl=' + hpzl);
+      ts.Add('clbj=0');
+      c := TRmService.DoGetVioCount(token, ts);
+      if c >= 10 then
+        clzt := 'G2'
+      else if c >= 3 then
+        clzt := 'G1'
+      else
+        clzt := '';
+      if TCommon.DicSpotWfxw.ContainsKey(clzt) then
+        wfxw := TCommon.DicSpotWfxw[clzt];
+      ts.Free;
+    end
+    else if clzt = 'Q' then
+    begin
+      if wslb = '6' then
+        clzt := 'Q1'
+      else
+        clzt := 'Q2';
+      if TCommon.DicSpotWfxw.ContainsKey(clzt) then
+        wfxw := TCommon.DicSpotWfxw[clzt];
+    end;
+  end;
+  if wfxw <> '' then
+    qzcslx := gSQLHelper.GetSinge
+      ('select qzcslx from T_VIO_ILLECODE where wfxwdm=' + wfxw.QuotedString);
+
+  AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
+    ('{"wfxw":"' + wfxw + '","qzcslx":"' + qzcslx + '"}');
 end;
 
 class procedure TSPService.GetJFS(token: TToken; Params: TStrings;
@@ -234,6 +295,8 @@ begin
   begin
     GetJFS(token, Params, AResponseInfo);
   end
+  else if action = 'GETWFXWBYVEH' then
+    GetWfXwByVeh(token, Params, AResponseInfo)
   else if action = UpperCase('GetExamData') then
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
       (TExamService.GetExamData);
