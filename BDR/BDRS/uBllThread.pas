@@ -36,18 +36,21 @@ var
 begin
   ActiveX.CoInitialize(nil);
   CoInitializeEx(Nil, COINIT_MULTITHREADED);
+  logger.Debug(FRequest.DOCUMENT + FRequest.PARAMS);
   response := DoAction;
   if response.ERROR_MESSAGE.Contains('10054') then
     response := DoAction;
   if Assigned(FRequest.POST_STREAM) then
     FRequest.POST_STREAM.Free;
   SaveResult(response);
+  logger.Debug(response.CONTENT_TEXT);
 end;
 
 function TBllThread.DoAction: TResponse;
 var
   url: string;
   http: TIdHttp;
+  i: integer;
 begin
   result.CONTENT_TEXT := '';
   result.CONTENT_STREAM := nil;
@@ -66,6 +69,10 @@ begin
     url := url + '?' + FRequest.PARAMS;
   http := TIdHttp.Create(nil);
   http.Request.CustomHeaders.Text := FRequest.Header;
+  i := http.Request.CustomHeaders.IndexOfName('Content-Length');
+  if i>=0 then http.Request.CustomHeaders.Delete(i);
+  i := http.Request.CustomHeaders.IndexOfName('Host');
+  if i>=0 then http.Request.CustomHeaders.Delete(i);
   http.HandleRedirects := true;
   try
     if FRequest.HTTP_METHOD = Ord(hcGET) then

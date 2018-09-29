@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uCommon, uJTPThread;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Ehlservice;
 
 type
   TForm3 = class(TForm)
@@ -23,9 +23,14 @@ implementation
 {$R *.dfm}
 
 procedure TForm3.FormCreate(Sender: TObject);
+var
+  soap: EHLServiceSoap;
+  s: string;
 begin
-  TCommon.ProgramInit;
-  TJTPThread.Create;
+  soap := Ehlservice.GetEHLServiceSoap();
+  s := soap.queryObjectOut('02C26','440005171207000222','<?xml version="1.0" encoding="GBK"?><root><QueryCondition><sfzmhm>430611198109134511</sfzmhm></QueryCondition></root>');
+  showmessage(s);
+  soap := nil;
 end;
 
 end.

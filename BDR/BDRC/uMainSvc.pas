@@ -157,6 +157,7 @@ begin
   end
   else
     AResponseInfo.ContentText := FormatResponse('Request Failed(ERROR: 60512)');
+  logger.Debug('[' + ip + ']' + AResponseInfo.ContentText);
 end;
 
 function TBDRCSvc.CheckIP(ip: string): boolean;

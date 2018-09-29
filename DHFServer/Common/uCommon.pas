@@ -78,7 +78,8 @@ begin
       if not tmp.ContainsKey(key) then
         tmp.Add(key, item)
       else begin
-        item.SJHM := tmp[key].SJHM + ',' + item.SJHM;
+        if tmp[key].SJHM <> '' then
+          item.SJHM := tmp[key].SJHM + ',' + item.SJHM;
         if item.smsBeginTime > tmp[key].smsBeginTime then
           item.smsBeginTime := tmp[key].smsBeginTime;
         if item.smsEndTime < tmp[key].smsEndTime then

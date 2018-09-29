@@ -76,7 +76,6 @@ begin
       request.AppName := request.AppName.ToUpper;
       request.Header := Fields[8].AsString;
       list.Add(request);
-      //logger.Debug(request.DOCUMENT + request.PARAMS + request.Header);
       Next;
     end;
     Close;
