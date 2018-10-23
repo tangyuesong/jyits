@@ -106,7 +106,7 @@ begin
 
   s := httpClient.Get
     (TIdURI.URLEncode
-    ('http://127.0.0.1:7115/Login?user=250688&pwd=E14B236263F88BB55354B247CEE47C29')
+    ('http://127.0.0.1:17115/Login?user=250688&pwd=E14B236263F88BB55354B247CEE47C29')
     // ('http://127.0.0.1:17115/wxLogin?user=252871&pwd=0D6B629FB5553B325FB1A7C359A180E9207EA79CEBD39BC03C80317F55832924')
     );
   token := TCommon.GetJsonNode('token', s);
@@ -117,7 +117,7 @@ begin
   end;
 
   Memo1.Text := httpClient.Get
-    (TIdURI.URLEncode('http://127.0.0.1:7115/GetAlarmSDCL?kssj=1514736000000&jssj=1538323200000&token='
+    (TIdURI.URLEncode('http://127.0.0.1:17115/GetWfxwByVeh?hphm=‘¡U0C383&hpzl=02&token='
     // (TIdURI.URLEncode('http://127.0.0.1:17115/WriteSG?token='
     // ('http://127.0.0.1:17115/GetDrvInfo?sfzmhm=342921198309063411&token='
     + token));
@@ -336,7 +336,7 @@ begin
 
   params.Free;  }
 params.LoadFromFile('d:\ss.txt');
-THikDSJ.DecodefootHoldsResult(params.Text);
+//THikDSJ.DecodefootHoldsResult(params.Text);
 
 
 

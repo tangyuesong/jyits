@@ -88,7 +88,7 @@ begin
       // gLogger.Error('No min WSBH in DB for : ' + xzqh);
       // cs.Leave;
       // exit;
-      wsbh := xzqh + '520183000000';
+      wsbh := xzqh + '150000000000';
     end;
     n := strtoint64def(wsbh.Substring(6), 0);
     if n > 0 then
@@ -164,9 +164,13 @@ begin
       '.dbo.S_WSBH where xzqh=''' + xzqh + ''' and wsbb=''' + wsbb + '''');
     if wsbh = '' then
     begin
-      gLogger.Error('No min WSBH in DB for : ' + xzqh);
-      cs.Leave;
-      exit;
+      // gLogger.Error('No min WSBH in DB for : ' + xzqh);
+      // cs.Leave;
+      // exit;
+      if wslb = '1' then
+        wsbh := xzqh + '150000000'
+      else
+        wsbh := xzqh + '350000000';
     end;
     n := strtointdef(wsbh.Substring(6), 0);
     if n > 0 then

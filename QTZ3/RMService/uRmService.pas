@@ -914,7 +914,7 @@ end;
 class procedure TRmService.SaveForceVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, wfsj, pzbh, checkStr, oldMj, newMj, zqmj2: String;
+  json, code, wfsj, pzbh, checkStr, oldMj, newMj, zqmj2, pic: String;
   tmriParam: TTmriParam;
   n: Integer;
 begin
@@ -938,6 +938,11 @@ begin
   if n >= 0 then
     params.Delete(n);
 
+  pic := params.Values['pic'];
+  n := params.IndexOfName('pic');
+  if n >= 0 then
+    params.Delete(n);
+
   params.Add('JKID=04C55');
   json := DoWrite(token, params);
   gLogger.Info(json);
@@ -953,6 +958,7 @@ begin
       params.Delete(n);
     params.Add('zt=1');
     params.Add('zqmj2=' + zqmj2);
+    params.Add('pic=' + pic);
     pzbh := params.Values['pzbh'];
     if RightStr(pzbh, 8) >= '30000000' then
       TWSManager.Submit(pzbh)
@@ -982,7 +988,7 @@ end;
 class procedure TRmService.SaveSimpleVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, zt, wfsj, jdsbh, zqmj2: String;
+  json, code, zt, wfsj, jdsbh, zqmj2, pic: String;
   tmriParam: TTmriParam;
   n: Integer;
 begin
@@ -994,6 +1000,11 @@ begin
 
   zqmj2 := params.Values['zqmj2'];
   n := params.IndexOfName('zqmj2');
+  if n >= 0 then
+    params.Delete(n);
+
+  pic := params.Values['pic'];
+  n := params.IndexOfName('pic');
   if n >= 0 then
     params.Delete(n);
 
@@ -1012,6 +1023,7 @@ begin
       params.Delete(n);
     params.Add('zt=1');
     params.Add('zqmj2=' + zqmj2);
+    params.Add('pic=' + pic);
     jdsbh := params.Values['jdsbh'];
     if RightStr(jdsbh, 8) >= '30000000' then
       TWSManager.Submit(jdsbh)

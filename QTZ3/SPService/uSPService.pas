@@ -25,6 +25,7 @@ type
       AResponseInfo: TIdHTTPResponseInfo);
     class procedure GetWfXwByVeh(token: TToken; Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
+    class function UploadSpotPic(token: TToken; Params: TStrings): String;
   public
     class property Actions: String read GetActions;
     class procedure DoSP(action, tokenKey: String; Params: TStrings;
@@ -36,7 +37,7 @@ implementation
 class function TSPService.GetActions: String;
 begin
   Result := ',LOCKVIO,GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,'
-    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,';
+    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,UPLOADSPOTPIC,';
 end;
 
 class function TSPService.GetCCLZRQ(token: TToken; Params: TStrings): String;
@@ -98,60 +99,79 @@ end;
 class procedure TSPService.GetWfXwByVeh(token: TToken; Params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  hphm, hpzl, wslb, json, clzt, wfxw, qzcslx: String;
-  ts: TStrings;
+  hphm, hpzl, wslb, json, clzt, qzcslx, wfxwmc, je, jf, tmpClzt, s: String;
+  ts, wfxwList: TStrings;
   c: Integer;
+  i: Integer;
 begin
   hphm := Params.Values['hphm'];
   hpzl := Params.Values['hpzl'];
   wslb := Params.Values['wslb'];
+  s := '';
 
-  wfxw := '';
+  wfxwList := TStringList.Create;
 
   json := TRmService.GetVehinfo(token, hphm, hpzl);
   if json = '' then
   begin
     if TCommon.DicSpotWfxw.ContainsKey('JP') then
-      wfxw := TCommon.DicSpotWfxw['JP'];
+      wfxwList.Add(TCommon.DicSpotWfxw['JP']);
   end
   else if json <> '-1' then
   begin
     clzt := TCommon.GetJsonNode('zt', json);
     if TCommon.DicSpotWfxw.ContainsKey(clzt) then
-      wfxw := TCommon.DicSpotWfxw[clzt]
-    else if clzt = 'G' then
+      wfxwList.Add(TCommon.DicSpotWfxw[clzt])
+    else
     begin
-      ts := TStringList.Create;
-      ts.Add('hphm=' + hphm);
-      ts.Add('hpzl=' + hpzl);
-      ts.Add('clbj=0');
-      c := TRmService.DoGetVioCount(token, ts);
-      if c >= 10 then
-        clzt := 'G2'
-      else if c >= 3 then
-        clzt := 'G1'
-      else
-        clzt := '';
-      if TCommon.DicSpotWfxw.ContainsKey(clzt) then
-        wfxw := TCommon.DicSpotWfxw[clzt];
-      ts.Free;
-    end
-    else if clzt = 'Q' then
-    begin
-      if wslb = '6' then
-        clzt := 'Q1'
-      else
-        clzt := 'Q2';
-      if TCommon.DicSpotWfxw.ContainsKey(clzt) then
-        wfxw := TCommon.DicSpotWfxw[clzt];
+      if clzt.Contains('G') then
+      begin
+        ts := TStringList.Create;
+        ts.Add('hphm=' + hphm);
+        ts.Add('hpzl=' + hpzl);
+        ts.Add('clbj=0');
+        c := TRmService.DoGetVioCount(token, ts);
+        if c >= 10 then
+          tmpClzt := 'G2'
+        else if c >= 3 then
+          tmpClzt := 'G1';
+        if TCommon.DicSpotWfxw.ContainsKey(tmpClzt) then
+          wfxwList.Add(TCommon.DicSpotWfxw[tmpClzt]);
+        ts.Free;
+      end;
+      if clzt.Contains('Q') then
+      begin
+        if wslb = '6' then
+          tmpClzt := 'Q1'
+        else
+          tmpClzt := 'Q2';
+        if TCommon.DicSpotWfxw.ContainsKey(tmpClzt) then
+          wfxwList.Add(TCommon.DicSpotWfxw[tmpClzt]);
+      end;
     end;
   end;
-  if wfxw <> '' then
-    qzcslx := gSQLHelper.GetSinge
-      ('select qzcslx from T_VIO_ILLECODE where wfxwdm=' + wfxw.QuotedString);
+  for i := 0 to wfxwList.Count - 1 do
+  begin
+    with gSQLHelper.Query('select wfxwmc, je, jf, qzcslx from ' + CDBName +
+      '.dbo.T_VIO_ILLECODE where wfxwdm=' + wfxwList[i].QuotedString) do
+    begin
+      if not Eof then
+      begin
+        wfxwmc := Fields[0].AsString;
+        je := Fields[1].AsString;
+        jf := Fields[2].AsString;
+        qzcslx := Fields[3].AsString;
+        s := s + ',{"wfxwdm":"' + wfxwList[i] + '","wfxwmc":"' + wfxwmc +
+          '","je":"' + je + '","jf":"' + jf + '","qzcslx":"' + qzcslx + '"}';
+      end;
+      Free;
+    end;
+  end;
+  wfxwList.Free;
 
-  AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
-    ('{"wfxw":"' + wfxw + '","qzcslx":"' + qzcslx + '"}');
+  if s <> '' then
+    s := '[' + s.Substring(1) + ']';
+  AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(s);
 end;
 
 class procedure TSPService.GetJFS(token: TToken; Params: TStrings;
@@ -215,6 +235,33 @@ begin
   Result := gSQLHelper.GetSinge('select DMSM1 from ' + CDBName +
     '.dbo.T_VIO_CODE where xtlb=' + xtlb.QuotedString + ' and dmlb=' +
     dmlb.QuotedString + ' and dmz = ' + dmz.QuotedString);
+end;
+
+class function TSPService.UploadSpotPic(token: TToken;
+  Params: TStrings): String;
+var
+  pic, tp, dir: String;
+begin
+  Result := '';
+  pic := Params.Values['pic'];
+  tp := token.Login + FormatDateTime('yyyymmddhhnnsszzz', Now()) + '.jpg';
+  if not TCommon.Base64ToFile(pic, ExtractFilePath(Paramstr(0)) + tp) or
+    not FileExists(ExtractFilePath(Paramstr(0)) + tp) then
+  begin
+    Result := TCommon.AssembleFailedHttpResult('base64字符串有误');
+    exit;
+  end;
+
+  dir := 'clientvio/' + FormatDateTime('yyyymm-dd', Now()) + '/';
+
+  if TCommon.FtpPutFile(gConfig.ImportVioHost, gConfig.ImportVioUser,
+    gConfig.ImportVioPassword, ExtractFilePath(Paramstr(0)) + tp,
+    '/' + dir + tp, gConfig.ImportVioPort) then
+    Result := TCommon.AssembleSuccessHttpResult
+      ('{"url":"' + gConfig.ImportVioHome + dir + tp + '"}')
+  else
+    Result := TCommon.AssembleFailedHttpResult('上传失败');
+  DeleteFile(ExtractFilePath(Paramstr(0)) + tp);
 end;
 
 class procedure TSPService.DoSP(action, tokenKey: String; Params: TStrings;
@@ -299,8 +346,9 @@ begin
     GetWfXwByVeh(token, Params, AResponseInfo)
   else if action = UpperCase('GetExamData') then
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
-      (TExamService.GetExamData);
-
+      (TExamService.GetExamData)
+  else if action = 'UPLOADSPOTPIC' then
+    AResponseInfo.ContentText := UploadSpotPic(token, Params);
   ActiveX.CoUninitialize;
 end;
 
