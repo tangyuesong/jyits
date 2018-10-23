@@ -3,8 +3,8 @@
 interface
 
 uses
-  SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uSMS, EncdDecd,
-  uLockVio, uImportVio, uRmService, qjson, uSurveilVio, uHikDSJ,
+  SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uSMS, EncdDecd, uHik,
+  uLockVio, uVehPass, uAnalysisPic, uImportVio, uRmService, qjson, uSurveilVio,
   Generics.Collections, StrUtils, uTokenManager, ActiveX, uExamService;
 
 type
@@ -14,6 +14,7 @@ type
     class function GetWFJFS(cclzrq: TDateTime; token: TToken;
       Params: TStrings): Integer;
     class function GetActions(): String; static;
+    class function GetZhptCode(xtlb, dmlb, dmz: String): String;
     class function GetSGZR(Params: TStrings): String;
     class function GetTJJG(Params: TStrings): String;
     class procedure GetLocalDrvInfo(token: TToken; Params: TStrings;
@@ -35,8 +36,8 @@ implementation
 
 class function TSPService.GetActions: String;
 begin
-  Result := ',LOCKVIO,GETPASSLIST,SENDSMS,IMPORTVIO,GETLOCALVEHINFO,' +
-    'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,UPLOADSPOTPIC,';
+  Result := ',LOCKVIO,GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,'
+    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,UPLOADSPOTPIC,';
 end;
 
 class function TSPService.GetCCLZRQ(token: TToken; Params: TStrings): String;
@@ -229,6 +230,13 @@ begin
   AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(json);
 end;
 
+class function TSPService.GetZhptCode(xtlb, dmlb, dmz: String): String;
+begin
+  Result := gSQLHelper.GetSinge('select DMSM1 from ' + CDBName +
+    '.dbo.T_VIO_CODE where xtlb=' + xtlb.QuotedString + ' and dmlb=' +
+    dmlb.QuotedString + ' and dmz = ' + dmz.QuotedString);
+end;
+
 class function TSPService.UploadSpotPic(token: TToken;
   Params: TStrings): String;
 var
@@ -259,10 +267,9 @@ end;
 class procedure TSPService.DoSP(action, tokenKey: String; Params: TStrings;
   isExport: Boolean; AResponseInfo: TIdHTTPResponseInfo);
 var
-  s, page, pageSize: String;
+  kssj, jssj: Double;
+  s: String;
   token: TToken;
-  i: Integer;
-  param: TDictionary<string, String>;
 begin
   ActiveX.CoInitialize(nil);
   token := gTokenManager.GetToken(tokenKey);
@@ -272,19 +279,15 @@ begin
   end
   else if action = UpperCase('GetPassList') then
   begin
-    param := TDictionary<string, String>.Create;
-    for i := 0 to Params.Count - 1 do
-    begin
-      if UpperCase(Params.Names[i]) = 'CURRENTPAGE' then
-        page := Params.ValueFromIndex[i]
-      else if UpperCase(Params.Names[i]) = 'PAGESIZE' then
-        pageSize := Params.ValueFromIndex[i]
-      else
-        param.Add(Params.Names[i], Params.ValueFromIndex[i]);
-    end;
-    s := THIKDSJ.moreLikeThis(param, page, pageSize);
-    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(s);
-    param.Free;
+    kssj := TCommon.GetRealDatetime(StrToInt64Def(Params.Values['kssj'], 0));
+    jssj := TCommon.GetRealDatetime(StrToInt64Def(Params.Values['jssj'], 0));
+    TVehPass.GetPassList(kssj, jssj, Params.Values['kdbh'],
+      Params.Values['hphm'], Params.Values['hpzl'], Params.Values['vehlogo'],
+      Params.Values['vehsublogo'], Params.Values['vehcolor'],
+      Params.Values['pilotsafebelt'], Params.Values['vicepilotsafebelt'],
+      Params.Values['vehiclesunvisor'], Params.Values['vicepilotsunvisor'],
+      Params.Values['pendant'], Params.Values['currentpage'],
+      Params.Values['pageSize'], AResponseInfo);
   end
   else if action = UpperCase('SendSMS') then
   begin
@@ -293,6 +296,11 @@ begin
       AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('')
     else
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('error');
+  end
+  else if (action = UpperCase('AnalysisOnePic')) and gConfig.HaveK08 then
+  begin
+    TAnalysisPic.AnalysisPic(Params.Values['url'], Params.Values['pic'],
+      AResponseInfo);
   end
   else if action = UpperCase('ImportVio') then
   begin
@@ -341,7 +349,6 @@ begin
       (TExamService.GetExamData)
   else if action = 'UPLOADSPOTPIC' then
     AResponseInfo.ContentText := UploadSpotPic(token, Params);
-
   ActiveX.CoUninitialize;
 end;
 

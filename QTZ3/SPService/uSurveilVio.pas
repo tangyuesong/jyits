@@ -3,7 +3,7 @@ unit uSurveilVio;
 interface
 
 uses
-  SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uRmService,
+  SysUtils, Classes, uGlobal, uCommon, uHik, IdCustomHTTPServer, uRmService,
   uEntity, uLockVio, DateUtils, uRmInf, Windows, imageenview, Vcl.Imaging.jpeg,
   Graphics, QBAES;
 

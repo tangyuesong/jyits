@@ -63,22 +63,19 @@ type
   End;
 
   THikConfig = Record
-  {
     LYUrl: String; // ¡‘”•URL
     LYUser: String;
     LYPwd: String;
     LYHttpConverter: string;
-  }
-    moreLikeThisHBase: String;
+    K08SearchURL: String;
+    K08SaveUrl: String;
     PicAnalysis: String;
     CarFace: String;
     analysisExtra: String;
     dataAnalysis: String;
-    {
     DFUrl: String;
     DFUser: String;
     DFPwd: String;
-    }
     PassOra: TOraConfig;
   End;
 
@@ -112,9 +109,8 @@ type
     HikConfig: THikConfig;
     // SMS
     SMSUrl: String;
-    // Heartbeat
     PicUrl: String;
-
+    // Heartbeat
     HeartbeatUrl: String;
     HeartbeatInterval: Integer;
   end;

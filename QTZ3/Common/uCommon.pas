@@ -1128,14 +1128,14 @@ begin
     gConfig.ImportVioHome := ReadString('ImportVio', 'Home', '');
 
     gConfig.HaveK08 := ReadString('Hik', 'Enabled', '0') = '1';
-    gConfig.HikConfig.moreLikeThisHBase := ReadString('Hik', 'moreLikeThisHBase',
+    gConfig.HikConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL',
       'http://10.43.255.16:8080/kms/services/ws/vehicleSearch');
-    //gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
-    //  'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
-    //gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
-    //  'http://10.43.255.20:18010');
-    //gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
-    //gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
+    gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
+      'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
+    gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
+      'http://10.43.255.20:18010');
+    gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
+    gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
 
     gConfig.HikConfig.PicAnalysis := ReadString('Hik', 'PicAnalysis', '');
     gConfig.HikConfig.CarFace := ReadString('Hik', 'CarFace', '');
@@ -1225,7 +1225,8 @@ begin
   FSaUsers.add('sa');
   FSaUsers.add('su');
 
-  gConfig.dwdm := gSQLHelper.GetSinge('select CJJG from YJITSDB.dbo.S_SA_SETUP');
+  gConfig.dwdm := gSQLHelper.GetSinge('select CJJG from ' + cDBName +
+    '.dbo.s_sa_setup');
   InitLHY_JK;
 
   InitK08Hpzl();

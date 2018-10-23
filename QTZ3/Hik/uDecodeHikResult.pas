@@ -161,8 +161,6 @@ Type
     class function DecodeJobProgress(proStr: String; var msg: String): String;
     class function DecodeCarFaceResult(passStr: String; var msg: String)
       : TList<TK08VehInfo>;
-    class function DecodeMoreLikeThieResult(Xml: String;
-      var totalPage, currentPage: Integer): TList<TK08VehInfo>; static;
   end;
 
 implementation
@@ -509,76 +507,6 @@ begin
     if (I > 0) and (J > I) then
       msg := copy(passStr, I + 5, J - I - 5);
   end;
-end;
-
-class function TDecodeHikResult.DecodeMoreLikeThieResult(Xml: String;
-  var totalPage: Integer; var currentPage: Integer): TList<TK08VehInfo>;
-var
-  I, J: Integer;
-  key, value, s, msg: String;
-  veh: TK08VehInfo;
-  rrt: TRttiRecordType;
-  rField: TRttiField;
-  fields: TArray<TRttiField>;
-  json, Rows, Item: TQJson;
-begin
-  Result := nil;
-  rrt := TRTTIContext.Create.GetType(TypeInfo(TK08VehInfo)).AsRecord;
-  fields := rrt.GetFields;
-  I := pos('<return>', Xml);
-  J := pos('</return>', Xml);
-  if (I > 0) and (J > I) then
-    s := Trim(copy(Xml, I + 8, J - I - 8))
-  else
-    Exit;
-  json := TQJson.Create;
-  try
-    json.Parse(s);
-    Rows := TCommon.FindJson('msg', json);
-    if Rows <> nil then
-    begin
-      msg := Rows.value;
-      if msg = 'success' then
-      begin
-        Result := TList<TK08VehInfo>.Create;
-        totalPage := StrToIntDef(TCommon.GetJsonNode('totalPages', s), 0);
-        currentPage := StrToIntDef(TCommon.GetJsonNode('pageNo', s), 0);
-        Rows := TCommon.FindJson('rows', json);
-        if Rows <> nil then
-        begin
-          for I := 0 to Rows.Count - 1 do
-          begin
-            Item := TQJson.Create;
-            Item.Parse(Rows.Items[I].value);
-            // Item := Rows.Items[I];
-            for J := 0 to Item.Count - 1 do
-            begin
-              key := Item.Items[J].Name;
-              value := Item.Items[J].value;
-              try
-                rField := GetField(key, fields);
-                if rField <> nil then
-                  rField.SetValue(@veh, TValue.From<string>(value));
-              except
-                on e: exception do
-                  gLogger.Error(e.Message);
-              end;
-            end;
-            if veh.id <> '' then
-              Result.Add(veh);
-            Item.Free;
-          end;
-        end;
-      end
-      else
-        gLogger.Error(Rows.ToString);
-    end;
-  except
-    on e: exception do
-      gLogger.Error(e.Message);
-  end;
-  rrt := nil;
-  json.Free;
 end;
 
 end.
