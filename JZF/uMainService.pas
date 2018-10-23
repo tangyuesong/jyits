@@ -52,6 +52,7 @@ begin
     TKKAlarmThread.Create(False);
   if gUploadTempVio then
     TUploadTempVioThread.Create(False);
+  TUploadVioThread.Running := False;
   TVioSBThread.Create(False);
   Timer1.Interval := gHeartbeatInterval * 60000;
   Timer1Timer(nil);
@@ -122,7 +123,12 @@ begin
     TJTPThread.Create;
 
   if gUploadHisCfg.ACTIVATE and (Min = 0) then
-    TUploadVioThread.Create(False);
+  begin
+    if (not TUploadVioThread.Running) or
+      (TUploadVioThread.Running and (Now - TUploadVioThread.RunnTime > 5 / 24))
+    then
+      TUploadVioThread.Create(False);
+  end;
 end;
 
 end.

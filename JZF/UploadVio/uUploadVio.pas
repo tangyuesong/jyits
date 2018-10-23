@@ -36,6 +36,9 @@ type
     procedure UploadVioAutoCjjg();
   protected
     procedure Execute; override;
+  public
+    class var Running: Boolean;
+    class var RunnTime: TDateTime;
   end;
 
 implementation
@@ -79,12 +82,14 @@ var
   cjjgs: TStrings;
 begin
   ActiveX.CoInitialize(nil);
+  TUploadVioThread.RunnTime := Now;
   gLogger.Info('Upload Vio Thread Start');
   FWhiteList := TStringList.Create;
   // UploadVioAutoCjjg();
   UploadVioDateDiff();
   FWhiteList.Free;
   gLogger.Info('Upload Vio Thread End');
+  TUploadVioThread.Running := False;
   ActiveX.CoUninitialize;
 end;
 
