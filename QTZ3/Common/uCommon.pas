@@ -1129,19 +1129,21 @@ begin
     gConfig.ImportVioHome := ReadString('ImportVio', 'Home', '');
 
     gConfig.HaveK08 := ReadString('Hik', 'Enabled', '0') = '1';
-    gConfig.HikConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL',
+    gConfig.HikConfig.moreLikeThisHBase := ReadString('Hik', 'moreLikeThisHBase',
       'http://10.43.255.16:8080/kms/services/ws/vehicleSearch');
-    gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
-      'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
-    gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
-      'http://10.43.255.20:18010');
-    gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
-    gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
+    //gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
+    //  'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
+    //gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
+    //  'http://10.43.255.20:18010');
+    //gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
+    //gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
 
     gConfig.HikConfig.PicAnalysis := ReadString('Hik', 'PicAnalysis', '');
     gConfig.HikConfig.CarFace := ReadString('Hik', 'CarFace', '');
     gConfig.HikConfig.analysisExtra := ReadString('Hik', 'analysisExtra', '');
     gConfig.HikConfig.dataAnalysis := ReadString('Hik', 'dataAnalysis', '');
+
+    gConfig.PicUrl := ReadString('Hik', 'PicUrl', 'http://10.43.235.39:17116');
 
     gConfig.SMSUrl := ReadString('SMS', 'SMSUrl', '');
 

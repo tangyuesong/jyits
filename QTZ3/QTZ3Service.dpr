@@ -27,17 +27,14 @@ uses
   QString in 'Common\QString.pas',
   qrbtree in 'Common\qrbtree.pas',
   uLockVio in 'SPService\uLockVio.pas',
-  uVehPass in 'SPService\uVehPass.pas',
   MessageDigest_5 in 'SPService\MessageDigest_5.pas',
   uSMS in 'SPService\uSMS.pas',
-  uAnalysisPic in 'SPService\uAnalysisPic.pas',
   QBAes in 'Common\QBAes.pas',
   ElAES in 'Common\ElAES.pas',
   uImportVio in 'SPService\uImportVio.pas' {,
     uHik in 'Hik\uHik.pas';
 
     {$R *.RES},
-  uHik in 'Hik\uHik.pas',
   uWSManager in 'RMService\uWSManager.pas',
   TmriOutNewAccess in 'RMService\intf\TmriOutNewAccess.pas',
   uJKDefine in 'RMService\impl\uJKDefine.pas',

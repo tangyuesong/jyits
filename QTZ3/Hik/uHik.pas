@@ -26,8 +26,6 @@ type
     class function GetK08SearchParam(param, page, pageSize: string): TStrings;
     class function HttPPost(AUrl: String; AParams: TStrings;
       var AResult: String; AEncoding: TEncoding = nil): Boolean;
-    class function DFLogin(AUser, APwd: String; var AToken: String): Boolean;
-    class procedure DFLogout(AToken: String);
     class function GetK08Hpzl(): TDictionary<String, TStrings>; static;
     class function GetHpzl(): TDictionary<String, String>; static;
     class function GetK08Clpp(): TDictionary<String, String>; static;
@@ -41,10 +39,6 @@ type
     class property K08Csys: TDictionary<String, String> read GetK08Csys;
     class property DevID: TDictionary<String, String> read GetDevID;
 
-    class function DFCreateImageJob(AImages: TList<TImageInfo>): Boolean;
-    class function DFAnalysisOnePic(Url: String; var AMsg: String)
-      : TList<TDFVehInfo>; overload;
-    class function DFAnalysisOnePic(Url: String): String; overload;
     class function GetK08VehInfo(hphm, hpzl: String): String;
     class function GetK08PassList(kssj, jssj, hphm, hpzl, KDBH, clpp, csys,
       clpp1, aqd, aqd1, zyb, zyb1, gj, page, pageSize: string;
@@ -52,51 +46,6 @@ type
   end;
 
 implementation
-
-class function THik.DFAnalysisOnePic(Url: String; var AMsg: String)
-  : TList<TDFVehInfo>;
-var
-  Params: TStrings;
-  token, s: String;
-begin
-  Result := nil;
-  ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
-  if not DFLogin(gConfig.HikConfig.DFUser, gConfig.HikConfig.DFPwd, s) then
-    exit;
-  if s = '' then
-    exit;
-  token := s;
-  Params := TStringList.Create;
-  Params.Add
-    ('<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:wsdl="http://www.hikvision.com.cn/ver1/ivms/wsdl">');
-  Params.Add('   <soap:Header>');
-  Params.Add('      <wsdl:HeaderReq>');
-  Params.Add('         <wsdl:token>' + token + '</wsdl:token>');
-  Params.Add('         <wsdl:version>1.2</wsdl:version>');
-  Params.Add('      </wsdl:HeaderReq>');
-  Params.Add('   </soap:Header>');
-  Params.Add('   <soap:Body>');
-  Params.Add('      <wsdl:PicAnalysisReq>');
-  Params.Add('         <wsdl:nDataType>1</wsdl:nDataType>');
-  Params.Add('         <wsdl:algorithmType>258</wsdl:algorithmType>');
-  Params.Add('         <wsdl:strPicUrl>' + Url + '</wsdl:strPicUrl>');
-  Params.Add('         <wsdl:PicData>cid:1211963137164</wsdl:PicData>');
-  Params.Add('      </wsdl:PicAnalysisReq>');
-  Params.Add('   </soap:Body>');
-  Params.Add('</soap:Envelope>');
-  if HttPPost(gConfig.HikConfig.DFUrl, Params, s) then
-  begin
-    Result := TDecodeHikResult.DecodeDFAnalysisOnePicResult(s);
-  end
-  else
-  begin
-    glogger.Error(s);
-    AMsg := s;
-  end;
-  DFLogout(token);
-  Params.Free;
-  ActiveX.CoUninitialize;
-end;
 
 class function THik.AssemblePassjson(veh: TK08VehInfo): String;
 var
@@ -148,156 +97,6 @@ begin
   else
     Result := Result + ',"hpzlmc":""';
   Result := '{' + Result + '}';
-end;
-
-class function THik.DFAnalysisOnePic(Url: String): String;
-var
-  msg, logo: String;
-  ls, ls1: TList<TDFVehInfo>;
-  i: Integer;
-  veh: TDFVehInfo;
-begin
-  Result := '';
-  ls := DFAnalysisOnePic(Url, msg);
-  if ls <> nil then
-  begin
-    ls1 := TList<TDFVehInfo>.Create;
-    for i := 0 to ls.Count - 1 do
-    begin
-      veh := ls[i];
-      logo := ls[i].nMainLogo + '-' + ls[i].nSubLogo;
-      if K08Clpp.ContainsKey(logo) then
-        veh.nMainLogo := K08Clpp[logo]
-      else
-        veh.nMainLogo := logo;
-      ls1.Add(veh);
-    end;
-    Result := TCommon.RecordListToJSON<TDFVehInfo>(ls1);
-    ls1.Free;
-    ls.Free;
-  end;
-end;
-
-class function THik.DFCreateImageJob(AImages: TList<TImageInfo>): Boolean;
-var
-  Params: TStrings;
-  token, s, imgStr: String;
-  img: TImageInfo;
-begin
-  Result := False;
-  ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
-  if not DFLogin(gConfig.HikConfig.DFUser, gConfig.HikConfig.DFPwd, s) then
-    exit;
-  if s = '' then
-    exit;
-  token := s;
-
-  Params := TStringList.Create;
-
-  Params.Add
-    ('<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:wsdl="http://www.hikvision.com.cn/ver1/ivms/wsdl" xmlns:ivms="http://www.hikvision.com.cn/ver1/schema/ivms/">');
-  Params.Add('   <soap:Header>');
-  Params.Add('      <wsdl:HeaderReq>');
-  Params.Add('         <wsdl:token>' + token + '</wsdl:token>');
-  Params.Add('         <wsdl:version>1.2</wsdl:version>');
-  Params.Add('      </wsdl:HeaderReq>');
-  Params.Add('   </soap:Header>');
-  Params.Add('   <soap:Body>');
-  Params.Add('      <wsdl:SubmitJobReq>');
-  Params.Add('         <wsdl:jobInfo>');
-  Params.Add('            <ivms:jobName>job_' +
-    FormatDateTime('yyyymmddhhnnsszzz', Now()) + '</ivms:jobName>');
-  Params.Add('            <ivms:jobType>2</ivms:jobType>');
-  Params.Add('            <ivms:dataSourceType>2</ivms:dataSourceType>');
-  Params.Add('            <ivms:priority>30</ivms:priority>');
-  Params.Add('            <ivms:source>test111</ivms:source>');
-  Params.Add('            <ivms:algorithmType>770</ivms:algorithmType>');
-  Params.Add('            <!--1 or more repetitions:-->');
-  Params.Add('            <ivms:destinationInfos>');
-  Params.Add('               <ivms:destinationUrl>' +
-    gConfig.HikConfig.K08SaveUrl + '</ivms:destinationUrl>');
-  Params.Add('               <ivms:destinationType>17</ivms:destinationType>');
-  Params.Add('            </ivms:destinationInfos>');
-  Params.Add('            <ivms:streamInfo>');
-  Params.Add('               <ivms:streamType>2</ivms:streamType>');
-  imgStr := '               <ivms:streamUrl>images://{"imageInfos":	[';
-  for img in AImages do
-  begin
-    imgStr := imgStr + '{"data":	"' + img.Url + '",' +
-      '"dataType":	1,"id":	"dddddddddddddd","LaneNO":	1,"plate":	"","vehicleDir":	0,'
-      + '"targetAttrs":	"{\n\t\"crossing_id\":\t\"' + img.KDBH +
-      '\",\n\t\"pass_id\":\t\"' + img.GCXH + '\",\n\t\"lane_no\":\t\"' +
-      img.CDBH + '\",\n\t\"pass_time\":\t\"' + img.PassTime + '\"\n}"},'
-  end;
-  imgStr := copy(imgStr, 1, Length(imgStr) - 1) +
-    '],"operate":524287,"targetNum":100,"plateRegMode":	0}</ivms:streamUrl>';
-  Params.Add(imgStr);
-  Params.Add('               <ivms:smart>false</ivms:smart>');
-  Params.Add('               <ivms:maxSplitCount>0</ivms:maxSplitCount>');
-  Params.Add('               <ivms:splitTime>0</ivms:splitTime>');
-  Params.Add('            </ivms:streamInfo>');
-  Params.Add('         </wsdl:jobInfo>');
-  Params.Add('      </wsdl:SubmitJobReq>');
-  Params.Add('   </soap:Body>');
-  Params.Add('</soap:Envelope>');
-  Result := HttPPost(gConfig.HikConfig.DFUrl, Params, s);
-  DFLogout(token);
-  glogger.Debug(s);
-  Params.Free;
-  ActiveX.CoUninitialize;
-end;
-
-class function THik.DFLogin(AUser, APwd: String; var AToken: String): Boolean;
-var
-  Params: TStrings;
-  token: String;
-begin
-  AToken := '';
-  Result := False;
-  Params := TStringList.Create;
-  Params.Add
-    ('<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:wsdl="http://www.hikvision.com.cn/ver1/ivms/wsdl">');
-  Params.Add('   <soap:Header/>');
-  Params.Add('   <soap:Body>');
-  Params.Add('      <wsdl:LoginReq>');
-  Params.Add('         <wsdl:userName>' + AUser + '</wsdl:userName>');
-  Params.Add('         <wsdl:password>' + APwd + '</wsdl:password>');
-  Params.Add('      </wsdl:LoginReq>');
-  Params.Add('   </soap:Body>');
-  Params.Add('</soap:Envelope>');
-  if HttPPost(gConfig.HikConfig.DFUrl, Params, token) then
-  begin
-    if pos('<token>', token) > 0 then
-      token := copy(token, pos('<token>', token) + 7, Length(token));
-    if pos('</token>', token) > 0 then
-      AToken := copy(token, 1, pos('</token>', token) - 1);
-    Result := True;
-  end;
-  Params.Free;
-end;
-
-class procedure THik.DFLogout(AToken: String);
-var
-  Params: TStrings;
-  s: String;
-begin
-  Params := TStringList.Create;
-  Params.Add
-    ('<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:wsdl="http://www.hikvision.com.cn/ver1/ivms/wsdl">');
-  Params.Add('   <soap:Header>');
-  Params.Add('      <wsdl:HeaderReq>');
-  Params.Add('         <wsdl:token>' + AToken + '</wsdl:token>');
-  Params.Add('         <wsdl:version>1.2</wsdl:version>');
-  Params.Add('      </wsdl:HeaderReq>');
-  Params.Add('   </soap:Header>');
-  Params.Add('   <soap:Body>');
-  Params.Add('      <wsdl:LogoutReq>');
-  Params.Add('         <wsdl:token>' + AToken + '</wsdl:token>');
-  Params.Add('      </wsdl:LogoutReq>');
-  Params.Add('   </soap:Body>');
-  Params.Add('</soap:Envelope>');
-  HttPPost(gConfig.HikConfig.DFUrl, Params, s);
-  Params.Free;
 end;
 
 class function THik.GetK08SearchParam(param, page, pageSize: string): TStrings;
@@ -410,7 +209,8 @@ begin
 
   Params := GetK08SearchParam(param, page, pageSize);
 
-  if HttPPost(gConfig.HikConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
+  if HttPPost(gConfig.HikConfig.moreLikeThisHBase, Params, s, TEncoding.UTF8)
+  then
   begin
     try
       vehList := TDecodeHikResult.DecodeK08SearchResult(s, totalPage,
@@ -450,7 +250,8 @@ begin
 
   Params := GetK08SearchParam(param, '1', '1');
 
-  if HttPPost(gConfig.HikConfig.K08SearchURL, Params, s, TEncoding.UTF8) then
+  if HttPPost(gConfig.HikConfig.moreLikeThisHBase, Params, s, TEncoding.UTF8)
+  then
   begin
     vehList := TDecodeHikResult.DecodeK08SearchResult(s, totalPage,
       currentPage);

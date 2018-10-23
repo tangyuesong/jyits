@@ -40,31 +40,145 @@ type
     class function GetCarFaceJobParam(passTimeStart, passTimeEnd, crossingIdSet,
       picData: String; stDetectRect, stROIRect: TRect;
       modelCmpThreadhold, modelTopN, ROICmpThreadhold, ROITopN, vehiclelogo,
-      vehiclesublogo, vehicleHead, vehiclemodel: String; modeInfo: TmodeInfo)
+      vehiclesublogo, vehiclehead, vehiclemodel: String; modeInfo: TmodeInfo)
       : TStrings;
     class function DecodeDarkKnightResult(xml: String): String;
     class function DecodeTrackerAssociateResult(xml: String): String;
     class function DecodefootHoldsResult(xml: String): String;
+    class function GetMoreLikeThisParam(param: TDictionary<string, String>;
+      page, pageSize: string): TStrings; static;
   public
     class function picAnalysis(picStr: WideString): String;
     class function submitCarFaceCompareJob(passTimeStart, passTimeEnd,
       crossingIdSet, picData: String; stDetectRect, stROIRect: TRect;
       modelCmpThreadhold, modelTopN, ROICmpThreadhold, ROITopN, vehiclelogo,
-      vehiclesublogo, vehicleHead, vehiclemodel: String;
+      vehiclesublogo, vehiclehead, vehiclemodel: String;
       modeInfo: TmodeInfo): String;
     class function getJobResultByTaskId(taskid: String): String;
     class function getJobFinalResultByTaskId(taskid: String): String;
-    class function footHoldsByTrackAndTime(plateNo, startTime, endTime,
+    class function footHoldsByTrackAndTime(plateno, startTime, endTime,
       pageSize, pageNo: String): String;
     class function darkKnightAnalysis(startTime, endTime, crosses, pageSize,
       pageNo: String): String;
-    class function trackerAssociateAnalysis(plateNo, startTime, endTime,
+    class function trackerAssociateAnalysis(plateno, startTime, endTime,
       timeInterval, threshold, crosses, pageSize, pageNo: String): String;
+    class function moreLikeThis(param: TDictionary<string, String>;
+      page, pageSize: String): String; static;
   end;
 
 implementation
 
+uses
+  uDecodeHikResult;
+
 { THikDSJ }
+
+class function THikDSJ.moreLikeThis(param: TDictionary<string, String>;
+  page, pageSize: String): String;
+var
+  Params: TStrings;
+  s, h, clpp: String;
+  vehList: TList<TK08VehInfo>;
+  veh: TK08VehInfo;
+  totalPage, currentPage: Integer;
+begin
+  Result := '';
+  ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
+
+  Params := GetMoreLikeThisParam(param, page, pageSize);
+
+  if HttPPost(gConfig.HikConfig.moreLikeThisHBase, Params, s, TEncoding.UTF8)
+  then
+  begin
+    try
+      vehList := TDecodeHikResult.DecodeMoreLikeThieResult(s, totalPage,
+        currentPage);
+    except
+      glogger.Error(s);
+    end;
+    if (vehList <> nil) and (vehList.Count > 0) then
+    begin
+      for veh in vehList do
+      begin
+        s := '"HPHM":"' + veh.plateno + '",';
+        if gHpzl.ContainsKey(veh.vehicletype) then
+          s := s + '"HPZL":"' + gHpzl[veh.vehicletype] + '"'
+        else
+          s := s + '"HPZL":"' + veh.vehicletype + '"';
+        s := s + ',"GCSJ":"' + FormatDateTime('yyyy/mm/dd hh:nn:ss',
+          DateUtils.IncMilliSecond(25569.3333333333,
+          StrToInt64(veh.passtime))) + '",';
+
+        if gHikID.ContainsKey(veh.crossingid) then
+          s := s + '"KDBH":"' + gHikID[veh.crossingid] + '"'
+        else if gDevID.ContainsKey(veh.crossingid) then
+          s := s + '"KDBH":"' + gDevID[veh.crossingid] + '"'
+        else
+          s := s + '"KDBH":"' + veh.crossingid + '"';
+
+        clpp := veh.vehiclelogo + '-' + veh.vehiclesublogo;
+        if gK08Clpp.ContainsKey(clpp) then
+          s := s + ',"CLPP":"' + gK08Clpp[clpp] + '"'
+        else if gK08Clpp.ContainsKey(veh.vehiclelogo + '-0') then
+          s := s + ',"CLPP":"' + gK08Clpp[veh.vehiclelogo + '-0'] + '"'
+        else
+          s := s + ',"CLPP":"' + clpp + '"';
+
+        if gK08Csys.ContainsKey(veh.vehiclecolor) then
+          s := s + ',"CSYS":"' + gK08Csys[veh.vehiclecolor] + '"'
+        else
+          s := s + ',"CSYS":"' + veh.vehiclecolor + '"';
+        s := '{' + s + ',"CDBH":"' + veh.laneno + '","CLSD":"' +
+          veh.vehiclespeed + '","FWQDZ":"","TP1":"' + gConfig.PicUrl +
+          veh.imagepath + '"}';
+
+        Result := Result + ',' + s;
+      end;
+      Result := '[' + Result.Substring(1) + ']';
+      vehList.Free;
+    end
+  end;
+  Params.Free;
+  ActiveX.CoUninitialize;
+end;
+
+class function THikDSJ.GetMoreLikeThisParam(param: TDictionary<string, String>;
+  page, pageSize: string): TStrings;
+var
+  key: String;
+begin
+  Result := TStringList.Create;
+  Result.Add
+    ('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">');
+  Result.Add('   <soapenv:Header/>');
+  Result.Add('   <soapenv:Body>');
+  Result.Add('      <ws:moreLikeThisCustomized>');
+  Result.Add('         <arg0>');
+  Result.Add('            <beanId>pass</beanId>');
+  Result.Add('            <currentPage>' + page + '</currentPage>');
+  Result.Add('            <pageSize>' + pageSize + '</pageSize>');
+  for key in param.Keys do
+  begin
+    if key = 'q' then
+    begin
+      Result.Add('             <q>' + param[key] + '</q>');
+    end
+    else
+    begin
+      Result.Add('             <fieldOptions>');
+      Result.Add('               <filedName>' + key + '</filedName>');
+      Result.Add('               <keyWords>' + param[key] + '</keyWords>');
+      Result.Add('             </fieldOptions>');
+    end;
+  end;
+  Result.Add('           <cursorMark>*</cursorMark>');
+  Result.Add('           <sortColumn>passtime</sortColumn>');
+  Result.Add('           <sortMethod>desc</sortMethod>');
+  Result.Add('         </arg0>');
+  Result.Add('      </ws:moreLikeThisCustomized>');
+  Result.Add('   </soapenv:Body>');
+  Result.Add('</soapenv:Envelope>');
+end;
 
 class function THikDSJ.darkKnightAnalysis(startTime, endTime, crosses, pageSize,
   pageNo: String): String;
@@ -98,12 +212,12 @@ begin
   Params.Add('      </ws:darkKnightAnalysis>');
   Params.Add('   </soapenv:Body>');
   Params.Add('</soapenv:Envelope>');
-  gLogger.Info(Params.Text);
+  glogger.Info(Params.Text);
   if not HttPPost(Url, Params, Result, TEncoding.UTF8) then
     Result := ''
   else
   begin
-    gLogger.Info('[darkKnightAnalysis] Result: ' + Result);
+    glogger.Info('[darkKnightAnalysis] Result: ' + Result);
     Result := DecodeDarkKnightResult(Result);
   end;
   Params.Free;
@@ -112,7 +226,7 @@ end;
 class function THikDSJ.GetCarFaceJobParam(passTimeStart, passTimeEnd,
   crossingIdSet, picData: String; stDetectRect, stROIRect: TRect;
   modelCmpThreadhold, modelTopN, ROICmpThreadhold, ROITopN, vehiclelogo,
-  vehiclesublogo, vehicleHead, vehiclemodel: String; modeInfo: TmodeInfo)
+  vehiclesublogo, vehiclehead, vehiclemodel: String; modeInfo: TmodeInfo)
   : TStrings;
 var
   Params: TStrings;
@@ -175,8 +289,8 @@ begin
   if vehiclesublogo <> '' then
     Params.Add('            <subVehicleLogo>' + vehiclesublogo +
       '</subVehicleLogo>');
-  if vehicleHead <> '' then
-    Params.Add('            <vehicleHead>' + vehicleHead + '</vehicleHead>');
+  if vehiclehead <> '' then
+    Params.Add('            <vehicleHead>' + vehiclehead + '</vehicleHead>');
   if vehiclelogo <> '' then
     Params.Add('            <vehicleLogo>' + vehiclelogo + '</vehicleLogo>');
   if vehiclemodel <> '' then
@@ -208,7 +322,7 @@ begin
 
   if not HttPPost(Url, Params, Result, TEncoding.UTF8) then
     Result := '';
-  gLogger.Info('[getJobFinalResultByTaskId] Result: ' + Result);
+  glogger.Info('[getJobFinalResultByTaskId] Result: ' + Result);
   Params.Free;
 end;
 
@@ -233,7 +347,7 @@ begin
 
   if not HttPPost(Url, Params, Result, TEncoding.UTF8) then
     Result := '';
-  gLogger.Info('[getJobResultByTaskId] Result: ' + Result);
+  glogger.Info('[getJobResultByTaskId] Result: ' + Result);
   Params.Free;
 end;
 
@@ -299,9 +413,8 @@ begin
       begin
         s := '{"id":"' + TCommon.GetJsonNode('id', Rows.Items[i].value) + '",' +
           '"passtime":"' + TCommon.GetJsonNode('passtime', Rows.Items[i].value)
-          + '","picurl":"http://10.43.255.8:18088' +
-          TCommon.GetJsonNode('picurl', Rows.Items[i].value) +
-          '&appname=PIC&isstream=1",' + '"hphm":"' +
+          + '","picurl":"' + gConfig.PicUrl + TCommon.GetJsonNode('picurl',
+          Rows.Items[i].value) + '",' + '"hphm":"' +
           TCommon.GetJsonNode('plateno', Rows.Items[i].value) + '",' +
           '"total":"' + TCommon.GetJsonNode('total',
           Rows.Items[i].value) + '",';
@@ -331,7 +444,7 @@ begin
     end;
   except
     on e: exception do
-      gLogger.Error(e.Message);
+      glogger.Error(e.Message);
   end;
   json.Free;
 end;
@@ -365,12 +478,12 @@ begin
         s := '{"gcsj":"' + FormatDateTime('yyyy/mm/dd hh:nn:ss',
           DateUtils.IncMilliSecond(25569.3333333333,
           StrToInt64(TCommon.GetJsonNode('passtime', Rows.Items[i].value)))) +
-          '","picurl":"http://10.43.255.8:18088' + TCommon.GetJsonNode
-          ('imagepath', Rows.Items[i].value) + '&appname=PIC&isstream=1",' +
-          '"hphm":"' + TCommon.GetJsonNode('plateno', Rows.Items[i].value) +
-          '","latitude":"' + TCommon.GetJsonNode('latitude',
-          Rows.Items[i].value) + '","longitude":"' +
-          TCommon.GetJsonNode('longitude', Rows.Items[i].value) + '",';
+          '","picurl":"' + gConfig.PicUrl + TCommon.GetJsonNode('imagepath',
+          Rows.Items[i].value) + '",' + '"hphm":"' +
+          TCommon.GetJsonNode('plateno', Rows.Items[i].value) + '","latitude":"'
+          + TCommon.GetJsonNode('latitude', Rows.Items[i].value) +
+          '","longitude":"' + TCommon.GetJsonNode('longitude',
+          Rows.Items[i].value) + '",';
 
         kdbh := TCommon.GetJsonNode('crossingid', Rows.Items[i].value);
         if gHikID.ContainsKey(kdbh) then
@@ -409,7 +522,7 @@ begin
     end;
   except
     on e: exception do
-      gLogger.Error(e.Message);
+      glogger.Error(e.Message);
   end;
   json.Free;
 end;
@@ -491,9 +604,8 @@ begin
             Info := Info + '"csys":"' + gK08Csys[csys] + '",'
           else
             Info := Info + '"csys":"' + csys + '",';
-          Info := Info + '"picurl":"http://10.43.255.8:18088' +
-            TCommon.GetJsonNode('imagepath', jsonString) +
-            '&appname=PIC&isstream=1"}';
+          Info := Info + '"picurl":"' + gConfig.PicUrl +
+            TCommon.GetJsonNode('imagepath', jsonString) + '"}';
           if j > 0 then
             s := s + ',';
           s := s + Info;
@@ -508,12 +620,12 @@ begin
     Result := '[' + Result + ']';
   except
     on e: exception do
-      gLogger.Error(e.Message);
+      glogger.Error(e.Message);
   end;
   json.Free;
 end;
 
-class function THikDSJ.footHoldsByTrackAndTime(plateNo, startTime, endTime,
+class function THikDSJ.footHoldsByTrackAndTime(plateno, startTime, endTime,
   pageSize, pageNo: String): String;
 var
   Url: String;
@@ -528,7 +640,7 @@ begin
   Params.Add('   <soapenv:Header/>');
   Params.Add('   <soapenv:Body>');
   Params.Add('      <ws:footHoldsByTrackAndTime>');
-  Params.Add('         <plateNo>' + plateNo + '</plateNo>');
+  Params.Add('         <plateNo>' + plateno + '</plateNo>');
   Params.Add('         <plateColor>ALL</plateColor>');
   Params.Add('         <plateType>ALL</plateType>');
   Params.Add('         <startTime>' + startTime + '</startTime>');
@@ -540,12 +652,12 @@ begin
   Params.Add('      </ws:footHoldsByTrackAndTime>');
   Params.Add('   </soapenv:Body>');
   Params.Add('</soapenv:Envelope>');
-  gLogger.Info(Params.Text);
+  glogger.Info(Params.Text);
   if not HttPPost(Url, Params, Result, TEncoding.UTF8) then
     Result := ''
   else
   begin
-    gLogger.Info('[footHoldsByTrackAndTime] Result: ' + Result);
+    glogger.Info('[footHoldsByTrackAndTime] Result: ' + Result);
     Result := DecodefootHoldsResult(Result);
   end;
   Params.Free;
@@ -572,7 +684,7 @@ begin
   Params.Add('</soapenv:Body>');
   Params.Add('</soapenv:Envelope>');
   b := HttPPost(Url, Params, Result, TEncoding.UTF8);
-  gLogger.Info('[picAnalysis] Result: ' + Result);
+  glogger.Info('[picAnalysis] Result: ' + Result);
   if not b then
     Result := '';
   Params.Free;
@@ -581,24 +693,24 @@ end;
 class function THikDSJ.submitCarFaceCompareJob(passTimeStart, passTimeEnd,
   crossingIdSet, picData: String; stDetectRect, stROIRect: TRect;
   modelCmpThreadhold, modelTopN, ROICmpThreadhold, ROITopN, vehiclelogo,
-  vehiclesublogo, vehicleHead, vehiclemodel: String;
+  vehiclesublogo, vehiclehead, vehiclemodel: String;
   modeInfo: TmodeInfo): String;
 var
   Params: TStrings;
 begin
   Params := GetCarFaceJobParam(passTimeStart, passTimeEnd, crossingIdSet,
     picData, stDetectRect, stROIRect, modelCmpThreadhold, modelTopN,
-    ROICmpThreadhold, ROITopN, vehiclelogo, vehiclesublogo, vehicleHead,
+    ROICmpThreadhold, ROITopN, vehiclelogo, vehiclesublogo, vehiclehead,
     vehiclemodel, modeInfo);
   if not HttPPost(gConfig.HikConfig.CarFace, Params, Result, TEncoding.UTF8)
   then
     Result := '';
-  gLogger.Info('[submitCarFaceCompareJob] Result: ' + Result);
+  glogger.Info('[submitCarFaceCompareJob] Result: ' + Result);
   Params.Free;
 
 end;
 
-class function THikDSJ.trackerAssociateAnalysis(plateNo, startTime, endTime,
+class function THikDSJ.trackerAssociateAnalysis(plateno, startTime, endTime,
   timeInterval, threshold, crosses, pageSize, pageNo: String): String;
 var
   Url: String;
@@ -616,7 +728,7 @@ begin
   Params.Add('   <soapenv:Body>');
   Params.Add('      <ws:trackerAssociateAnalysis>');
   Params.Add('         <taskId/>');
-  Params.Add('         <plateNo>' + plateNo + '</plateNo>');
+  Params.Add('         <plateNo>' + plateno + '</plateNo>');
   Params.Add('         <crosses>' + crosses + '</crosses>');
   Params.Add('         <startTime>' + startTime + '</startTime>');
   Params.Add('         <endTime>' + endTime + '</endTime>');
@@ -627,12 +739,12 @@ begin
   Params.Add('      </ws:trackerAssociateAnalysis>');
   Params.Add('   </soapenv:Body>');
   Params.Add('</soapenv:Envelope>');
-  gLogger.Info(Params.Text);
+  glogger.Info(Params.Text);
   if not HttPPost(Url, Params, Result, TEncoding.UTF8) then
     Result := ''
   else
   begin
-    gLogger.Info('[trackerAssociateAnalysis] Result: ' + Result);
+    glogger.Info('[trackerAssociateAnalysis] Result: ' + Result);
     Result := DecodeTrackerAssociateResult(Result);
   end;
   Params.Free;

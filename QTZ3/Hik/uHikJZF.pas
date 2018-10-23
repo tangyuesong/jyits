@@ -89,8 +89,7 @@ begin
       else
         s := s + '"csys":"' + veh.vehiclecolor + '",';
       s := '{' + s + '"cdbh":"' + veh.laneno + '","clsd":"' + veh.vehiclespeed +
-        '","fwqdz":"","tp1":"http://10.43.255.8:18088' + veh.imagepath +
-        '&appname=PIC&isstream=1"}';
+        '","fwqdz":"","tp1":"' + gConfig.PicUrl + veh.imagepath + '"}';
 
       Result := Result + ',' + s;
     end;
