@@ -108,9 +108,9 @@ begin
   TfrxMemoView(frxrprt1.FindObject('wfsjf')).Memo.Text := Copy(obj.WFSJ, 15, 2);
   TfrxMemoView(frxrprt1.FindObject('hphm')).Memo.Text := obj.HPHM;
   if TLZDictionary.gDicMain.ContainsKey('HPZL') and TLZDictionary.gDicMain
-    ['hpzl'].ContainsKey(obj.HPZL) then
+    ['HPZL'].ContainsKey(obj.HPZL) then
     TfrxMemoView(frxrprt1.FindObject('hpzl')).Memo.Text :=
-      TLZDictionary.gDicMain['hpzl'][obj.HPZL]
+      TLZDictionary.gDicMain['HPZL'][obj.HPZL]
   else
     TfrxMemoView(frxrprt1.FindObject('hpzl')).Memo.Text := obj.HPZL;
   TfrxMemoView(frxrprt1.FindObject('wfdz')).Memo.Text := obj.wfdz;
