@@ -73,9 +73,7 @@ begin
     end;
     http.Free;
     stream.Free;
-  end
-  else
-    logger.Warn('DFSHost is null');
+  end;
 end;
 
 class procedure Tmypint.CheckFalseHPHM(pass: TPass);
@@ -302,7 +300,7 @@ class procedure Tmypint.SaveToSolr(list: Tlist<TPass>);
 begin
   if solrFtp.host = '' then
   begin
-    logger.Warn('SolrFtp is null');
+    //logger.Warn('SolrFtp is null');
     exit;
   end;
   FtpUpload(list, solrFtp);
@@ -312,7 +310,7 @@ class procedure Tmypint.SaveToHDP(list: Tlist<TPass>);
 begin
   if hdpFtp.host = '' then
   begin
-    logger.Warn('HDP Ftp Host is null');
+    //logger.Warn('HDP Ftp Host is null');
     exit;
   end;
   FtpUpload(list, hdpFtp);
@@ -402,7 +400,6 @@ end;
 
 class function Tmypint.WriteVehicleInfo(pass: TPass; device: TDevice): Boolean;
 var
-  url, r: string;
   ret: int64;
 begin
   //if (not gOpenedDevice.ContainsKey(device.SBBH))or                         // 该设备不上报
@@ -445,7 +442,6 @@ var
   ret, WSResult: string;
   hole: HoleService;
   driverWayId, carType: string;
-  jkxlh, m_info: string;
 begin
   Result := true;
   try
@@ -513,7 +509,6 @@ class procedure Tmypint.SaveVio(list: Tlist<TPass>);
 var
   sql: TStrings;
   vio: TPass;
-  s: string;
 begin
   sql := TStringList.Create;
   for vio in list do
@@ -534,7 +529,7 @@ begin
       + vio.tp1 + ''','''
       + vio.tp2 + ''','''
       + vio.tp3 + ''',''0''),');
-    if sql.Count = 999 then
+    if sql.Count = 1000 then
     begin
       exec(sql);
     end;
@@ -580,7 +575,7 @@ begin
       pass.ser05.QuotedString + ',' +
       pass.ldbh.QuotedString + ',' +
       pass.lkbh.QuotedString + '),');
-    if sql.Count = 999 then
+    if sql.Count = 1000 then
     begin
       s := sql.Text;
       s := copy(s, 1, length(s) - 3); // 回车换行
