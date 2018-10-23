@@ -1107,7 +1107,6 @@ begin
   Result := True;
   with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
   begin
-    gConfig.dwdm := ReadString('SYS', 'DWDM', '445100000000');
     gLogger.Level := ReadInteger('SYS', 'LogLevel', 0);
     gConfig.DBServer := ReadString('DB', 'Server', '.');
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
@@ -1118,7 +1117,7 @@ begin
     gConfig.SolrHome := ReadString('solr', 'home',
       'http://10.43.255.66:8983/solr/traffic/');
 
-    gConfig.HttpServerPort := ReadInteger('Http', 'Port', 20086);
+    gConfig.HttpServerPort := ReadInteger('Http', 'Port', 17115);
     gConfig.HttpPath := ReadString('Http', 'Path', '');
     gConfig.HttpHome := ReadString('Http', 'Home', '');
 
@@ -1223,6 +1222,8 @@ begin
   FSaUsers := TStringList.Create;
   FSaUsers.add('sa');
   FSaUsers.add('su');
+
+  gConfig.dwdm := gSQLHelper.GetSinge('select CJJG from YJITSDB.dbo.S_SA_SETUP');
   InitLHY_JK;
 
   InitK08Hpzl();
