@@ -31,7 +31,7 @@ uses
   dxLayoutControl, dxLayoutcxEditAdapters, dxLayoutControlAdapters, cxContainer,
   Vcl.Menus, Vcl.StdCtrls, cxButtons, cxTextEdit, uRequestItf, uJsonUtils,
   uGlobal, dxFrame, uFrameRoleEdit, uFrameRoleUserEdit, System.Actions,
-  Vcl.ActnList, cxMaskEdit, cxDropDownEdit, Vcl.ExtCtrls;
+  Vcl.ActnList, cxMaskEdit, cxDropDownEdit, Vcl.ExtCtrls, cxLabel;
 
 type
   TToolRoleManage = class(TToolGridFrame)

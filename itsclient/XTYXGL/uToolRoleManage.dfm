@@ -1,18 +1,23 @@
 inherited ToolRoleManage: TToolRoleManage
+  Width = 804
+  Height = 532
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Height = 305
+    Width = 804
+    Height = 532
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
-      Top = 85
-      Height = 207
-      TabOrder = 7
-      ExplicitTop = 85
-      ExplicitHeight = 207
+      Top = 113
+      Width = 778
+      Height = 406
+      TabOrder = 8
+      ExplicitTop = 113
+      ExplicitWidth = 778
+      ExplicitHeight = 406
     end
     object BtnInput: TcxButton [1]
-      Left = 408
+      Left = 761
       Top = 13
       Width = 30
       Height = 25
@@ -47,12 +52,16 @@ inherited ToolRoleManage: TToolRoleManage
       Top = 57
       ExplicitTop = 57
     end
+    inherited lbCount: TcxLabel
+      Top = 85
+      ExplicitTop = 85
+    end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
       Index = 1
     end
     inherited dxLayoutItem3: TdxLayoutItem
-      Index = 3
+      Index = 4
     end
     inherited dxLayoutGroupPage: TdxLayoutGroup
       Visible = False
@@ -139,7 +148,7 @@ inherited ToolRoleManage: TToolRoleManage
   inline fRoleUserEdit: TFrameRoleUserEdit [2]
     Left = 0
     Top = 400
-    Width = 617
+    Width = 750
     Height = 569
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -150,15 +159,13 @@ inherited ToolRoleManage: TToolRoleManage
     TabOrder = 6
     Visible = False
     ExplicitTop = 400
-    ExplicitWidth = 617
+    ExplicitWidth = 750
     inherited dxLayoutControl2: TdxLayoutControl
-      Width = 617
+      Width = 750
       ExplicitWidth = 617
       inherited cxGrid1: TcxGrid
-        Width = 608
-        Height = 386
-        ExplicitWidth = 608
-        ExplicitHeight = 386
+        Width = 694
+        ExplicitWidth = 694
         inherited GridView: TcxGridDBTableView
           inherited GridViewColumn1: TcxGridDBColumn
             IsCaptionAssigned = True
@@ -166,26 +173,14 @@ inherited ToolRoleManage: TToolRoleManage
         end
       end
       inherited btnSave: TcxButton
-        Left = 253
-        Top = 499
+        Left = 296
         OnClick = fRoleUserEditbtnSaveClick
-        ExplicitLeft = 253
-        ExplicitTop = 499
+        ExplicitLeft = 296
       end
       inherited btnCancel: TcxButton
-        Left = 335
-        Top = 499
+        Left = 378
         OnClick = btnCancelClick
-        ExplicitLeft = 335
-        ExplicitTop = 499
-      end
-      inherited cxButton1: TcxButton
-        Top = 499
-        ExplicitTop = 499
-      end
-      inherited cxButton2: TcxButton
-        Top = 499
-        ExplicitTop = 499
+        ExplicitLeft = 378
       end
     end
   end

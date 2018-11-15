@@ -1,48 +1,48 @@
 inherited FrameRoleUserEdit: TFrameRoleUserEdit
-  Width = 668
+  Width = 762
   Height = 569
   Align = alNone
   Visible = False
-  ExplicitWidth = 668
+  ExplicitWidth = 762
   ExplicitHeight = 569
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 668
+    Width = 762
     Height = 569
     ExplicitWidth = 668
     ExplicitHeight = 569
     object edtYhxm: TcxTextEdit [0]
-      Left = 439
+      Left = 391
       Top = 59
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 2
       Height = 21
-      Width = 100
+      Width = 68
     end
     object edtYhbh: TcxTextEdit [1]
-      Left = 278
+      Left = 262
       Top = 59
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 1
       Height = 21
-      Width = 100
+      Width = 68
     end
     object btnSearch: TcxButton [2]
-      Left = 546
+      Left = 631
       Top = 59
       Width = 75
       Height = 25
       Caption = #26597#25214
-      TabOrder = 3
+      TabOrder = 4
       OnClick = btnSearchClick
     end
     object cxGrid1: TcxGrid [3]
       Left = 28
       Top = 106
-      Width = 612
+      Width = 706
       Height = 403
-      TabOrder = 4
+      TabOrder = 5
       object GridView: TcxGridDBTableView
         Navigator.Buttons.CustomButtons = <>
         Navigator.Buttons.Prior.Visible = False
@@ -120,20 +120,20 @@ inherited FrameRoleUserEdit: TFrameRoleUserEdit
       end
     end
     object btnSave: TcxButton [4]
-      Left = 255
+      Left = 302
       Top = 516
       Width = 75
       Height = 25
       Caption = #20445#23384
-      TabOrder = 7
+      TabOrder = 8
     end
     object btnCancel: TcxButton [5]
-      Left = 337
+      Left = 384
       Top = 516
       Width = 75
       Height = 25
       Caption = #21462#28040
-      TabOrder = 8
+      TabOrder = 9
     end
     object cxButton1: TcxButton [6]
       Left = 28
@@ -141,7 +141,7 @@ inherited FrameRoleUserEdit: TFrameRoleUserEdit
       Width = 30
       Height = 25
       Caption = #20840#36873
-      TabOrder = 5
+      TabOrder = 6
       OnClick = cxButton1Click
     end
     object cxButton2: TcxButton [7]
@@ -150,7 +150,7 @@ inherited FrameRoleUserEdit: TFrameRoleUserEdit
       Width = 30
       Height = 25
       Caption = #21453#36873
-      TabOrder = 6
+      TabOrder = 7
       OnClick = cxButton2Click
     end
     object cbbDwdm: TcxComboBox [8]
@@ -160,7 +160,21 @@ inherited FrameRoleUserEdit: TFrameRoleUserEdit
       Style.HotTrack = False
       TabOrder = 0
       Height = 21
-      Width = 120
+      Width = 104
+    end
+    object cbbRyll: TcxComboBox [9]
+      Left = 520
+      Top = 59
+      AutoSize = False
+      Properties.Items.Strings = (
+        ''
+        #20132#35686
+        #27665#35686
+        #21327#35686)
+      Style.HotTrack = False
+      TabOrder = 3
+      Height = 21
+      Width = 104
     end
     object dxLayoutGroup1: TdxLayoutGroup
       Parent = dxLayoutControl2Group_Root
@@ -183,7 +197,7 @@ inherited FrameRoleUserEdit: TFrameRoleUserEdit
       CaptionOptions.Text = #29992#25143#22995#21517
       Control = edtYhxm
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 100
+      ControlOptions.OriginalWidth = 68
       ControlOptions.ShowBorder = False
       Index = 2
     end
@@ -192,7 +206,7 @@ inherited FrameRoleUserEdit: TFrameRoleUserEdit
       CaptionOptions.Text = #29992#25143#32534#21495
       Control = edtYhbh
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 100
+      ControlOptions.OriginalWidth = 68
       ControlOptions.ShowBorder = False
       Index = 1
     end
@@ -204,14 +218,14 @@ inherited FrameRoleUserEdit: TFrameRoleUserEdit
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
-      Index = 3
+      Index = 4
     end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxLayoutGroup2
       CaptionOptions.Text = #21333#20301#20195#30721
       Control = cbbDwdm
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 120
+      ControlOptions.OriginalWidth = 104
       ControlOptions.ShowBorder = False
       Index = 0
     end
@@ -292,6 +306,15 @@ inherited FrameRoleUserEdit: TFrameRoleUserEdit
       ControlOptions.OriginalWidth = 30
       ControlOptions.ShowBorder = False
       Index = 1
+    end
+    object dxLayoutItem10: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #20154#21592#31867#22411
+      Control = cbbRyll
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 104
+      ControlOptions.ShowBorder = False
+      Index = 3
     end
   end
   object FDMemTable1: TFDMemTable

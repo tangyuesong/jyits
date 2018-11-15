@@ -1,19 +1,17 @@
 inherited ToolUserManage: TToolUserManage
-  Width = 816
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 816
     Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 790
-      Height = 219
+      Width = 595
+      Height = 174
       TabOrder = 5
       ExplicitTop = 45
-      ExplicitWidth = 790
-      ExplicitHeight = 219
+      ExplicitWidth = 595
+      ExplicitHeight = 174
     end
     object edtYhbh: TcxTextEdit [1]
       Left = 228
@@ -52,7 +50,7 @@ inherited ToolUserManage: TToolUserManage
       Width = 100
     end
     object BtnInput: TcxButton [5]
-      Left = 773
+      Left = 578
       Top = 13
       Width = 30
       Height = 25
@@ -64,34 +62,38 @@ inherited ToolUserManage: TToolUserManage
       OnClick = BtnInputClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 271
+      Top = 226
       TabOrder = 6
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited btnFirstPage: TcxButton
-      Top = 271
+      Top = 226
       TabOrder = 7
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited btnPriorPage: TcxButton
-      Top = 271
+      Top = 226
       TabOrder = 8
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 271
+      Top = 226
       TabOrder = 9
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited btnnextPage: TcxButton
-      Top = 271
+      Top = 226
       TabOrder = 10
-      ExplicitTop = 271
+      ExplicitTop = 226
     end
     inherited btnLastPage: TcxButton
-      Top = 271
+      Top = 226
       TabOrder = 11
-      ExplicitTop = 271
+      ExplicitTop = 226
+    end
+    inherited lbCount: TcxLabel
+      Top = 254
+      ExplicitTop = 254
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
@@ -172,64 +174,98 @@ inherited ToolUserManage: TToolUserManage
       ExplicitWidth = 377
       ExplicitHeight = 435
       inherited btnSave: TcxButton
-        Left = 107
-        Top = 382
+        Left = 98
+        Top = 445
         OnClick = btnSaveClick
-        ExplicitLeft = 107
-        ExplicitTop = 382
+        ExplicitLeft = 98
+        ExplicitTop = 445
       end
       inherited btnExit: TcxButton
-        Left = 195
-        Top = 382
+        Left = 186
+        Top = 445
         OnClick = btnExitClick
-        ExplicitLeft = 195
-        ExplicitTop = 382
+        ExplicitLeft = 186
+        ExplicitTop = 445
       end
       inherited edtYhbh: TcxTextEdit
-        ExplicitWidth = 263
-        Width = 263
+        ExplicitWidth = 238
+        Width = 238
       end
       inherited edtYhxm: TcxTextEdit
-        ExplicitWidth = 263
-        Width = 263
+        ExplicitWidth = 238
+        Width = 238
       end
       inherited edtYhmm: TcxTextEdit
-        ExplicitWidth = 263
-        Width = 263
+        ExplicitWidth = 238
+        Width = 238
       end
       inherited edtSfzh: TcxTextEdit
-        ExplicitWidth = 263
-        Width = 263
+        ExplicitWidth = 238
+        Width = 238
       end
       inherited edtSjhm: TcxTextEdit
-        ExplicitWidth = 263
-        Width = 263
+        ExplicitWidth = 238
+        Width = 238
       end
       inherited cbbYhzw: TcxComboBox
-        ExplicitWidth = 263
-        Width = 263
+        ExplicitWidth = 238
+        Width = 238
       end
       inherited edtMac: TcxTextEdit
-        ExplicitWidth = 263
-        Width = 263
+        ExplicitWidth = 238
+        Width = 238
       end
       inherited edtQsip: TcxTextEdit
         ExplicitWidth = 263
         Width = 263
       end
+      inherited cbbSH: TcxComboBox
+        ExplicitWidth = 238
+        Width = 238
+      end
       inherited edtJsip: TcxTextEdit
         ExplicitWidth = 263
         Width = 263
       end
+      inherited dtValidDate: TcxDateEdit
+        ExplicitWidth = 238
+        Width = 238
+      end
+      inherited dtPasswordValidDate: TcxDateEdit
+        ExplicitWidth = 238
+        Width = 238
+      end
+      inherited dtLoginTimeBegin: TcxTimeEdit
+        ExplicitWidth = 115
+        Width = 115
+      end
+      inherited dtLoginTimeEnd: TcxTimeEdit
+        Left = 227
+        ExplicitLeft = 227
+      end
       inherited cbbDwdm: TcxComboBox
-        ExplicitWidth = 263
-        Width = 263
+        ExplicitWidth = 238
+        Width = 238
       end
       inherited cbManage: TcxCheckBox
         Style.LookAndFeel.SkinName = ''
         StyleDisabled.LookAndFeel.SkinName = ''
         StyleFocused.LookAndFeel.SkinName = ''
         StyleHot.LookAndFeel.SkinName = ''
+      end
+      inherited cbMM: TcxCheckBox
+        Style.LookAndFeel.SkinName = ''
+        StyleDisabled.LookAndFeel.SkinName = ''
+        StyleFocused.LookAndFeel.SkinName = ''
+        StyleHot.LookAndFeel.SkinName = ''
+        ExplicitWidth = 237
+      end
+      inherited cbbRyll: TcxComboBox
+        ExplicitWidth = 238
+        Width = 238
+      end
+      inherited dxLayoutItem17: TdxLayoutItem
+        CaptionOptions.Text = 'cxCheckBox1'
       end
     end
   end

@@ -32,7 +32,7 @@ uses
   Vcl.Menus, Vcl.StdCtrls, cxButtons, cxTextEdit, uRequestItf, uJsonUtils,
   dxFrame, dxDialogBase, uDialogUserEdit, uGlobal, uFrameSetUserRole,
   uFrameSetUserDataRole, System.Actions, Vcl.ActnList, uCommon, cxMaskEdit,
-  cxDropDownEdit, Udictionary;
+  cxDropDownEdit, Udictionary, cxLabel;
 
 type
   TToolUserManage = class(TToolGridFrame)
@@ -213,7 +213,7 @@ end;
 
 procedure TToolUserManage.btnModifyClick(Sender: TObject);
 var
-  dwdm: String;
+  dwdm, mj: String;
 begin
   inherited;
   if not FDMemTable1.Active or FDMemTable1.Eof then
@@ -246,10 +246,15 @@ begin
     // cbFh.Checked := FDMemTable1.FieldByName('FH').AsBoolean
     // else
     // cbFh.Checked := False;
-    if FDMemTable1.FieldByName('Manager').AsString <> '' then
-      cbManage.Checked := FDMemTable1.FieldByName('Manager').AsBoolean
-    else
-      cbManage.Checked := False;
+
+    cbManage.Checked := FDMemTable1.FieldByName('Manager').AsBoolean;
+    mj := FDMemTable1.FieldByName('IsMJ').AsString;
+    if mj = '1' then
+      cbbRyll.ItemIndex := 0
+    else if mj = '0' then
+      cbbRyll.ItemIndex := 3
+    else if mj = '2' then
+      cbbRyll.ItemIndex := 1;
   end;
   ShowEditFrame;
 end;

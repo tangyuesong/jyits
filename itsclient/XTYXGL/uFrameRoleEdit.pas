@@ -70,7 +70,7 @@ implementation
 procedure TFrameRoleEdit.FillFunctionRole(RoleID, RoleName, Bz: String);
 var
   mmList: TList<TMainMenu>;
-  mm: TParentMenu;
+  mm: TMainMenu;
   cmList: TList<TChildMenu>;
   cm: TChildMenu;
   afList: TList<TAppFunction>;

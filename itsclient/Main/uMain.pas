@@ -238,13 +238,10 @@ procedure TfrmMain.FormCreate(Sender: TObject);
 var
   barGroup: TdxNavBarGroup;
   barItem: TdxNavBarItem;
-  mm: TParentMenu;
+  mm: TMainMenu;
   cmList: TList<TChildMenu>;
   cm: TChildMenu;
   indx: Integer;
-  aItemLink: TdxBarItemLink;
-  aSubItem: TdxBarSubItem;
-  aBarButton: TdxBarButton;
 begin
 {$IFDEF WEBXONE}
   self.WindowState := wsNormal;
@@ -253,47 +250,38 @@ begin
 {$ELSE}
   self.WindowState := wsMaximized;
 {$ENDIF}
-  lbUser.Caption := StringReplace(lbUser.Caption, 'admin', gUser.yhbh,
-    [rfReplaceAll]);
   self.Caption := gSetup.AppTitle;
   self.cxLabel1.Caption := gSetup.AppTitle;
-
   if not gIsSa then
   begin
+    //dxFrameManager.RegisterFrame(1, TFramePGS, '地图', 1, 1, 1, -1, '');
     dxFrameManager.RegisterFrame(2, TFrameIndexGCSJ, '过车流量统计', 33, 1,
       1, -1, '');
-    // dxFrameManager.RegisterFrame(3, TFrameTJJCCJ, '缉查业务开展情况', 33, 1, 1, -1, '');
+    //dxFrameManager.RegisterFrame(3, TFrameTJJCCJ, '缉查业务开展情况', 33, 1, 1, -1, '');
     dxFrameManager.RegisterFrame(4, TFrameQDZView, '劝导站详细信息', 33, 1, 1, -1, '');
   end;
-
   indx := 5;
   for mm in gUserPower.AllMainMenu do
   begin
-    if gIsSa and (mm.Caption <> '系统运行管理') then
+    if gIsSa and (mm.Caption <> '系统运行管理') and (mm.Caption <> '指挥平台管理') then
       continue
     else if not gIsSa and (gUserPower.UserMainMenu.IndexOf(mm.SystemID) < 0)
     then
       continue;
     cmList := gUserPower.AllChildMenu[mm.SystemID];
-
-    aSubItem := TdxBarSubItem.Create(self);
-    aSubItem.ImageIndex := mm.ImageIndex;
-    aSubItem.Caption := mm.Caption;
-    aItemLink := aSubItem.barManager.Bars[0].ItemLinks.Add;
-    aItemLink.item := aSubItem;
-
     barGroup := mbMain.Groups.Add;
     barGroup.Expanded := False;
     barGroup.ShowExpandButton := False;
     barGroup.SmallImageIndex := mm.ImageIndex;
     barGroup.Caption := mm.Caption;
     barGroup.OnExpanded := mbMainGroupExpanded;
-
     for cm in cmList do
     begin
       if gIsSa and (cm.ClassType <> 'TToolUserManage') and
         (cm.ClassType <> 'TToolRoleManage') and
-        (cm.ClassType <> 'TToolDataRoleManage') then
+        (cm.ClassType <> 'TToolDataRoleManage') and
+        (cm.ClassType <> 'TZHPTFunctionRole') and
+        (cm.ClassType <> 'TFrameZHPTDeviceRole') then
         continue
       else if not gIsSa and (gUserPower.UserChildMenu.IndexOf(cm.SystemID) < 0)
       then
@@ -301,22 +289,12 @@ begin
       try
         dxFrameManager.RegisterFrame(indx, TdxFrameClass(FindClass(cm.ClassType)
           ), cm.Caption, cm.ImageIndex, 1, 1, -1, cm.SystemID);
-
-        aBarButton := TdxBarButton.Create(self);
-        aBarButton.Caption := cm.Caption;
-        aBarButton.ImageIndex := cm.ImageIndex;
-        aBarButton.Tag := indx;
-        aBarButton.OnClick := mbMainItemClick;
-        aItemLink := aSubItem.ItemLinks.Add;
-        aItemLink.item := aBarButton;
-
         barItem := mbMain.Items.Add;
         barItem.SmallImageIndex := cm.ImageIndex;
         barItem.Caption := cm.Caption;
         barItem.Tag := indx;
         barItem.OnClick := mbMainItemClick;
         barGroup.CreateLink(barItem);
-
         inc(indx);
       except
       end;

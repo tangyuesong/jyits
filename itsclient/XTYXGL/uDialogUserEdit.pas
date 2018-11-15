@@ -25,7 +25,8 @@ uses
   dxLayoutContainer, cxClasses, Vcl.StdCtrls, cxButtons, dxLayoutControl,
   dxLayoutcxEditAdapters, cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit,
   cxTextEdit, Udictionary, uCommon, uGlobal, uRequestItf, uEntity, uJsonUtils,
-  Generics.Collections, QBAES, cxCheckBox, FireDAC.Comp.Client;
+  Generics.Collections, QBAES, cxCheckBox, FireDAC.Comp.Client, Vcl.ComCtrls,
+  dxCore, cxDateUtils, cxCalendar, cxSpinEdit, cxTimeEdit;
 
 type
   TfDialogUserEdit = class(TdxDialogBaseFrame)
@@ -54,6 +55,21 @@ type
     dxLayoutItem14: TdxLayoutItem;
     cbbSH: TcxComboBox;
     dxLayoutItem15: TdxLayoutItem;
+    dtValidDate: TcxDateEdit;
+    dtPasswordValidDate: TcxDateEdit;
+    dxLayoutAutoCreatedGroup1: TdxLayoutAutoCreatedGroup;
+    dxLayoutItem13: TdxLayoutItem;
+    dxLayoutItem16: TdxLayoutItem;
+    dxLayoutItem19: TdxLayoutItem;
+    dtLoginTimeBegin: TcxTimeEdit;
+    dxLayoutItem20: TdxLayoutItem;
+    dtLoginTimeEnd: TcxTimeEdit;
+    dxLayoutAutoCreatedGroup4: TdxLayoutAutoCreatedGroup;
+    dxLayoutItem17: TdxLayoutItem;
+    cbMM: TcxCheckBox;
+    dxLayoutAutoCreatedGroup2: TdxLayoutAutoCreatedGroup;
+    cbbRyll: TcxComboBox;
+    dxLayoutItem18: TdxLayoutItem;
   private
     procedure AfterConstruction; override;
     function GetEditUserInfo: String;
@@ -72,24 +88,22 @@ implementation
 
 procedure TfDialogUserEdit.AfterConstruction;
 var
-  xzqh, param: String;
-  depts: TList<TDept>;
   dept: TDept;
+  str: TStringList;
 begin
   inherited;
+  TLZDictionary.BindCombobox(cbbYhzw, TLZDictionary.gDicMain['ZW']);
   cbbDwdm.Properties.Items.Clear;
-  param := 'bj=1';
-  if not gIsSa then
-  begin
-    TLZDictionary.BindCombobox(cbbYhzw, TLZDictionary.gDicMain['ZW']);
-    xzqh := TCommon.GetXZQH(gUser.DWDM);
-    param := param + '&like_dwdm=' + xzqh;
-  end;
-  depts := TJsonUtils.JsonToRecordList<TDept>
-    (TRequestItf.DbQuery('GetS_Dept', param));
-  for dept in depts do
-    cbbDwdm.Properties.Items.Add(dept.DWMC);
-  depts.Free;
+
+  str := TStringList.Create;
+  str.Sort;
+  str.Sorted := True;
+
+  for dept in TLZDictionary.gDicDept.Values do
+    str.Add(dept.DWMC);
+
+  cbbDwdm.Properties.Items.AddStrings(str);
+  str.Free;
 end;
 
 function TfDialogUserEdit.GetEditUserInfo: String;
@@ -107,9 +121,8 @@ begin
 
   Result := 'DWDM=' + DWDM + '&YHBH=' + Trim(edtYhbh.Text) + '&YHXM=' +
     Trim(edtYhxm.Text);
-  if Trim(edtYhmm.Text) <> '$' then
-    Result := Result + '&MM=' + AesEncrypt(Trim(edtYhbh.Text) +
-      Trim(edtYhmm.Text), key);
+  if (UserID = '') or cbMM.Checked then
+    Result := Result + '&MM=' + AesEncrypt(edtYhbh.Text + '88888888', key);
   if cbbYhzw.ItemIndex >= 0 then
     Result := Result + '&ZW=' + cbbYhzw.Text;
   if Trim(edtSfzh.Text) <> '' then
@@ -131,7 +144,23 @@ begin
   // if cbFh.Checked then
   // Result := Result + '&FH=1';
   if cbManage.Checked then
-    Result := Result + '&Manager=1';
+    Result := Result + '&Manager=1'
+  else
+    Result := Result + '&Manager=0';
+
+  if cbbRyll.ItemIndex = 1 then
+    Result := Result + '&ISMJ=2'
+  else if cbbRyll.ItemIndex = 2 then
+    Result := Result + '&ISMJ=0'
+  else
+    Result := Result + '&ISMJ=1';
+
+  if dtValidDate.Text <> '' then
+    Result := Result + '&ValidDate=' + dtValidDate.Text;
+  if dtPasswordValidDate.Text <> '' then
+    Result := Result + '&PasswordValidDate=' + dtPasswordValidDate.Text;
+  Result := Result + '&LoginTimeBegin=' + dtLoginTimeBegin.Text;
+  Result := Result + '&LoginTimeEnd=' + dtLoginTimeEnd.Text;
   if UserID <> '' then
     Result := Result + '&Systemid=' + UserID
   else
@@ -158,11 +187,11 @@ begin
     Application.MessageBox('用户姓名不能为空', '提示', MB_OK);
     exit;
   end;
-  if Trim(edtYhmm.Text) = '' then
-  begin
+  { if Trim(edtYhmm.Text) = '' then
+    begin
     Application.MessageBox('用户密码不能为空', '提示', MB_OK);
     exit;
-  end;
+    end; }
 
   param := 'YHBH=' + Trim(edtYhbh.Text);
   if UserID <> '' then

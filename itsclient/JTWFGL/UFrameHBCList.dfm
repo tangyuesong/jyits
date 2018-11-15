@@ -1,20 +1,20 @@
 inherited FrameHBCList: TFrameHBCList
-  Width = 716
-  Height = 382
+  Width = 777
+  Height = 495
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 716
-    Height = 382
+    Width = 777
+    Height = 495
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 690
-      Height = 268
+      Width = 751
+      Height = 381
       TabOrder = 6
       ExplicitTop = 45
-      ExplicitWidth = 690
-      ExplicitHeight = 268
+      ExplicitWidth = 751
+      ExplicitHeight = 381
     end
     object cbbSF: TcxComboBox [1]
       Left = 67
@@ -79,38 +79,38 @@ inherited FrameHBCList: TFrameHBCList
       OnClick = btnImportVioClick
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 320
+      Top = 433
       TabOrder = 7
-      ExplicitTop = 320
+      ExplicitTop = 433
     end
     inherited btnFirstPage: TcxButton
-      Top = 320
+      Top = 433
       TabOrder = 8
-      ExplicitTop = 320
+      ExplicitTop = 433
     end
     inherited btnPriorPage: TcxButton
-      Top = 320
+      Top = 433
       TabOrder = 9
-      ExplicitTop = 320
+      ExplicitTop = 433
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 320
+      Top = 433
       TabOrder = 10
-      ExplicitTop = 320
+      ExplicitTop = 433
     end
     inherited btnnextPage: TcxButton
-      Top = 320
+      Top = 433
       TabOrder = 11
-      ExplicitTop = 320
+      ExplicitTop = 433
     end
     inherited btnLastPage: TcxButton
-      Top = 320
+      Top = 433
       TabOrder = 12
-      ExplicitTop = 320
+      ExplicitTop = 433
     end
     inherited lbCount: TcxLabel
-      Top = 348
-      ExplicitTop = 348
+      Top = 461
+      ExplicitTop = 461
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal

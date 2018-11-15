@@ -73,6 +73,8 @@ type
     cxButton1: TcxButton;
     cxButton2: TcxButton;
     cbbDwdm: TcxComboBox;
+    cbbRyll: TcxComboBox;
+    dxLayoutItem10: TdxLayoutItem;
     procedure btnSearchClick(Sender: TObject);
     procedure cxButton1Click(Sender: TObject);
     procedure cxButton2Click(Sender: TObject);
@@ -96,20 +98,20 @@ implementation
 
 procedure TFrameRoleUserEdit.AfterConstruction;
 var
-  xzqh, param: String;
+  xzqh, Param: String;
   depts: TList<TDept>;
   dept: TDept;
 begin
   inherited;
   cbbDwdm.Properties.Items.Clear;
-  param := 'bj=1';
+  Param := 'bj=1';
   if not gIsSa then
   begin
     xzqh := TCommon.GetXZQH(gUser.DWDM);
-    param := param + '&like_dwdm=' + xzqh;
+    Param := Param + '&like_dwdm=' + xzqh;
   end;
   depts := TJsonUtils.JsonToRecordList<TDept>
-    (TRequestItf.DbQuery('GetS_Dept', param));
+    (TRequestItf.DbQuery('GetS_Dept', Param));
   for dept in depts do
     cbbDwdm.Properties.Items.Add(dept.DWDM);
   depts.Free;
@@ -186,8 +188,8 @@ begin
   FDMemTable1.FieldDefs.Add('BZ', ftString, 100);
   FDMemTable1.FieldDefs.Add('LRR', ftString, 100);
 
-  FDMemTable1.IndexDefs.Add('index', 'BJ', [ixPrimary]);
-  FDMemTable1.IndexName := 'index';
+  //FDMemTable1.IndexDefs.Add('index', 'BJ', [ixPrimary]);
+  //FDMemTable1.IndexName := 'index';
 end;
 
 function TFrameRoleUserEdit.SaveRoleUsers: Boolean;
@@ -225,13 +227,19 @@ begin
     FRoleID := RoleID;
 
   users := GetRoleUsers;
-  Param:= 'ZT=1&not_YHBH='+gUser.yhbh;
+  Param := 'ZT=1&not_YHBH=' + gUser.YHBH;
   if Trim(cbbDwdm.Text) <> '' then
-    Param := Param+'&like_dwdm=' + Trim(cbbDwdm.Text);
+    Param := Param + '&like_dwdm=' + Trim(cbbDwdm.Text);
   if Trim(edtYhbh.Text) <> '' then
     Param := Param + '&like_yhbh=' + Trim(edtYhbh.Text);
   if Trim(edtYhxm.Text) <> '' then
     Param := Param + '&like_yhxm=' + Trim(edtYhxm.Text);
+  if cbbRyll.ItemIndex = 1 then
+    Param := Param + '&isMJ=1'
+  else if cbbRyll.ItemIndex = 2 then
+    Param := Param + '&isMJ=2'
+  else if cbbRyll.ItemIndex = 3 then
+    Param := Param + '&isMJ=0';
   InitTb;
   TJsonUtils.JSONToDataSet(TRequestItf.DbQuery('GetS_User', Param), FDMemTable1,
     'yhbh', False);

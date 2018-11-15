@@ -1,23 +1,23 @@
 inherited ToolDataRoleManage: TToolDataRoleManage
-  Width = 664
-  Height = 438
+  Width = 815
+  Height = 505
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 664
-    Height = 438
+    Width = 815
+    Height = 505
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
-      Top = 85
-      Width = 638
-      Height = 340
-      TabOrder = 7
-      ExplicitTop = 85
-      ExplicitWidth = 638
-      ExplicitHeight = 340
+      Top = 113
+      Width = 789
+      Height = 379
+      TabOrder = 8
+      ExplicitTop = 113
+      ExplicitWidth = 789
+      ExplicitHeight = 379
     end
     object BtnInput: TcxButton [1]
-      Left = 621
+      Left = 772
       Top = 13
       Width = 30
       Height = 25
@@ -52,12 +52,16 @@ inherited ToolDataRoleManage: TToolDataRoleManage
       Top = 57
       ExplicitTop = 57
     end
+    inherited lbCount: TcxLabel
+      Top = 85
+      ExplicitTop = 85
+    end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
       Index = 1
     end
     inherited dxLayoutItem3: TdxLayoutItem
-      Index = 3
+      Index = 4
     end
     inherited dxLayoutGroupPage: TdxLayoutGroup
       Visible = False
@@ -104,7 +108,7 @@ inherited ToolDataRoleManage: TToolDataRoleManage
   inline fDataRoleUserEdit: TFrameDataRoleUserEdit [2]
     Left = 0
     Top = 50
-    Width = 617
+    Width = 750
     Height = 569
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -115,15 +119,17 @@ inherited ToolDataRoleManage: TToolDataRoleManage
     TabOrder = 6
     Visible = False
     ExplicitTop = 50
-    ExplicitWidth = 617
+    ExplicitWidth = 750
+    ExplicitHeight = 569
     inherited dxLayoutControl2: TdxLayoutControl
-      Width = 617
+      Width = 750
+      Height = 569
       ExplicitWidth = 617
       inherited cxGrid1: TcxGrid
-        Width = 608
-        Height = 386
-        ExplicitWidth = 608
-        ExplicitHeight = 386
+        Width = 694
+        Height = 403
+        ExplicitWidth = 694
+        ExplicitHeight = 403
         inherited GridView: TcxGridDBTableView
           inherited GridViewColumn1: TcxGridDBColumn
             IsCaptionAssigned = True
@@ -131,30 +137,30 @@ inherited ToolDataRoleManage: TToolDataRoleManage
         end
       end
       inherited btnSave: TcxButton
-        Left = 253
-        Top = 499
-        TabOrder = 5
+        Left = 296
+        Top = 516
+        TabOrder = 6
         OnClick = fDataRoleUserEditbtnSaveClick
-        ExplicitLeft = 253
-        ExplicitTop = 499
+        ExplicitLeft = 296
+        ExplicitTop = 516
       end
       inherited btnCancel: TcxButton
-        Left = 335
-        Top = 499
-        TabOrder = 6
+        Left = 378
+        Top = 516
+        TabOrder = 7
         OnClick = btnCancelClick
-        ExplicitLeft = 335
-        ExplicitTop = 499
+        ExplicitLeft = 378
+        ExplicitTop = 516
       end
       inherited cxButton1: TcxButton
-        Top = 499
-        TabOrder = 7
-        ExplicitTop = 499
+        Top = 516
+        TabOrder = 8
+        ExplicitTop = 516
       end
       inherited cxButton2: TcxButton
-        Top = 499
-        TabOrder = 8
-        ExplicitTop = 499
+        Top = 516
+        TabOrder = 9
+        ExplicitTop = 516
       end
       inherited dxLayoutGroup6: TdxLayoutGroup
         Index = 0

@@ -91,7 +91,7 @@ var
   fun: TRoleFunction;
   roleids: TStrings;
   mmList: TList<TMainMenu>;
-  mm: TParentMenu;
+  mm: TMainMenu;
   cmList: TList<TChildMenu>;
   cm: TChildMenu;
   afList: TList<TAppFunction>;

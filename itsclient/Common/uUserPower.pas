@@ -7,7 +7,7 @@ uses
 
 type
 
-  TParentMenu = Record
+  TMainMenu = Record
     SystemID: String;
     Caption: String;
     ImageIndex: Integer;
@@ -44,7 +44,7 @@ type
 
   TUserPower = Class
   private
-    FAllMainMenu: TList<TParentMenu>;
+    FAllMainMenu: TList<TMainMenu>;
     FAllChildMenu: TDictionary<String, TList<TChildMenu>>;
     FAllFunction: TDictionary<String, TList<TAppFunction>>;
 
@@ -56,7 +56,7 @@ type
     function GetUserMainMenu(): TStrings;
     function GetUserChildMenu(): TStrings;
     function GetUserFunction(): TDictionary<string, TStrings>;
-    function GetAllMainMenu(): TList<TParentMenu>;
+    function GetAllMainMenu(): TList<TMainMenu>;
     function GetAllChildMenu: TDictionary<String, TList<TChildMenu>>;
     function GetAllFunction: TDictionary<String, TList<TAppFunction>>;
   public
@@ -66,7 +66,7 @@ type
     property UserChildMenu: TStrings read GetUserChildMenu;
     property UserFunction: TDictionary<string, TStrings> read GetUserFunction;
 
-    property AllMainMenu: TList<TParentMenu> read GetAllMainMenu;
+    property AllMainMenu: TList<TMainMenu> read GetAllMainMenu;
     property AllChildMenu: TDictionary < String, TList < TChildMenu >>
       read GetAllChildMenu;
     property AllFunction: TDictionary < String, TList < TAppFunction >>
@@ -183,12 +183,12 @@ begin
   Result := FAllFunction;
 end;
 
-function TUserPower.GetAllMainMenu: TList<TParentMenu>;
+function TUserPower.GetAllMainMenu: TList<TMainMenu>;
 begin
   if FAllMainMenu = nil then
   begin
-    FAllMainMenu := TJsonUtils.RecordListSort<TParentMenu>
-      (TJsonUtils.JsonToRecordList<TParentMenu>
+    FAllMainMenu := TJsonUtils.RecordListSort<TMainMenu>
+      (TJsonUtils.JsonToRecordList<TMainMenu>
       (TRequestItf.DbQuery('GetS_MENU_MAIN', 'activate=1')), 'OrderID');
   end;
   Result := FAllMainMenu
@@ -237,13 +237,13 @@ end;
 
 function TUserPower.GetUserMainMenu: TStrings;
 var
-  list: TList<TParentMenu>;
-  me: TParentMenu;
+  list: TList<TMainMenu>;
+  me: TMainMenu;
 begin
   if FUserMainMenu = nil then
   begin
     FUserMainMenu := TStringList.Create;
-    list := TJsonUtils.JsonToRecordList<TParentMenu>
+    list := TJsonUtils.JsonToRecordList<TMainMenu>
       (TRequestItf.DbQuery('GetUserMainMenu', 'yhbh=' + gUser.YHBH));
     for me in list do
       FUserMainMenu.Add(me.SystemID);

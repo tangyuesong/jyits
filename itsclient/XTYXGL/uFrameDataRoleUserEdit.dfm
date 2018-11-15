@@ -1,48 +1,21 @@
 inherited FrameDataRoleUserEdit: TFrameDataRoleUserEdit
-  Width = 665
-  Height = 569
+  Width = 760
+  Height = 606
   Align = alNone
   Visible = False
-  ExplicitWidth = 665
-  ExplicitHeight = 569
+  ExplicitWidth = 760
+  ExplicitHeight = 606
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 665
-    Height = 569
+    Width = 760
+    Height = 606
     ExplicitWidth = 665
     ExplicitHeight = 569
-    object edtYhxm: TcxTextEdit [0]
-      Left = 439
-      Top = 59
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 2
-      Height = 21
-      Width = 100
-    end
-    object edtYhbh: TcxTextEdit [1]
-      Left = 278
-      Top = 59
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 1
-      Height = 21
-      Width = 100
-    end
-    object btnSearch: TcxButton [2]
-      Left = 546
-      Top = 59
-      Width = 75
-      Height = 25
-      Caption = #26597#25214
-      TabOrder = 3
-      OnClick = btnSearchClick
-    end
-    object cxGrid1: TcxGrid [3]
+    object cxGrid1: TcxGrid [0]
       Left = 28
       Top = 106
-      Width = 609
-      Height = 403
-      TabOrder = 4
+      Width = 704
+      Height = 440
+      TabOrder = 5
       object GridView: TcxGridDBTableView
         Navigator.Buttons.CustomButtons = <>
         Navigator.Buttons.Prior.Visible = False
@@ -119,48 +92,89 @@ inherited FrameDataRoleUserEdit: TFrameDataRoleUserEdit
         GridView = GridView
       end
     end
-    object btnSave: TcxButton [4]
-      Left = 254
-      Top = 516
+    object btnSave: TcxButton [1]
+      Left = 301
+      Top = 553
       Width = 75
       Height = 25
       Caption = #20445#23384
-      TabOrder = 7
+      TabOrder = 8
     end
-    object btnCancel: TcxButton [5]
-      Left = 336
-      Top = 516
+    object btnCancel: TcxButton [2]
+      Left = 383
+      Top = 553
       Width = 75
       Height = 25
       Caption = #21462#28040
-      TabOrder = 8
+      TabOrder = 9
     end
-    object cxButton1: TcxButton [6]
+    object cxButton1: TcxButton [3]
       Left = 28
-      Top = 516
+      Top = 553
       Width = 30
       Height = 25
       Caption = #20840#36873
-      TabOrder = 5
+      TabOrder = 6
       OnClick = cxButton1Click
     end
-    object cxButton2: TcxButton [7]
+    object cxButton2: TcxButton [4]
       Left = 65
-      Top = 516
+      Top = 553
       Width = 30
       Height = 25
       Caption = #21453#36873
-      TabOrder = 6
+      TabOrder = 7
       OnClick = cxButton2Click
     end
-    object cbbDwdm: TcxComboBox [8]
+    object cbbDwdm: TcxComboBox [5]
       Left = 97
       Top = 59
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 0
       Height = 21
-      Width = 120
+      Width = 104
+    end
+    object edtYhbh: TcxTextEdit [6]
+      Left = 262
+      Top = 59
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 1
+      Height = 21
+      Width = 68
+    end
+    object edtYhxm: TcxTextEdit [7]
+      Left = 391
+      Top = 59
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 2
+      Height = 21
+      Width = 68
+    end
+    object btnSearch: TcxButton [8]
+      Left = 631
+      Top = 59
+      Width = 75
+      Height = 25
+      Caption = #26597#25214
+      TabOrder = 4
+      OnClick = btnSearchClick
+    end
+    object cbbRyll: TcxComboBox [9]
+      Left = 520
+      Top = 59
+      AutoSize = False
+      Properties.Items.Strings = (
+        ''
+        #20132#35686
+        #27665#35686
+        #21327#35686)
+      Style.HotTrack = False
+      TabOrder = 3
+      Height = 21
+      Width = 104
     end
     object dxLayoutGroup1: TdxLayoutGroup
       Parent = dxLayoutControl2Group_Root
@@ -168,51 +182,6 @@ inherited FrameDataRoleUserEdit: TFrameDataRoleUserEdit
       AlignVert = avClient
       CaptionOptions.Text = #35282#33394#29992#25143
       ButtonOptions.Buttons = <>
-      Index = 0
-    end
-    object dxLayoutGroup2: TdxLayoutGroup
-      Parent = dxLayoutGroup1
-      AlignHorz = ahClient
-      AlignVert = avTop
-      ButtonOptions.Buttons = <>
-      LayoutDirection = ldHorizontal
-      Index = 0
-    end
-    object dxLayoutItem4: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #29992#25143#22995#21517
-      Control = edtYhxm
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 100
-      ControlOptions.ShowBorder = False
-      Index = 2
-    end
-    object dxLayoutItem5: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #29992#25143#32534#21495
-      Control = edtYhbh
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 100
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
-    object dxLayoutItem6: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = 'cxButton1'
-      CaptionOptions.Visible = False
-      Control = btnSearch
-      ControlOptions.OriginalHeight = 25
-      ControlOptions.OriginalWidth = 75
-      ControlOptions.ShowBorder = False
-      Index = 3
-    end
-    object dxLayoutItem7: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      CaptionOptions.Text = #21333#20301#20195#30721
-      Control = cbbDwdm
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 120
-      ControlOptions.ShowBorder = False
       Index = 0
     end
     object dxLayoutItem3: TdxLayoutItem
@@ -294,6 +263,60 @@ inherited FrameDataRoleUserEdit: TFrameDataRoleUserEdit
       ControlOptions.OriginalWidth = 30
       ControlOptions.ShowBorder = False
       Index = 1
+    end
+    object dxLayoutGroup2: TdxLayoutGroup
+      Parent = dxLayoutGroup1
+      AlignHorz = ahClient
+      AlignVert = avTop
+      ButtonOptions.Buttons = <>
+      LayoutDirection = ldHorizontal
+      Index = 0
+    end
+    object dxLayoutItem7: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #21333#20301#20195#30721
+      Control = cbbDwdm
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 104
+      ControlOptions.ShowBorder = False
+      Index = 0
+    end
+    object dxLayoutItem5: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #29992#25143#32534#21495
+      Control = edtYhbh
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 68
+      ControlOptions.ShowBorder = False
+      Index = 1
+    end
+    object dxLayoutItem4: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #29992#25143#22995#21517
+      Control = edtYhxm
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 68
+      ControlOptions.ShowBorder = False
+      Index = 2
+    end
+    object dxLayoutItem6: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = 'cxButton1'
+      CaptionOptions.Visible = False
+      Control = btnSearch
+      ControlOptions.OriginalHeight = 25
+      ControlOptions.OriginalWidth = 75
+      ControlOptions.ShowBorder = False
+      Index = 4
+    end
+    object dxLayoutItem10: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #20154#21592#31867#22411
+      Control = cbbRyll
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 104
+      ControlOptions.ShowBorder = False
+      Index = 3
     end
   end
   object FDMemTable1: TFDMemTable
