@@ -139,6 +139,7 @@ begin
   msg := '';
 
   PicStr := params.Values['pic'];
+  // picStr:= TCommon.FileToBase64('d:\1234.jpg');
   TCommon.Base64ToFile(PicStr, 'd:\111.jpg');
   if PicStr = '' then
   begin
@@ -172,6 +173,7 @@ begin
           veh.stTagRect.Height) then
         begin
           b := true;
+          msg := '';
           break;
         end
         else
@@ -222,7 +224,7 @@ begin
       else
       begin
         gLogger.Error('[submitCarFaceCompareJob]Result:' + s);
-        msg := s;
+        // msg := s;
       end;
     end;
   except

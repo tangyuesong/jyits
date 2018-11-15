@@ -81,6 +81,7 @@ type
     class function StringToDT(s: String): TDatetime;
     class function GetXZQH(dwdm: String): String;
     class function Base64ToFile(ABase64Str, AFileName: String): Boolean;
+    class function FileToBase64(AFileName: String): String;
     class function FtpPutFile(AHost, AUser, Apw, ASourceFile, ADestFile: string;
       APort: Integer): Boolean; static;
     class function QueryToStream(ASql: String): TStringStream; static;
@@ -585,7 +586,7 @@ begin
   gDevID := TDictionary<String, String>.Create;
   gHikID := TDictionary<String, String>.Create;
   with gSQLHelper.Query('select SBBH, ID, HikID from ' + cDBName +
-    '.dbo.S_Device ') do
+    '.dbo.S_Device where QYZT=''1''') do
   begin
     while not Eof do
     begin
@@ -893,6 +894,25 @@ begin
   JSON.Free;
 end;
 
+class function TCommon.FileToBase64(AFileName: String): String;
+var
+  ms: TMemoryStream;
+  ss: TStringStream;
+begin
+  Result := '';
+  try
+    ms := TMemoryStream.Create;
+    ms.LoadFromFile(AFileName);
+    ss := TStringStream.Create;
+    ms.Position := 0;
+    TBase64Encoding.Base64.Encode(ms, ss);
+    Result := ss.DataString;
+  finally
+    ms.Free;
+    ss.Free;
+  end;
+end;
+
 class function TCommon.FindJson(AItemName: String; AJSON: TQJson): TQJson;
 var
   i: Integer;
@@ -1112,7 +1132,7 @@ begin
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
     gConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
     gConfig.DBPwd := ReadString('DB', 'Pwd', 'lgm1224,./');
-    gConfig.DBName := ReadString('DB', 'Name', 'YjItsDB');
+    gConfig.DBName := ReadString('DB', 'Name', 'YDJWPT');
 
     gConfig.SolrHome := ReadString('solr', 'home',
       'http://10.43.255.66:8983/solr/traffic/');

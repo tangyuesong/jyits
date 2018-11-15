@@ -584,14 +584,28 @@ begin
   json := TQJson.Create;
   try
     json.Parse(s);
-    if isAll then
-      c := json.Count
+    if json.DataType = jdtArray then
+    begin
+      if isAll then
+        c := json.Count
+      else
+      begin
+        c := 0;
+        for n := 0 to json.Count - 1 do
+        begin
+          if TCommon.GetJsonNode('jkbj', json.Items[n].ToString) = clbj then
+            inc(c);
+        end;
+      end;
+    end
     else
     begin
-      c := 0;
-      for n := 0 to json.Count - 1 do
+      if isAll then
+        c := 1
+      else
       begin
-        if TCommon.GetJsonNode('jkbj', json.Items[n].ToString) = clbj then
+        c := 0;
+        if TCommon.GetJsonNode('jkbj', s) = clbj then
           inc(c);
       end;
     end;

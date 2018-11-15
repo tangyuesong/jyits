@@ -52,6 +52,7 @@ var
   Form1: TForm1;
 
 implementation
+
 uses
   uHikDSJ;
 
@@ -117,7 +118,7 @@ begin
   end;
 
   Memo1.Text := httpClient.Get
-    (TIdURI.URLEncode('http://127.0.0.1:17115/GetWfxwByVeh?hphm=‘¡U0C383&hpzl=02&token='
+    (TIdURI.URLEncode('http://127.0.0.1:17115/GetVioCount?hphm=‘¡GBX930&hpzl=02&clbj=0&token='
     // (TIdURI.URLEncode('http://127.0.0.1:17115/WriteSG?token='
     // ('http://127.0.0.1:17115/GetDrvInfo?sfzmhm=342921198309063411&token='
     + token));
@@ -326,22 +327,17 @@ var
 begin
 
   params := TStringList.Create;
-{  params.Add('wfxw1=1234');
-  // Params.Add('wfxw2=1234');
-  // Params.Add('wfxw3=1234');
-  params.Add('wfxw4=1235');
-  params.Add('wfxw5=1237');
-  TRmService.CheckForceParam(params);
-  Memo1.Text := params.Text;
+  { params.Add('wfxw1=1234');
+    // Params.Add('wfxw2=1234');
+    // Params.Add('wfxw3=1234');
+    params.Add('wfxw4=1235');
+    params.Add('wfxw5=1237');
+    TRmService.CheckForceParam(params);
+    Memo1.Text := params.Text;
 
-  params.Free;  }
-params.LoadFromFile('d:\ss.txt');
-//THikDSJ.DecodefootHoldsResult(params.Text);
-
-
-
-
-
+    params.Free; }
+  params.LoadFromFile('d:\ss.txt');
+  // THikDSJ.DecodefootHoldsResult(params.Text);
 
 end;
 
@@ -413,6 +409,13 @@ begin
   try
     if UpperCase(ARequestInfo.Command) = 'POST' then
     begin
+      if (s = '') and (ARequestInfo.PostStream <> nil) then
+        s := TIdURI.URLDecode(TStringStream(ARequestInfo.PostStream)
+          .DataString);
+      if s = '' then
+      begin
+        gLogger.Error('PostStream is nil');
+      end;
       json := TQJson.Create;
       try
         json.Parse(s);

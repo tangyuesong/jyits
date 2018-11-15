@@ -83,6 +83,14 @@ begin
   try
     if UpperCase(ARequestInfo.Command) = 'POST' then
     begin
+      if (s = '') and (ARequestInfo.PostStream <> nil) then
+        s := TIDURI.URLDecode(TStringStream(ARequestInfo.PostStream)
+          .DataString);
+      if s = '' then
+      begin
+        gLogger.Error('PostStream is nil');
+        exit;
+      end;
       json := TQJson.Create;
       try
         json.Parse(s);
