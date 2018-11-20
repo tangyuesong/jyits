@@ -39,7 +39,7 @@ var
   WSIServer: RmJaxRpcOutAccess;
   Rio: THTTPRIO;
 begin
-  logger.Info(UTF8XmlDoc);
+  logger.debug(UTF8XmlDoc);
   result := '';
   Rio := THTTPRIO.Create(nil);
   WSIServer := GetRmJaxRpcOutAccess(true, JKDic[jkid].WSDL, Rio);
