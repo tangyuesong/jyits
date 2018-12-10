@@ -63,19 +63,22 @@ type
   End;
 
   THikConfig = Record
-    LYUrl: String; // 猎鹰URL
-    LYUser: String;
-    LYPwd: String;
-    LYHttpConverter: string;
-    K08SearchURL: String;
-    K08SaveUrl: String;
+    {
+      LYUrl: String; // 猎鹰URL
+      LYUser: String;
+      LYPwd: String;
+      LYHttpConverter: string;
+    }
+    moreLikeThisHBase: String;
     PicAnalysis: String;
     CarFace: String;
     analysisExtra: String;
     dataAnalysis: String;
-    DFUrl: String;
-    DFUser: String;
-    DFPwd: String;
+    {
+      DFUrl: String;
+      DFUser: String;
+      DFPwd: String;
+    }
     PassOra: TOraConfig;
   End;
 
@@ -113,6 +116,7 @@ type
     // Heartbeat
     HeartbeatUrl: String;
     HeartbeatInterval: Integer;
+    TmriType: String; // 访问6合1方式
   end;
 
   TDBActionParam = Record
@@ -301,6 +305,59 @@ type
     CLBGCDZ: String;
     YZURL: String;
     JSCFDD: String;
+  end;
+
+  TLockVio = Record
+    sysid: string;
+    flag: string; // 0为本省车辆，不需要复核，其它为省外车辆，要经过六合一平台复核
+    xh: string; // 序号
+    cjjg: string; // 采集机关
+    clfl: string; // 车辆分类
+    HPZL: string; // 号牌种类
+    HPHM: string; // 号牌号码
+    jdcsyr: string; // 机动车所有人
+    syxz: string; // 使用性质
+    fdjh: string; // 发动机号,注意要过滤非法字符
+    clsbdh: string; // 车辆识别代号，注意要过滤非法字符
+    csys: string; // 车身颜色
+    clpp: string; // 车辆品牌
+    jtfs: string; // 交通方式
+    fzjg: string; // 发证机关
+    zsxzqh: string; // 住所行政区划
+    ZSXXDZ: string; // 住所详细地址
+    dh: string; // 电话
+    LXFS: string; // 联系方式
+    tzsh: string; // 通知书号
+    tzrq: string; // 通知日期
+    cjfs: string; // 采集方式    7为区间测速
+    wfsj: string; // 违法时间
+    sj: String;
+    xzqh: string; // 行政区划
+    wfdd: string; // 违法地点
+    lddm: string; // 路段号码
+    ddms: string; // 地点米数
+    wfdz: string; // 违法地址
+    wfxw: string; // 违法行为
+    scz: string; // 实测值
+    bzz: string; // 标准值
+    zqmj: string; // 执勤民警
+    spdz: string; // 视频地址
+    SBBH: string; // 设备编号
+    fwqdz: string; // 服务器地址
+    xp1: string;
+    xp2: string;
+    xp3: string;
+    lhywfdd: string; // 六合一违法地点
+    zpstr1: String; // 图片1
+    zpstr2: String; // 图片2
+    zpstr3: String; // 图片3
+    SCMS: string;
+    tpzl: String;
+    tpw: String;
+    tph: String;
+    LHY_WFDD_1: String;
+    LHY_DDMS_1: String;
+    LHY_LDDM_1: String;
   end;
 
 implementation

@@ -50,7 +50,10 @@ begin
   begin
     for veh in vehList do
     begin
-      s := '"hphm":"' + veh.plateno + '",';
+      if veh.plateno <> '' then
+        s := '"hphm":"' + veh.plateno + '",'
+      else
+        s := '"hphm":"' + veh.plateinfo + '",';
       hpzl := veh.vehicletype;
       if gHpzl.ContainsKey(hpzl) then
         hpzl := gHpzl[hpzl];
@@ -66,14 +69,10 @@ begin
         StrToInt64(veh.PassTime))) + '",';
 
       kdbh := veh.crossingid;
-      if gHikID.ContainsKey(kdbh) then
-        kdbh := gHikID[veh.crossingid]
-      else if gDevID.ContainsKey(kdbh) then
-        kdbh := gDevID[veh.crossingid];
       s := s + '"kdbh":"' + kdbh + '",';
 
-      if TCommon.DicDevice.ContainsKey(kdbh) then
-        s := s + '"sbddmc":"' + TCommon.DicDevice[kdbh].SBDDMC + '",'
+      if gPassDevice.ContainsKey(kdbh) then
+        s := s + '"sbddmc":"' + gPassDevice[kdbh] + '",'
       else
         s := s + '"sbddmc":"",';
 
@@ -139,7 +138,6 @@ begin
   msg := '';
 
   PicStr := params.Values['pic'];
-  // picStr:= TCommon.FileToBase64('d:\1234.jpg');
   TCommon.Base64ToFile(PicStr, 'd:\111.jpg');
   if PicStr = '' then
   begin

@@ -3,8 +3,8 @@
 interface
 
 uses
-  SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uSMS, EncdDecd, uHik,
-  uLockVio, uVehPass, uAnalysisPic, uImportVio, uRmService, qjson, uSurveilVio,
+  SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uSMS, EncdDecd,
+  uImportVio, uRmService, qjson, uSurveilVio, uHikDSJ,
   Generics.Collections, StrUtils, uTokenManager, ActiveX, uExamService;
 
 type
@@ -36,8 +36,9 @@ implementation
 
 class function TSPService.GetActions: String;
 begin
-  Result := ',LOCKVIO,GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,'
-    + 'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,UPLOADSPOTPIC,';
+  Result := ',GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,' +
+    'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,'
+    + 'UPLOADSPOTPIC,VEHCHECK,';
 end;
 
 class function TSPService.GetCCLZRQ(token: TToken; Params: TStrings): String;
@@ -267,27 +268,40 @@ end;
 class procedure TSPService.DoSP(action, tokenKey: String; Params: TStrings;
   isExport: Boolean; AResponseInfo: TIdHTTPResponseInfo);
 var
-  kssj, jssj: Double;
-  s: String;
+  s, page, pageSize, passtime: String;
   token: TToken;
+  kssj, jssj: Int64;
+  i: Integer;
+  param: TDictionary<string, String>;
 begin
   ActiveX.CoInitialize(nil);
   token := gTokenManager.GetToken(tokenKey);
-  if action = UpperCase('LockVio') then
+  if action = UpperCase('GetPassList') then
   begin
-    TLockVioUtils.LockVio(Params.Values['systemid'], tokenKey, AResponseInfo);
-  end
-  else if action = UpperCase('GetPassList') then
-  begin
-    kssj := TCommon.GetRealDatetime(StrToInt64Def(Params.Values['kssj'], 0));
-    jssj := TCommon.GetRealDatetime(StrToInt64Def(Params.Values['jssj'], 0));
-    TVehPass.GetPassList(kssj, jssj, Params.Values['kdbh'],
-      Params.Values['hphm'], Params.Values['hpzl'], Params.Values['vehlogo'],
-      Params.Values['vehsublogo'], Params.Values['vehcolor'],
-      Params.Values['pilotsafebelt'], Params.Values['vicepilotsafebelt'],
-      Params.Values['vehiclesunvisor'], Params.Values['vicepilotsunvisor'],
-      Params.Values['pendant'], Params.Values['currentpage'],
-      Params.Values['pageSize'], AResponseInfo);
+    param := TDictionary<string, String>.Create;
+    for i := 0 to Params.Count - 1 do
+    begin
+      if UpperCase(Params.Names[i]) = 'CURRENTPAGE' then
+        page := Params.ValueFromIndex[i]
+      else if UpperCase(Params.Names[i]) = 'PAGESIZE' then
+        pageSize := Params.ValueFromIndex[i]
+      else if UpperCase(Params.Names[i]) = 'KSSJ' then
+        kssj := StrToInt64Def(Params.ValueFromIndex[i], -346789)
+      else if UpperCase(Params.Names[i]) = 'JSSJ' then
+        jssj := StrToInt64Def(Params.ValueFromIndex[i], -346789)
+      else if Trim(Params.Names[i]) <> '' then
+        param.Add(Trim(Params.Names[i]), Params.ValueFromIndex[i]);
+    end;
+    if (kssj <> -346789) and (jssj <> -346789) then
+    begin
+      passtime := FormatDateTime('yyyy-mm-dd hh:nn:ss',
+        TCommon.GetRealDatetime(kssj)) + ',' +
+        FormatDateTime('yyyy-mm-dd hh:nn:ss', TCommon.GetRealDatetime(jssj));
+      param.Add('passtime', passtime);
+    end;
+    s := THIKDSJ.moreLikeThis(param, page, pageSize);
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(s);
+    param.Free;
   end
   else if action = UpperCase('SendSMS') then
   begin
@@ -296,11 +310,6 @@ begin
       AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('')
     else
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('error');
-  end
-  else if (action = UpperCase('AnalysisOnePic')) and gConfig.HaveK08 then
-  begin
-    TAnalysisPic.AnalysisPic(Params.Values['url'], Params.Values['pic'],
-      AResponseInfo);
   end
   else if action = UpperCase('ImportVio') then
   begin
@@ -348,7 +357,20 @@ begin
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
       (TExamService.GetExamData)
   else if action = 'UPLOADSPOTPIC' then
-    AResponseInfo.ContentText := UploadSpotPic(token, Params);
+    AResponseInfo.ContentText := UploadSpotPic(token, Params)
+  else if action = 'VEHCHECK' then
+  begin
+    TRmService.DoRM(action, tokenKey, Params, isExport, AResponseInfo);
+    if AResponseInfo.ContentText.Contains('"code":"1"') then
+    begin
+      s := 'update yjitsdb.dbo.serv_veh_check set sfd=''' + Params.Values['SFD']
+        + '''' + ' where hphm=''' + Params.Values['HPHM'] + ''' and ' +
+        ' HPZL=''' + Params.Values['HPZL'] +
+        ''' and gxsj>dateadd(mi, -20, getdate())';
+      gSQLHelper.ExecuteSql(s);
+    end;
+  end;
+
   ActiveX.CoUninitialize;
 end;
 

@@ -27,7 +27,6 @@ uses
   Trans1 in '..\RMService\intf\Trans1.pas',
   MessageDigest_5 in '..\SPService\MessageDigest_5.pas',
   uAnalysisPic in '..\SPService\uAnalysisPic.pas',
-  uLockVio in '..\SPService\uLockVio.pas',
   uSMS in '..\SPService\uSMS.pas',
   uSolr in '..\SPService\uSolr.pas',
   uSPService in '..\SPService\uSPService.pas',
@@ -41,7 +40,10 @@ uses
   uSurveilVio in '..\SPService\uSurveilVio.pas',
   uExamService in '..\ExamService\uExamService.pas',
   uHikDSJ in '..\Hik\uHikDSJ.pas',
-  uHikJZF in '..\Hik\uHikJZF.pas';
+  uHikJZF in '..\Hik\uHikJZF.pas',
+  uTmri_huizhou in '..\RMService\impl\uTmri_huizhou.pas',
+  uTmriType in '..\RMService\impl\uTmriType.pas',
+  Ehlservice in '..\RMService\intf\Ehlservice.pas';
 
 {$R *.res}
 

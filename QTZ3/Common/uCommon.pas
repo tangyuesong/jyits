@@ -6,7 +6,8 @@ uses
   SysUtils, Classes, IniFiles, uGlobal, Rtti, uSQLHelper, uLogger, ADODB,
   System.JSON, FireDAC.Comp.Client, uTokenManager, QJson,
   Data.DB, uEntity, System.Generics.Collections, DateUtils, QBAES, IdFtp,
-  IdFtpCommon, IdGlobal, System.Variants, httpApp, uTmri, uJKDefine, uWSManager,
+  IdFtpCommon, IdGlobal, System.Variants, httpApp, uJKDefine,
+  uWSManager,
   StrUtils, System.NetEncoding, System.Math;
 
 type
@@ -33,6 +34,7 @@ type
     class procedure InitK08Clpp();
     class procedure InitK08Csys();
     class procedure InitDevice();
+    class procedure InitPassDevice();
     class function AssembleHttpResult(code, msg, body: String;
       totalnum: String = '0'; currentpage: String = '1';
       pagesize: String = '1'): String;
@@ -75,7 +77,8 @@ type
     class function AssembleSuccessHttpResult(body: String;
       totalnum: String = '0'; currentpage: String = '1';
       pagesize: String = '1'): String;
-    class function AssembleFailedHttpResult(msg: String): String;
+    class function AssembleFailedHttpResult(msg: String;
+      code: String = '0'): String;
     class function GetJsonNode(ANode, AJSON: String): String;
     class function GetRealDatetime(AMilliSecond: Int64): TDatetime;
     class function StringToDT(s: String): TDatetime;
@@ -86,8 +89,6 @@ type
       APort: Integer): Boolean; static;
     class function QueryToStream(ASql: String): TStringStream; static;
     class function AddWfxwmc(AJSON: String): String;
-    class function GetTmriParam(jkid: string; token: TToken)
-      : TTmriParam; static;
     class procedure WriteForceVio(params: TStrings);
     class procedure WriteSimpleVio(params: TStrings);
     class procedure WriteDutySimple(params: TStrings);
@@ -114,16 +115,6 @@ begin
   except
     Result := False;
   end;
-end;
-
-class function TCommon.GetTmriParam(jkid: string; token: TToken): TTmriParam;
-begin
-  Result.jkid := jkid;
-  Result.yhbz := token.Login;
-  Result.dwmc := '';
-  Result.dwjgdm := token.User.dwdm;
-  Result.yhxm := token.User.yhxm;
-  Result.zdbs := token.ip;
 end;
 
 class function TCommon.QueryToStream(ASql: String): TStringStream;
@@ -672,6 +663,25 @@ begin
   end;
 end;
 
+class procedure TCommon.InitPassDevice;
+var
+  id: String;
+begin
+  gPassDevice := TDictionary<String, String>.Create;
+  with gSQLHelper.Query('select KDBH, SBDDMC from ' + cDBName +
+    '.dbo.S_Device_Pass where KDBH <> '''' and SBDDMC <> '''' ') do
+  begin
+    while not Eof do
+    begin
+      id := Fields[0].AsString;
+      if not gPassDevice.ContainsKey(id) then
+        gPassDevice.add(id, Fields[1].AsString);
+      Next;
+    end;
+    Free;
+  end;
+end;
+
 class function TCommon.GetDevice: TDictionary<String, TDevice>;
 var
   dev: TDevice;
@@ -737,7 +747,7 @@ begin
         dev.YSXZB := FieldByName('YSXZB').AsBoolean;
         dev.CZDW := FieldByName('CZDW').AsString;
         dev.AddSY := FieldByName('AddSY').AsBoolean;
-        dev.ID := FieldByName('ID').AsString;
+        dev.id := FieldByName('ID').AsString;
         dev.AutoUpload := FieldByName('AutoUpload').AsBoolean;
         dev.UploadJCPT := FieldByName('UploadJCPT').AsBoolean;
         if not FDicDevice.ContainsKey(dev.SBBH) then
@@ -857,9 +867,10 @@ begin
   qj.Free;
 end;
 
-class function TCommon.AssembleFailedHttpResult(msg: String): String;
+class function TCommon.AssembleFailedHttpResult(msg: String;
+  code: String): String;
 begin
-  Result := AssembleHttpResult('0', msg, '');
+  Result := AssembleHttpResult(code, msg, '');
 end;
 
 class function TCommon.AssembleHttpResult(code, msg, body, totalnum,
@@ -1128,6 +1139,7 @@ begin
   with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
   begin
     gLogger.Level := ReadInteger('SYS', 'LogLevel', 0);
+    gConfig.TmriType := ReadString('SYS', 'TmriType', '0');
     gConfig.DBServer := ReadString('DB', 'Server', '.');
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
     gConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
@@ -1148,14 +1160,15 @@ begin
     gConfig.ImportVioHome := ReadString('ImportVio', 'Home', '');
 
     gConfig.HaveK08 := ReadString('Hik', 'Enabled', '0') = '1';
-    gConfig.HikConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL',
+    gConfig.HikConfig.moreLikeThisHBase :=
+      ReadString('Hik', 'moreLikeThisHBase',
       'http://10.43.255.16:8080/kms/services/ws/vehicleSearch');
-    gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
-      'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
-    gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
-      'http://10.43.255.20:18010');
-    gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
-    gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
+    // gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
+    // 'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
+    // gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
+    // 'http://10.43.255.20:18010');
+    // gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
+    // gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
 
     gConfig.HikConfig.PicAnalysis := ReadString('Hik', 'PicAnalysis', '');
     gConfig.HikConfig.CarFace := ReadString('Hik', 'CarFace', '');
@@ -1253,6 +1266,7 @@ begin
   InitK08Clpp();
   InitK08Csys();
   InitDevice();
+  InitPassDevice();
 end;
 
 class procedure TCommon.ProgramDestroy;

@@ -25,6 +25,7 @@ var
   gDevKDBH: TDictionary<String, String>;
   gDevID: TDictionary<String, String>;
   gSpotWfxw: TDictionary<String, String>;
+  gPassDevice: TDictionary<String, String>;
 
 implementation
 

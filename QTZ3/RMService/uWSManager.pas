@@ -15,6 +15,7 @@ type
     function ApplyQWSG(yhbh, xzqh: String; num: integer): String;
     class function Rollback(wsbh: string): boolean;
     class function Submit(wsbh: string): boolean;
+    class function HaveWsbh(wsbh: String): boolean;
     constructor Create;
     destructor Destroy; override;
   end;
@@ -205,11 +206,17 @@ end;
 
 class function TWSManager.UpdateWSBH(wsbh: string; flag: integer): boolean;
 begin
-  result := gSQLHelper.GetSinge('select flag from ' + cDBName +
-    '.dbo.S_WSBH where wsbh = ' + wsbh.QuotedString) = '1';
-  result := result and gSQLHelper.ExecuteSql('update ' + cDBName +
-    '.dbo.S_WSBH set flag=' + flag.ToString + ', gxsj=getdate() where wsbh = ' +
-    wsbh.QuotedString);
+  // result := gSQLHelper.GetSinge('select flag from ' + cDBName +
+  // '.dbo.S_WSBH where wsbh = ' + wsbh.QuotedString) = '1';
+  // result := result and
+  result := gSQLHelper.ExecuteSql('update ' + cDBName + '.dbo.S_WSBH set flag='
+    + flag.ToString + ', gxsj=getdate() where wsbh = ' + wsbh.QuotedString);
+end;
+
+class function TWSManager.HaveWsbh(wsbh: String): boolean;
+begin
+  result := gSQLHelper.GetSinge('select wsbh from ' + cDBName +
+    '.dbo.S_WSBH where wsbh = ' + wsbh.QuotedString) <> '';
 end;
 
 class function TWSManager.Rollback(wsbh: string): boolean;

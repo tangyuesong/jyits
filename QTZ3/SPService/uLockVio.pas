@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, Classes, uCommon, IdCustomHTTPServer, StrUtils, uGlobal,
   idHttp, Vcl.Imaging.GIFImg, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, Vcl.Graphics, uTmri, IdFtp, IdFTPCommon, IdGlobal,
+  Vcl.Imaging.pngimage, Vcl.Graphics, uTmriType, IdFtp, IdFTPCommon, IdGlobal,
   ADODB, uTokenManager, System.NetEncoding;
 
 type

@@ -9,8 +9,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uCommon, uGlobal, uRmService,
   uSPService, uDBService, IdContext, IdCustomHTTPServer, IdTCPConnection,
   IdTCPClient, IdHTTP, Vcl.ExtCtrls, IdBaseComponent, IdComponent, uentity,
-  IdCustomTCPServer, IdHTTPServer, Vcl.StdCtrls, IdHeaderList, QJson, uTmri,
-  IdStrings, QBAES,
+  IdCustomTCPServer, IdHTTPServer, Vcl.StdCtrls, IdHeaderList, QJson, uTmriType,
+  IdStrings, QBAES, uSurveilVio,
   FireDAC.Phys.OracleDef, FireDAC.Stan.Intf, FireDAC.Phys, FireDAC.Phys.Oracle,
   IdTime, IdUnixTime, uHikJZF;
 
@@ -107,7 +107,7 @@ begin
 
   s := httpClient.Get
     (TIdURI.URLEncode
-    ('http://127.0.0.1:17115/Login?user=250688&pwd=E14B236263F88BB55354B247CEE47C29')
+    ('http://127.0.0.1:17115/Login?user=pda&pwd=5214D5D9B9446F3EE05F4446CF286118')
     // ('http://127.0.0.1:17115/wxLogin?user=252871&pwd=0D6B629FB5553B325FB1A7C359A180E9207EA79CEBD39BC03C80317F55832924')
     );
   token := TCommon.GetJsonNode('token', s);
@@ -118,7 +118,7 @@ begin
   end;
 
   Memo1.Text := httpClient.Get
-    (TIdURI.URLEncode('http://127.0.0.1:17115/GetVioCount?hphm=‘¡GBX930&hpzl=02&clbj=0&token='
+    (TIdURI.URLEncode('http://127.0.0.1:17115/QUERY?jkid=02C05&sfzmhm=342921198309063411&token='
     // (TIdURI.URLEncode('http://127.0.0.1:17115/WriteSG?token='
     // ('http://127.0.0.1:17115/GetDrvInfo?sfzmhm=342921198309063411&token='
     + token));

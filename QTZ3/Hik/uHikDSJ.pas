@@ -40,31 +40,160 @@ type
     class function GetCarFaceJobParam(passTimeStart, passTimeEnd, crossingIdSet,
       picData: String; stDetectRect, stROIRect: TRect;
       modelCmpThreadhold, modelTopN, ROICmpThreadhold, ROITopN, vehiclelogo,
-      vehiclesublogo, vehicleHead, vehiclemodel: String; modeInfo: TmodeInfo)
+      vehiclesublogo, vehiclehead, vehiclemodel: String; modeInfo: TmodeInfo)
       : TStrings;
     class function DecodeDarkKnightResult(xml: String): String;
     class function DecodeTrackerAssociateResult(xml: String): String;
     class function DecodefootHoldsResult(xml: String): String;
+    class function GetMoreLikeThisParam(param: TDictionary<string, String>;
+      page, pageSize: string): TStrings; static;
   public
     class function picAnalysis(picStr: WideString): String;
     class function submitCarFaceCompareJob(passTimeStart, passTimeEnd,
       crossingIdSet, picData: String; stDetectRect, stROIRect: TRect;
       modelCmpThreadhold, modelTopN, ROICmpThreadhold, ROITopN, vehiclelogo,
-      vehiclesublogo, vehicleHead, vehiclemodel: String;
+      vehiclesublogo, vehiclehead, vehiclemodel: String;
       modeInfo: TmodeInfo): String;
     class function getJobResultByTaskId(taskid: String): String;
     class function getJobFinalResultByTaskId(taskid: String): String;
-    class function footHoldsByTrackAndTime(plateNo, startTime, endTime,
+    class function footHoldsByTrackAndTime(plateno, startTime, endTime,
       pageSize, pageNo: String): String;
     class function darkKnightAnalysis(startTime, endTime, crosses, pageSize,
       pageNo: String): String;
-    class function trackerAssociateAnalysis(plateNo, startTime, endTime,
+    class function trackerAssociateAnalysis(plateno, startTime, endTime,
       timeInterval, threshold, crosses, pageSize, pageNo: String): String;
+    class function moreLikeThis(param: TDictionary<string, String>;
+      page, pageSize: String): String; static;
   end;
 
 implementation
 
+uses
+  uDecodeHikResult;
+
 { THikDSJ }
+
+class function THikDSJ.moreLikeThis(param: TDictionary<string, String>;
+  page, pageSize: String): String;
+var
+  Params: TStrings;
+  s, h, clpp, hpzl, kdbh: String;
+  vehList: TList<TK08VehInfo>;
+  veh: TK08VehInfo;
+  totalPage, currentPage: Integer;
+begin
+  Result := '';
+  ActiveX.CoInitializeEx(nil, COINIT_MULTITHREADED);
+
+  Params := GetMoreLikeThisParam(param, page, pageSize);
+
+  // gLogger.Info(Params.Text);
+  // gLogger.Info(gConfig.HikConfig.moreLikeThisHBase);
+
+  if HttPPost(gConfig.HikConfig.moreLikeThisHBase, Params, s, TEncoding.UTF8)
+  then
+  begin
+    try
+      // gLogger.Info(s);
+      vehList := TDecodeHikResult.DecodeMoreLikeThieResult(s, totalPage,
+        currentPage);
+    except
+      gLogger.Error(s);
+    end;
+    if (vehList <> nil) and (vehList.Count > 0) then
+    begin
+      for veh in vehList do
+      begin
+        if veh.plateno <> '' then
+          s := '"hphm":"' + veh.plateno + '",'
+        else
+          s := '"hphm":"' + veh.plateinfo + '",';
+
+        if gHpzl.ContainsKey(veh.vehicletype) then
+          hpzl := gHpzl[veh.vehicletype]
+        else
+          hpzl := veh.vehicletype;
+        s := s + '"hpzl":"' + hpzl + '",';
+
+        if TCommon.DicHpzlMC.ContainsKey(hpzl) then
+          s := s + '"hpzlmc":"' + TCommon.DicHpzlMC[hpzl] + '",'
+        else
+          s := s + '"hpzlmc":"",';
+
+        s := s + '"gcsj":"' + FormatDateTime('yyyy/mm/dd hh:nn:ss',
+          DateUtils.IncMilliSecond(25569.3333333333,
+          StrToInt64(veh.passtime))) + '",';
+
+        kdbh := veh.crossingid;
+        s := s + '"kdbh":"' + kdbh + '",';
+
+        if gPassDevice.ContainsKey(kdbh) then
+          s := s + '"sbddmc":"' + gPassDevice[kdbh] + '",'
+        else
+          s := s + '"sbddmc":"",';
+
+        clpp := veh.vehiclelogo + '-' + veh.vehiclesublogo;
+        if gK08Clpp.ContainsKey(clpp) then
+          s := s + '"clpp":"' + gK08Clpp[clpp] + '",'
+        else if gK08Clpp.ContainsKey(veh.vehiclelogo + '-0') then
+          s := s + '"clpp":"' + gK08Clpp[veh.vehiclelogo + '-0'] + '",'
+        else
+          s := s + '"clpp":"' + clpp + '",';
+
+        if gK08Csys.ContainsKey(veh.vehiclecolor) then
+          s := s + '"csys":"' + gK08Csys[veh.vehiclecolor] + '",'
+        else
+          s := s + '"csys":"' + veh.vehiclecolor + '",';
+        s := '{' + s + '"cdbh":"' + veh.laneno + '","clsd":"' + veh.vehiclespeed
+          + '","fwqdz":"","tp1":"' + gConfig.PicUrl + veh.imagepath + '"}';
+
+        Result := Result + ',' + s;
+      end;
+      Result := '[' + Result.Substring(1) + ']';
+      vehList.Free;
+    end
+  end;
+  Params.Free;
+  ActiveX.CoUninitialize;
+end;
+
+class function THikDSJ.GetMoreLikeThisParam(param: TDictionary<string, String>;
+  page, pageSize: string): TStrings;
+var
+  key: String;
+begin
+  Result := TStringList.Create;
+  Result.Add
+    ('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">');
+  Result.Add('   <soapenv:Header/>');
+  Result.Add('   <soapenv:Body>');
+  Result.Add('      <ws:moreLikeThis>');
+  Result.Add('         <arg0>');
+  Result.Add('            <beanId>pass</beanId>');
+  Result.Add('            <currentPage>' + page + '</currentPage>');
+  Result.Add('            <pageSize>' + pageSize + '</pageSize>');
+  for key in param.Keys do
+  begin
+    if key = 'q' then
+    begin
+      Result.Add('             <q>' + param[key] + '</q>');
+    end
+    else
+    begin
+      Result.Add('             <fieldOptions>');
+      Result.Add('               <filedName>' + key + '</filedName>');
+      Result.Add('               <keyWords>' + param[key] + '</keyWords>');
+      Result.Add('             </fieldOptions>');
+    end;
+  end;
+  Result.Add('           <cursorMark>*</cursorMark>');
+  Result.Add('           <sortColumn>passtime</sortColumn>');
+  Result.Add('           <sortMethod>desc</sortMethod>');
+  Result.Add('         </arg0>');
+  Result.Add('      </ws:moreLikeThis>');
+  Result.Add('   </soapenv:Body>');
+  Result.Add('</soapenv:Envelope>');
+end;
 
 class function THikDSJ.darkKnightAnalysis(startTime, endTime, crosses, pageSize,
   pageNo: String): String;
@@ -112,7 +241,7 @@ end;
 class function THikDSJ.GetCarFaceJobParam(passTimeStart, passTimeEnd,
   crossingIdSet, picData: String; stDetectRect, stROIRect: TRect;
   modelCmpThreadhold, modelTopN, ROICmpThreadhold, ROITopN, vehiclelogo,
-  vehiclesublogo, vehicleHead, vehiclemodel: String; modeInfo: TmodeInfo)
+  vehiclesublogo, vehiclehead, vehiclemodel: String; modeInfo: TmodeInfo)
   : TStrings;
 var
   Params: TStrings;
@@ -175,8 +304,8 @@ begin
   if vehiclesublogo <> '' then
     Params.Add('            <subVehicleLogo>' + vehiclesublogo +
       '</subVehicleLogo>');
-  if vehicleHead <> '' then
-    Params.Add('            <vehicleHead>' + vehicleHead + '</vehicleHead>');
+  if vehiclehead <> '' then
+    Params.Add('            <vehicleHead>' + vehiclehead + '</vehicleHead>');
   if vehiclelogo <> '' then
     Params.Add('            <vehicleLogo>' + vehiclelogo + '</vehicleLogo>');
   if vehiclemodel <> '' then
@@ -317,8 +446,8 @@ begin
           hpzl := gHpzl[hpzl];
         s := s + '"hpzl":"' + hpzl + '",';
 
-        if TCommon.DicHpzlmc.ContainsKey(hpzl) then
-          s := s + '"hpzlmc":"' + TCommon.DicHpzlmc[hpzl] + '"}'
+        if TCommon.DicHpzlMC.ContainsKey(hpzl) then
+          s := s + '"hpzlmc":"' + TCommon.DicHpzlMC[hpzl] + '"}'
         else
           s := s + '"hpzlmc":""}';
 
@@ -372,14 +501,10 @@ begin
           Rows.Items[i].value) + '",';
 
         kdbh := TCommon.GetJsonNode('crossingid', Rows.Items[i].value);
-        if gHikID.ContainsKey(kdbh) then
-          kdbh := gHikID[kdbh]
-        else if gDevID.ContainsKey(kdbh) then
-          kdbh := gDevID[kdbh];
         s := s + '"kdbh":"' + kdbh + '",';
 
-        if TCommon.DicDevice.ContainsKey(kdbh) then
-          s := s + '"sbddmc":"' + TCommon.DicDevice[kdbh].SBDDMC + '",'
+        if gPassDevice.ContainsKey(kdbh) then
+          s := s + '"sbddmc":"' + gPassDevice[kdbh] + '",'
         else
           s := s + '"sbddmc":"",';
 
@@ -395,8 +520,8 @@ begin
           hpzl := gHpzl[hpzl];
         s := s + '"hpzl":"' + hpzl + '",';
 
-        if TCommon.DicHpzlmc.ContainsKey(hpzl) then
-          s := s + '"hpzlmc":"' + TCommon.DicHpzlmc[hpzl] + '"}'
+        if TCommon.DicHpzlMC.ContainsKey(hpzl) then
+          s := s + '"hpzlmc":"' + TCommon.DicHpzlMC[hpzl] + '"}'
         else
           s := s + '"hpzlmc":""}';
 
@@ -457,20 +582,16 @@ begin
             hpzl := gHpzl[hpzl];
           Info := Info + '"hpzl":"' + hpzl + '",';
 
-          if TCommon.DicHpzlmc.ContainsKey(hpzl) then
-            Info := Info + '"hpzlmc":"' + TCommon.DicHpzlmc[hpzl] + '",'
+          if TCommon.DicHpzlMC.ContainsKey(hpzl) then
+            Info := Info + '"hpzlmc":"' + TCommon.DicHpzlMC[hpzl] + '",'
           else
             Info := Info + '"hpzlmc":"",';
 
           kdbh := TCommon.GetJsonNode('crossingid', jsonString);
-          if gHikID.ContainsKey(kdbh) then
-            kdbh := gHikID[kdbh]
-          else if gDevID.ContainsKey(kdbh) then
-            kdbh := gDevID[kdbh];
           Info := Info + '"kdbh":"' + kdbh + '",';
 
-          if TCommon.DicDevice.ContainsKey(kdbh) then
-            Info := Info + '"sbddmc":"' + TCommon.DicDevice[kdbh].SBDDMC + '",'
+          if gPassDevice.ContainsKey(kdbh) then
+            Info := Info + '"sbddmc":"' + gPassDevice[kdbh] + '",'
           else
             Info := Info + '"sbddmc":"",';
 
@@ -511,7 +632,7 @@ begin
   json.Free;
 end;
 
-class function THikDSJ.footHoldsByTrackAndTime(plateNo, startTime, endTime,
+class function THikDSJ.footHoldsByTrackAndTime(plateno, startTime, endTime,
   pageSize, pageNo: String): String;
 var
   Url: String;
@@ -526,7 +647,7 @@ begin
   Params.Add('   <soapenv:Header/>');
   Params.Add('   <soapenv:Body>');
   Params.Add('      <ws:footHoldsByTrackAndTime>');
-  Params.Add('         <plateNo>' + plateNo + '</plateNo>');
+  Params.Add('         <plateNo>' + plateno + '</plateNo>');
   Params.Add('         <plateColor>ALL</plateColor>');
   Params.Add('         <plateType>ALL</plateType>');
   Params.Add('         <startTime>' + startTime + '</startTime>');
@@ -579,14 +700,14 @@ end;
 class function THikDSJ.submitCarFaceCompareJob(passTimeStart, passTimeEnd,
   crossingIdSet, picData: String; stDetectRect, stROIRect: TRect;
   modelCmpThreadhold, modelTopN, ROICmpThreadhold, ROITopN, vehiclelogo,
-  vehiclesublogo, vehicleHead, vehiclemodel: String;
+  vehiclesublogo, vehiclehead, vehiclemodel: String;
   modeInfo: TmodeInfo): String;
 var
   Params: TStrings;
 begin
   Params := GetCarFaceJobParam(passTimeStart, passTimeEnd, crossingIdSet,
     picData, stDetectRect, stROIRect, modelCmpThreadhold, modelTopN,
-    ROICmpThreadhold, ROITopN, vehiclelogo, vehiclesublogo, vehicleHead,
+    ROICmpThreadhold, ROITopN, vehiclelogo, vehiclesublogo, vehiclehead,
     vehiclemodel, modeInfo);
   if not HttPPost(gConfig.HikConfig.CarFace, Params, Result, TEncoding.UTF8)
   then
@@ -596,7 +717,7 @@ begin
 
 end;
 
-class function THikDSJ.trackerAssociateAnalysis(plateNo, startTime, endTime,
+class function THikDSJ.trackerAssociateAnalysis(plateno, startTime, endTime,
   timeInterval, threshold, crosses, pageSize, pageNo: String): String;
 var
   Url: String;
@@ -614,7 +735,7 @@ begin
   Params.Add('   <soapenv:Body>');
   Params.Add('      <ws:trackerAssociateAnalysis>');
   Params.Add('         <taskId/>');
-  Params.Add('         <plateNo>' + plateNo + '</plateNo>');
+  Params.Add('         <plateNo>' + plateno + '</plateNo>');
   Params.Add('         <crosses>' + crosses + '</crosses>');
   Params.Add('         <startTime>' + startTime + '</startTime>');
   Params.Add('         <endTime>' + endTime + '</endTime>');

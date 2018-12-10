@@ -148,11 +148,8 @@
         <DCCReference Include="Common\qjson.pas"/>
         <DCCReference Include="Common\QString.pas"/>
         <DCCReference Include="Common\qrbtree.pas"/>
-        <DCCReference Include="SPService\uLockVio.pas"/>
-        <DCCReference Include="SPService\uVehPass.pas"/>
         <DCCReference Include="SPService\MessageDigest_5.pas"/>
         <DCCReference Include="SPService\uSMS.pas"/>
-        <DCCReference Include="SPService\uAnalysisPic.pas"/>
         <DCCReference Include="Common\QBAes.pas"/>
         <DCCReference Include="Common\ElAES.pas"/>
         <DCCReference Include="SPService\uImportVio.pas">
@@ -161,7 +158,6 @@
 
     {$R *.RES</Form>
         </DCCReference>
-        <DCCReference Include="Hik\uHik.pas"/>
         <DCCReference Include="RMService\uWSManager.pas"/>
         <DCCReference Include="RMService\intf\TmriOutNewAccess.pas"/>
         <DCCReference Include="RMService\impl\uJKDefine.pas"/>
@@ -169,6 +165,9 @@
         <DCCReference Include="ExamService\uExamService.pas"/>
         <DCCReference Include="Hik\uHikJZF.pas"/>
         <DCCReference Include="Hik\uHikDSJ.pas"/>
+        <DCCReference Include="RMService\impl\uTmri_huizhou.pas"/>
+        <DCCReference Include="RMService\intf\Ehlservice.pas"/>
+        <DCCReference Include="RMService\impl\uTmriType.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
