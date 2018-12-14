@@ -48,7 +48,7 @@ begin
       logger.Trace('[TTmri.CallWebService]' + UTF8XmlDoc + #10#13 + WSResult);
     except
       on e: exception do
-        logger.Error('[CallWebService1]' + e.Message + ' ' + WSResult);
+        logger.Error('[CallWebService1]' + e.Message);
     end;
     try
       result := TXmlAndJSON.XML2JSON(WSResult);
