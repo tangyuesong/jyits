@@ -122,7 +122,7 @@ begin
   if gJTP and (Min mod 5 = 0) and (not JTPRunning) then
     TJTPThread.Create;
 
-  if gUploadHisCfg.ACTIVATE and (Min = 0) then
+  if gUploadHisCfg.ACTIVATE and (Min = 18) then
   begin
     if (not TUploadVioThread.Running) or
       (TUploadVioThread.Running and (Now - TUploadVioThread.RunnTime > 5 / 24))
