@@ -111,6 +111,7 @@ begin
   while not FStoped do
   begin
     DownloadAlarms;
+    DownloadZFZAlarms;
     if now - FLastUploadTime > OneMinute then
     begin
       DownloadSURVEIL;
@@ -118,7 +119,6 @@ begin
       FeedbackAll;
       UploadVeh;
       DownloadYiFanKui;
-      DownloadZFZAlarms;
       DownloadZFZDriver;
       DownloadAlarmVehicle;
       DoWQCZ;
@@ -605,27 +605,25 @@ begin
   begin
     Close;
     SQL.Clear;
-    SQL.Add('select a.BKLX,a.YJXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CDH,a.SBBH,a.FXLX,a.RKSJ,b.TPLJ||b.TP1 as URL,a.CLPP,a.CSYS ');
+    SQL.Add('select a.BKLX,a.YJXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CDH,a.SBBH,a.FXLX,a.YJSJ,b.TPLJ||b.TP1 as URL,a.CLPP,a.CSYS ');
     SQL.Add('from VMC_ALARM_PASS a ');
     SQL.Add('inner join TFC_PASS b on a.GCXH=b.GCXH ');
-    SQL.Add('where a.QSBJ=0 and a.RKSJ > to_date(''' +
-      FormatDateTime('yyyy-mm-dd hh:mm', FMaxRKSJ - 0.01) +
-      ''',''yyyy-mm-dd hh24:mi'') ');
+    SQL.Add('where a.YJSJ > to_date(''' + FormatDateTime('yyyy-mm-dd hh:mm', FMaxRKSJ - 0.01) +
+      ''',''yyyy-mm-dd hh24:mi'') and a.QSBJ=0 ');
     SQL.Add('UNION ');
-    SQL.Add('select a.BKLX,a.YJXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CDH,a.SBBH,a.FXLX,a.RKSJ,b.TPLJ||b.TP1 as URL,a.CLPP,a.CSYS ');
+    SQL.Add('select a.BKLX,a.YJXH,a.HPHM,a.HPZL,a.GCSJ,a.CLSD,a.CDH,a.SBBH,a.FXLX,a.YJSJ,b.TPLJ||b.TP1 as URL,a.CLPP,a.CSYS ');
     SQL.Add('from VMC_ALARM a ');
     SQL.Add('inner join TFC_PASS b on a.GCXH=b.GCXH ');
-    SQL.Add('where a.QSBJ=0 and a.RKSJ > to_date(''' +
-      FormatDateTime('yyyy-mm-dd hh:mm', FMaxRKSJ - 0.01) +
-      ''',''yyyy-mm-dd hh24:mi'') ');
-    SQL.Add('order by RKSJ desc');
+    SQL.Add('where a.YJSJ > to_date(''' + FormatDateTime('yyyy-mm-dd hh:mm', FMaxRKSJ - 0.01) +
+      ''',''yyyy-mm-dd hh24:mi'') and a.QSBJ=0  ');
+    SQL.Add('order by YJSJ desc');
     try
       if not FOraConn.Connected then
         FOraConn.Open;
       Open;
       DisableControls;
       if not EOF then
-        FMaxRKSJ := FieldByName('RKSJ').AsDateTime;
+        FMaxRKSJ := FieldByName('YJSJ').AsDateTime;
       while not EOF do
       begin
         ss.Add('(' + FieldByName('BKLX').AsString.QuotedString + ',' +
@@ -936,57 +934,44 @@ procedure TMainThread.DownloadZFZAlarms;
     s, tmpTable: string;
   begin
     logger.Info('Download_ZFZ_Alarms: ' + ss.Count.ToString);
-    tmpTable := 'tmp_alarm' + FormatDateTime('yymmddhhmmsszzz', now);
-    s := 'create table ' + tmpTable + '(JCXH varchar(50),' + 'GCXH varchar(50),'
-      + 'KKBH varchar(50),' + 'FXLX varchar(50),' + 'CDH varchar(50),' +
-      'GCSJ varchar(50),' + 'FWZBH varchar(50),' + 'FWZMC varchar(128),' +
-      'CLZT varchar(50),' + 'HPHM varchar(50),' + 'HPZL varchar(50),' +
-      'JCCLLX varchar(50),' + 'SFD varchar(128),' + 'MDD varchar(128),' +
-      'ZKS varchar(50),' + 'HDZKL varchar(50),' + 'SJZZL varchar(50),' +
-      'HDZZL varchar(50),' + 'GPS varchar(50),' + 'AQSB varchar(50),' +
-      'CLLTHW varchar(50),' + 'WFYY varchar(50),' + 'JAQD varchar(50),' +
-      'PLJS varchar(50),' + 'FFGZ varchar(50),' + 'ZTFGBS varchar(50),' +
-      'AZFHZZ varchar(50),' + 'XGJSBZ varchar(50),' + 'AZDSJ varchar(50),' +
-      'AZDLX varchar(50),' + 'SFWZJS varchar(50),' + 'SFYFJSY varchar(50),' +
-      'QDYSTXZ varchar(50),' + 'JCJG varchar(64),' + 'JCQKMS varchar(512),' +
-      'CZ varchar(50),' + 'CY varchar(50),' + 'JCSJ varchar(50),' +
-      'JCMJ varchar(50),' + 'CJR varchar(50),' + 'CJJG varchar(50),' +
-      'CJSJ varchar(50),' + 'GXSJ varchar(50))';
-    FSQLHelper.ExecuteSQL(s);
+
+	tmpTable := 'tmp_alarm' + FormatDateTime('yymmddhhmmsszzz', now);
+    FSQLHelper.ExecuteSQL('select * into ' + tmpTable + ' from SERV_VEH_CHECK where 1=0');
 
     s := ss.Text;
     s := copy(s, 1, length(s) - 3); // 回车换行
-    s := 'insert into ' + tmpTable +
-      '(JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX,' +
-      'SFD,MDD,ZKS,HDZKL,SJZZL,HDZZL,GPS,AQSB,CLLTHW,WFYY,JAQD,PLJS,FFGZ,ZTFGBS,'
-      + 'AZFHZZ,XGJSBZ,AZDSJ,AZDLX,SFWZJS,SFYFJSY,QDYSTXZ,JCJG,JCQKMS,' +
-      'CZ,CY,JCSJ,JCMJ,CJR,CJJG,CJSJ,GXSJ)values' + s;
+    s := 'insert into ' + tmpTable
+      + '(JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX,ZDCLLX,ZDCLZLX,'
+      + 'CLYQWBF,CLYQWJY,CLWFWCL,JDCSYR,LXDZ,LXDH,FZJG,SYXZ,CLLX,CLPP,ZT,ZTMC,CCDJRQ,YXQZ,QZBFQZ,'
+      + 'JCBJ,RKSJ,RKFS,BZ,CSBJ,BJCSBJ,YJXH,DGZC,ZDZC,ZXZC,SFJBC,BXPC,SFTBJQX,SRZK,SCZK,YXQY,YYXM,'
+      + 'YYDH,YYSFZ,WHPZL,WHPMC,SFTXLDQK,SFGZLDQK,'
+      + 'SFD,MDD,ZKS,HDZKL,SJZZL,HDZZL,GPS,AQSB,CLLTHW,WFYY,JAQD,PLJS,FFGZ,ZTFGBS,'
+      + 'AZFHZZ,XGJSBZ,AZDSJ,AZDLX,SFWZJS,SFYFJSY,QDYSTXZ,JCJG,JCQKMS,'
+      + 'CZ,CY,JCSJ,JCMJ,CJR,CJJG,CJSJ,GXSJ)values' + s;
+    FSQLHelper.ExecuteSQL(s);
+
+    s := 'update ' + tmpTable + ' set flag=2,message=''操作成功'' where SFD <> ''''';
     FSQLHelper.ExecuteSQL(s);
 
     s := 'delete t from SERV_VEH_CHECK t,' + tmpTable +
       ' s where t.JCXH=s.JCXH ';
     FSQLHelper.ExecuteSQL(s);
 
-    s := 'update t set t.CJR=s.CJR,t.CJJG=s.CJJG,t.CJSJ=s.CJSJ,t.GXSJ=s.GXSJ,t.HDZKL=s.HDZKL,t.HDZZL=s.HDZZL ';
-    s := s + 'from SERV_VEH_CHECK t,' + tmpTable +
-      ' s where t.HPHM=s.HPHM and t.GCSJ=s.GCSJ ';
-    s := s + 'delete t from ' + tmpTable +
-      ' t,SERV_VEH_CHECK s where t.HPHM=s.HPHM and t.GCSJ=s.GCSJ ';
-    FSQLHelper.ExecuteSQL(s);
-
     s := 'insert into SERV_VEH_CHECK(' +
-      'JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX,' +
-      'SFD,MDD,ZKS,HDZKL,SJZZL,HDZZL,GPS,AQSB,CLLTHW,WFYY,JAQD,PLJS,FFGZ,ZTFGBS,'
-      + 'AZFHZZ,XGJSBZ,AZDSJ,AZDLX,SFWZJS,SFYFJSY,QDYSTXZ,JCJG,JCQKMS,' +
-      'CZ,CY,JCSJ,JCMJ,CJR,CJJG,CJSJ,GXSJ) ' +
-      'select JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX,' +
-      'SFD,MDD,ZKS,HDZKL,SJZZL,HDZZL,GPS,AQSB,CLLTHW,WFYY,JAQD,PLJS,FFGZ,ZTFGBS,'
-      + 'AZFHZZ,XGJSBZ,AZDSJ,AZDLX,SFWZJS,SFYFJSY,QDYSTXZ,JCJG,JCQKMS,' +
-      'CZ,CY,JCSJ,JCMJ,CJR,CJJG,CJSJ,GXSJ from ' + tmpTable;
-    FSQLHelper.ExecuteSQL(s);
-
-    s := 'update t set t.flag=2,t.message=''操作成功'' ' + 'from SERV_VEH_CHECK t,'
-      + tmpTable + ' s ' + 'where s.SFD <> '''' and s.JCXH=t.JCXH';
+      'JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX,ZDCLLX,ZDCLZLX,'
+      + 'CLYQWBF,CLYQWJY,CLWFWCL,JDCSYR,LXDZ,LXDH,FZJG,SYXZ,CLLX,CLPP,ZT,ZTMC,CCDJRQ,YXQZ,QZBFQZ,'
+      + 'JCBJ,RKSJ,RKFS,BZ,CSBJ,BJCSBJ,YJXH,DGZC,ZDZC,ZXZC,SFJBC,BXPC,SFTBJQX,SRZK,SCZK,YXQY,YYXM,'
+      + 'YYDH,YYSFZ,WHPZL,WHPMC,SFTXLDQK,SFGZLDQK,'
+      + 'SFD,MDD,ZKS,HDZKL,SJZZL,HDZZL,GPS,AQSB,CLLTHW,WFYY,JAQD,PLJS,FFGZ,ZTFGBS,'
+      + 'AZFHZZ,XGJSBZ,AZDSJ,AZDLX,SFWZJS,SFYFJSY,QDYSTXZ,JCJG,JCQKMS,'
+      + 'CZ,CY,JCSJ,JCMJ,CJR,CJJG,CJSJ,GXSJ) ' +
+      'select JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX,ZDCLLX,ZDCLZLX,'
+      + 'CLYQWBF,CLYQWJY,CLWFWCL,JDCSYR,LXDZ,LXDH,FZJG,SYXZ,CLLX,CLPP,ZT,ZTMC,CCDJRQ,YXQZ,QZBFQZ,'
+      + 'JCBJ,RKSJ,RKFS,BZ,CSBJ,BJCSBJ,YJXH,DGZC,ZDZC,ZXZC,SFJBC,BXPC,SFTBJQX,SRZK,SCZK,YXQY,YYXM,'
+      + 'YYDH,YYSFZ,WHPZL,WHPMC,SFTXLDQK,SFGZLDQK,'
+      + 'SFD,MDD,ZKS,HDZKL,SJZZL,HDZZL,GPS,AQSB,CLLTHW,WFYY,JAQD,PLJS,FFGZ,ZTFGBS,'
+      + 'AZFHZZ,XGJSBZ,AZDSJ,AZDLX,SFWZJS,SFYFJSY,QDYSTXZ,JCJG,JCQKMS,'
+      + 'CZ,CY,JCSJ,JCMJ,CJR,CJJG,CJSJ,GXSJ from ' + tmpTable;
     FSQLHelper.ExecuteSQL(s);
 
     s := 'drop table ' + tmpTable;
@@ -994,10 +979,9 @@ procedure TMainThread.DownloadZFZAlarms;
 
     logger.Info('Download_ZFZ_Alarms OK');
   end;
-
 var
   ss: TStrings;
-  s: string;
+  s, s1: string;
   maxGXSJ: double;
 begin
   s := FSQLHelper.GetSinge('select max(gxsj) from SERV_VEH_CHECK');
@@ -1005,68 +989,116 @@ begin
     maxGXSJ := now - 1
   else
     maxGXSJ := vartodatetime(s);
+  s := FormatDateTime('yyyy-mm-dd hh:mm', maxGXSJ);
+  s1 := FormatDateTime('yyyy-mm-dd hh:mm', maxGXSJ - 0.1);
   ss := TStringList.Create;
   with FOraQuery do
   begin
     Close;
     SQL.Clear;
-    SQL.Add('select JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX,');
+    SQL.Add('select JCXH,GCXH,KKBH,FXLX,CDH,GCSJ,FWZBH,FWZMC,CLZT,HPHM,HPZL,JCCLLX,ZDCLLX,ZDCLZLX,');
+    SQL.Add('CLYQWBF,CLYQWJY,CLWFWCL,JDCSYR,LXDZ,LXDH,FZJG,SYXZ,CLLX,CLPP,ZT,ZTMC,CCDJRQ,YXQZ,QZBFQZ,');
+    SQL.Add('JCBJ,RKSJ,RKFS,BZ,CSBJ,BJCSBJ,YJXH,DGZC,ZDZC,ZXZC,SFJBC,BXPC,SFTBJQX,SRZK,SCZK,YXQY,YYXM,');
+    SQL.Add('YYDH,YYSFZ,WHPZL,WHPMC,SFTXLDQK,SFGZLDQK,');
     SQL.Add('SFD,MDD,ZKS,HDZKL,SJZZL,HDZZL,GPS,AQSB,CLLTHW,WFYY,JAQD,PLJS,FFGZ,ZTFGBS,');
     SQL.Add('AZFHZZ,XGJSBZ,AZDSJ,AZDLX,SFWZJS,SFYFJSY,QDYSTXZ,JCJG,JCQKMS,');
     SQL.Add('CZ,CY,JCSJ,JCMJ,CJR,CJJG,CJSJ,GXSJ ');
     SQL.Add('from SERV_VEH_CHECK ');
-    SQL.Add('where GXSJ > to_date(''' + FormatDateTime('yyyy-mm-dd hh:mm',
-      maxGXSJ) + ''',''yyyy-mm-dd hh24:mi'') ');
+    SQL.Add('where RKSJ>to_date(''' + s1 + ''',''yyyy-mm-dd hh24:mi'') and GXSJ>to_date(''' + s + ''',''yyyy-mm-dd hh24:mi'')  ');
     try
       if not FOraConn.Connected then
         FOraConn.Open;
       Open;
       DisableControls;
-      while not EOF do
+      while not Eof do
       begin
-        ss.Add('(' + FieldByName('JCXH').AsString.QuotedString + ',' +
-          FieldByName('GCXH').AsString.QuotedString + ',' + FieldByName('KKBH')
-          .AsString.QuotedString + ',' + FieldByName('FXLX')
-          .AsString.QuotedString + ',' + FieldByName('CDH')
-          .AsString.QuotedString + ',' + FieldByName('GCSJ')
-          .AsString.QuotedString + ',' + FieldByName('FWZBH')
-          .AsString.QuotedString + ',' + FieldByName('FWZMC')
-          .AsString.QuotedString + ',' + FieldByName('CLZT')
-          .AsString.QuotedString + ',' + FieldByName('HPHM')
-          .AsString.QuotedString + ',' + FieldByName('HPZL')
-          .AsString.QuotedString + ',' + FieldByName('JCCLLX')
-          .AsString.QuotedString + ',' + FieldByName('SFD')
-          .AsString.QuotedString + ',' + FieldByName('MDD')
-          .AsString.QuotedString + ',' + FieldByName('ZKS')
-          .AsString.QuotedString + ',' + FieldByName('HDZKL')
-          .AsString.QuotedString + ',' + FieldByName('SJZZL')
-          .AsString.QuotedString + ',' + FieldByName('HDZZL')
-          .AsString.QuotedString + ',' + FieldByName('GPS')
-          .AsString.QuotedString + ',' + FieldByName('AQSB')
-          .AsString.QuotedString + ',' + FieldByName('CLLTHW')
-          .AsString.QuotedString + ',' + FieldByName('WFYY')
-          .AsString.QuotedString + ',' + FieldByName('JAQD')
-          .AsString.QuotedString + ',' + FieldByName('PLJS')
-          .AsString.QuotedString + ',' + FieldByName('FFGZ')
-          .AsString.QuotedString + ',' + FieldByName('ZTFGBS')
-          .AsString.QuotedString + ',' + FieldByName('AZFHZZ')
-          .AsString.QuotedString + ',' + FieldByName('XGJSBZ')
-          .AsString.QuotedString + ',' + FieldByName('AZDSJ')
-          .AsString.QuotedString + ',' + FieldByName('AZDLX')
-          .AsString.QuotedString + ',' + FieldByName('SFWZJS')
-          .AsString.QuotedString + ',' + FieldByName('SFYFJSY')
-          .AsString.QuotedString + ',' + FieldByName('QDYSTXZ')
-          .AsString.QuotedString + ',' + FieldByName('JCJG')
-          .AsString.QuotedString + ',' + FieldByName('JCQKMS')
-          .AsString.QuotedString + ',' + FieldByName('CZ').AsString.QuotedString
-          + ',' + FieldByName('CY').AsString.QuotedString + ',' +
-          FieldByName('JCSJ').AsString.QuotedString + ',' + FieldByName('JCMJ')
-          .AsString.QuotedString + ',' + FieldByName('CJR')
-          .AsString.QuotedString + ',' + FieldByName('CJJG')
-          .AsString.QuotedString + ',' + FieldByName('CJSJ')
-          .AsString.QuotedString + ',' + FieldByName('GXSJ')
-          .AsString.QuotedString + '),');
-        if ss.Count = 999 then
+        ss.Add('(' +FieldByName('JCXH').AsString.QuotedString + ',' +
+                    FieldByName('GCXH').AsString.QuotedString + ',' +
+                    FieldByName('KKBH').AsString.QuotedString + ',' +
+                    FieldByName('FXLX').AsString.QuotedString + ',' +
+                    FieldByName('CDH').AsString.QuotedString + ',' +
+                    FieldByName('GCSJ').AsString.QuotedString + ',' +
+                    FieldByName('FWZBH').AsString.QuotedString + ',' +
+                    FieldByName('FWZMC').AsString.QuotedString + ',' +
+                    FieldByName('CLZT').AsString.QuotedString + ',' +
+                    FieldByName('HPHM').AsString.QuotedString + ',' +
+                    FieldByName('HPZL').AsString.QuotedString + ',' +
+                    FieldByName('JCCLLX').AsString.QuotedString + ',' +
+                    FieldByName('ZDCLLX').AsString.QuotedString + ',' +
+                    FieldByName('ZDCLZLX').AsString.QuotedString + ',' +
+
+                    FieldByName('CLYQWBF').AsString.QuotedString + ',' +
+                    FieldByName('CLYQWJY').AsString.QuotedString + ',' +
+                    FieldByName('CLWFWCL').AsString.QuotedString + ',' +
+                    FieldByName('JDCSYR').AsString.QuotedString + ',' +
+                    FieldByName('LXDZ').AsString.QuotedString + ',' +
+                    FieldByName('LXDH').AsString.QuotedString + ',' +
+                    FieldByName('FZJG').AsString.QuotedString + ',' +
+                    FieldByName('SYXZ').AsString.QuotedString + ',' +
+                    FieldByName('CLLX').AsString.QuotedString + ',' +
+                    FieldByName('CLPP').AsString.QuotedString + ',' +
+                    FieldByName('ZT').AsString.QuotedString + ',' +
+                    FieldByName('ZTMC').AsString.QuotedString + ',' +
+                    FieldByName('CCDJRQ').AsString.QuotedString + ',' +
+                    FieldByName('YXQZ').AsString.QuotedString + ',' +
+                    FieldByName('QZBFQZ').AsString.QuotedString + ',' +
+                    FieldByName('JCBJ').AsString.QuotedString + ',' +
+                    FieldByName('RKSJ').AsString.QuotedString + ',' +
+                    FieldByName('RKFS').AsString.QuotedString + ',' +
+                    FieldByName('BZ').AsString.QuotedString + ',' +
+                    FieldByName('CSBJ').AsString.QuotedString + ',' +
+                    FieldByName('BJCSBJ').AsString.QuotedString + ',' +
+                    FieldByName('YJXH').AsString.QuotedString + ',' +
+                    FieldByName('DGZC').AsString.QuotedString + ',' +
+                    FieldByName('ZDZC').AsString.QuotedString + ',' +
+                    FieldByName('ZXZC').AsString.QuotedString + ',' +
+                    FieldByName('SFJBC').AsString.QuotedString + ',' +
+                    FieldByName('BXPC').AsString.QuotedString + ',' +
+                    FieldByName('SFTBJQX').AsString.QuotedString + ',' +
+                    FieldByName('SRZK').AsString.QuotedString + ',' +
+                    FieldByName('SCZK').AsString.QuotedString + ',' +
+                    FieldByName('YXQY').AsString.QuotedString + ',' +
+                    FieldByName('YYXM').AsString.QuotedString + ',' +
+                    FieldByName('YYDH').AsString.QuotedString + ',' +
+                    FieldByName('YYSFZ').AsString.QuotedString + ',' +
+                    FieldByName('WHPZL').AsString.QuotedString + ',' +
+                    FieldByName('WHPMC').AsString.QuotedString + ',' +
+                    FieldByName('SFTXLDQK').AsString.QuotedString + ',' +
+                    FieldByName('SFGZLDQK').AsString.QuotedString + ',' +
+
+                    FieldByName('SFD').AsString.QuotedString + ',' +
+                    FieldByName('MDD').AsString.QuotedString + ',' +
+                    FieldByName('ZKS').AsString.QuotedString + ',' +
+                    FieldByName('HDZKL').AsString.QuotedString + ',' +
+                    FieldByName('SJZZL').AsString.QuotedString + ',' +
+                    FieldByName('HDZZL').AsString.QuotedString + ',' +
+                    FieldByName('GPS').AsString.QuotedString + ',' +
+                    FieldByName('AQSB').AsString.QuotedString + ',' +
+                    FieldByName('CLLTHW').AsString.QuotedString + ',' +
+                    FieldByName('WFYY').AsString.QuotedString + ',' +
+                    FieldByName('JAQD').AsString.QuotedString + ',' +
+                    FieldByName('PLJS').AsString.QuotedString + ',' +
+                    FieldByName('FFGZ').AsString.QuotedString + ',' +
+                    FieldByName('ZTFGBS').AsString.QuotedString + ',' +
+                    FieldByName('AZFHZZ').AsString.QuotedString + ',' +
+                    FieldByName('XGJSBZ').AsString.QuotedString + ',' +
+                    FieldByName('AZDSJ').AsString.QuotedString + ',' +
+                    FieldByName('AZDLX').AsString.QuotedString + ',' +
+                    FieldByName('SFWZJS').AsString.QuotedString + ',' +
+                    FieldByName('SFYFJSY').AsString.QuotedString + ',' +
+                    FieldByName('QDYSTXZ').AsString.QuotedString + ',' +
+                    FieldByName('JCJG').AsString.QuotedString + ',' +
+                    FieldByName('JCQKMS').AsString.QuotedString + ',' +
+                    FieldByName('CZ').AsString.QuotedString + ',' +
+                    FieldByName('CY').AsString.QuotedString + ',' +
+                    FieldByName('JCSJ').AsString.QuotedString + ',' +
+                    FieldByName('JCMJ').AsString.QuotedString + ',' +
+                    FieldByName('CJR').AsString.QuotedString + ',' +
+                    FieldByName('CJJG').AsString.QuotedString + ',' +
+                    FieldByName('CJSJ').AsString.QuotedString + ',' +
+                    FieldByName('GXSJ').AsString.QuotedString + '),'
+        );
+        if ss.Count = 1000 then
         begin
           Save(ss);
           ss.Clear;
@@ -1099,53 +1131,55 @@ procedure TMainThread.DownloadZFZDriver;
 
     s := ss.Text;
     s := copy(s, 1, length(s) - 3); // 回车换行
-    s := 'insert into SERV_VEH_CHECK_Driver' +
-      '(JCXH,JSYLX,XM,JSZH,DABH,FZJG,CCSLRQ,ZT,ZTMC,LJJF,YXQZ,SYYXQZ,LXDZ,' +
-      'LXDH,SFCF,SFZJBF,SFYQWHZ,SFYQWSY,QTMS,CSBJ,BJCSBJ,ZJCX)values' + s;
-    FSQLHelper.ExecuteSQL(s);
+    s := 'insert into SERV_VEH_CHECK_Driver'
+      + '(JCXH,JSYLX,XM,JSZH,DABH,FZJG,CCSLRQ,ZT,ZTMC,LJJF,YXQZ,SYYXQZ,LXDZ,'
+      + 'LXDH,SFCF,SFZJBF,SFYQWHZ,SFYQWSY,QTMS,CSBJ,BJCSBJ,ZJCX)values' + s;
+    FSQLHelper.ExecuteSql(s);
 
     logger.Info('Download_ZFZ_Driver OK');
   end;
-
 var
   ss: TStrings;
   s: string;
+  maxJCXH: string;
 begin
-  FSQLHelper.ExecuteSQL('delete from SERV_VEH_CHECK_Driver');
+  maxJCXH := FSQLHelper.GetSinge('select max(substring(JCXH,12,100)) from SERV_VEH_CHECK_Driver');
   ss := TStringList.Create;
   with FOraQuery do
   begin
     Close;
     SQL.Clear;
-    SQL.Add('select * from SERV_VEH_CHECK_Driver ');
+    SQL.Add('select * from SERV_VEH_CHECK_Driver where substr(JCXH,12,100)>' + maxJCXH.QuotedString);
     try
       if not FOraConn.Connected then
         FOraConn.Open;
       Open;
       DisableControls;
-      while not EOF do
+      while not Eof do
       begin
-        ss.Add('(' + FieldByName('JCXH').AsString.QuotedString + ',' +
-          FieldByName('JSYLX').AsString.QuotedString + ',' + FieldByName('XM')
-          .AsString.QuotedString + ',' + FieldByName('JSZH')
-          .AsString.QuotedString + ',' + FieldByName('DABH')
-          .AsString.QuotedString + ',' + FieldByName('FZJG')
-          .AsString.QuotedString + ',' + FieldByName('CCSLRQ')
-          .AsString.QuotedString + ',' + FieldByName('ZT').AsString.QuotedString
-          + ',' + FieldByName('ZTMC').AsString.QuotedString + ',' +
-          FieldByName('LJJF').AsString.QuotedString + ',' + FieldByName('YXQZ')
-          .AsString.QuotedString + ',' + FieldByName('SYYXQZ')
-          .AsString.QuotedString + ',' + FieldByName('LXDZ')
-          .AsString.QuotedString + ',' + FieldByName('LXDH')
-          .AsString.QuotedString + ',' + FieldByName('SFCF')
-          .AsString.QuotedString + ',' + FieldByName('SFZJBF')
-          .AsString.QuotedString + ',' + FieldByName('SFYQWHZ')
-          .AsString.QuotedString + ',' + FieldByName('SFYQWSY')
-          .AsString.QuotedString + ',' + FieldByName('QTMS')
-          .AsString.QuotedString + ',' + FieldByName('CSBJ')
-          .AsString.QuotedString + ',' + FieldByName('BJCSBJ')
-          .AsString.QuotedString + ',' + FieldByName('ZJCX')
-          .AsString.QuotedString + '),');
+        ss.Add('(' +FieldByName('JCXH').AsString.QuotedString + ',' +
+                    FieldByName('JSYLX').AsString.QuotedString + ',' +
+                    FieldByName('XM').AsString.QuotedString + ',' +
+                    FieldByName('JSZH').AsString.QuotedString + ',' +
+                    FieldByName('DABH').AsString.QuotedString + ',' +
+                    FieldByName('FZJG').AsString.QuotedString + ',' +
+                    FieldByName('CCSLRQ').AsString.QuotedString + ',' +
+                    FieldByName('ZT').AsString.QuotedString + ',' +
+                    FieldByName('ZTMC').AsString.QuotedString + ',' +
+                    FieldByName('LJJF').AsString.QuotedString + ',' +
+                    FieldByName('YXQZ').AsString.QuotedString + ',' +
+                    FieldByName('SYYXQZ').AsString.QuotedString + ',' +
+                    FieldByName('LXDZ').AsString.QuotedString + ',' +
+                    FieldByName('LXDH').AsString.QuotedString + ',' +
+                    FieldByName('SFCF').AsString.QuotedString + ',' +
+                    FieldByName('SFZJBF').AsString.QuotedString + ',' +
+                    FieldByName('SFYQWHZ').AsString.QuotedString + ',' +
+                    FieldByName('SFYQWSY').AsString.QuotedString + ',' +
+                    FieldByName('QTMS').AsString.QuotedString + ',' +
+                    FieldByName('CSBJ').AsString.QuotedString + ',' +
+                    FieldByName('BJCSBJ').AsString.QuotedString + ',' +
+                    FieldByName('ZJCX').AsString.QuotedString + '),'
+        );
         if ss.Count = 999 then
         begin
           Save(ss);
