@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uSMS, EncdDecd,
-  uImportVio, uRmService, qjson, uSurveilVio, uHikDSJ,
+  uImportVio, uRmService, qjson, uSurveilVio, uHikDSJ, uHikHumanFace,
   Generics.Collections, StrUtils, uTokenManager, ActiveX, uExamService;
 
 type
@@ -38,7 +38,7 @@ class function TSPService.GetActions: String;
 begin
   Result := ',GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,' +
     'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,'
-    + 'UPLOADSPOTPIC,VEHCHECK,';
+    + 'UPLOADSPOTPIC,VEHCHECK,GETHUMANFACECOMPARERESULT,';
 end;
 
 class function TSPService.GetCCLZRQ(token: TToken; Params: TStrings): String;
@@ -268,7 +268,7 @@ end;
 class procedure TSPService.DoSP(action, tokenKey: String; Params: TStrings;
   isExport: Boolean; AResponseInfo: TIdHTTPResponseInfo);
 var
-  s, page, pageSize, passtime: String;
+  s, msg, page, pageSize, passtime: String;
   token: TToken;
   kssj, jssj: Int64;
   i: Integer;
@@ -369,8 +369,16 @@ begin
         ''' and gxsj>dateadd(mi, -20, getdate())';
       gSQLHelper.ExecuteSql(s);
     end;
+  end
+  else if action = 'GETHUMANFACECOMPARERESULT' then
+  begin
+    msg := '';
+    s := THikHumanFace.GetHumanFaceCompareResult(Params, msg);
+    if msg <> '' then
+      AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg)
+    else
+      AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(s);
   end;
-
   ActiveX.CoUninitialize;
 end;
 

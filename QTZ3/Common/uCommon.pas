@@ -99,7 +99,9 @@ type
     class function QueryVehInfo(hphm, hpzl: String): String;
     class function DelFile(fileName: String): Boolean; static;
     class function JsonToRecord<T>(JSON: string): T; static;
+    class function JsonToRecordList<T>(JSON: string): TList<T>; static;
     class procedure SaveSLWS(yhbh: String);
+    class function FtpPic(base64Str: String): String; static;
   end;
 
 procedure SQLError(const SQL, Description: string);
@@ -224,8 +226,8 @@ begin
               value := '0';
           end
           else
-            value := Fields[i].AsString.Replace(char(9), ' ')
-              .Replace(char(10), ' ').Replace(char(13), ' ');
+            value := Trim(Fields[i].AsString.Replace(char(9), ' ')
+              .Replace(char(10), ' ').Replace(char(13), ' '));
           s := '"' + col + '":"' + value + '"';
 
           if (AGroups <> nil) and (AGroups.IndexOf(UpperCase(col)) >= 0) then
@@ -695,7 +697,7 @@ begin
       while not Eof do
       begin
         dev.SystemID := FieldByName('SYSTEMID').AsString;
-        dev.SBBH := FieldByName('SBBH').AsString;
+        dev.SBBH := Trim(FieldByName('SBBH').AsString);
         dev.JCPTBABH := FieldByName('JCPTBABH').AsString;
         dev.JCPTBAFX := FieldByName('JCPTBAFX').AsString;
         dev.LKBH := FieldByName('LKBH').AsString;
@@ -770,9 +772,9 @@ begin
     begin
       while not Eof do
       begin
-        if not FDicHpzlMC.ContainsKey(FieldByName('DM').AsString) then
-          FDicHpzlMC.add(FieldByName('DM').AsString,
-            FieldByName('MC').AsString);
+        if not FDicHpzlMC.ContainsKey(Trim(FieldByName('DM').AsString)) then
+          FDicHpzlMC.add(Trim(FieldByName('DM').AsString),
+            Trim(FieldByName('MC').AsString));
         Next;
       end;
       Free;
@@ -898,7 +900,7 @@ begin
   except
     on e: Exception do
     begin
-      Result := AJSON;
+      // Result := AJSON;
       gLogger.Error('[TCommon.GetJsonNode]' + e.Message + AJSON);
     end;
   end;
@@ -1071,7 +1073,7 @@ begin
       begin
         dept.PDWDM := FieldByName('PDWDM').AsString;
         dept.dwjb := FieldByName('DWJB').AsString;
-        dept.dwdm := FieldByName('DWDM').AsString;
+        dept.dwdm := Trim(FieldByName('DWDM').AsString);
         dept.dwmc := FieldByName('DWMC').AsString;
         dept.DWFZR := FieldByName('DWFZR').AsString;
         dept.DWLXR := FieldByName('DWLXR').AsString;
@@ -1150,8 +1152,8 @@ begin
       'http://10.43.255.66:8983/solr/traffic/');
 
     gConfig.HttpServerPort := ReadInteger('Http', 'Port', 17115);
-    gConfig.HttpPath := ReadString('Http', 'Path', '');
-    gConfig.HttpHome := ReadString('Http', 'Home', '');
+    // gConfig.HttpPath := ReadString('Http', 'Path', '');
+    // gConfig.HttpHome := ReadString('Http', 'Home', '');
 
     gConfig.ImportVioHost := ReadString('ImportVio', 'Host', '127.0.0.1');
     gConfig.ImportVioPort := ReadInteger('ImportVio', 'Port', 21);
@@ -1174,6 +1176,7 @@ begin
     gConfig.HikConfig.CarFace := ReadString('Hik', 'CarFace', '');
     gConfig.HikConfig.analysisExtra := ReadString('Hik', 'analysisExtra', '');
     gConfig.HikConfig.dataAnalysis := ReadString('Hik', 'dataAnalysis', '');
+    gConfig.HikConfig.HumanFace := ReadString('Hik', 'HumanFace', '');
 
     gConfig.PicUrl := ReadString('Hik', 'PicUrl', 'http://10.43.235.39:17116');
 
@@ -1596,6 +1599,33 @@ begin
   end;
 end;
 
+Class function TCommon.JsonToRecordList<T>(JSON: string): TList<T>;
+var
+  ja: TJSONArray;
+  jv: TJSONValue;
+  rec: T;
+begin
+  Result := TList<T>.Create;
+
+  if JSON = '' then
+    exit;
+
+  try
+    ja := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(JSON), 0)
+      as TJSONArray;
+    if ja <> nil then
+    begin
+      for jv in ja do
+      begin
+        rec := JsonToRecord<T>('[' + jv.ToJSON + ']');
+        Result.add(rec);
+      end;
+      ja.Free;
+    end;
+  except
+  end;
+end;
+
 Class function TCommon.JsonToRecord<T>(JSON: string): T;
 var
   rrt: TRttiRecordType;
@@ -1673,6 +1703,29 @@ begin
     Result := TCommon.QueryToJsonString('GetLocalVehInfo ' + hphm.QuotedString +
       ',' + hpzl.QuotedString, nil, c);
   end;
+end;
+
+class function TCommon.FtpPic(base64Str: String): String;
+var
+  tp: String;
+begin
+  tp := Formatdatetime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
+  Result := gConfig.ImportVioHome + 'clientvio/' + Formatdatetime('yyyymm-dd',
+    Now()) + '/' + tp;
+  try
+    TCommon.Base64ToFile(base64Str, ExtractFilePath(ParamStr(0)) + tp);
+    TCommon.FtpPutFile(gConfig.ImportVioHost, gConfig.ImportVioUser,
+      gConfig.ImportVioPassword, ExtractFilePath(ParamStr(0)) + tp,
+      '/clientvio/' + Formatdatetime('yyyymm-dd', Now()) + '/' + tp,
+      gConfig.ImportVioPort);
+  except
+    on e: Exception do
+    begin
+      Result := '';
+      gLogger.Error(e.Message);
+    end;
+  end;
+  TCommon.DelFile(ExtractFilePath(ParamStr(0)) + tp);
 end;
 
 end.

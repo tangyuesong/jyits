@@ -35,7 +35,6 @@ type
     class var FDicSBBH: TDictionary<string, string>;
     class function GetZsxxdz(hphm, hpzl: String): String;
     class procedure SaveVio2DB(vio: TSurveil);
-    class function FtpPic(base64Str: String): String;
     class function GetVioUploadStr(vio: TSurveil): String; static;
     class function IsReVio(vio: TSurveil): Boolean;
     class function AddPicText(sourcePic, targetPic: String;
@@ -150,26 +149,6 @@ begin
     ms.Free;
     ss.Free;
   end;
-end;
-
-class function TSurveilVio.FtpPic(base64Str: String): String;
-var
-  tp: String;
-begin
-  tp := FormatDateTime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
-  Result := gConfig.ImportVioHome + 'clientvio/' + FormatDateTime('yyyymm-dd',
-    Now()) + '/' + tp;
-  try
-    TCommon.Base64ToFile(base64Str, ExtractFilePath(Paramstr(0)) + tp);
-    TCommon.FtpPutFile(gConfig.ImportVioHost, gConfig.ImportVioUser,
-      gConfig.ImportVioPassword, ExtractFilePath(Paramstr(0)) + tp,
-      '/clientvio/' + FormatDateTime('yyyymm-dd', Now()) + '/' + tp,
-      gConfig.ImportVioPort);
-  except
-    on e: exception do
-      gLogger.Error(e.Message);
-  end;
-  TCommon.DelFile(ExtractFilePath(Paramstr(0)) + tp);
 end;
 
 class function TSurveilVio.GetZsxxdz(hphm, hpzl: String): String;
@@ -377,8 +356,8 @@ class procedure TSurveilVio.SaveVio2DB(vio: TSurveil);
 var
   s, url1, url2: String;
 begin
-  url1 := FtpPic(vio.pic1Str);
-  url2 := FtpPic(vio.pic2Str);
+  url1 := TCommon.FtpPic(vio.pic1Str);
+  url2 := TCommon.FtpPic(vio.pic2Str);
   s := 'insert into ' + cDBName +
     '.dbo.T_Spot_Surveil([SXH],[HPHM],[HPZL],[WFSJ],[XZQH],[WFDD],[LDDM],[DDMS],'
     + '[WFDZ],[SBBH],[WFXW],[ZQMJ],[FXJG],[PIC1],[PIC2],[CFZL],[ZT],[BZ],[WSBH]) values ('

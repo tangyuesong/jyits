@@ -74,6 +74,7 @@ type
     CarFace: String;
     analysisExtra: String;
     dataAnalysis: String;
+    HumanFace: String;
     {
       DFUrl: String;
       DFUser: String;
@@ -91,8 +92,8 @@ type
     DBName: String;
     SolrHome: string;
     HttpServerPort: Integer;
-    HttpPath: String;
-    HttpHome: String;
+    //HttpPath: String;
+    //HttpHome: String;
     // ImportVio
     ImportVioHost: String;
     ImportVioPort: Integer;

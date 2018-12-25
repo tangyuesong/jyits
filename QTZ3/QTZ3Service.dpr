@@ -43,7 +43,8 @@ uses
   uHikDSJ in 'Hik\uHikDSJ.pas',
   uTmri_huizhou in 'RMService\impl\uTmri_huizhou.pas',
   Ehlservice in 'RMService\intf\Ehlservice.pas',
-  uTmriType in 'RMService\impl\uTmriType.pas';
+  uTmriType in 'RMService\impl\uTmriType.pas',
+  uHikHumanFace in 'Hik\uHikHumanFace.pas';
 
 {$R *.RES}
 
