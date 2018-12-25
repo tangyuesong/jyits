@@ -163,7 +163,8 @@ begin
     dybj := '0'
   else
     dybj := '1';
-  Param := 'kssj=' + vdt + '&jssj=' + vdt2 + '&dybj=' + dybj;
+  Param := 'kssj=' + vdt + '&jssj=' + vdt2 + '&dybj=' + dybj + '&dwdm=' +
+    gUser.DWDM;
   Param := Param + '&num=' + edtNum.Text;
   s := TRequestItf.pDbQuery('GetJCPTSurveil', Param);
   TJSONUtils.JSONToDataSet(s, FDMemTable1, '');

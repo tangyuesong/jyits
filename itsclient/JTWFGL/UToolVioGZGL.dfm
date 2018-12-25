@@ -1,8 +1,6 @@
 inherited ToolVioGZGL: TToolVioGZGL
-  Width = 775
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 775
     Height = 305
     ExplicitTop = 0
     ExplicitHeight = 305
