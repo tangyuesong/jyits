@@ -1,16 +1,16 @@
-unit uTmri;
+unit uTmri_huizhou;
 
 interface
 
 uses
   Windows, Dialogs, System.Classes, SysUtils, Variants,
   SOAPHTTPClient, Httpapp, IdGlobal, IdHTTP, Provider, WinSock2, System.JSON,
-  XMLDoc, XMLIntf, msxml, msxmldom, xmldom, forms, TmriOutNewAccess, uLogger,
+  XMLDoc, XMLIntf, msxml, msxmldom, xmldom, forms, Ehlservice, uLogger,
   uTmriType, uJKDefine;
 
 type
 
-  TTmri = class
+  TTmri_huizhou = class
   private
     class function CallWebService(xtlb, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs,
       UTF8XmlDoc: string; write: boolean = false): string; static;
@@ -26,29 +26,26 @@ implementation
 
 uses uXmlAndJSON;
 
-class function TTmri.CallWebService(xtlb, jkid, yhbz, dwmc, dwjgdm, yhxm, zdbs,
-  UTF8XmlDoc: string; write: boolean = false): string;
+class function TTmri_huizhou.CallWebService(xtlb, jkid, yhbz, dwmc, dwjgdm,
+  yhxm, zdbs, UTF8XmlDoc: string; write: boolean = false): string;
 var
   WSResult: string;
-  WSIServer: TmriJaxRpcOutNewAccess;
-  Rio: THTTPRIO;
+  WSIServer: EHLServiceSoap;
 begin
   result := '';
-  Rio := THTTPRIO.Create(nil);
-  WSIServer := GetTmriJaxRpcOutNewAccess(true, JKDic[jkid].WSDL, Rio);
+  WSIServer := GetEHLServiceSoap(true, JKDic[jkid].WSDL);
   try
     if write then
-      WSResult := WSIServer.writeObjectOutNew(xtlb, JKDic[jkid].XLH, jkid,
-        JKDic[jkid].CJSQBH, dwjgdm, dwmc, yhbz, yhxm, zdbs, UTF8XmlDoc)
+      WSResult := WSIServer.writeObjectOut(jkid, UTF8XmlDoc)
     else
-      WSResult := WSIServer.queryObjectOutNew(xtlb, JKDic[jkid].XLH, jkid,
-        JKDic[jkid].CJSQBH, dwjgdm, dwmc, yhbz, yhxm, zdbs, UTF8XmlDoc);
+      WSResult := WSIServer.queryObjectOut(jkid, JKDic[jkid].CJSQBH,
+        UTF8XmlDoc);
     try
       WSResult := HTTPDecode(WSResult);
       logger.Trace('[TTmri.CallWebService]' + UTF8XmlDoc + #10#13 + WSResult);
     except
       on e: exception do
-        logger.Error('[CallWebService1]' + e.Message);
+        logger.Trace('[CallWebService1]' + e.Message);
     end;
     try
       result := TXmlAndJSON.XML2JSON(WSResult);
@@ -62,10 +59,9 @@ begin
     on e: exception do
       logger.Error('[CallWebService]' + e.Message);
   end;
-  Rio := nil;
 end;
 
-class function TTmri.Query(param: TTmriParam; JSON: string): string;
+class function TTmri_huizhou.Query(param: TTmriParam; JSON: string): string;
 var
   xml: string;
 begin
@@ -82,7 +78,7 @@ begin
   end;
 end;
 
-class function TTmri.write(param: TTmriParam; JSON: string): string;
+class function TTmri_huizhou.write(param: TTmriParam; JSON: string): string;
 var
   xml: string;
 begin

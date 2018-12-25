@@ -3,7 +3,7 @@ unit uHuiZhouKaoHe;
 interface
 
 uses
-  SysUtils, Classes, uGlobal, uCommon, uHik, IdCustomHTTPServer,DateUtils,
+  SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer,DateUtils,
   Graphics, QBAES, IniFiles, Types, IOUtils, Generics.Collections, Windows,
   Generics.Defaults, FireDAC.Comp.Client, FireDAC.Stan.Option, FireDAC.Stan.Def,
   FireDAC.DApt, FireDAC.Stan.Async, FireDAC.Stan.Expr, FireDAC.Stan.Pool,

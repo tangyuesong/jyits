@@ -3,23 +3,47 @@ unit uSurveilVio;
 interface
 
 uses
-  SysUtils, Classes, uGlobal, uCommon, uHik, IdCustomHTTPServer, uRmService,
-  uEntity, uLockVio, DateUtils, uRmInf, Windows, imageenview, Vcl.Imaging.jpeg,
-  Graphics, QBAES;
+  SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uRmService,
+  DateUtils, uRmInf, Windows, imageenview, Vcl.Imaging.jpeg,
+  Graphics, QBAES, System.Generics.Collections, ADODB, System.NetEncoding;
 
 type
+  TSurveil = Record
+    sxh: String;
+    hphm: String;
+    hpzl: String;
+    wfsj: TDatetime;
+    xzqh: String;
+    wfdd: String;
+    lddm: String;
+    ddms: String;
+    wfdz: String;
+    sbbh: String;
+    wfxw: String;
+    zqmj: String;
+    fxjg: String;
+    cfzl: String;
+    zt: String;
+    pic1Str: String;
+    pic2Str: String;
+    bz: String;
+    wsbh: String;
+  End;
+
   TSurveilVio = Class
   private
+    class var FDicSBBH: TDictionary<string, string>;
     class function GetZsxxdz(hphm, hpzl: String): String;
-    class procedure SaveVio2DB(ip, code, wfdd, zt: String; vio: TLockVio;
-      bz: String = '');
-    class function FtpPic(base64Str: String): String;
-    class function GetVioUploadStr(vio: TLockVio): String; static;
-    class function IsReVio(hphm, hpzl, wfdd, wfxw: String;
-      wfsj: TDateTime): Boolean;
+    class procedure SaveVio2DB(vio: TSurveil);
+    class function GetVioUploadStr(vio: TSurveil): String; static;
+    class function IsReVio(vio: TSurveil): Boolean;
     class function AddPicText(sourcePic, targetPic: String;
-      vio: TLockVio): Boolean;
-    class procedure AddSY(var vio: TLockVio);
+      vio: TSurveil): Boolean;
+    class procedure AddSY(var vio: TSurveil);
+    class function IsWhite(vio: TSurveil): Boolean;
+    class function BitmapToString(lj: string): WideString;
+    class function GetDicSBBH: TDictionary<string, string>; static;
+    class property DicSBBH: TDictionary<string, string> read GetDicSBBH;
   public
     class procedure SaveSurveilVio(tokenKey: String; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
@@ -30,7 +54,7 @@ implementation
 { TSurveilVio }
 
 class function TSurveilVio.AddPicText(sourcePic, targetPic: String;
-  vio: TLockVio): Boolean;
+  vio: TSurveil): Boolean;
 var
   LogFont: TLogFont;
   img: TImageEnView;
@@ -58,8 +82,8 @@ begin
       LogFont.lfQuality := 3;
       Font.Handle := CreateFontIndirect(LogFont);
       Brush.Style := bsClear;
-      TextOut(10, 10, '违法时间: ' + vio.wfsj + ' 号牌号码: ' + vio.hphm + ' 号牌种类: ' +
-        vio.hpzl);
+      TextOut(10, 10, '违法时间: ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', vio.wfsj)
+        + ' 号牌号码: ' + vio.hphm + ' 号牌种类: ' + vio.hpzl);
       TextOut(10, 10 + w * 1, '违法地点: ' + vio.wfdz);
       TextOut(10, 10 + w * 2, '违法代码: ' + vio.wfxw);
       TextOut(10, 10 + w * 3,
@@ -73,59 +97,58 @@ begin
   img.Free;
 end;
 
-class procedure TSurveilVio.AddSY(var vio: TLockVio);
+class procedure TSurveilVio.AddSY(var vio: TSurveil);
 var
-  tmpPic1, tmpPic2, Pic1, Pic2: String;
+  tmpPic1, tmpPic2, pic1, pic2: String;
 begin
   tmpPic1 := ExtractFilePath(Paramstr(0)) + 'tmp_' + vio.zqmj + '_' +
-    formatDatetime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
+    FormatDateTime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
   tmpPic2 := ExtractFilePath(Paramstr(0)) + 'tmp_' + vio.zqmj + '_' +
-    formatDatetime('yyyymmddhhnnsszzz', Now()) + '2.jpg';
-  Pic1 := ExtractFilePath(Paramstr(0)) + vio.zqmj + '_' +
-    formatDatetime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
-  Pic2 := ExtractFilePath(Paramstr(0)) + vio.zqmj + '_' +
-    formatDatetime('yyyymmddhhnnsszzz', Now()) + '2.jpg';
+    FormatDateTime('yyyymmddhhnnsszzz', Now()) + '2.jpg';
+  pic1 := ExtractFilePath(Paramstr(0)) + vio.zqmj + '_' +
+    FormatDateTime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
+  pic2 := ExtractFilePath(Paramstr(0)) + vio.zqmj + '_' +
+    FormatDateTime('yyyymmddhhnnsszzz', Now()) + '2.jpg';
 
   try
-    TCommon.Base64ToFile(vio.zpstr1, tmpPic1);
-    AddPicText(tmpPic1, Pic1, vio);
-    vio.zpstr1 := TLockVioUtils.BitmapToString(Pic1);
+    TCommon.Base64ToFile(vio.pic1Str, tmpPic1);
+    AddPicText(tmpPic1, pic1, vio);
+    vio.pic1Str := BitmapToString(pic1);
   finally
     if FileExists(tmpPic1) then
       DeleteFile(PChar(tmpPic1));
-    if FileExists(Pic1) then
-      DeleteFile(PChar(Pic1));
+    if FileExists(pic1) then
+      DeleteFile(PChar(pic1));
   end;
   try
-    TCommon.Base64ToFile(vio.zpstr2, tmpPic2);
-    AddPicText(tmpPic2, Pic2, vio);
-    vio.zpstr2 := TLockVioUtils.BitmapToString(Pic2);
+    TCommon.Base64ToFile(vio.pic2Str, tmpPic2);
+    AddPicText(tmpPic2, pic2, vio);
+    vio.pic2Str := BitmapToString(pic2);
   finally
     if FileExists(tmpPic2) then
       DeleteFile(PChar(tmpPic2));
-    if FileExists(Pic2) then
-      DeleteFile(PChar(Pic2));
+    if FileExists(pic2) then
+      DeleteFile(PChar(pic2));
   end;
 end;
 
-class function TSurveilVio.FtpPic(base64Str: String): String;
+class function TSurveilVio.BitmapToString(lj: string): WideString;
 var
-  tp: String;
+  ms: TMemoryStream;
+  ss: TStringStream;
 begin
-  tp := formatDatetime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
-  Result := gConfig.ImportVioHome + 'clientvio/' + formatDatetime('yyyymm-dd',
-    Now()) + '/' + tp;
+  Result := '';
   try
-    TCommon.Base64ToFile(base64Str, ExtractFilePath(Paramstr(0)) + tp);
-    TCommon.FtpPutFile(gConfig.ImportVioHost, gConfig.ImportVioUser,
-      gConfig.ImportVioPassword, ExtractFilePath(Paramstr(0)) + tp,
-      '/clientvio/' + formatDatetime('yyyymm-dd', Now()) + '/' + tp,
-      gConfig.ImportVioPort);
-  except
-    on e: exception do
-      gLogger.Error(e.Message);
+    ms := TMemoryStream.Create;
+    ms.LoadFromFile(lj);
+    ss := TStringStream.Create;
+    ms.Position := 0;
+    TBase64Encoding.Base64.Encode(ms, ss);
+    Result := ss.DataString;
+  finally
+    ms.Free;
+    ss.Free;
   end;
-  TCommon.DelFile(ExtractFilePath(Paramstr(0)) + tp);
 end;
 
 class function TSurveilVio.GetZsxxdz(hphm, hpzl: String): String;
@@ -141,181 +164,212 @@ begin
   end;
 end;
 
-class function TSurveilVio.IsReVio(hphm, hpzl, wfdd, wfxw: String;
-  wfsj: TDateTime): Boolean;
+class function TSurveilVio.IsReVio(vio: TSurveil): Boolean;
 var
   s: String;
 begin
-  s := ' where hphm=' + hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString +
-    ' and zt=''8'' and wfsj>''' + formatDatetime('yyyy/mm/dd', wfsj - 1) +
-    ' 23:50:01'' and wfsj<''' + formatDatetime('yyyy/mm/dd', wfsj + 1) +
-    ' 00:10:59'' and wfxw=' + wfxw.QuotedString + ' and wfdd=' +
-    wfdd.QuotedString;
-  Result := gSQLHelper.ExistsRecord(cDBName + '.dbo.T_VIO_HIS', s);
+  s := ' where hphm=' + vio.hphm.QuotedString + ' and hpzl=' +
+    vio.hpzl.QuotedString + ' and zt=''1'' and wfsj>''' +
+    FormatDateTime('yyyy/mm/dd', vio.wfsj - 1) + ' 23:50:01'' and wfsj<''' +
+    FormatDateTime('yyyy/mm/dd', vio.wfsj + 1) + ' 00:10:59'' and wfxw=' +
+    vio.wfxw.QuotedString + ' and wfdz=' + vio.wfdz.QuotedString;
+  Result := gSQLHelper.ExistsRecord(cDBName + '.dbo.T_Spot_Surveil', s);
+end;
+
+class function TSurveilVio.IsWhite(vio: TSurveil): Boolean;
+var
+  s, wfsj: String;
+  qy: TADOQuery;
+begin
+  Result := False;
+  wfsj := FormatDateTime('yyyy-mm-dd hh:nn:ss', vio.wfsj);
+  s := ' select 1 from ' + cDBName +
+    '.dbo.T_VIO_WHILELIST where ZT=1 and powertype in (1,2) and hphm=' +
+    vio.hphm.QuotedString + ' and hpzl=' + vio.hpzl.QuotedString + ' and dwdm='
+    + vio.fxjg.QuotedString + ' and YXSJ<' + wfsj.QuotedString + ' and JSSJ>' +
+    wfsj.QuotedString;
+  s := s + ' union all ';
+  s := s + ' select 1 from ' + cDBName +
+    '.dbo.T_VIO_WHILELIST where ZT=1 and powertype in (1,2) and hphm=' +
+    vio.hphm.QuotedString + ' and hpzl=' + vio.hpzl.QuotedString +
+    ' and dwdm=left(''' + vio.fxjg + ''', 6)+''000000'' and YXSJ<' +
+    wfsj.QuotedString + ' and JSSJ>' + wfsj.QuotedString;
+  s := s + ' union all ';
+  s := s + ' select 1 from ' + cDBName +
+    '.dbo.T_VIO_WHILELIST where ZT=1 and powertype in (1,2) and hphm=' +
+    vio.hphm.QuotedString + ' and hpzl=' + vio.hpzl.QuotedString +
+    ' and dwdm=left(''' + vio.fxjg + ''', 4)+''00000000'' and YXSJ<' +
+    wfsj.QuotedString + ' and JSSJ>' + wfsj.QuotedString;
+  Result := gSQLHelper.ExistsRecord(s);
+
+  if Result then
+    exit;
+
+  // CZ 白名单
+  qy := TADOQuery.Create(nil);
+  qy.ConnectionString :=
+    'Provider=SQLOLEDB.1;Password=cagajcajak;Persist Security Info=True;User ID=tp;Initial Catalog=vio;Data Source=10.43.255.5';
+  qy.SQL.Text := ' select 1 from T_BLACKLIST where hphm = ' +
+    vio.hphm.QuotedString + ' and hpzl = ' + vio.hpzl.QuotedString +
+    ' and jssj > ' + wfsj.QuotedString;
+  try
+    qy.Open;
+    Result := qy.RecordCount > 0;
+  except
+  end;
+  qy.Free;
 end;
 
 class procedure TSurveilVio.SaveSurveilVio(tokenKey: String; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  hphm, hpzl, wfdd, json, wfxw, code, ip, cfzl, bz, msg, zt: String;
-  wfsj: TDateTime;
-  device: TDevice;
-  vio: TLockVio;
+  json, bz, ip, msg: String;
+  vio: TSurveil;
 begin
-  hphm := params.Values['hphm'];
-  hpzl := params.Values['hpzl'];
-  wfdd := params.Values['wfdd'];
-  wfsj := DateUtils.IncMilliSecond(25569.3333333333,
+  vio.hphm := params.Values['hphm'];
+  vio.hpzl := params.Values['hpzl'];
+  vio.wfsj := DateUtils.IncMilliSecond(25569.3333333333,
     StrToInt64Def(params.Values['wfsj'], -346789));
-  cfzl := params.Values['cfzl'];
-  wfxw := params.Values['wfxw'];
+  vio.cfzl := params.Values['cfzl'];
+  vio.wfxw := params.Values['wfxw'];
+  vio.xzqh := params.Values['xzqh'];
+  vio.wfdd := params.Values['wfdd'];
+  vio.lddm := params.Values['lddm'];
+  vio.ddms := params.Values['ddms'];
+  vio.wfdz := params.Values['wfdz'];
+  vio.zqmj := gTokenManager.GetToken(tokenKey).Login;
+  vio.fxjg := gTokenManager.GetToken(tokenKey).User.DWDM;
+  vio.pic1Str := params.Values['pic1'];
+  vio.pic2Str := params.Values['pic2'];
+  vio.wsbh := params.Values['wsbh'];
 
-  gLogger.Info('[SaveSurveilVio] {"cfzl":"' + cfzl + '","wfdd":"' + wfdd +
-    '","hpzl":"' + hpzl + '","hphm":"' + hphm + '","wfsj":"' +
-    formatDatetime('yyyy-mm-dd hh:nn:ss', wfsj) + '","wfxw":"' + wfxw + '"}');
+  gLogger.Info('[SaveSurveilVio] {"cfzl":"' + vio.cfzl + '","wfdz":"' + vio.wfdz
+    + '","hpzl":"' + vio.hpzl + '","hphm":"' + vio.hphm + '","wfsj":"' +
+    FormatDateTime('yyyy-mm-dd hh:nn:ss', vio.wfsj) + '","wfxw":"' + vio.wfxw +
+    '","zqmj":"' + vio.zqmj + '","fxjg":"' + vio.fxjg + '"}');
 
-  if TCommon.DicDevice.ContainsKey(wfdd) then
-    device := TCommon.DicDevice[wfdd]
-  else
+  if not DicSBBH.ContainsKey(vio.fxjg) then
   begin
-    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('违法地点不存在');
-    gLogger.Error('[SaveSurveilVio] 违法地点不存在');
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('未配置违停设备编号');
+    gLogger.Error('[SaveSurveilVio] 未配置违停设备编号');
     exit;
-  end;
+  end
+  else
+    vio.sbbh := DicSBBH[vio.fxjg];
 
-  if IsReVio(hphm, hpzl, wfdd, wfxw, wfsj) then
+  if IsReVio(vio) then
   begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('重复录入');
     gLogger.Error('[SaveSurveilVio] 重复录入');
     exit;
   end;
 
-  vio.cjjg := device.cjjg;
-  vio.clfl := '3';
-  vio.hphm := hphm;
-  vio.hpzl := hpzl;
-  vio.wfsj := formatDatetime('yyyy-mm-dd hh:nn:ss', wfsj);
-  vio.wfxw := wfxw;
-  vio.spdz := '';
-  vio.zpstr1 := params.Values['pic1'];
-  vio.zpstr2 := params.Values['pic2'];
+  // AddSY(vio);     //前端加水印
 
-  vio.bzz := device.XZSD.ToString;
-  vio.scz := '0';
-
-  vio.wfdd := device.LHY_WFDD;
-  vio.wfdz := device.SBDDMC;
-  vio.xzqh := device.LHY_XZQH;;
-  vio.ddms := device.LHY_DDMS;
-  vio.lddm := device.LHY_LDDM;
-  vio.sbbh := device.LHY_SBBH;
-  vio.cjfs := device.LHY_CJFS;
-  vio.tpzl := device.LHY_JPGQ;
-  vio.tpw := device.LHY_JPGW;
-  vio.tph := device.LHY_JPGH;
-  vio.zqmj := gTokenManager.GetToken(tokenKey).Login;
-  ip := gTokenManager.GetToken(tokenKey).ip;
-
-  zt := '8';
-  // AddSY(vio);
-
-  if TLockVioUtils.IsWhite(hphm, hpzl, vio.cjjg, vio.wfsj) then
+  if IsWhite(vio) then
   begin
-    code := 'h' + formatDatetime('hhnnmmzzz', Now());
-    bz := 'h';
-    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
-      ('"' + code + '"');
+    vio.zt := '1';
+    vio.sxh := 'h';
+    vio.bz := 'h';
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('"1"');
   end
-  else if cfzl = '1' then
+  else if vio.cfzl = '1' then
   begin
-    code := cfzl;
-    bz := '警告';
-    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
-      ('"' + code + '"');
+    vio.zt := '1';
+    vio.sxh := '1';
+    vio.bz := '警告';
+    AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('"1"');
   end
   else
   begin
-    // json := TLockVioUtils.GetVioUploadStr(vio);
-    // code := TLockVioUtils.WriteVio('', tokenKey, json, vio.flag, AResponseInfo);
     json := GetVioUploadStr(vio);
     json := TRminf.surscreen(json);
     gLogger.Info('[SaveSurveilVio]' + json);
-    code := TCommon.GetJsonNode('code', json);
-    if code = '1' then
+    vio.sxh := TCommon.GetJsonNode('code', json);
+    if vio.sxh = '1' then
     begin
-      code := TCommon.GetJsonNode('value', json);
-      bz := '';
-      AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(code);
+      vio.zt := '1';
+      vio.sxh := TCommon.GetJsonNode('value', json);
+      vio.bz := '成功';
+      AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(vio.sxh);
     end
     else
     begin
-      zt := '6';
-      if code = '0' then
-        bz := TCommon.GetJsonNode('message', json)
+      vio.zt := '0';
+      if vio.sxh = '0' then
+      begin
+        bz := TCommon.GetJsonNode('message', json);
+        vio.bz := bz;
+      end
       else
       begin
-        code := '-1';
+        vio.sxh := '-1';
         bz := 'jcpt error';
+        vio.bz := json;
       end;
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(bz);
     end;
   end;
-  SaveVio2DB(ip, code, wfdd, zt, vio, bz);
+  SaveVio2DB(vio);
 end;
 
-class function TSurveilVio.GetVioUploadStr(vio: TLockVio): String;
+class function TSurveilVio.GetDicSBBH: TDictionary<string, string>;
+begin
+  if FDicSBBH = nil then
+  begin
+    FDicSBBH := TDictionary<string, string>.Create;
+    with gSQLHelper.Query('select dwdm, sbbh from ' + cDBName +
+      '.dbo.T_WT_SBBH') do
+    begin
+      while not Eof do
+      begin
+        FDicSBBH.Add(Fields[0].AsString, Fields[1].AsString);
+        Next;
+      end;
+      Free;
+    end;
+  end;
+  Result := FDicSBBH;
+end;
+
+class function TSurveilVio.GetVioUploadStr(vio: TSurveil): String;
 var
   zpsl: string;
 begin
-  Result := '{"sbbh":"' + vio.sbbh + '","hpzl":"' + vio.hpzl + '","hphm":"' +
-    vio.hphm + '","wfsj":"' + vio.wfsj + '","wfxw":"' + vio.wfxw + '","scz":"' +
-    vio.scz + '","wfdz":"' + vio.wfdz + '","xzqh":"' + vio.xzqh + '","wfdd":"' +
-    vio.wfdd + '","lddm":"' + vio.lddm + '","ddms":"' + vio.ddms + '",';
+  Result := '{"zqmj":"' + vio.zqmj + '","sbbh":"' + vio.sbbh + '","hpzl":"' +
+    vio.hpzl + '","hphm":"' + vio.hphm + '","wfsj":"' +
+    FormatDateTime('yyyy-mm-dd hh:nn:ss', vio.wfsj) + '","wfxw":"' + vio.wfxw +
+    '","wfdz":"' + vio.wfdz + '","xzqh":"' + vio.xzqh + '","wfdd":"' + vio.wfdd
+    + '","lddm":"' + vio.lddm + '","ddms":"' + vio.ddms + '",';
   zpsl := '1';
-  if vio.zpstr1 <> '' then
-    Result := Result + '"zpstr1":"' + vio.zpstr1 + '",';
-  if vio.zpstr2 <> '' then
+  if vio.pic1Str <> '' then
+    Result := Result + '"zpstr1":"' + vio.pic1Str + '",';
+  if vio.pic2Str <> '' then
   begin
-    Result := Result + '"zpstr2":"' + vio.zpstr2 + '",';
+    Result := Result + '"zpstr2":"' + vio.pic2Str + '",';
     zpsl := '2';
   end;
-  if (zpsl = '2') and (vio.zpstr3 <> '') then
-  begin
-    Result := Result + '"zpstr3:"' + vio.zpstr3 + '",';
-    zpsl := '3';
-  end;
-
   Result := Result + '"zpsl":"' + zpsl + '"}';
 end;
 
-class procedure TSurveilVio.SaveVio2DB(ip, code, wfdd, zt: String;
-  vio: TLockVio; bz: String);
+class procedure TSurveilVio.SaveVio2DB(vio: TSurveil);
 var
-  s, url1, url2, dir: String;
+  s, url1, url2: String;
 begin
-  if bz = '' then
-    bz := '现场违停抓拍'
-  else
-    bz := '现场违停抓拍,' + bz;
-  url1 := FtpPic(vio.zpstr1);
-  url2 := FtpPic(vio.zpstr2);
-
+  url1 := TCommon.FtpPic(vio.pic1Str);
+  url2 := TCommon.FtpPic(vio.pic2Str);
   s := 'insert into ' + cDBName +
-    '.dbo.T_VIO_HIS([SXH],[CJJG],[HPHM],[HPZL],[SYXZ],[WFXW],[WFDD],[WFSJ],[XZSD],[SJSD],'
-    + '[PHOTOFILE1],[PHOTOFILE2],[CSYS],[CLPP1],[CLLX],[CLSBDH],[FDJH],[SYR],' +
-    '[ZSXZQH],[ZSXXDZ],[ZT],[CJMJ],[LRR],[IP],[BZ]) values (' +
-    code.QuotedString + ',' + vio.cjjg.QuotedString + ',' +
-    vio.hphm.QuotedString + ',' + vio.hpzl.QuotedString + ',' +
-    vio.syxz.QuotedString + ',' + vio.wfxw.QuotedString + ',' +
-    wfdd.QuotedString + ',' + vio.wfsj.QuotedString + ',' + vio.bzz.QuotedString
-    + ',' + vio.scz.QuotedString + ',' + url1.QuotedString + ',' +
-    url2.QuotedString + ',' + vio.csys.QuotedString + ',' +
-    vio.clpp.QuotedString + ',' + vio.jtfs.QuotedString + ',' +
-    vio.clsbdh.QuotedString + ',' + vio.fdjh.QuotedString + ',' +
-    vio.jdcsyr.QuotedString + ',' + vio.zsxzqh.QuotedString + ',' +
-    vio.zsxxdz.QuotedString + ',''' + zt + ''',' + vio.zqmj.QuotedString + ',' +
-    vio.zqmj.QuotedString + ',' + ip.QuotedString + ',' +
-    bz.QuotedString + ') ';
+    '.dbo.T_Spot_Surveil([SXH],[HPHM],[HPZL],[WFSJ],[XZQH],[WFDD],[LDDM],[DDMS],'
+    + '[WFDZ],[SBBH],[WFXW],[ZQMJ],[FXJG],[PIC1],[PIC2],[CFZL],[ZT],[BZ],[WSBH]) values ('
+    + vio.sxh.QuotedString + ',' + vio.hphm.QuotedString + ',' +
+    vio.hpzl.QuotedString + ',''' + FormatDateTime('yyyy-mm-dd hh:nn:ss',
+    vio.wfsj) + ''',' + vio.xzqh.QuotedString + ',' + vio.wfdd.QuotedString +
+    ',' + vio.lddm.QuotedString + ',' + vio.ddms.QuotedString + ',' +
+    vio.wfdz.QuotedString + ',' + vio.sbbh.QuotedString + ',' +
+    vio.wfxw.QuotedString + ',' + vio.zqmj.QuotedString + ',' +
+    vio.fxjg.QuotedString + ',' + url1.QuotedString + ',' + url2.QuotedString +
+    ',' + vio.cfzl.QuotedString + ',' + vio.zt.QuotedString + ',' +
+    vio.bz.QuotedString + ',' + vio.wsbh.QuotedString + ') ';
   gSQLHelper.ExecuteSql(s);
 end;
 

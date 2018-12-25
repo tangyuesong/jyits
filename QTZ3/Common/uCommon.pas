@@ -6,7 +6,8 @@ uses
   SysUtils, Classes, IniFiles, uGlobal, Rtti, uSQLHelper, uLogger, ADODB,
   System.JSON, FireDAC.Comp.Client, uTokenManager, QJson,
   Data.DB, uEntity, System.Generics.Collections, DateUtils, QBAES, IdFtp,
-  IdFtpCommon, IdGlobal, System.Variants, httpApp, uTmri, uJKDefine, uWSManager,
+  IdFtpCommon, IdGlobal, System.Variants, httpApp, uJKDefine,
+  uWSManager,
   StrUtils, System.NetEncoding, System.Math;
 
 type
@@ -33,6 +34,7 @@ type
     class procedure InitK08Clpp();
     class procedure InitK08Csys();
     class procedure InitDevice();
+    class procedure InitPassDevice();
     class function AssembleHttpResult(code, msg, body: String;
       totalnum: String = '0'; currentpage: String = '1';
       pagesize: String = '1'): String;
@@ -75,7 +77,8 @@ type
     class function AssembleSuccessHttpResult(body: String;
       totalnum: String = '0'; currentpage: String = '1';
       pagesize: String = '1'): String;
-    class function AssembleFailedHttpResult(msg: String): String;
+    class function AssembleFailedHttpResult(msg: String;
+      code: String = '0'): String;
     class function GetJsonNode(ANode, AJSON: String): String;
     class function GetRealDatetime(AMilliSecond: Int64): TDatetime;
     class function StringToDT(s: String): TDatetime;
@@ -86,8 +89,6 @@ type
       APort: Integer): Boolean; static;
     class function QueryToStream(ASql: String): TStringStream; static;
     class function AddWfxwmc(AJSON: String): String;
-    class function GetTmriParam(jkid: string; token: TToken)
-      : TTmriParam; static;
     class procedure WriteForceVio(params: TStrings);
     class procedure WriteSimpleVio(params: TStrings);
     class procedure WriteDutySimple(params: TStrings);
@@ -98,7 +99,9 @@ type
     class function QueryVehInfo(hphm, hpzl: String): String;
     class function DelFile(fileName: String): Boolean; static;
     class function JsonToRecord<T>(JSON: string): T; static;
+    class function JsonToRecordList<T>(JSON: string): TList<T>; static;
     class procedure SaveSLWS(yhbh: String);
+    class function FtpPic(base64Str: String): String; static;
   end;
 
 procedure SQLError(const SQL, Description: string);
@@ -114,16 +117,6 @@ begin
   except
     Result := False;
   end;
-end;
-
-class function TCommon.GetTmriParam(jkid: string; token: TToken): TTmriParam;
-begin
-  Result.jkid := jkid;
-  Result.yhbz := token.Login;
-  Result.dwmc := '';
-  Result.dwjgdm := token.User.dwdm;
-  Result.yhxm := token.User.yhxm;
-  Result.zdbs := token.ip;
 end;
 
 class function TCommon.QueryToStream(ASql: String): TStringStream;
@@ -233,8 +226,8 @@ begin
               value := '0';
           end
           else
-            value := Fields[i].AsString.Replace(char(9), ' ')
-              .Replace(char(10), ' ').Replace(char(13), ' ');
+            value := Trim(Fields[i].AsString.Replace(char(9), ' ')
+              .Replace(char(10), ' ').Replace(char(13), ' '));
           s := '"' + col + '":"' + value + '"';
 
           if (AGroups <> nil) and (AGroups.IndexOf(UpperCase(col)) >= 0) then
@@ -672,6 +665,25 @@ begin
   end;
 end;
 
+class procedure TCommon.InitPassDevice;
+var
+  id: String;
+begin
+  gPassDevice := TDictionary<String, String>.Create;
+  with gSQLHelper.Query('select KDBH, SBDDMC from ' + cDBName +
+    '.dbo.S_Device_Pass where KDBH <> '''' and SBDDMC <> '''' ') do
+  begin
+    while not Eof do
+    begin
+      id := Fields[0].AsString;
+      if not gPassDevice.ContainsKey(id) then
+        gPassDevice.add(id, Fields[1].AsString);
+      Next;
+    end;
+    Free;
+  end;
+end;
+
 class function TCommon.GetDevice: TDictionary<String, TDevice>;
 var
   dev: TDevice;
@@ -685,7 +697,7 @@ begin
       while not Eof do
       begin
         dev.SystemID := FieldByName('SYSTEMID').AsString;
-        dev.SBBH := FieldByName('SBBH').AsString;
+        dev.SBBH := Trim(FieldByName('SBBH').AsString);
         dev.JCPTBABH := FieldByName('JCPTBABH').AsString;
         dev.JCPTBAFX := FieldByName('JCPTBAFX').AsString;
         dev.LKBH := FieldByName('LKBH').AsString;
@@ -737,7 +749,7 @@ begin
         dev.YSXZB := FieldByName('YSXZB').AsBoolean;
         dev.CZDW := FieldByName('CZDW').AsString;
         dev.AddSY := FieldByName('AddSY').AsBoolean;
-        dev.ID := FieldByName('ID').AsString;
+        dev.id := FieldByName('ID').AsString;
         dev.AutoUpload := FieldByName('AutoUpload').AsBoolean;
         dev.UploadJCPT := FieldByName('UploadJCPT').AsBoolean;
         if not FDicDevice.ContainsKey(dev.SBBH) then
@@ -760,9 +772,9 @@ begin
     begin
       while not Eof do
       begin
-        if not FDicHpzlMC.ContainsKey(FieldByName('DM').AsString) then
-          FDicHpzlMC.add(FieldByName('DM').AsString,
-            FieldByName('MC').AsString);
+        if not FDicHpzlMC.ContainsKey(Trim(FieldByName('DM').AsString)) then
+          FDicHpzlMC.add(Trim(FieldByName('DM').AsString),
+            Trim(FieldByName('MC').AsString));
         Next;
       end;
       Free;
@@ -857,9 +869,10 @@ begin
   qj.Free;
 end;
 
-class function TCommon.AssembleFailedHttpResult(msg: String): String;
+class function TCommon.AssembleFailedHttpResult(msg: String;
+  code: String): String;
 begin
-  Result := AssembleHttpResult('0', msg, '');
+  Result := AssembleHttpResult(code, msg, '');
 end;
 
 class function TCommon.AssembleHttpResult(code, msg, body, totalnum,
@@ -887,7 +900,7 @@ begin
   except
     on e: Exception do
     begin
-      Result := AJSON;
+      // Result := AJSON;
       gLogger.Error('[TCommon.GetJsonNode]' + e.Message + AJSON);
     end;
   end;
@@ -1060,7 +1073,7 @@ begin
       begin
         dept.PDWDM := FieldByName('PDWDM').AsString;
         dept.dwjb := FieldByName('DWJB').AsString;
-        dept.dwdm := FieldByName('DWDM').AsString;
+        dept.dwdm := Trim(FieldByName('DWDM').AsString);
         dept.dwmc := FieldByName('DWMC').AsString;
         dept.DWFZR := FieldByName('DWFZR').AsString;
         dept.DWLXR := FieldByName('DWLXR').AsString;
@@ -1128,6 +1141,7 @@ begin
   with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
   begin
     gLogger.Level := ReadInteger('SYS', 'LogLevel', 0);
+    gConfig.TmriType := ReadString('SYS', 'TmriType', '0');
     gConfig.DBServer := ReadString('DB', 'Server', '.');
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
     gConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
@@ -1138,8 +1152,8 @@ begin
       'http://10.43.255.66:8983/solr/traffic/');
 
     gConfig.HttpServerPort := ReadInteger('Http', 'Port', 17115);
-    gConfig.HttpPath := ReadString('Http', 'Path', '');
-    gConfig.HttpHome := ReadString('Http', 'Home', '');
+    // gConfig.HttpPath := ReadString('Http', 'Path', '');
+    // gConfig.HttpHome := ReadString('Http', 'Home', '');
 
     gConfig.ImportVioHost := ReadString('ImportVio', 'Host', '127.0.0.1');
     gConfig.ImportVioPort := ReadInteger('ImportVio', 'Port', 21);
@@ -1148,19 +1162,21 @@ begin
     gConfig.ImportVioHome := ReadString('ImportVio', 'Home', '');
 
     gConfig.HaveK08 := ReadString('Hik', 'Enabled', '0') = '1';
-    gConfig.HikConfig.K08SearchURL := ReadString('Hik', 'K08SearchURL',
+    gConfig.HikConfig.moreLikeThisHBase :=
+      ReadString('Hik', 'moreLikeThisHBase',
       'http://10.43.255.16:8080/kms/services/ws/vehicleSearch');
-    gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
-      'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
-    gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
-      'http://10.43.255.20:18010');
-    gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
-    gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
+    // gConfig.HikConfig.K08SaveUrl := ReadString('Hik', 'K08SaveUrl',
+    // 'http://10.43.255.16:8080/kms/services/ws/falconOperateData?wsdl');
+    // gConfig.HikConfig.DFUrl := ReadString('Hik', 'DFUrl',
+    // 'http://10.43.255.20:18010');
+    // gConfig.HikConfig.DFUser := ReadString('Hik', 'DFUser', 'admin');
+    // gConfig.HikConfig.DFPwd := ReadString('Hik', 'DFPwd', 'Hik12345');
 
     gConfig.HikConfig.PicAnalysis := ReadString('Hik', 'PicAnalysis', '');
     gConfig.HikConfig.CarFace := ReadString('Hik', 'CarFace', '');
     gConfig.HikConfig.analysisExtra := ReadString('Hik', 'analysisExtra', '');
     gConfig.HikConfig.dataAnalysis := ReadString('Hik', 'dataAnalysis', '');
+    gConfig.HikConfig.HumanFace := ReadString('Hik', 'HumanFace', '');
 
     gConfig.PicUrl := ReadString('Hik', 'PicUrl', 'http://10.43.235.39:17116');
 
@@ -1253,6 +1269,7 @@ begin
   InitK08Clpp();
   InitK08Csys();
   InitDevice();
+  InitPassDevice();
 end;
 
 class procedure TCommon.ProgramDestroy;
@@ -1582,6 +1599,33 @@ begin
   end;
 end;
 
+Class function TCommon.JsonToRecordList<T>(JSON: string): TList<T>;
+var
+  ja: TJSONArray;
+  jv: TJSONValue;
+  rec: T;
+begin
+  Result := TList<T>.Create;
+
+  if JSON = '' then
+    exit;
+
+  try
+    ja := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(JSON), 0)
+      as TJSONArray;
+    if ja <> nil then
+    begin
+      for jv in ja do
+      begin
+        rec := JsonToRecord<T>('[' + jv.ToJSON + ']');
+        Result.add(rec);
+      end;
+      ja.Free;
+    end;
+  except
+  end;
+end;
+
 Class function TCommon.JsonToRecord<T>(JSON: string): T;
 var
   rrt: TRttiRecordType;
@@ -1659,6 +1703,29 @@ begin
     Result := TCommon.QueryToJsonString('GetLocalVehInfo ' + hphm.QuotedString +
       ',' + hpzl.QuotedString, nil, c);
   end;
+end;
+
+class function TCommon.FtpPic(base64Str: String): String;
+var
+  tp: String;
+begin
+  tp := Formatdatetime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
+  Result := gConfig.ImportVioHome + 'clientvio/' + Formatdatetime('yyyymm-dd',
+    Now()) + '/' + tp;
+  try
+    TCommon.Base64ToFile(base64Str, ExtractFilePath(ParamStr(0)) + tp);
+    TCommon.FtpPutFile(gConfig.ImportVioHost, gConfig.ImportVioUser,
+      gConfig.ImportVioPassword, ExtractFilePath(ParamStr(0)) + tp,
+      '/clientvio/' + Formatdatetime('yyyymm-dd', Now()) + '/' + tp,
+      gConfig.ImportVioPort);
+  except
+    on e: Exception do
+    begin
+      Result := '';
+      gLogger.Error(e.Message);
+    end;
+  end;
+  TCommon.DelFile(ExtractFilePath(ParamStr(0)) + tp);
 end;
 
 end.

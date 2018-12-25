@@ -26,18 +26,11 @@ uses
   qjson in 'Common\qjson.pas',
   QString in 'Common\QString.pas',
   qrbtree in 'Common\qrbtree.pas',
-  uLockVio in 'SPService\uLockVio.pas',
-  uVehPass in 'SPService\uVehPass.pas',
   MessageDigest_5 in 'SPService\MessageDigest_5.pas',
   uSMS in 'SPService\uSMS.pas',
-  uAnalysisPic in 'SPService\uAnalysisPic.pas',
   QBAes in 'Common\QBAes.pas',
   ElAES in 'Common\ElAES.pas',
-  uImportVio in 'SPService\uImportVio.pas' {,
-    uHik in 'Hik\uHik.pas';
-
-    {$R *.RES},
-  uHik in 'Hik\uHik.pas',
+  uImportVio in 'SPService\uImportVio.pas',
   uWSManager in 'RMService\uWSManager.pas',
   TmriOutNewAccess in 'RMService\intf\TmriOutNewAccess.pas',
   uJKDefine in 'RMService\impl\uJKDefine.pas',
@@ -46,7 +39,11 @@ uses
   uHikJZF in 'Hik\uHikJZF.pas',
   uHikDSJ in 'Hik\uHikDSJ.pas',
   uHuiZhouKaoHe in 'SPService\uHuiZhouKaoHe.pas',
-  LatLngHelper in 'Common\LatLngHelper.pas';
+  LatLngHelper in 'Common\LatLngHelper.pas',
+  uTmri_huizhou in 'RMService\impl\uTmri_huizhou.pas',
+  uTmriType in 'RMService\impl\uTmriType.pas',
+  Ehlservice in 'RMService\intf\Ehlservice.pas',
+  uHikHumanFace in 'Hik\uHikHumanFace.pas';
 
 {$R *.RES}
 

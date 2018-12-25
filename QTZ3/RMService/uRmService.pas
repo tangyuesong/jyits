@@ -6,9 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   IdBaseComponent, IdComponent, IdCustomTCPServer, IdCustomHTTPServer,
-  IdHTTPServer, IniFiles, IdContext, uLogger, HTTPApp, uTmri, uRmweb,
-  uRminf, uTrans, ActiveX, IdURI, IdHttp, StrUtils, uLockVio, DateUtils,
-  IdSSLOpenSSL, uTokenManager, uGlobal, uCommon, QJson, uWSManager, uJKDefine;
+  IdHTTPServer, IniFiles, IdContext, uLogger, HTTPApp, uTmriType, uRmweb,
+  uRminf, uTrans, ActiveX, IdURI, IdHttp, StrUtils, DateUtils, uTmri_huizhou,
+  uTmri, IdSSLOpenSSL, uTokenManager, uGlobal, uCommon, QJson, uWSManager,
+  uJKDefine;
 
 type
 
@@ -51,6 +52,8 @@ type
     class function GetVioInfoByVeh(token: TToken; params: TStrings): String;
     class procedure GetVioCount(token: TToken; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
+    class function GetTmriParam(jkid: string; token: TToken)
+      : TTmriParam; static;
   public
     class function GetVehInfo(token: TToken; hphm, hpzl: String): String;
     class function GetDrvInfo(token: TToken; params: TStrings): String;
@@ -162,9 +165,9 @@ begin
   json := params.Values['vio'];
   flag := params.Values['flag'];
   if flag = '0' then
-    tp := TCommon.GetTmriParam('04C52', token)
+    tp := GetTmriParam('04C52', token)
   else
-    tp := TCommon.GetTmriParam('04C53', token);
+    tp := GetTmriParam('04C53', token);
   AResponseInfo.ContentText := TTmri.Write(tp, json);
 end;
 
@@ -290,9 +293,12 @@ var
   json: string;
   tmriParam: TTmriParam;
 begin
-  tmriParam := TCommon.GetTmriParam(params.Values['JKID'], token);
+  tmriParam := GetTmriParam(params.Values['JKID'], token);
   json := ParamsToJson(params, ',JKID,');
-  json := TTmri.Query(tmriParam, json);
+  if gConfig.TmriType = '1' then
+    json := TTmri_huizhou.Query(tmriParam, json)
+  else
+    json := TTmri.Query(tmriParam, json);
   result := json;
 end;
 
@@ -301,10 +307,13 @@ var
   json: string;
   tmriParam: TTmriParam;
 begin
-  tmriParam := TCommon.GetTmriParam(params.Values['JKID'], token);
+  tmriParam := GetTmriParam(params.Values['JKID'], token);
   json := ParamsToJson(params, ',JKID,');
   gLogger.Info('[DoWrite]' + json);
-  json := TTmri.Write(tmriParam, json);
+  if gConfig.TmriType = '1' then
+    json := TTmri_huizhou.Write(tmriParam, json)
+  else
+    json := TTmri.Write(tmriParam, json);
   result := json;
 end;
 
@@ -315,7 +324,7 @@ var
   QJson: TQJson;
   i: Integer;
   t: Int64;
-  sj: TDatetime;
+  sj: TDateTime;
 begin
   try
     xh := params.Values['xh'];
@@ -534,6 +543,16 @@ class function TRmService.GetDwdm(zqmj: String): String;
 begin
   result := gSQLHelper.GetSinge('select dwdm from ' + cDBName +
     '.dbo.S_User where yhbh=''' + zqmj + '''');
+end;
+
+class function TRmService.GetTmriParam(jkid: string; token: TToken): TTmriParam;
+begin
+  result.jkid := jkid;
+  result.yhbz := token.Login;
+  result.dwmc := '';
+  result.dwjgdm := token.User.DWDM;
+  result.yhxm := token.User.yhxm;
+  result.zdbs := token.ip;
 end;
 
 class function TRmService.GetVehInfo(token: TToken; hphm, hpzl: String): String;
@@ -928,7 +947,7 @@ end;
 class procedure TRmService.SaveForceVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, wfsj, pzbh, checkStr, oldMj, newMj, zqmj2, pic: String;
+  json, code, wfsj, pzbh, checkStr, oldMj, newMj, zqmj2, pic, msg: String;
   tmriParam: TTmriParam;
   n: Integer;
 begin
@@ -939,6 +958,7 @@ begin
     exit;
   end;
   CheckForceParam(params);
+  pzbh := params.Values['pzbh'];
   oldMj := params.Values['zqmj'];
   newMj := GetZQMJ(oldMj);
   if oldMj <> newMj then
@@ -961,48 +981,55 @@ begin
   json := DoWrite(token, params);
   gLogger.Info(json);
   code := TCommon.GetJsonNode('code', json);
+
+  if params.IndexOf('lrr') >= 0 then
+    params.Values['lrr'] := token.Login
+  else
+    params.Add('lrr=' + token.Login);
+  n := params.IndexOfName('JKID');
+  if n >= 0 then
+    params.Delete(n);
+  params.Add('zqmj2=' + zqmj2);
+  params.Add('pic=' + pic);
+
+  TWSManager.Submit(pzbh); // 只要提交了，该证书就不再用了，防止证书重复
+
   if code = '1' then
   begin
-    if params.IndexOf('lrr') >= 0 then
-      params.Values['lrr'] := token.Login
-    else
-      params.Add('lrr=' + token.Login);
-    n := params.IndexOfName('JKID');
-    if n >= 0 then
-      params.Delete(n);
     params.Add('zt=1');
-    params.Add('zqmj2=' + zqmj2);
-    params.Add('pic=' + pic);
-    pzbh := params.Values['pzbh'];
-    if RightStr(pzbh, 8) >= '30000000' then
-      TWSManager.Submit(pzbh)
-    else
+    if not TWSManager.HaveWsbh(pzbh) then
     begin
       wfsj := params.Values['wfsj'];
       if DateUtils.MinutesBetween(TCommon.StringToDT(wfsj), Now()) > 10 then
         // 如果用手写单但10分钟内在pda上录入，也认为是非手写单
         TCommon.SaveSLWS(token.Login);
     end;
-    TCommon.WriteForceVio(params);
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
   end
-  else if code = '0' then
+  else if code <> '' then
   begin
-    code := TCommon.GetJsonNode('msg', json);
-    if code = '' then
-      code := TCommon.GetJsonNode('msg1', json);
-    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+    params.Add('zt=0');
+    msg := Trim(TCommon.GetJsonNode('msg', json));
+    if msg = '' then
+      msg := Trim(TCommon.GetJsonNode('msg1', json));
+    if msg = '' then
+      msg := Trim(TCommon.GetJsonNode('message', json));
+    if msg = '已存在该强制措施凭证编号的强制措施记录' then
+      code := '2';
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg, code);
   end
-  else if code = '' then
-    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('6合1网络故障')
   else
-    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+  begin
+    params.Add('zt=2');
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('六合一网络故障');
+  end;
+  TCommon.WriteForceVio(params);
 end;
 
 class procedure TRmService.SaveSimpleVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, zt, wfsj, jdsbh, zqmj2, pic: String;
+  json, code, zt, wfsj, jdsbh, zqmj2, pic, msg: String;
   tmriParam: TTmriParam;
   n: Integer;
 begin
@@ -1011,7 +1038,7 @@ begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('重复录入');
     exit;
   end;
-
+  jdsbh := params.Values['jdsbh'];
   zqmj2 := params.Values['zqmj2'];
   n := params.IndexOfName('zqmj2');
   if n >= 0 then
@@ -1026,44 +1053,50 @@ begin
   json := DoWrite(token, params);
   gLogger.Info(json);
   code := TCommon.GetJsonNode('code', json);
+
+  if params.IndexOf('lrr') >= 0 then
+    params.Values['lrr'] := token.Login
+  else
+    params.Add('lrr=' + token.Login);
+  n := params.IndexOfName('JKID');
+  if n >= 0 then
+    params.Delete(n);
+  params.Add('zqmj2=' + zqmj2);
+  params.Add('pic=' + pic);
+
+  TWSManager.Submit(jdsbh);
+
   if code = '1' then
   begin
-    if params.IndexOf('lrr') >= 0 then
-      params.Values['lrr'] := token.Login
-    else
-      params.Add('lrr=' + token.Login);
-    n := params.IndexOfName('JKID');
-    if n >= 0 then
-      params.Delete(n);
     params.Add('zt=1');
-    params.Add('zqmj2=' + zqmj2);
-    params.Add('pic=' + pic);
-    jdsbh := params.Values['jdsbh'];
-    if RightStr(jdsbh, 8) >= '30000000' then
-      TWSManager.Submit(jdsbh)
-    else
+    if not TWSManager.HaveWsbh(jdsbh) then
     begin
       wfsj := params.Values['wfsj'];
       if DateUtils.MinutesBetween(TCommon.StringToDT(wfsj), Now()) > 10 then
         // 如果用手写单但10分钟内在pda上录入，也认为是非手写单
         TCommon.SaveSLWS(token.Login);
     end;
-
-    TCommon.WriteSimpleVio(params);
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
   end
-  else if code = '0' then
+  else if code <> '' then
   begin
+    params.Add('zt=0');
     gLogger.Info(json);
-    code := TCommon.GetJsonNode('msg', json);
-    if code = '' then
-      code := TCommon.GetJsonNode('msg1', json);
-    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+    msg := Trim(TCommon.GetJsonNode('msg', json));
+    if msg = '' then
+      msg := Trim(TCommon.GetJsonNode('msg1', json));
+    if msg = '' then
+      msg := Trim(TCommon.GetJsonNode('message', json));
+    if msg = '已存在该决定书编号的违法记录' then
+      code := '2';
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg, code);
   end
-  else if code = '' then
-    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('6合1网络故障')
   else
-    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+  begin
+    params.Add('zt=2');
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('六合一网络故障');
+  end;
+  TCommon.WriteSimpleVio(params);
 end;
 
 class procedure TRmService.WriteSG(token: TToken; params: TStrings;
@@ -1262,9 +1295,9 @@ begin
   wfsj := params.Values['wfsj'];
   wfxw := params.Values['wfxw'];
 
-  s := ' where zqmj=' + zqmj.QuotedString + ' and ryfl=' + ryfl.QuotedString +
-    ' and wfdd=' + wfdd.QuotedString + ' and abs(DATEDIFF(MI, ' +
-    wfsj.QuotedString + ', wfsj)) <= 60 ';
+  s := ' where zt=''1'' and zqmj=' + zqmj.QuotedString + ' and ryfl=' +
+    ryfl.QuotedString + ' and wfdd=' + wfdd.QuotedString +
+    ' and abs(DATEDIFF(MI, ' + wfsj.QuotedString + ', wfsj)) <= 60 ';
   if wfxw <> '' then
     s := s + ' and wfxw = ' + wfxw.QuotedString;
   if ryfl = '4' then
