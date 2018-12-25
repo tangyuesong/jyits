@@ -44,7 +44,9 @@ uses
   uSurveilVio in 'SPService\uSurveilVio.pas',
   uExamService in 'ExamService\uExamService.pas',
   uHikJZF in 'Hik\uHikJZF.pas',
-  uHikDSJ in 'Hik\uHikDSJ.pas';
+  uHikDSJ in 'Hik\uHikDSJ.pas',
+  uHuiZhouKaoHe in 'SPService\uHuiZhouKaoHe.pas',
+  LatLngHelper in 'Common\LatLngHelper.pas';
 
 {$R *.RES}
 
