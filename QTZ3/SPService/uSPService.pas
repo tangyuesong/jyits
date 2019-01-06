@@ -412,8 +412,9 @@ begin
         Params.Values['sgxt'];
       if RightStr(Params.Values['sgxt'], 2) <> '事故' then
         Result := Result + '事故。';
-      Result := Result + '至受伤' + Params.Values['ssrs'] + '人,直接财产损失' +
-        Params.Values['zjccss'] + '元。';
+      if Params.Values['ssrs'] <> '' then
+        Result := Result + '致受伤' + Params.Values['ssrs'] + '人,';
+      Result := Result + '直接财产损失' + Params.Values['zjccss'] + '元。';
 
       for i := 0 to ryDic.Keys.Count - 1 do
       begin

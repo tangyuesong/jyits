@@ -120,6 +120,11 @@ begin
       wslb := '1';
       wsbb := 'B';
     end
+    else if wslb = '1'then
+    begin
+      wslb := '6';
+      wsbb := 'E';
+    end
     else
       wsbb := 'D';
     wsbh := gWSManager.Apply(token.Login, xzqh, wsbb, wslb,
@@ -693,7 +698,7 @@ begin
       ('parameter error');
     exit;
   end;
-  if (wslb <> '3') and (wslb <> '6') then
+  if (wslb <> '3') and (wslb <> '6') and (wslb <> '1') then
   begin
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult
       ('parameter error');
@@ -978,6 +983,8 @@ begin
     params.Delete(n);
 
   params.Add('JKID=04C55');
+  if params.Values['wslb'] = '1' then
+    params.Values['wslb'] := '6';
   json := DoWrite(token, params);
   gLogger.Info(json);
   code := TCommon.GetJsonNode('code', json);
@@ -1023,6 +1030,8 @@ begin
     params.Add('zt=2');
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('¡˘∫œ“ªÕ¯¬Áπ ’œ');
   end;
+  if params.Values['wslb'] = '6' then
+    params.Values['wslb'] := '1';
   TCommon.WriteForceVio(params);
 end;
 
