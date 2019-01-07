@@ -286,13 +286,13 @@ begin
       FConnection.Params.Add
         (Format('Database=(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = %s)(PORT = %s)))'
         + '(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = %s)))',
-        [FDBHost, FDBPort, FSERVICE_NAME]));
+        [FDBHost, FDBPort.ToString, FSERVICE_NAME]));
     end
     else if FSID <> '' then
       FConnection.Params.Add
         (Format('Database=(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = %s)(PORT = %s)))'
         + '(CONNECT_DATA = (SERVER = DEDICATED)(SID = %s)))',
-        [FDBHost, FDBPort, FSID]))
+        [FDBHost, FDBPort.ToString, FSID]))
     else
       DoError('', 'ora config error');
 
