@@ -120,7 +120,7 @@ begin
       wslb := '1';
       wsbb := 'B';
     end
-    else if wslb = '1'then
+    else if wslb = '1' then
     begin
       wslb := '6';
       wsbb := 'E';
@@ -404,7 +404,7 @@ const
   rmweb = ',QVEHBUS,QSTATION,QSTATIONRELATION,QSTATIONPERSON,FEEDBACK,FEEDBACKPIC,VEHCHECK,';
   rminf = ',SURSCREEN,SUREXAMINE,FLOWEQUIP,WEATHER,INCIDENT,INDUCEMENT,CAR,POLICE,PARK,';
 var
-  json, sjson, wsbh: string;
+  json, wsbh: string;
   token: TToken;
 begin
   ActiveX.CoInitialize(nil);
@@ -590,7 +590,7 @@ class function TRmService.DoGetVioCount(token: TToken;
 var
   s: String;
   json: TQJson;
-  clbj, jkbj: String;
+  clbj: String;
   c, n: Integer;
   isAll: Boolean;
 begin
@@ -953,7 +953,6 @@ class procedure TRmService.SaveForceVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
   json, code, wfsj, pzbh, checkStr, oldMj, newMj, zqmj2, pic, msg: String;
-  tmriParam: TTmriParam;
   n: Integer;
 begin
   checkStr := CheckForceInput(token, params);
@@ -1015,14 +1014,18 @@ begin
   end
   else if code <> '' then
   begin
-    params.Add('zt=0');
     msg := Trim(TCommon.GetJsonNode('msg', json));
     if msg = '' then
       msg := Trim(TCommon.GetJsonNode('msg1', json));
     if msg = '' then
       msg := Trim(TCommon.GetJsonNode('message', json));
     if msg = '已存在该强制措施凭证编号的强制措施记录' then
-      code := '2';
+    begin
+      code := '1';
+      params.Add('zt=1');
+    end
+    else
+      params.Add('zt=' + code);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg, code);
   end
   else
@@ -1038,8 +1041,7 @@ end;
 class procedure TRmService.SaveSimpleVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, zt, wfsj, jdsbh, zqmj2, pic, msg: String;
-  tmriParam: TTmriParam;
+  json, code, wfsj, jdsbh, zqmj2, pic, msg: String;
   n: Integer;
 begin
   if IsReVio(params, 1) then
@@ -1089,7 +1091,6 @@ begin
   end
   else if code <> '' then
   begin
-    params.Add('zt=0');
     gLogger.Info(json);
     msg := Trim(TCommon.GetJsonNode('msg', json));
     if msg = '' then
@@ -1097,7 +1098,12 @@ begin
     if msg = '' then
       msg := Trim(TCommon.GetJsonNode('message', json));
     if msg = '已存在该决定书编号的违法记录' then
-      code := '2';
+    begin
+      params.Add('zt=1');
+      code := '1';
+    end
+    else
+      params.Add('zt=' + code);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg, code);
   end
   else
@@ -1203,8 +1209,21 @@ class procedure TRmService.SaveDutySimple(token: TToken; params: TStrings;
 var
   n: Integer;
   json, code, djbh, sgbh, wsbh: String;
-  tmriParam: TTmriParam;
+  url1, url2, url3: String;
 begin
+  url1 := TCommon.FtpPic(params.Values['pic1']);
+  url2 := TCommon.FtpPic(params.Values['pic2']);
+  url3 := TCommon.FtpPic(params.Values['pic3']);
+  n := params.IndexOfName('pic1');
+  if n >= 0 then
+    params.Delete(n);
+  n := params.IndexOfName('pic2');
+  if n >= 0 then
+    params.Delete(n);
+  n := params.IndexOfName('pic3');
+  if n >= 0 then
+    params.Delete(n);
+
   params.Add('JKID=03C52');
   json := DoWrite(token, params);
   code := TCommon.GetJsonNode('code', json);
@@ -1220,42 +1239,44 @@ begin
       params.Values['sgbh'] := djbh
     else
       params.Add('sgbh=' + sgbh);
-    if params.IndexOf('lrr') >= 0 then
-      params.Values['lrr'] := token.Login
-    else
-      params.Add('lrr=' + token.Login);
-    n := params.IndexOfName('JKID');
-    if n >= 0 then
-      params.Delete(n);
     params.Add('zt=1');
-    TCommon.WriteDutySimple(params);
-    wsbh := params.Values['wsbh'];
-    if wsbh <> '' then
-      gWSManager.Submit(wsbh);
     AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult
       ('{"wsbh":"' + wsbh + '","sgbh":"' + sgbh + '"}');
   end
   else if code = '0' then
   begin
+    params.Add('zt=0');
     gLogger.Info(json);
     code := TCommon.GetJsonNode('message', json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
   end
   else if code = '' then // 6合1问题,不能暂时缓存到数据库，因为要返回事故编号，用来开单
   begin
+    params.Add('zt=2');
     gLogger.Info(json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(json);
-    // AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('');
-    {
-      n := params.IndexOfName('JKID');
-      if n >= 0 then
-      params.Delete(n);
-      params.Add('bz=write zhpt error:' + json);
-      TCommon.WriteDutySimple(params);
-    }
   end
   else
+  begin
+    params.Add('zt=' + code);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
+  end;
+
+  if params.IndexOf('lrr') >= 0 then
+    params.Values['lrr'] := token.Login
+  else
+    params.Add('lrr=' + token.Login);
+  n := params.IndexOfName('JKID');
+  if n >= 0 then
+    params.Delete(n);
+  params.Add('pic1=' + url1);
+  params.Add('pic2=' + url2);
+  params.Add('pic3=' + url3);
+  TCommon.WriteDutySimple(params);
+
+  wsbh := params.Values['wsbh'];
+  if wsbh <> '' then
+    gWSManager.Submit(wsbh);
 end;
 
 class function TRmService.CheckForceInput(token: TToken;

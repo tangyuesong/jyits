@@ -47,6 +47,7 @@ type
     class function DecodefootHoldsResult(xml: String): String;
     class function GetMoreLikeThisParam(param: TDictionary<string, String>;
       page, pageSize: string): TStrings; static;
+    class function GetHPZL(HPLX, HPYS, HPHM, CLLX: string): string;
   public
     class function picAnalysis(picStr: WideString): String;
     class function submitCarFaceCompareJob(passTimeStart, passTimeEnd,
@@ -73,11 +74,106 @@ uses
 
 { THikDSJ }
 
+class function THikDSJ.GetHPZL(HPLX, HPYS, HPHM, CLLX: string): string;
+begin
+  if (HPHM = '车牌') or (HPHM = '未识别') or (HPHM = '未识别牌') or (HPHM = '未识别车牌') or
+    (HPHM.Length <= 0) then
+    exit('44');
+  if (HPYS = '5') and ((CLLX = '1') or (CLLX = '2') or (CLLX = '10')) then
+    exit('51');
+  if HPYS = '5' then
+    exit('52');
+  if (HPHM.Length >= 2) and (HPHM.Substring(0, 1) = 'W') and
+    (HPHM.Substring(1, 1) = 'J') then
+    exit('31');
+  if HPLX = '0' then
+    exit('99')
+  else if HPLX = '1' then
+  begin
+    if HPYS = '2' then
+      exit('02')
+    else if HPYS = '1' then
+    begin
+      if HPHM.Contains('学') then
+        exit('16')
+      else
+        exit('01');
+    end
+    else if HPYS = '0' then
+      exit('23');
+  end
+  else if HPLX = '2' then
+    exit('23')
+  else if HPLX = '3' then
+    exit('32')
+  else if HPLX = '4' then
+    exit('31')
+  else if HPLX = '5' then
+    exit('32')
+  else if HPLX = '7' then
+  begin
+    if HPYS = '1' then
+      exit('01')
+    else if HPYS = '0' then
+      exit('02');
+  end
+  else if HPLX = '8' then
+  begin
+    if HPHM.Contains('挂') then
+      exit('15')
+    else
+      exit('01');
+  end
+  else if HPLX = '9' then
+    exit('32')
+  else if HPLX = '10' then
+    exit('03')
+  else if HPLX = '11' then
+    exit('99')
+  else if HPLX = '12' then
+    exit('99')
+  else if HPLX = '13' then
+    exit('13')
+  else if HPLX = '14' then
+    exit('14')
+  else if HPLX = '15' then
+    exit('15')
+  else if HPLX = '16' then
+  begin
+    if HPYS = '1' then
+      exit('07')
+    else if HPYS = '2' then
+      exit('08');
+  end
+  else if HPLX = '17' then
+    exit('52')
+  else if HPLX = '100' then
+    exit('16')
+  else if HPLX = '101' then
+    exit('22')
+  else if HPLX = '102' then
+    exit('15')
+  else if HPLX = '103' then
+    exit('04')
+  else if HPLX = '104' then
+  begin
+    if HPHM.Contains('港') then
+      exit('26')
+    else if HPHM.Contains('澳') then
+      exit('27');
+  end
+  else if HPLX = '105' then
+  begin
+    exit('20');
+  end;
+  exit('99');
+end;
+
 class function THikDSJ.moreLikeThis(param: TDictionary<string, String>;
   page, pageSize: String): String;
 var
   Params: TStrings;
-  s, h, clpp, hpzl, kdbh: String;
+  s, h, clpp, hpzl, kdbh, HPHM: String;
   vehList: TList<TK08VehInfo>;
   veh: TK08VehInfo;
   totalPage, currentPage: Integer;
@@ -105,14 +201,20 @@ begin
       for veh in vehList do
       begin
         if veh.plateno <> '' then
-          s := '"hphm":"' + veh.plateno + '",'
+          HPHM := veh.plateno
         else
-          s := '"hphm":"' + veh.plateinfo + '",';
+          HPHM := veh.plateinfo;
 
-        if gHpzl.ContainsKey(veh.vehicletype) then
+        s := '"hphm":"' + HPHM + '",';
+
+        {
+          if gHpzl.ContainsKey(veh.vehicletype) then
           hpzl := gHpzl[veh.vehicletype]
-        else
+          else
           hpzl := veh.vehicletype;
+          s := s + '"hpzl":"' + hpzl + '",';
+        }
+        hpzl := GetHPZL(veh.platetype, veh.platecolor, HPHM, veh.vehicletype);
         s := s + '"hpzl":"' + hpzl + '",';
 
         if TCommon.DicHpzlMC.ContainsKey(hpzl) then
@@ -163,11 +265,44 @@ var
   key: String;
 begin
   Result := TStringList.Create;
+  {
+    Result.Add
+    ('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">');
+    Result.Add('   <soapenv:Header/>');
+    Result.Add('   <soapenv:Body>');
+    Result.Add('      <ws:moreLikeThis>');
+    Result.Add('         <arg0>');
+    Result.Add('            <beanId>pass</beanId>');
+    Result.Add('            <currentPage>' + page + '</currentPage>');
+    Result.Add('            <pageSize>' + pageSize + '</pageSize>');
+    for key in param.Keys do
+    begin
+    if key = 'q' then
+    begin
+    Result.Add('             <q>' + param[key] + '</q>');
+    end
+    else
+    begin
+    Result.Add('             <fieldOptions>');
+    Result.Add('               <filedName>' + key + '</filedName>');
+    Result.Add('               <keyWords>' + param[key] + '</keyWords>');
+    Result.Add('             </fieldOptions>');
+    end;
+    end;
+    Result.Add('           <cursorMark>*</cursorMark>');
+    Result.Add('           <sortColumn>passtime</sortColumn>');
+    Result.Add('           <sortMethod>desc</sortMethod>');
+    Result.Add('         </arg0>');
+    Result.Add('      </ws:moreLikeThis>');
+    Result.Add('   </soapenv:Body>');
+    Result.Add('</soapenv:Envelope>');
+  }
+
   Result.Add
     ('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.hikvision.com/traffic/ws/">');
   Result.Add('   <soapenv:Header/>');
   Result.Add('   <soapenv:Body>');
-  Result.Add('      <ws:moreLikeThis>');
+  Result.Add('      <ws:moreLikeThisCustomized>');
   Result.Add('         <arg0>');
   Result.Add('            <beanId>pass</beanId>');
   Result.Add('            <currentPage>' + page + '</currentPage>');
@@ -190,7 +325,7 @@ begin
   Result.Add('           <sortColumn>passtime</sortColumn>');
   Result.Add('           <sortMethod>desc</sortMethod>');
   Result.Add('         </arg0>');
-  Result.Add('      </ws:moreLikeThis>');
+  Result.Add('      </ws:moreLikeThisCustomized>');
   Result.Add('   </soapenv:Body>');
   Result.Add('</soapenv:Envelope>');
 end;

@@ -1557,8 +1557,16 @@ end;
 class procedure TCommon.WriteForceVio(params: TStrings);
 var
   i: Integer;
-  cols, Values, s: String;
+  cols, Values, s, pzbh: String;
 begin
+  pzbh := params.Values['pzbh'];
+  if pzbh <> '' then
+  begin
+    s := 'delete from ' + cDBName + '.dbo.T_Spot_Force where pzbh=' +
+      pzbh.QuotedString + ' and zt <> ''1'' ';
+    gSQLHelper.ExecuteSql(s);
+  end;
+
   cols := '';
   Values := '';
   for i := 0 to params.Count - 1 do
@@ -1579,8 +1587,16 @@ end;
 class procedure TCommon.WriteSimpleVio(params: TStrings);
 var
   i: Integer;
-  cols, Values, s: String;
+  cols, Values, s, jdsbh: String;
 begin
+  jdsbh := params.Values['jdsbh'];
+  if jdsbh <> '' then
+  begin
+    s := 'delete from ' + cDBName + '.dbo.T_Spot_Violation where jdsbh=' +
+      jdsbh.QuotedString + ' and zt <> ''1'' ';
+    gSQLHelper.ExecuteSql(s);
+  end;
+
   cols := '';
   Values := '';
   for i := 0 to params.Count - 1 do
@@ -1709,6 +1725,10 @@ class function TCommon.FtpPic(base64Str: String): String;
 var
   tp: String;
 begin
+  Result := '';
+  if base64Str = '' then
+    exit;
+
   tp := Formatdatetime('yyyymmddhhnnsszzz', Now()) + '1.jpg';
   Result := gConfig.ImportVioHome + 'clientvio/' + Formatdatetime('yyyymm-dd',
     Now()) + '/' + tp;

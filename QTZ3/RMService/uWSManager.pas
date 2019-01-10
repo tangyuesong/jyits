@@ -89,7 +89,7 @@ begin
       // gLogger.Error('No min WSBH in DB for : ' + xzqh);
       // cs.Leave;
       // exit;
-      wsbh := xzqh + '150000000000';
+      wsbh := xzqh + '500000000000';
     end;
     n := strtoint64def(wsbh.Substring(6), 0);
     if n > 0 then

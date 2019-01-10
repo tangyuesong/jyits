@@ -412,7 +412,7 @@ begin
         Params.Values['sgxt'];
       if RightStr(Params.Values['sgxt'], 2) <> '事故' then
         Result := Result + '事故。';
-      if Params.Values['ssrs'] <> '' then
+      if StrToIntDef(Params.Values['ssrs'], 0) > 0 then
         Result := Result + '致受伤' + Params.Values['ssrs'] + '人,';
       Result := Result + '直接财产损失' + Params.Values['zjccss'] + '元。';
 

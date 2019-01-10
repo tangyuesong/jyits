@@ -26,6 +26,7 @@ type
     zt: String;
     pic1Str: String;
     pic2Str: String;
+    pic3Str: String;
     bz: String;
     wsbh: String;
   End;
@@ -241,6 +242,7 @@ begin
   vio.fxjg := gTokenManager.GetToken(tokenKey).User.DWDM;
   vio.pic1Str := params.Values['pic1'];
   vio.pic2Str := params.Values['pic2'];
+  vio.pic3Str := params.Values['pic3'];
   vio.wsbh := params.Values['wsbh'];
 
   gLogger.Info('[SaveSurveilVio] {"cfzl":"' + vio.cfzl + '","wfdz":"' + vio.wfdz
@@ -354,13 +356,14 @@ end;
 
 class procedure TSurveilVio.SaveVio2DB(vio: TSurveil);
 var
-  s, url1, url2: String;
+  s, url1, url2, url3: String;
 begin
   url1 := TCommon.FtpPic(vio.pic1Str);
   url2 := TCommon.FtpPic(vio.pic2Str);
+  url3 := TCommon.FtpPic(vio.pic3Str);
   s := 'insert into ' + cDBName +
     '.dbo.T_Spot_Surveil([SXH],[HPHM],[HPZL],[WFSJ],[XZQH],[WFDD],[LDDM],[DDMS],'
-    + '[WFDZ],[SBBH],[WFXW],[ZQMJ],[FXJG],[PIC1],[PIC2],[CFZL],[ZT],[BZ],[WSBH]) values ('
+    + '[WFDZ],[SBBH],[WFXW],[ZQMJ],[FXJG],[PIC1],[PIC2],[PIC3],[CFZL],[ZT],[BZ],[WSBH]) values ('
     + vio.sxh.QuotedString + ',' + vio.hphm.QuotedString + ',' +
     vio.hpzl.QuotedString + ',''' + FormatDateTime('yyyy-mm-dd hh:nn:ss',
     vio.wfsj) + ''',' + vio.xzqh.QuotedString + ',' + vio.wfdd.QuotedString +
@@ -368,8 +371,9 @@ begin
     vio.wfdz.QuotedString + ',' + vio.sbbh.QuotedString + ',' +
     vio.wfxw.QuotedString + ',' + vio.zqmj.QuotedString + ',' +
     vio.fxjg.QuotedString + ',' + url1.QuotedString + ',' + url2.QuotedString +
-    ',' + vio.cfzl.QuotedString + ',' + vio.zt.QuotedString + ',' +
-    vio.bz.QuotedString + ',' + vio.wsbh.QuotedString + ') ';
+    ',' + url3.QuotedString + ',' + vio.cfzl.QuotedString + ',' +
+    vio.zt.QuotedString + ',' + vio.bz.QuotedString + ',' +
+    vio.wsbh.QuotedString + ') ';
   gSQLHelper.ExecuteSql(s);
 end;
 
