@@ -47,8 +47,6 @@ type
     class procedure Init;
     class procedure AddGPS(tokenKey: String; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
-    class procedure GetKaoHe(tokenKey: String; params: TStrings;
-      AResponseInfo: TIdHTTPResponseInfo);
   end;
 
 var
@@ -102,6 +100,12 @@ var
   his: THistory;
   dis: Double;
 begin
+  AResponseInfo.ResponseText := TCommon.AssembleSuccessHttpResult('{}');
+  if not Assigned(gZBDic) then
+  begin
+    AResponseInfo.ResponseText := TCommon.AssembleFailedHttpResult('Config Invalid');
+    exit;
+  end;
   point.lng := StrToFloatDef(params.Values['lng'], 0);
   if point.lng = 0 then
     exit;
@@ -128,7 +132,7 @@ begin
   his := gHistory[user.yhbh];
   if not OnLine then
   begin
-    AResponseInfo.ResponseText := '不在线路上';
+    //AResponseInfo.ResponseText := '不在线路上';
     if his.OnLine then
       his.firstOutTime := now
     else if (now - his.firstOutTime > OneMinute * 10)
@@ -138,7 +142,6 @@ begin
     end;
   end
   else begin
-    AResponseInfo.ResponseText := 'OK';
     dis := 0;
     if his.OnLine then
       dis := his.LastPoint.DistanceTo(point);
@@ -146,8 +149,8 @@ begin
     moved := (not his.OnLine) or (dis > 10);
     if moved then
     begin
-      // TODO： 保存经纬度信息(YHBH,GXSJ,Lat,Lng,OnLine,dis)
-      gSQLHelper.ExecuteSql('insert into T_PDA_GPS(YHBH,Latitude,Longitude,Distance,Online)values('''
+      // DONE： 保存经纬度信息(YHBH,GXSJ,Lat,Lng,OnLine,dis)
+      gSQLHelper.ExecuteSql('insert into YJITSDB.dbo.T_PDA_GPS(YHBH,Latitude,Longitude,Distance,Online)values('''
         + user.yhbh + ''',' + point.lat.ToString + ',' + point.lng.ToString + ',' + dis.ToString + ','
         + OnLine.ToInteger.ToString + ')');
       his.LastPoint := point;
@@ -156,14 +159,6 @@ begin
   his.OnLine := OnLine;
   his.lastTime := now;
   gHistory[user.yhbh] := his;
-end;
-
-class procedure THuiZhouKaoHe.GetKaoHe(tokenKey: String; params: TStrings;
-  AResponseInfo: TIdHTTPResponseInfo);
-begin
-
-  //AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(code);
-  //AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(bz);
 end;
 
 class procedure THuiZhouKaoHe.Init;
@@ -180,13 +175,15 @@ begin
   SERVICE_NAME := ini.ReadString('Ora', 'SERVICE_NAME', '');
   SID := ini.ReadString('Ora', 'SID', '');
   ini.Free;
-
-  gLineList := TList<TLine>.Create;
-  gZBDic := TDictionary<string, TZB>.Create;
-  gHistory := TDictionary<string, THistory>.Create;
-  gOraHelper := TOraHelper.Create(host, service_name, sid, user, password, port);
-  LoadZBData;
-  LoadLineData;
+  if Host <> '' then
+  begin
+    gLineList := TList<TLine>.Create;
+    gZBDic := TDictionary<string, TZB>.Create;
+    gHistory := TDictionary<string, THistory>.Create;
+    gOraHelper := TOraHelper.Create(host, service_name, sid, user, password, port);
+    LoadZBData;
+    LoadLineData;
+  end;
 end;
 
 class procedure THuiZhouKaoHe.LoadZBData;
@@ -197,10 +194,11 @@ var
   date: TDateTime;
   AFormat: TFormatSettings;
 begin
-  AFormat.ShortDateFormat := 'yyyymmdd';
+  AFormat.ShortDateFormat := 'yyyy-mm-dd';
+  AFormat.DateSeparator := '-';
   s := FormatDateTime('yyyymmdd', now);
   s := 'SELECT RYBH,RYXM,QWRQ,KSSD,JSSD FROM SERV_DEPT_SCHEDULE ' +
-    'WHERE QWRQ>''' + s + ''' and JLZT=1';
+    'WHERE QWRQ>=''' + s + ''' and JLZT=1 order by RYBH,QWRQ,KSSD';
   zb.yhbh := '';
   with gOraHelper.Query(s) do
   begin
@@ -212,6 +210,7 @@ begin
       qwrq := FieldByName('QWRQ').AsString;
       kssd := FieldByName('KSSD').AsInteger;
       jssd := FieldByName('JSSD').AsInteger;
+      qwrq := qwrq.Substring(0, 4) + '-' + qwrq.Substring(4, 2) + '-' + qwrq.Substring(6, 2);
       date := StrToDateTime(qwrq, AFormat);
       if zb.yhbh <> yhbh then
       begin
@@ -239,7 +238,7 @@ var
   i, n: integer;
   lng, lat: double;
 begin
-  with gOraHelper.Query('SELECT GLBM,QYZB FROM SERV_PATROL_REGIONAL_AREA WHERE JLZT=1') do
+  with gOraHelper.Query('SELECT GLBM,QYZB FROM SERV_PATROL_REGIONAL_AREA WHERE JLZT=1 order by GLBM') do
   begin
     if not EOF then
       gLineList.Clear;
@@ -253,7 +252,7 @@ begin
         //LINESTRING(114.416084 23.103077,114.4181 23.10008,114.420395 23.097265)
         SetLength(line.points, 0);
         n := 0;
-        s := s.Substring(12, s.Length - 12);
+        s := s.Substring(11, s.Length - 12);
         for lonlat in s.Split([',']) do
         begin
           i := lonlat.IndexOf(' ');
@@ -261,10 +260,10 @@ begin
           lat := strtofloatdef(lonlat.Substring(i + 1, 20), 0);
           if (lng > 0)and(lat > 0) then
           begin
-            n := n + 1;
-            SetLength(line.points, n);
+            SetLength(line.points, n + 1);
             line.points[n].lng := lng;
             line.points[n].lat := lat;
+            n := n + 1;
           end;
         end;
         gLineList.Add(line);

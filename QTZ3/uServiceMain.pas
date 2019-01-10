@@ -38,7 +38,7 @@ var
 implementation
 
 uses
-  uCommon, uGlobal, uRmService, uDbService, uSPService;
+  uCommon, uGlobal, uRmService, uDbService, uSPService, uHuiZhouKaoHe;
 
 {$R *.dfm}
 
@@ -208,6 +208,8 @@ begin
     TSpService.DoSP(action, tokenKey, params, isExport, AResponseInfo)
   else if THikJZFService.Actions.Contains(',' + action + ',') then
     THikJZFService.DoJZF(action, tokenKey, params, AResponseInfo)
+  else if action = 'ADDGPS' then
+    THuiZhouKaoHe.AddGPS(tokenKey, params, AResponseInfo)
   else
     TRMService.DoRM(action, tokenKey, params, isExport, AResponseInfo);
   if (AResponseInfo.ContentText = '') and (AResponseInfo.ContentStream = nil)
@@ -224,6 +226,7 @@ end;
 procedure TItsQTZ3Service.ServiceStart(Sender: TService; var Started: Boolean);
 begin
   TCommon.ProgramInit;
+  THuiZhouKaoHe.Init;
   httpServer.Bindings.Clear;
   httpServer.DefaultPort := gConfig.HttpServerPort;
   httpServer.Active := True;

@@ -30,10 +30,7 @@ uses
   uSMS in 'SPService\uSMS.pas',
   QBAes in 'Common\QBAes.pas',
   ElAES in 'Common\ElAES.pas',
-  uImportVio in 'SPService\uImportVio.pas' {,
-    uHik in 'Hik\uHik.pas';
-
-    {$R *.RES},
+  uImportVio in 'SPService\uImportVio.pas',
   uWSManager in 'RMService\uWSManager.pas',
   TmriOutNewAccess in 'RMService\intf\TmriOutNewAccess.pas',
   uJKDefine in 'RMService\impl\uJKDefine.pas',

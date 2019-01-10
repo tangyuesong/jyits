@@ -76,6 +76,8 @@ begin
   f := getRad((lat + AOther.lat) / 2);
   g := getRad((lat - AOther.lat) / 2);
   l := getRad((lng - AOther.lng) / 2);
+  if (g = 0) and (l = 0) then
+    exit(0);
 
   sg := sinh(g);
   sl := sinh(l);

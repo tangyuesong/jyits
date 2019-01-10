@@ -36,7 +36,7 @@ type
 
   TMainThread = class(TThread)
   private
-    FLastUploadTime: double;
+    FLastUploadTime, FBaseTime: double;
     FMaxRKSJ: double;
     FMaxRKSJ1: double;
     FMaxRKSJVehicle: double;
@@ -66,6 +66,7 @@ type
     procedure DoVehCheck(item: TVehCheck);
     procedure DownloadAlarmVehicle;
     procedure DownloadSURVEIL;
+    procedure BaseData;
   protected
     procedure Execute; override;
   public
@@ -88,6 +89,7 @@ begin
   FMaxRKSJ1 := now - 1;
   FMaxRKSJVehicle := now - 1;
   FLastUploadTime := now;
+  FBaseTime := now - 1;
   inherited Create(false);
 end;
 
@@ -125,6 +127,11 @@ begin
       // UpdateDeviceStauts;    ×÷·Ï
       VehCheck;
       FLastUploadTime := now;
+    end;
+    if Now - FBaseTime > 1 then
+    begin
+      BaseData;
+      FBaseTime := Now;
     end;
     Sleep(3000);
   end;
@@ -1451,6 +1458,179 @@ begin
         logger.Error('[ExecuteSQL]:' + e.Message + ' ' + ss);
       end;
     end;
+  end;
+end;
+
+procedure TMainThread.BaseData;
+  function GetTmpTable(sSQL: string): string;
+  var
+    flds, values, ddl, tmpTbl: string;
+    ss: TStringList;
+    I: integer;
+  begin
+    result := '';
+    with FOraQuery do
+    begin
+      Close;
+      SQL.Clear;
+      SQL.Add(sSQL);
+      try
+        if not FOraConn.Connected then
+          FOraConn.Open;
+        Open;
+        if not EOF then
+        begin
+          ss := TStringList.Create;
+          tmpTbl := 'tmp_' + FormatDateTime('yymmddhhnnsszzz', now);
+          ddl := 'create table ' + tmpTbl + '(';
+          ddl := ddl + Fields[0].FieldName + ' varchar(255)';
+          flds := Fields[0].FieldName;
+          for I := 1 to FieldCount - 1 do
+          begin
+            ddl := ddl + ',' + Fields[i].FieldName + ' varchar(255)';
+            flds := flds + ',' + Fields[i].FieldName;
+          end;
+          ddl := ddl + ')';
+          if not FSQLHelper.ExecuteSql(ddl) then exit;
+
+          while not EOF do
+          begin
+            values := Fields[0].AsString.QuotedString;
+            for I := 1 to FieldCount - 1 do
+            begin
+              values := values + ',' + Fields[i].AsString.QuotedString;
+            end;
+            ss.Add(',(' + values + ')');
+            if ss.Count = 1000 then
+            begin
+              if not FSQLHelper.ExecuteSql('insert into ' + tmpTbl + '('
+                + flds + ')values' + ss.Text.Substring(1)) then
+                exit;
+              ss.Clear;
+            end;
+            Next;
+          end;
+          if ss.Count > 0 then
+          begin
+            if not FSQLHelper.ExecuteSql('insert into ' + tmpTbl + '('
+              + flds + ')values' + ss.Text.Substring(1)) then exit;
+          end;
+           result := tmpTbl;
+        end;
+      except
+        on e: exception do
+          logger.Error(e.Message + ',' + sSQL);
+      end;
+    end;
+  end;
+var
+  sSQL, tmpTbl: string;
+begin
+  sSQL := 'SELECT SJBM,BMJB,GLBM,BMMC,FZR,LXR,LXDH,LXDZ FROM FRM_DEPARTMENT '
+      + 'where GLBM like ''4452%''';
+  tmpTbl := GetTmpTable(sSQL);
+  if tmpTbl <> '' then
+  begin
+    sSQL := 'INSERT INTO YJITSDB.DBO.S_DEPT(PDWDM,DWJB,DWDM,DWMC,DWFZR,DWLXR,LXDH,DWDZ) ' +
+      ' select a.SJBM,a.BMJB,a.GLBM,a.BMMC,a.FZR,a.LXR,a.LXDH,a.LXDZ ' +
+      ' from ' + tmpTbl + ' as a' +
+      ' left join YJITSDB.DBO.S_DEPT as b on a.GLBM=b.DWDM ' +
+      ' where b.DWDM is null';
+    FSQLHelper.ExecuteSql(sSQL);
+    FSQLHelper.ExecuteSql('drop table ' + tmpTbl);
+  end;
+
+  sSQL := 'select BMDM,JYBH,ZW,XM,SJ,SFZMHM from bas_police ' +
+    'where JLZT=1 and BMDM like ''445%''';
+  tmpTbl := GetTmpTable(sSQL);
+  if tmpTbl <> '' then
+  begin
+    sSQL := 'update a set a.DWDM=b.BMDM from YJITSDB.DBO.S_USER as a '
+      + 'inner join ' + tmpTbl + ' as b on a.YHBH=b.JYBH and a.DWDM<>b.BMDM';
+    FSQLHelper.ExecuteSql(sSQL);
+
+    sSQL := 'insert into YJITSDB.DBO.S_USER(DWDM,YHBH,ZW,YHXM,SJHM,SFZHM)' +
+      ' select a.BMDM,a.JYBH,a.ZW,a.XM,a.SJ,a.SFZMHM ' +
+      ' from ' + tmpTbl + ' as a' +
+      ' left join YJITSDB.DBO.S_USER as b on b.YHBH=a.JYBH ' +
+      ' where b.YHBH is null';
+    FSQLHelper.ExecuteSql(sSQL);
+    FSQLHelper.ExecuteSql('drop table ' + tmpTbl);
+  end;
+{
+  //DONE: ¿¨¿Ú
+  sSQL := 'SELECT KKBH,SXFXBM,XXFXBM,GLBM,KKMC,XZQH,DLDM,DLMS FROM DEV_TOLLGATE';
+  tmpTbl := GetTmpTable(sSQL);
+  if tmpTbl <> '' then
+  begin
+    sSQL := 'INSERT INTO YJITSDB.DBO.S_DEVICE(SBBH,JCPTBABH,JCPTBAFX,FXBH,FXMC,' +
+      ' CJJG,SBDDMC,LHY_XZQH,LHY_LDDM,LHY_DDMS) ' +
+      ' SELECT KKBH+''1'',KKBH,''1'',''1'',SXFXBM,GLBM,KKMC+ISNULL(SXFXBM, ''''),XZQH,DLDM,DLMS ' +
+      ' FROM ' + tmpTbl + ' AS A' +
+      ' LEFT JOIN YJITSDB.DBO.S_DEVICE B ON KKBH+''1'' = SBBH' +
+      ' WHERE A.XXFXBM = '''' AND B.SBBH IS NULL ' +
+      ' UNION ' +
+      ' SELECT KKBH+''2'',KKBH,''2'',''2'',XXFXBM,GLBM,KKMC+XXFXBM,XZQH,DLDM,DLMS ' +
+      ' FROM ' + tmpTbl + ' AS A' +
+      ' LEFT JOIN YJITSDB.DBO.S_DEVICE B ON KKBH+''2'' = SBBH' +
+      ' WHERE A.XXFXBM <> '''' AND B.SBBH IS NULL ';
+    FSQLHelper.ExecuteSql(sSQL);
+    FSQLHelper.ExecuteSql('drop table ' + tmpTbl);
+  end;
+}
+  sSQL := 'SELECT GLBM,DLDM,XZQH,DLMC,DLLX,GLXZDJ,DX,DLXX,LKLDLX,DLWLGL,' +
+    'LMJG,FHSSLX,QS,JS,XQLC,CJR,JLZT,QSMC,JSMC,XZQHXXLC,ZYGLSS,SSGLBM ' +
+    'FROM FRM_ROADITEM where XZQH like ''4452%''';
+  tmpTbl := GetTmpTable(sSQL);
+  if tmpTbl <> '' then
+  begin
+    sSQL := 'INSERT INTO YJITSDB.DBO.T_VIO_ROADITEM(' +
+      ' GLBM,DLDM,XZQH,DLMC,DLLX,GLXZDJ,DX,DLXX,LKLDLX,DLWLGL,' +
+      ' LMJG,FHSSLX,QS,JS,XQLC,CJR,JLZT,QSMC,JSMC,XZQHXXLC,ZYGLSS,SSGLBM) ' +
+      ' select a.GLBM,a.DLDM,a.XZQH,a.DLMC,a.DLLX,a.GLXZDJ,a.DX,a.DLXX,a.LKLDLX,a.DLWLGL,' +
+      ' a.LMJG,a.FHSSLX,a.QS,a.JS,a.XQLC,a.CJR,a.JLZT,a.QSMC,a.JSMC,a.XZQHXXLC,a.ZYGLSS,a.SSGLBM ' +
+      ' from ' + tmpTbl + ' as a' +
+      ' left join YJITSDB.DBO.T_VIO_ROADITEM as b on a.DLDM=b.DLDM ' +
+      ' where b.DLDM is null';
+    FSQLHelper.ExecuteSql(sSQL);
+    FSQLHelper.ExecuteSql('drop table ' + tmpTbl);
+  end;
+
+  sSQL := 'SELECT GLBM,DLDM,LDDM,LDMC,DLXX,LKLDLX,DLWLGL,LMJG,' +
+    'FHSSLX,CJR,QSMS,JSMS,XZQH,SSGLBM,XGDLDM,CSBJ,BJCSBJ ' +
+    'FROM FRM_ROADSEGITEM where XZQH like ''4452%''';
+  tmpTbl := GetTmpTable(sSQL);
+  if tmpTbl <> '' then
+  begin
+    sSQL := 'INSERT INTO YJITSDB.DBO.T_VIO_ROADSEGITEM(' +
+      ' GLBM,DLDM,LDDM,LDMC,DLXX,LKLDLX,DLWLGL,LMJG,' +
+      ' FHSSLX,CJR,QSMS,JSMS,XZQH,SSGLBM,XGDLDM,CSBJ,BJCSBJ ) ' +
+      ' select a.GLBM,a.DLDM,a.LDDM,a.LDMC,a.DLXX,a.LKLDLX,a.DLWLGL,a.LMJG,' +
+      ' a.FHSSLX,a.CJR,a.QSMS,a.JSMS,a.XZQH,a.SSGLBM,a.XGDLDM,a.CSBJ,a.BJCSBJ ' +
+      ' from ' + tmpTbl + ' as a left join YJITSDB.DBO.T_VIO_ROADSEGITEM as b ' +
+      ' on a.DLDM=b.DLDM and a.LDDM=b.LDDM ' +
+      ' where b.DLDM is null';
+    FSQLHelper.ExecuteSql(sSQL);
+    FSQLHelper.ExecuteSql('drop table ' + tmpTbl);
+  end;
+
+  sSQL := 'SELECT FWZBH,RYLX,SXH,XM,RYBH,SFZMHM,SJHM,BMDM,CJR,CJBM,JLZT,CSBJ,BJCSBJ ' +
+    'FROM SERV_STATION_PERSON where JLZT=1';
+  tmpTbl := GetTmpTable(sSQL);
+  if tmpTbl <> '' then
+  begin
+    sSQL := 'INSERT INTO YJITSDB.DBO.SERV_STATION_PERSON(' +
+      ' FWZBH,RYLX,SXH,XM,RYBH,SFZMHM,SJHM,BMDM,CJR,CJBM,JLZT,CSBJ,BJCSBJ ) ' +
+      ' select a.FWZBH,a.RYLX,a.SXH,a.XM,a.RYBH,a.SFZMHM,a.SJHM,a.BMDM,a.CJR,a.CJBM,a.JLZT,a.CSBJ,a.BJCSBJ ' +
+      ' from ' + tmpTbl + ' as a left join YJITSDB.DBO.SERV_STATION_PERSON as b ' +
+      ' on a.FWZBH=b.FWZBH and a.RYBH=b.RYBH ' +
+      ' where b.RYBH is null';
+    FSQLHelper.ExecuteSql(sSQL);
+    sSQL := 'DELETE a FROM YJITSDB.DBO.SERV_STATION_PERSON a ' +
+      ' left join ' + tmpTbl + ' b on a.FWZBH=b.FWZBH and a.RYBH=b.RYBH ' +
+      ' where b.RYBH is null';
+    FSQLHelper.ExecuteSql(sSQL);
+    FSQLHelper.ExecuteSql('drop table ' + tmpTbl);
   end;
 end;
 
