@@ -1312,7 +1312,7 @@ end;
 class function TRmService.IsReVio(params: TStrings; lx: Integer): Boolean;
 // 1 简易  2 强制
 var
-  s, zqmj, ryfl, jszh, hphm, hpzl, wfdd, wfsj, wfxw: String;
+  s, zqmj, ryfl, jszh, hphm, hpzl, clsbdh, fdjh, wfdd, wfsj, wfxw: String;
   tb: String;
 begin
   result := false;
@@ -1321,6 +1321,8 @@ begin
   jszh := params.Values['jszh'];
   hphm := params.Values['hphm'];
   hpzl := params.Values['hpzl'];
+  clsbdh := params.Values['clsbdh'];
+  fdjh := params.Values['fdjh'];
   wfdd := params.Values['wfdd'];
   wfsj := params.Values['wfsj'];
   wfxw := params.Values['wfxw'];
@@ -1334,13 +1336,16 @@ begin
   begin
     s := s + ' and jszh=' + jszh.QuotedString;
   end
-  else if pos('无', jszh) <= 0 then
+  else if not jszh.Contains('无') then
   begin
     s := s + ' and jszh=' + jszh.QuotedString;
   end
-  else if (pos('无', hphm) <= 0) and (pos('无', hpzl) <= 0) then
-    s := s + ' and hphm = ' + hphm.QuotedString + ' and hpzl=' +
-      hpzl.QuotedString
+  else if (not hphm.Contains('无')) and (not hpzl.Contains('无')) then
+    s := s + ' and hphm = ' + hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString
+  else if (not clsbdh.Contains('无'))and(clsbdh <> '') then
+      s := s + ' and clsbdh = ' + clsbdh.QuotedString
+  else if (not fdjh.Contains('无'))and(fdjh <> '') then
+      s := s + ' and fdjh = ' + fdjh.QuotedString
   else
     exit;
 

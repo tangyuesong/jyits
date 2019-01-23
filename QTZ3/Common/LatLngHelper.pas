@@ -172,10 +172,7 @@ begin
   bc := B.DistanceTo(self); // 边长 bc
   ca := Self.DistanceTo(A); // 边长 ca
 
-  // 根据余玄定理算角A、B的度数 cosA = (ca^2+ab^2-bc^2)/2*ca*ab
-  argA := System.Math.ArcCos(ca * ca + ab * ab - bc * bc / (2 * ca * ab));
-  argB := System.Math.ArcCos(bc * bc + ab * ab - ca * ca / (2 * bc * ab));
-  if (argA < 90) and (argB < 90) then        // C在AB内
+  if (ab * ab + ca * ca <= bc * bc) and (ab * ab + bc * bc <= ca * ca) then        // 角A和角B不是钝角
   begin
     p := (ab + bc + ca) / 2;
     S := sqrt(p * (p - ab) * (p - bc) * (p - ca)); // 根据海伦公式算面积

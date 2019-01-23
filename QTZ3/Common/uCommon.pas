@@ -447,6 +447,7 @@ begin
         Result.IPKS := FieldByName('IPKS').AsString;
         Result.IPJS := FieldByName('IPJS').AsString;
         Result.MAC := FieldByName('MAC').AsString;
+        Result.GPSBH := FieldByName('GPSBH').AsString;
         if FieldByName('FH').AsBoolean then
           Result.FH := '1'
         else
