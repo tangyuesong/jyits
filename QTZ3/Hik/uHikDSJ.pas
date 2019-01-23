@@ -190,7 +190,7 @@ begin
   then
   begin
     try
-      // gLogger.Info(s);
+      gLogger.Info(s);
       vehList := TDecodeHikResult.DecodeMoreLikeThieResult(s, totalPage,
         currentPage);
     except
@@ -528,7 +528,11 @@ begin
     AResult := TEncoding.UTF8.GetString(bytes);
     Result := True;
   except
-    AResult := UTF8Decode(http.ResponseText);
+    on e: exception do
+    begin
+      gLogger.Error(e.Message);
+      AResult := UTF8Decode(http.ResponseText);
+    end;
   end;
   stream.Free;
   http.Disconnect;

@@ -10,7 +10,7 @@ uses
   uSPService, uDBService, IdContext, IdCustomHTTPServer, IdTCPConnection,
   IdTCPClient, IdHTTP, Vcl.ExtCtrls, IdBaseComponent, IdComponent, uentity,
   IdCustomTCPServer, IdHTTPServer, Vcl.StdCtrls, IdHeaderList, QJson, uTmri,
-  IdStrings, QBAES,
+  IdStrings, QBAES, uHuiZhouKaoHe, uTmriType,
   FireDAC.Phys.OracleDef, FireDAC.Stan.Intf, FireDAC.Phys, FireDAC.Phys.Oracle,
   IdTime, IdUnixTime, uHikJZF;
 
@@ -107,7 +107,7 @@ begin
 
   s := httpClient.Get
     (TIdURI.URLEncode
-    ('http://127.0.0.1:17115/Login?user=250688&pwd=E14B236263F88BB55354B247CEE47C29')
+    ('http://127.0.0.1:17115/Login?user=130787&pwd=603A5802EB234380AC6F6D44DAAB4181')
     // ('http://127.0.0.1:17115/wxLogin?user=252871&pwd=0D6B629FB5553B325FB1A7C359A180E9207EA79CEBD39BC03C80317F55832924')
     );
   token := TCommon.GetJsonNode('token', s);
@@ -118,7 +118,7 @@ begin
   end;
 
   Memo1.Text := httpClient.Get
-    (TIdURI.URLEncode('http://127.0.0.1:17115/GetVioCount?hphm=‘¡GBX930&hpzl=02&clbj=0&token='
+    (TIdURI.URLEncode('http://127.0.0.1:17115/AddGPS?longitude=114.0313&latitude=23.435&token='
     // (TIdURI.URLEncode('http://127.0.0.1:17115/WriteSG?token='
     // ('http://127.0.0.1:17115/GetDrvInfo?sfzmhm=342921198309063411&token='
     + token));
@@ -350,6 +350,8 @@ begin
     TSpService.DoSP(Action, tokenKey, params, isExport, AResponseInfo)
   else if THikJZFService.Actions.Contains(',' + Action + ',') then
     THikJZFService.DoJZF(Action, tokenKey, params, AResponseInfo)
+  else if Action = 'ADDGPS' then
+    THuiZhouKaoHe.AddGPS(tokenKey, params, AResponseInfo)
   else
     TRmService.DoRM(Action, tokenKey, params, isExport, AResponseInfo);
   if (AResponseInfo.ContentText = '') and (AResponseInfo.ContentStream = nil)

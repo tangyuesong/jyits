@@ -30,7 +30,10 @@ uses
   uSMS in 'SPService\uSMS.pas',
   QBAes in 'Common\QBAes.pas',
   ElAES in 'Common\ElAES.pas',
-  uImportVio in 'SPService\uImportVio.pas',
+  uImportVio in 'SPService\uImportVio.pas' {,
+    uHik in 'Hik\uHik.pas';
+
+    {$R *.RES},
   uWSManager in 'RMService\uWSManager.pas',
   TmriOutNewAccess in 'RMService\intf\TmriOutNewAccess.pas',
   uJKDefine in 'RMService\impl\uJKDefine.pas',
@@ -44,7 +47,8 @@ uses
   uTmriType in 'RMService\impl\uTmriType.pas',
   Ehlservice in 'RMService\intf\Ehlservice.pas',
   uHikHumanFace in 'Hik\uHikHumanFace.pas',
-  uOraHelper in 'Common\uOraHelper.pas';
+  uOraHelper in 'Common\uOraHelper.pas',
+  uHumanFace in 'SPService\uHumanFace.pas';
 
 {$R *.RES}
 

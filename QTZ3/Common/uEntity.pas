@@ -114,6 +114,7 @@ type
     // SMS
     SMSUrl: String;
     PicUrl: String;
+    HumanfaceUrl: String;
     // Heartbeat
     HeartbeatUrl: String;
     HeartbeatInterval: Integer;

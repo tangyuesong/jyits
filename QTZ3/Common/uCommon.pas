@@ -227,7 +227,8 @@ begin
           end
           else
             value := Trim(Fields[i].AsString.Replace(char(9), ' ')
-              .Replace(char(10), ' ').Replace(char(13), ' '));
+              .Replace(char(10), ' ').Replace(char(13), ' ').Replace('"', '')
+              .Replace('\', ''));
           s := '"' + col + '":"' + value + '"';
 
           if (AGroups <> nil) and (AGroups.IndexOf(UpperCase(col)) >= 0) then
@@ -583,8 +584,10 @@ begin
   begin
     while not Eof do
     begin
-      gDevKDBH.add(FieldByName('SBBH').AsString, FieldByName('ID').AsString);
-      gDevID.add(FieldByName('ID').AsString, FieldByName('SBBH').AsString);
+      if not gDevKDBH.ContainsKey(FieldByName('SBBH').AsString) then
+        gDevKDBH.add(FieldByName('SBBH').AsString, FieldByName('ID').AsString);
+      if not gDevID.ContainsKey(FieldByName('ID').AsString) then
+        gDevID.add(FieldByName('ID').AsString, FieldByName('SBBH').AsString);
       hikid := FieldByName('HikID').AsString;
       if (hikid <> '') and (not gHikID.ContainsKey(hikid)) then
         gHikID.add(hikid, FieldByName('SBBH').AsString);
@@ -601,8 +604,10 @@ begin
   begin
     while not Eof do
     begin
-      gK08Clpp.add(FieldByName('vehiclelogo').AsString + '-' +
-        FieldByName('Vehiclesublogo').AsString, FieldByName('MC').AsString);
+      if not gK08Clpp.ContainsKey(FieldByName('vehiclelogo').AsString + '-' +
+        FieldByName('Vehiclesublogo').AsString) then
+        gK08Clpp.add(FieldByName('vehiclelogo').AsString + '-' +
+          FieldByName('Vehiclesublogo').AsString, FieldByName('MC').AsString);
       Next;
     end;
     Free;
@@ -617,7 +622,8 @@ begin
   begin
     while not Eof do
     begin
-      gK08Csys.add(FieldByName('DM').AsString, FieldByName('MC').AsString);
+      if not gK08Csys.ContainsKey(FieldByName('DM').AsString) then
+        gK08Csys.add(FieldByName('DM').AsString, FieldByName('MC').AsString);
       Next;
     end;
     Free;
@@ -636,7 +642,8 @@ begin
       if not gK08Hpzl.ContainsKey(FieldByName('MineKey').AsString) then
         gK08Hpzl.add(FieldByName('MineKey').AsString, TStringList.Create);
       gK08Hpzl[FieldByName('MineKey').AsString].add(FieldByName('DM').AsString);
-      gHpzl.add(FieldByName('DM').AsString, FieldByName('MineKey').AsString);
+      if not gHpzl.ContainsKey(FieldByName('DM').AsString) then
+        gHpzl.add(FieldByName('DM').AsString, FieldByName('MineKey').AsString);
       Next;
     end;
     Free;
@@ -1181,6 +1188,8 @@ begin
     gConfig.PicUrl := ReadString('Hik', 'PicUrl', 'http://10.43.235.39:17116');
 
     gConfig.SMSUrl := ReadString('SMS', 'SMSUrl', '');
+
+    gConfig.HumanfaceUrl:=ReadString('Hik', 'HumanfaceUrl', 'http://68.240.128.61:17117');
 
     gConfig.HikConfig.PassOra.ip := ReadString('PassOra', 'IP', '');
     gConfig.HikConfig.PassOra.port := ReadString('PassOra', 'Port', '');

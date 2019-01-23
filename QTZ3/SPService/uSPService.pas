@@ -5,7 +5,8 @@ interface
 uses
   SysUtils, Classes, uGlobal, uCommon, IdCustomHTTPServer, uSMS, EncdDecd,
   uImportVio, uRmService, qjson, uSurveilVio, uHikDSJ, uHikHumanFace,
-  Generics.Collections, StrUtils, uTokenManager, ActiveX, uExamService;
+  Generics.Collections, StrUtils, uTokenManager, ActiveX, uExamService,
+  uHuiZhouKaoHe, uHumanFace;
 
 type
   TSPService = Class
@@ -38,7 +39,7 @@ class function TSPService.GetActions: String;
 begin
   Result := ',GETPASSLIST,SENDSMS,ANALYSISONEPIC,IMPORTVIO,GETLOCALVEHINFO,' +
     'GETLOCALDRVINFO,SAVESURVEILVIO,GETSGZR,GETTJJG,GETJFS,GETEXAMDATA,GETWFXWBYVEH,'
-    + 'UPLOADSPOTPIC,VEHCHECK,GETHUMANFACECOMPARERESULT,';
+    + 'UPLOADSPOTPIC,VEHCHECK,ADDGPS,GETHUMANFACECOMPARE,GETALGORITHM,GETREPOSITORIES,';
 end;
 
 class function TSPService.GetCCLZRQ(token: TToken; Params: TStrings): String;
@@ -370,15 +371,36 @@ begin
       gSQLHelper.ExecuteSql(s);
     end;
   end
-  else if action = 'GETHUMANFACECOMPARERESULT' then
+  else if action = 'GETHUMANFACECOMPARE' then
   begin
     msg := '';
-    s := THikHumanFace.GetHumanFaceCompareResult(Params, msg);
+    s := THumanFace.GetHumanFaceCompare(Params, msg);
     if msg <> '' then
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg)
     else
       AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(s);
-  end;
+  end
+  else if action = 'GETALGORITHM' then
+  begin
+    msg := '';
+    s := THumanFace.GetAlgorithm(Params, msg);
+    if msg <> '' then
+      AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg)
+    else
+      AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(s);
+  end
+  else if action = 'GETREPOSITORIES' then
+  begin
+    msg := '';
+    s := THumanFace.GetRepositories(Params, msg);
+    if msg <> '' then
+      AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg)
+    else
+      AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult(s);
+  end
+  else if action = 'ADDGPS' then
+    THuiZhouKaoHe.AddGPS(tokenKey, Params, AResponseInfo);
+
   ActiveX.CoUninitialize;
 end;
 

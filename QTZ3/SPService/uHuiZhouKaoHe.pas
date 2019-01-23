@@ -18,6 +18,7 @@ type
   end;
 
   TLine = record
+    gxsj: Double;
     dwdm: string;
     points: TLatLngs;
   end;
@@ -41,10 +42,10 @@ type
 
   THuiZhouKaoHe = Class
   private
-    class procedure LoadZBData; static;
-    class procedure LoadLineData; static;
   public
     class procedure Init;
+    class procedure LoadZBData; static;
+    class procedure LoadLineData; static;
     class procedure AddGPS(tokenKey: String; params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
   end;
@@ -84,7 +85,7 @@ class procedure THuiZhouKaoHe.AddGPS(tokenKey: String; params: TStrings;
     result := false;
     for line in gLineList do
     begin
-      if line.dwdm = DWDM then
+      if (line.dwdm = DWDM)and(now - line.gxsj < OneHour * 3) then
       begin
         d := point.DistanceToLine(line.Points);
         if d < 100 then
@@ -100,10 +101,10 @@ var
   his: THistory;
   dis: Double;
 begin
-  AResponseInfo.ResponseText := TCommon.AssembleSuccessHttpResult('{}');
+  AResponseInfo.ContentText := TCommon.AssembleSuccessHttpResult('{}');
   if not Assigned(gZBDic) then
   begin
-    AResponseInfo.ResponseText := TCommon.AssembleFailedHttpResult('Config Invalid');
+    AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('Config Invalid');
     exit;
   end;
   point.lng := StrToFloatDef(params.Values['lng'], 0);
@@ -202,8 +203,8 @@ begin
   zb.yhbh := '';
   with gOraHelper.Query(s) do
   begin
-    if not EOF then
-      gZBDic.Clear;
+    //if not EOF then
+    //  gZBDic.Clear;
     while not EOF do
     begin
       yhbh := FieldByName('RYBH').AsString;
@@ -215,7 +216,7 @@ begin
       if zb.yhbh <> yhbh then
       begin
         if zb.yhbh <> '' then
-          gZBDic.Add(zb.yhbh, zb);
+          gZBDic.AddOrSetValue(zb.yhbh, zb);
         zb.yhbh := yhbh;
         setlength(zb.sections, 0);
       end;
@@ -226,26 +227,38 @@ begin
       Next;
     end;
     if zb.yhbh <> '' then
-      gZBDic.Add(zb.yhbh, zb);
+      gZBDic.AddOrSetValue(zb.yhbh, zb);
     Free;
   end;
 end;
 
 class procedure THuiZhouKaoHe.LoadLineData;
+  procedure ClearOldLine;
+  var
+    i: integer;
+  begin
+    for i := gLineList.Count - 1 downto 0 do
+    begin
+      if gLineList[i].gxsj < now - OneHour * 2 then
+        gLineList.Remove(gLineList[i]);
+    end;
+  end;
 var
   s, lonlat: string;
   line: TLine;
   i, n: integer;
   lng, lat: double;
 begin
+  ClearOldLine;
   with gOraHelper.Query('SELECT GLBM,QYZB FROM SERV_PATROL_REGIONAL_AREA WHERE JLZT=1 order by GLBM') do
   begin
-    if not EOF then
-      gLineList.Clear;
+    //if not EOF then
+    //  gLineList.Clear;
 
     while not EOF do
     begin
       line.dwdm := FieldByName('GLBM').AsString;
+      line.gxsj := now;
       s := FieldByName('QYZB').AsString;
       if s.StartsWith('LINESTRING') then
       begin

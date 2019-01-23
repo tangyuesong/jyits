@@ -14,7 +14,6 @@ uses
   uTokenManager in '..\Common\uTokenManager.pas',
   uDBService in '..\DBService\uDBService.pas',
   uDecodeHikResult in '..\Hik\uDecodeHikResult.pas',
-  uHik in '..\Hik\uHik.pas',
   uRmService in '..\RMService\uRmService.pas',
   uRmInf in '..\RMService\impl\uRmInf.pas',
   uRmWeb in '..\RMService\impl\uRmWeb.pas',
@@ -26,12 +25,9 @@ uses
   TmriOutAccess in '..\RMService\intf\TmriOutAccess.pas',
   Trans1 in '..\RMService\intf\Trans1.pas',
   MessageDigest_5 in '..\SPService\MessageDigest_5.pas',
-  uAnalysisPic in '..\SPService\uAnalysisPic.pas',
-  uLockVio in '..\SPService\uLockVio.pas',
   uSMS in '..\SPService\uSMS.pas',
   uSolr in '..\SPService\uSolr.pas',
   uSPService in '..\SPService\uSPService.pas',
-  uVehPass in '..\SPService\uVehPass.pas',
   ElAES in '..\Common\ElAES.pas',
   QBAes in '..\Common\QBAes.pas',
   uImportVio in '..\SPService\uImportVio.pas',
@@ -41,7 +37,14 @@ uses
   uSurveilVio in '..\SPService\uSurveilVio.pas',
   uExamService in '..\ExamService\uExamService.pas',
   uHikDSJ in '..\Hik\uHikDSJ.pas',
-  uHikJZF in '..\Hik\uHikJZF.pas';
+  uHikJZF in '..\Hik\uHikJZF.pas',
+  uHuiZhouKaoHe in '..\SPService\uHuiZhouKaoHe.pas',
+  LatLngHelper in '..\Common\LatLngHelper.pas',
+  uOraHelper in '..\Common\uOraHelper.pas',
+  uTmri_huizhou in '..\RMService\impl\uTmri_huizhou.pas',
+  uTmriType in '..\RMService\impl\uTmriType.pas',
+  Ehlservice in '..\RMService\intf\Ehlservice.pas',
+  uHikHumanFace in '..\Hik\uHikHumanFace.pas';
 
 {$R *.res}
 

@@ -41,6 +41,7 @@ begin
   token := GetToken;
   url := Format(gConfig.SMSUrl, [token, sj, HTTPEncode(content)]);
   http := TIdHttp.Create(nil);
+  http.HandleRedirects := True;
   stream := TMemoryStream.Create;
   http.Post(url, stream);
   http.Free;
@@ -68,7 +69,7 @@ end;
 
 class function TSMS.SendSMS(sn, sjhm, content: string): boolean;
 begin
-  Result:= True;
+  result := True;
   if gConfig.SMSUrl <> '' then
     SendSMSByHttp(sjhm, content)
   else

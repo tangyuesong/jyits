@@ -16,6 +16,7 @@ type
     Timer1: TTimer;
     httpClient: TIdHTTP;
     FDPhysOracleDriverLink1: TFDPhysOracleDriverLink;
+    Timer2: TTimer;
     procedure Timer1Timer(Sender: TObject);
     procedure ServiceStart(Sender: TService; var Started: Boolean);
     procedure ServiceStop(Sender: TService; var Stopped: Boolean);
@@ -24,6 +25,7 @@ type
     procedure httpServerCreatePostStream(AContext: TIdContext;
       AHeaders: TIdHeaderList; var VPostStream: TStream);
     procedure ServiceCreate(Sender: TObject);
+    procedure Timer2Timer(Sender: TObject);
   private
     procedure DoHttpRequest(action, tokenKey: String; params: TStrings;
       isExport: Boolean; AResponseInfo: TIdHTTPResponseInfo);
@@ -208,8 +210,6 @@ begin
     TSpService.DoSP(action, tokenKey, params, isExport, AResponseInfo)
   else if THikJZFService.Actions.Contains(',' + action + ',') then
     THikJZFService.DoJZF(action, tokenKey, params, AResponseInfo)
-  else if action = 'ADDGPS' then
-    THuiZhouKaoHe.AddGPS(tokenKey, params, AResponseInfo)
   else
     TRMService.DoRM(action, tokenKey, params, isExport, AResponseInfo);
   if (AResponseInfo.ContentText = '') and (AResponseInfo.ContentStream = nil)
@@ -258,6 +258,15 @@ begin
   end;
   requestStream.Free;
   response.Free;
+end;
+
+procedure TItsQTZ3Service.Timer2Timer(Sender: TObject);
+begin
+  if Assigned(uHuiZhouKaoHe.gZBDic) then
+  begin
+    uHuiZhouKaoHe.THuiZhouKaoHe.LoadZBData;
+    uHuiZhouKaoHe.THuiZhouKaoHe.LoadLineData;
+  end;
 end;
 
 end.
