@@ -13,9 +13,8 @@ type
   TLatLngs = array of TLatLng;
 
   TLatLngHelper = record Helper for TLatLng
-  private
-    const
-      X_PI = 3.14159265358979324 * 3000.0 / 180.0;
+  private const
+    X_PI = 3.14159265358979324 * 3000.0 / 180.0;
     function sgn(a: real): real;
     function atan2(Y, X: real): real;
     function TransformLng(X, Y: Double): Double;
@@ -31,7 +30,7 @@ type
     function Equals(AOther: TLatLng): Boolean;
     function DistanceTo(AOther: TLatLng): Double;
     function DistanceToLine(line: TLatLngs): Double;
-    function HeightTo(A, B: TLatLng): Double;
+    function HeightTo(a, B: TLatLng): Double;
     function ToString(const Precision: Integer): string;
   end;
 
@@ -65,8 +64,9 @@ end;
 function TLatLngHelper.DistanceTo(AOther: TLatLng): Double;
   function getRad(d: Double): Double;
   begin
-    Result := d * PI / 180.0;
+    Result := d * pi / 180.0;
   end;
+
 var
   f, g, l: Double;
   sg, sl, sf: Double;
@@ -98,39 +98,42 @@ begin
 end;
 
 function TLatLngHelper.DistanceToLine(line: TLatLngs): Double;
-  function getNearstIndex: integer;
+  function getNearstIndex: Integer;
   var
-    i: integer;
-    d, min: double;
+    i: Integer;
+    d, min: Double;
   begin
     min := Double.MaxValue;
     for i := 0 to Length(line) - 1 do
     begin
-      d := self.DistanceTo(line[i]);
+      d := Self.DistanceTo(line[i]);
       if d < min then
       begin
         min := d;
-        result := i;
+        Result := i;
       end;
     end;
   end;
+
 var
-  iA, iB: integer;
-  d, ca: double;
+  i: Integer;
+  d1, d2: Double;
 begin
-  iA := GetNearstIndex;
-  ca := self.DistanceTo(line[iA]);
+  i := getNearstIndex;
 
-  if (iA = 0) or (iA=length(line) - 1) then
-    exit(ca);
-
-  d := self.DistanceTo(line[iA-1]);
-  if d < self.DistanceTo(line[iA + 1]) then
-    iB := iA-1
+  if i = 0 then
+    Result := Self.HeightTo(line[0], line[1])
+  else if i = Length(line) - 1 then
+    Result := Self.HeightTo(line[i], line[i - 1])
   else
-    iB := iA+1;
-
-  result := self.HeightTo(line[iA], line[iB]);
+  begin
+    d1 := Self.HeightTo(line[i], line[i - 1]);
+    d2 := Self.HeightTo(line[i], line[i + 1]);
+    if d1 < d2 then
+      Result := d1
+    else
+      Result := d2;
+  end;
 end;
 
 function TLatLngHelper.Equals(AOther: TLatLng): Boolean;
@@ -152,28 +155,36 @@ end;
 
 class function TLatLngHelper.GCJ02ToWGS84(latLngs: TLatLngs): TLatLngs;
 var
-  I, count: Integer;
+  i, count: Integer;
 begin
   count := Length(latLngs);
   SetLength(Result, count);
-  for I := 0 to count - 1 do
-    Result[I] := latLngs[I].GCJ02ToWGS84;
+  for i := 0 to count - 1 do
+    Result[i] := latLngs[i].GCJ02ToWGS84;
 end;
 
-function TLatLngHelper.HeightTo(A, B: TLatLng): Double;
+function TLatLngHelper.HeightTo(a, B: TLatLng): Double;
 var
-  ab,bc,ca,bd: double;
+  ab, bc, ca, p, S, H, argA, argB: Double;
 begin
-  ab := A.DistanceTo(B);
-  bc := self.DistanceTo(B);
-  ca := self.DistanceTo(A);
-  bd := (ab*ab + bc*bc - ca*ca)/2/ab;
-  result := sqrt(bc*bc - bd*bd);
+  Result := Double.MaxValue;
+  ab := A.DistanceTo(B);    // 边长 ab
+  bc := B.DistanceTo(self); // 边长 bc
+  ca := Self.DistanceTo(A); // 边长 ca
+
+  if (ab * ab + ca * ca <= bc * bc) and (ab * ab + bc * bc <= ca * ca) then        // 角A和角B不是钝角
+  begin
+    p := (ab + bc + ca) / 2;
+    S := sqrt(p * (p - ab) * (p - bc) * (p - ca)); // 根据海伦公式算面积
+    H := S * 2 / ab;                               // S = ab * H / 2
+    Result := H;
+  end;
 end;
 
 function TLatLngHelper.OutOfChina: Boolean;
 begin
-  Result := (Self.lng < 72.004) and (Self.lng > 137.8347) and (Self.lat < 0.8293) and (Self.lat > 55.8271);
+  Result := (Self.lng < 72.004) and (Self.lng > 137.8347) and
+    (Self.lat < 0.8293) and (Self.lat > 55.8271);
 end;
 
 // http://kd5col.info/swag/DELPHI/0046.PAS.html
@@ -192,28 +203,36 @@ end;
 
 function TLatLngHelper.TransformLat(X, Y: Double): Double;
 begin
-  Result := -100.0 + 2.0 * X + 3.0 * Y + 0.2 * Y * Y + 0.1 * X * Y + 0.2 * sqrt(Abs(X));
-  Result := Result + (20.0 * sin(6.0 * X * pi) + 20.0 * sin(2.0 * X * pi)) * 2.0 / 3.0;
-  Result := Result + (20.0 * sin(Y * pi) + 40.0 * sin(Y / 3.0 * pi)) * 2.0 / 3.0;
-  Result := Result + (160.0 * sin(Y / 12.0 * pi) + 320 * sin(Y * pi / 30.0)) * 2.0 / 3.0;
+  Result := -100.0 + 2.0 * X + 3.0 * Y + 0.2 * Y * Y + 0.1 * X * Y + 0.2 *
+    sqrt(Abs(X));
+  Result := Result + (20.0 * sin(6.0 * X * pi) + 20.0 * sin(2.0 * X * pi)) *
+    2.0 / 3.0;
+  Result := Result + (20.0 * sin(Y * pi) + 40.0 * sin(Y / 3.0 * pi)) *
+    2.0 / 3.0;
+  Result := Result + (160.0 * sin(Y / 12.0 * pi) + 320 * sin(Y * pi / 30.0)) *
+    2.0 / 3.0;
 end;
 
 function TLatLngHelper.TransformLng(X, Y: Double): Double;
 begin
-  Result := 300.0 + X + 2.0 * Y + 0.1 * X * X + 0.1 * X * Y + 0.1 * sqrt(Abs(X));
-  Result := Result + (20.0 * sin(6.0 * X * pi) + 20.0 * sin(2.0 * X * pi)) * 2.0 / 3.0;
-  Result := Result + (20.0 * sin(X * pi) + 40.0 * sin(X / 3.0 * pi)) * 2.0 / 3.0;
-  Result := Result + (150.0 * sin(X / 12.0 * pi) + 300.0 * sin(X / 30.0 * pi)) * 2.0 / 3.0;
+  Result := 300.0 + X + 2.0 * Y + 0.1 * X * X + 0.1 * X * Y + 0.1 *
+    sqrt(Abs(X));
+  Result := Result + (20.0 * sin(6.0 * X * pi) + 20.0 * sin(2.0 * X * pi)) *
+    2.0 / 3.0;
+  Result := Result + (20.0 * sin(X * pi) + 40.0 * sin(X / 3.0 * pi)) *
+    2.0 / 3.0;
+  Result := Result + (150.0 * sin(X / 12.0 * pi) + 300.0 * sin(X / 30.0 * pi)) *
+    2.0 / 3.0;
 end;
 
 class function TLatLngHelper.WGS84ToGCJ02(latLngs: TLatLngs): TLatLngs;
 var
-  I, count: Integer;
+  i, count: Integer;
 begin
   count := Length(latLngs);
   SetLength(Result, count);
-  for I := 0 to count - 1 do
-    Result[I] := latLngs[I].WGS84ToGCJ02;
+  for i := 0 to count - 1 do
+    Result[i] := latLngs[i].WGS84ToGCJ02;
 end;
 
 function TLatLngHelper.WGS84ToGCJ02: TLatLng;
@@ -237,7 +256,7 @@ begin
   begin
     Result.lat := lat;
     Result.lng := lng;
-    Exit;
+    exit;
   end;
 
   offset_lat := TransformLat(lng - 105.0, lat - 35.0);
@@ -248,7 +267,8 @@ begin
   magic := 1 - ee * magic * magic;
   sqrtMagic := sqrt(magic);
 
-  offset_lat := (offset_lat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * pi);
+  offset_lat := (offset_lat * 180.0) /
+    ((a * (1 - ee)) / (magic * sqrtMagic) * pi);
   offset_lng := (offset_lng * 180.0) / (a / sqrtMagic * cos(radLat) * pi);
 
   Result.lat := lat + offset_lat;
@@ -280,4 +300,3 @@ begin
 end;
 
 end.
-

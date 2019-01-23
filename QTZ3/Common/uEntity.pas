@@ -255,6 +255,7 @@ type
     SystemID: string;
     DWDM: string;
     yhbh: string;
+    GPSBH: string;
     ZW: string;
     YHXM: string;
     XL: string;
