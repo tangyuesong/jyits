@@ -32,9 +32,10 @@ begin
   s := '';
   AMsg := '';
   http := TIdHttp.Create(nil);
+  http.HandleRedirects:= True;
   data := TStringStream.Create;
   for i := 0 to AParams.Count - 1 do
-    s := s + '"' + AParams.Names[i] + '":"' + AParams.ValueFromIndex[i] + '",';
+    s := s + ',"' + AParams.Names[i] + '":"' + AParams.ValueFromIndex[i] + '"';
   if s <> '' then
     s := '{' + s.Substring(1) + '}';
   try
@@ -55,6 +56,7 @@ var
 begin
   AMsg := '';
   http := TIdHttp.Create(nil);
+  http.HandleRedirects:= True;
   try
     Result := http.Get(gConfig.HumanfaceUrl + '/GetRepositories');
   except
@@ -72,6 +74,7 @@ var
 begin
   AMsg := '';
   http := TIdHttp.Create(nil);
+  http.HandleRedirects:= True;
   try
     Result := http.Get(gConfig.HumanfaceUrl + '/GetAlgorithm');
   except

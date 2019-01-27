@@ -64,6 +64,7 @@ begin
   if modeldata = '' then
     exit;
   http := TIdHttp.Create(nil);
+  http.HandleRedirects:= True;
   params := TStringList.Create;
   params.Add('modelData=' + modeldata);
   params.Add('blacklistIds=-1');
@@ -114,7 +115,7 @@ begin
   if modeldata = '' then
     exit;
   http := TIdHttp.Create(nil);
-
+  http.HandleRedirects:= True;
   params := TStringList.Create;
   params.Add('faceModel=' + modeldata);
   params.Add('facelibIds=-1');
@@ -184,6 +185,7 @@ begin
   url := gConfig.HikConfig.HumanFace +
     '/face-web/ws/rest/CommApply/getFaceModelFromUrl?faceUrl=' + AUrl;
   http := TIdHttp.Create(nil);
+  http.HandleRedirects:= True;
   s := http.Get(url);
   Result := GetResult('modeldata', s, AMsg);
   http.Disconnect;

@@ -41,6 +41,7 @@ object ItsQTZ3Service: TItsQTZ3Service
     Top = 144
   end
   object Timer2: TTimer
+    Enabled = False
     Interval = 3600000
     OnTimer = Timer2Timer
     Left = 64

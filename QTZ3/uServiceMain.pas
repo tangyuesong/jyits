@@ -226,7 +226,7 @@ end;
 procedure TItsQTZ3Service.ServiceStart(Sender: TService; var Started: Boolean);
 begin
   TCommon.ProgramInit;
-  THuiZhouKaoHe.Init;
+  //THuiZhouKaoHe.Init;
   httpServer.Bindings.Clear;
   httpServer.DefaultPort := gConfig.HttpServerPort;
   httpServer.Active := True;
@@ -262,11 +262,11 @@ end;
 
 procedure TItsQTZ3Service.Timer2Timer(Sender: TObject);
 begin
-  if Assigned(uHuiZhouKaoHe.gZBDic) then
+  {if Assigned(uHuiZhouKaoHe.gZBDic) then
   begin
     uHuiZhouKaoHe.THuiZhouKaoHe.LoadZBData;
     uHuiZhouKaoHe.THuiZhouKaoHe.LoadLineData;
-  end;
+  end;}
 end;
 
 end.

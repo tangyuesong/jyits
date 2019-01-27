@@ -512,6 +512,7 @@ begin
   AResult := '';
   Result := False;
   http := TIdHTTP.Create(nil);
+  http.HandleRedirects:= True;
   http.ConnectTimeout := 30000;
   stream := TMemoryStream.Create;
   try

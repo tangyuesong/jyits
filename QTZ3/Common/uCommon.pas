@@ -448,10 +448,10 @@ begin
         Result.IPKS := FieldByName('IPKS').AsString;
         Result.IPJS := FieldByName('IPJS').AsString;
         Result.MAC := FieldByName('MAC').AsString;
-        if FindField('GPSBH') <> nil then
-          Result.GPSBH := FieldByName('GPSBH').AsString
-        else
-          Result.GPSBH := '';
+        //if FindField('GPSBH') <> nil then
+        //  Result.GPSBH := FieldByName('GPSBH').AsString
+        //else
+        Result.GPSBH := '';
         if FieldByName('FH').AsBoolean then
           Result.FH := '1'
         else

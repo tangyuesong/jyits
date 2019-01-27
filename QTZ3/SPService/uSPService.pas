@@ -373,7 +373,6 @@ begin
   end
   else if action = 'GETHUMANFACECOMPARE' then
   begin
-    msg := '';
     s := THumanFace.GetHumanFaceCompare(Params, msg);
     if msg <> '' then
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg)
@@ -382,7 +381,6 @@ begin
   end
   else if action = 'GETALGORITHM' then
   begin
-    msg := '';
     s := THumanFace.GetAlgorithm(Params, msg);
     if msg <> '' then
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg)
@@ -391,7 +389,6 @@ begin
   end
   else if action = 'GETREPOSITORIES' then
   begin
-    msg := '';
     s := THumanFace.GetRepositories(Params, msg);
     if msg <> '' then
       AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg)
