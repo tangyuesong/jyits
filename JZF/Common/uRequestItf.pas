@@ -62,11 +62,13 @@ begin
     while i < 2 do
     begin
       if param <> '' then
-        s := '?' + ReplaceUnsafeChars(param) + '&token=' + gToken
+        s := param + '&token=' + gToken
       else
-        s := '?token=' + gToken;
-      s := url + '/' + action + s;
-      s := TIdURI.URLEncode(s);
+        s := 'token=' + gToken;
+
+      s := EncodeString(s);
+      s := s.Replace(#13#10, '');
+      s := url + '/' + action + '?' + s;
       s := http.Get(s);
       if Trim(s) = 'invalid token' then
       begin
@@ -120,15 +122,16 @@ end;
 class function TRequestItf.GetToken: String;
 var
   http: TIdHttp;
-  s: string;
+  url, s: string;
 begin
   Result := '';
   http := TIdHttp.Create(nil);
   try
-    s := gConfig.QTZDB +
-      '/Login?user=sa&pwd=EB8E560662808ED4FAEA1C8AF016055947C4EF17CFD7AFC5390AA126AB25E2A2';
-    s := TIdURI.URLEncode(s);
-    Result := http.Get(s);
+    s := 'user=sa&pwd=EB8E560662808ED4FAEA1C8AF016055947C4EF17CFD7AFC5390AA126AB25E2A2';
+    s := EncodeString(s);
+    s := s.Replace(#13#10, '');
+    url := gConfig.QTZDB + '/Login?' + s;
+    Result := http.Get(url);
   except
   end;
   http.Free;

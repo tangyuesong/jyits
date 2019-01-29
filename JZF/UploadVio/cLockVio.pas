@@ -156,6 +156,7 @@ begin
     begin
       zt := '6';
       Result := 'ÉÏ´«Ê§°Ü[' + msg + ']';
+      sxh := '';
     end;
     UpdateVioState(vio.sysid, zt, msg, sxh);
   end;
@@ -163,38 +164,17 @@ end;
 
 procedure TDealLockVio.DecodeRmResultHead(json: String; var code: String;
   var msg: String);
-var
-  head, s: string;
-  tmpTs: TStrings;
-  i: Integer;
 begin
-  tmpTs := TStringList.Create;
-  tmpTs.Delimiter := ',';
-  if pos('"head":{', json) > 0 then
-  begin
-    json := Copy(json, pos('"head":{', json) + 8, Length(json));
-    head := Copy(json, 1, pos('}', json) - 1);
-    json := Copy(json, pos('}', json) + 1, Length(json));
-    head := StringReplace(head, '"', '', [rfReplaceAll]);
-    tmpTs.DelimitedText := head;
-    for i := 0 to tmpTs.Count - 1 do
-    begin
-      if pos('code', tmpTs[i]) = 1 then
-        code := Trim(Copy(tmpTs[i], pos(':', tmpTs[i]) + 1, 10))
-      else if pos('msg:', tmpTs[i]) = 1 then
-      begin
-        s := Trim(Copy(tmpTs[i], pos(':', tmpTs[i]) + 1, Length(tmpTs[i])));
-        if Length(s) >= 5 then
-          msg := s;
-      end
-      else if pos('msg1', tmpTs[i]) = 1 then
-      begin
-        if Length(msg) < 5 then
-          msg := Trim(Copy(tmpTs[i], pos(':', tmpTs[i]) + 1, Length(tmpTs[i])));
-      end;
-    end;
+  try
+    code := TCommon.GetJsonNode('code', json);
+    if code = '1' then
+      msg := TCommon.GetJsonNode('value', json)
+    else if code = '0' then
+      msg := TCommon.GetJsonNode('message', json);
+  except
+    on e: exception do
+      gLogger.Error('[UploadVio]' + e.Message);
   end;
-  tmpTs.Free;
 end;
 
 function TDealLockVio.UploadVio(id: String; whiteList: TStrings): String;
