@@ -44,7 +44,8 @@ uses
   uTmri_huizhou in '..\RMService\impl\uTmri_huizhou.pas',
   uTmriType in '..\RMService\impl\uTmriType.pas',
   Ehlservice in '..\RMService\intf\Ehlservice.pas',
-  uHikHumanFace in '..\Hik\uHikHumanFace.pas';
+  uHikHumanFace in '..\Hik\uHikHumanFace.pas',
+  uHumanFace in '..\SPService\uHumanFace.pas';
 
 {$R *.res}
 
