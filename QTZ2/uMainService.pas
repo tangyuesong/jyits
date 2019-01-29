@@ -17,7 +17,6 @@ type
     procedure Timer1Timer(Sender: TObject);
   private
     procedure Heartbeat;
-    procedure ResetJKCounter;
     { Private declarations }
   public
     function GetServiceController: TServiceController; override;
@@ -64,8 +63,6 @@ end;
 procedure TItsQTZService.Timer1Timer(Sender: TObject);
 begin
   Heartbeat;
-  if FormatDateTime('HHMM', now) < '0003' then
-    ResetJKCounter;
 end;
 
 procedure TItsQTZService.Heartbeat;
@@ -82,16 +79,6 @@ begin
   end;
   requestStream.Free;
   response.Free;
-end;
-
-procedure TItsQTZService.ResetJKCounter;
-var
-  jkid: string;
-begin
-  for jkid in JKCounterDic.Keys do
-  begin
-    JKCounterDic[jkid] := 0;
-  end;
 end;
 
 end.

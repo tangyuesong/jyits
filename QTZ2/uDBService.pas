@@ -104,20 +104,26 @@ begin
 
   params := TStringList.Create;
   params.Delimiter := '&';
+  params.StrictDelimiter := True;
   try
-    // if UpperCase(ARequestInfo.Command) = 'POST' then
-    // postString := Trim(TStringStream(ARequestInfo.PostStream).DataString);
-
-    params.DelimitedText := Utf8Decode(ARequestInfo.UnparsedParams);
-    for i := params.Count - 1 downto 0 do
+    if UpperCase(ARequestInfo.Command) = 'POST' then
+      params.Text := Trim(TStringStream(ARequestInfo.PostStream).DataString)
+    else
     begin
-      if UpperCase(params.Names[i]) = 'TOKEN' then
+      s := Utf8Decode(ARequestInfo.UnparsedParams);
+      s := DecodeString(s);
+      params.DelimitedText := s;
+      // params.DelimitedText := Utf8Decode(ARequestInfo.UnparsedParams);
+      // params.DelimitedText := DecodeString(params.Values['data']);
+      for i := params.Count - 1 downto 0 do
       begin
-        token := TIdURI.URLDecode(params.ValueFromIndex[i]);
-        params.Delete(i);
-        continue;
+        if UpperCase(params.Names[i]) = 'TOKEN' then
+        begin
+          token := params.ValueFromIndex[i];
+          params.Delete(i);
+          continue;
+        end;
       end;
-      params[i] := TIdURI.URLDecode(params[i]);
     end;
 
     gLogger.logging('[' + clientIP + ']' + action + '/' +

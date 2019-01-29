@@ -11,14 +11,11 @@ type
     XLH: string;
     WSDL: string;
     JDID: string;
-    CJSQBH: string;    // ≥°æ∞…Í«Î±‡∫≈
-    NumPerDay: integer;
-    Flag: integer;
+    CJSQBH: string;
   end;
 
 var
   JKDic: TDictionary<string, TJK>;
-  JKCounterDic: TDictionary<string, integer>;
 
 implementation
 

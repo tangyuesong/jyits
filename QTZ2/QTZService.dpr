@@ -41,7 +41,8 @@ uses
   uHikHBase in 'hik\uHikHBase.pas',
   uAnalysisExtra in 'hik\uAnalysisExtra.pas',
   itfUploadVioToJcpt in 'itfUploadVioToJcpt.pas',
-  VioSurveil in 'rm\intf\VioSurveil.pas';
+  VioSurveil in 'rm\intf\VioSurveil.pas',
+  uTmriType in 'rm\impl\uTmriType.pas';
 
 {$R *.RES}
 

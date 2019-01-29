@@ -5,6 +5,8 @@ interface
 uses
   SysUtils, Classes, IniFiles, uGlobal, Rtti, uSQLHelper, uLogger, ADODB,
   System.JSON, FireDAC.Comp.Client, uTokenManager, uJKDefine, uWSManager,
+  System.NetEncoding, System.Net.URLClient, System.Net.HttpClient,
+  System.Net.HttpClientComponent,
   Data.DB, uEntity, System.Generics.Collections, QJSON, StrUtils, DateUtils;
 
 type
@@ -38,6 +40,7 @@ type
     class function FindJson(AItemName: String; AJSON: TQJson): TQJson;
     class function GetLocalVehInfo(hphm, hpzl: String): String;
     class function StringToDT(s: String): TDatetime;
+    class function PicUrl2Str(AUrl: String): WideString;
   end;
 
 procedure SQLError(const SQL, Description: string);
@@ -372,7 +375,6 @@ var
   jk: TJK;
 begin
   JKDic := TDictionary<String, TJK>.Create;
-  JKCounterDic := TDictionary<String, Integer>.Create;
   with gSQLHelper.Query('select * from S_JKGL where QYZT = 1') do
   begin
     while not Eof do
@@ -381,12 +383,10 @@ begin
       jk.JDID := FieldByName('JDID').AsString;
       jk.XLH := FieldByName('XLH').AsString;
       jk.WSDL := FieldByName('WSDL').AsString;
-      jk.Flag := FieldByName('Flag').AsInteger;
-      jk.NumPerDay := FieldByName('NumPerDay').AsInteger;
+      // jk.Flag := FieldByName('Flag').AsInteger;
+      // jk.NumPerDay := FieldByName('NumPerDay').AsInteger;
       jk.CJSQBH := FieldByName('CJSQBH').AsString;
       JKDic.Add(jk.JKID, jk);
-      JKCounterDic.Add(jk.JKID, 0);
-
       Next;
     end;
     Free;
@@ -627,6 +627,34 @@ begin
   gSaUsers := TStringList.Create;
   gSaUsers.Add('sa');
   gSaUsers.Add('su');
+end;
+
+class function TCommon.PicUrl2Str(AUrl: String): WideString;
+var
+  ms: TMemoryStream;
+  ss: TStringStream;
+  http: TNetHTTPClient;
+begin
+  Result := '';
+  ms := TMemoryStream.Create;
+  ss := TStringStream.Create;
+  http := TNetHTTPClient.Create(nil);
+  try
+    http.Get(AUrl, ms);
+    TBase64Encoding.Base64.Encode(ms, ss);
+    Result := ss.DataString;
+  except
+    on e: exception do
+      gLogger.Error(e.Message + ' ' + AUrl);
+  end;
+  FreeAndNil(http);
+  FreeAndNil(ms);
+  FreeAndNil(ss);
+  if Length(Result) < 50000 then
+  begin
+    gLogger.Error('图片大小小于50K');
+    Result := '';
+  end;
 end;
 
 class procedure TCommon.ProgramDestroy;

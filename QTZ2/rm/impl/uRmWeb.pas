@@ -39,13 +39,8 @@ var
   WSIServer: RmJaxRpcOutAccess;
   Rio: THTTPRIO;
 begin
+  logger.debug(UTF8XmlDoc);
   result := '';
-  JKCounterDic[jkid] := JKCounterDic[jkid] + 1;
-  if JKCounterDic[jkid] > JKDic[jkid].NumPerDay then
-  begin
-    logger.Warn('OutOfCounter');
-    exit;
-  end;
   Rio := THTTPRIO.Create(nil);
   WSIServer := GetRmJaxRpcOutAccess(true, JKDic[jkid].WSDL, Rio);
   try

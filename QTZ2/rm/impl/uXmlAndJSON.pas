@@ -50,31 +50,19 @@ var
   XMLDoc, DocIntf: IXMLDocument;
   nodeList, attrList: IXMLNodeList;
 begin
+  XMLDoc := TXMLDocument.Create(nil);
+  DocIntf := XMLDoc;
   try
-    try
-      XMLDoc := TXMLDocument.Create(nil);
-      DocIntf := XMLDoc;
-    except
-      on e: exception do
-        logger.Error('TXMLDocument.Create ' + e.Message);
-    end;
-    try
-      XMLDoc.LoadFromXML(xml);
-    except
-      on e: exception do
-        logger.Error('xmlDoc.LoadFromXML ' + e.Message);
-    end;
-    try
-      result := '{' + ReadXml(XMLDoc.DocumentElement) + '}';
-    except
-      on e: exception do
-        logger.Error('ReadXml ' + e.Message);
-    end;
-    // FreeAndNil(XMLDoc);
-  finally
-    XMLDoc := nil;
-    DocIntf := nil;
+    xml := xml.Replace('&amp;', '&').Replace('&', '&amp;');
+    XMLDoc.LoadFromXML(xml);
+    result := '{' + ReadXml(XMLDoc.DocumentElement) + '}';
+  except
+    on e: exception do
+      logger.Error('XML2JSON ' + e.Message);
   end;
+
+  XMLDoc := nil;
+  DocIntf := nil;
 end;
 
 class function TXmlAndJSON.ReadXml(node: IXMLNode): string;
@@ -93,7 +81,7 @@ begin
     result := '"' + node.NodeName + '":"' + strValue + '"';
     exit;
   end;
-
+  lastNode := false;
   InArray := ((node.NextSibling <> nil) and
     (node.NextSibling.NodeName = node.NodeName)) or
     ((node.PreviousSibling <> nil) and

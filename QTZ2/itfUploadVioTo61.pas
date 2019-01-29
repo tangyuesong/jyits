@@ -303,53 +303,28 @@ end;
 
 function TDealLockVioClass.DownloadPic: Boolean;
 var
-  f: String;
+  b: Boolean;
 begin
-  Result := False;
   if Length(Trim(FLockVio.xp1)) > 0 then
   begin
-    f := extractfilepath(paramstr(0)) + FLockVio.sysid;
-    if Pos('.', f) <= 0 then
-      f := f + '.jpg';
-    if not GetPic(Trim(FLockVio.FWQDZ), Trim(FLockVio.xp1), f) then
-    begin
-      exit;
-    end;
-    FLockVio.zpstr1 := BitmapToString(f);
-    deletefile(f);
+    FLockVio.zpstr1 := TCommon.PicUrl2Str(FLockVio.FWQDZ + FLockVio.xp1);
+    b := Length(FLockVio.zpstr1) > 0;
   end
   else
+    b := False;
+
+  if b and (Length(FLockVio.xp2) > 0) then
   begin
-    exit;
+    FLockVio.zpstr2 := TCommon.PicUrl2Str(FLockVio.FWQDZ + FLockVio.xp2);
+    b := Length(FLockVio.zpstr2) > 0;
   end;
 
-  if Length(Trim(FLockVio.xp2)) > 0 then
+  if b and (Length(FLockVio.xp3) > 0) then
   begin
-    f := extractfilepath(paramstr(0)) + FLockVio.sysid;
-    if Pos('.', f) <= 0 then
-      f := f + '.jpg';
-    if not GetPic(Trim(FLockVio.FWQDZ), Trim(FLockVio.xp2), f) then
-    begin
-      exit;
-    end;
-    FLockVio.zpstr2 := BitmapToString(f);
-    deletefile(f);
+    FLockVio.zpstr3 := TCommon.PicUrl2Str(FLockVio.FWQDZ + FLockVio.xp3);
+    b := Length(FLockVio.zpstr3) > 0;
   end;
-
-  if Length(Trim(FLockVio.xp3)) > 0 then
-  begin
-    f := extractfilepath(paramstr(0)) + FLockVio.sysid;
-    if Pos('.', f) <= 0 then
-      f := f + '.jpg';
-    if GetPic(Trim(FLockVio.FWQDZ), Trim(FLockVio.xp3), f) then
-    begin
-      exit;
-    end;
-    FLockVio.zpstr3 := BitmapToString(extractfilepath(paramstr(0)) +
-      FLockVio.xp3);
-    deletefile(f);
-  end;
-  Result := True;
+  Result := b;
 end;
 
 destructor TDealLockVioClass.Destroy;
@@ -398,7 +373,7 @@ begin
     + FLockVio.wfdz + '","wfsj":"' + FLockVio.sj + '","wfxw":"' + FLockVio.wfxw
     + '","scz":"' + FLockVio.scz + '","bzz":"' + FLockVio.bzz + '",';
   if FLockVio.cjfs = '7' then
-    Result := Result + '"wfsj1":"' + FLockVio.wfsj + '",';
+    Result := Result + '"wfsj1":"' + FLockVio.sj + '",';
 
   zpsl := '1';
   if FLockVio.zpstr1 <> '' then

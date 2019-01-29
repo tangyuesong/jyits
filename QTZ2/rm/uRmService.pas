@@ -8,7 +8,7 @@ uses
   IdBaseComponent, IdComponent, IdCustomTCPServer, IdCustomHTTPServer,
   IdHTTPServer, IniFiles, IdContext, uLogger, HTTPApp, uTmri, uRmweb,
   uRminf, uTrans, ActiveX, itfUploadVioTo61, Soap.EncdDecd, IdURI, IdHttp,
-  IdSSLOpenSSL, uTokenManager, uGlobal, uSpecialItf, uCommon;
+  IdSSLOpenSSL, uTokenManager, uGlobal, uSpecialItf, uCommon, uTmriType;
 
 type
 
@@ -150,7 +150,9 @@ begin
   else if gIsUploadJCPT then
   begin
     param := vio.GetJCPTVioUploadStr;
-    AResponseInfo.ContentText := TRminf.surscreen(param);
+    s := TRminf.surscreen(param);
+    gLogger.Info(s);
+    AResponseInfo.ContentText := s;
   end
   else
   begin
@@ -326,36 +328,52 @@ const
   rminf = ',SURSCREEN,SUREXAMINE,FLOWEQUIP,WEATHER,INCIDENT,INDUCEMENT,CAR,POLICE,PARK,';
 var
   Params: TStrings;
-  action, tokenStr, IP: string;
+  action, tokenStr, IP, s: string;
   wsbh, wslb, num: string;
   tmriParam: TTmriParam;
   token: TToken;
   i: integer;
+  stream: TStringStream;
 begin
   ActiveX.CoInitialize(nil);
   action := UpperCase(ARequestInfo.Document.Substring(1));
   IP := Trim(AContext.Connection.Socket.Binding.PeerIP);
   tokenStr := '';
 
-  if action <> UpperCase('WriteVehicleInfo') then // 太多无意义的日志
-  begin
-    logger.logging('[' + IP + ']' + action + '/' + ARequestInfo.Params.Text, 2);
-  end;
   AResponseInfo.ContentType := 'text/html';
   AResponseInfo.CharSet := 'utf-8';
 
   Params := TStringList.Create;
   Params.Delimiter := '&';
-  Params.DelimitedText := ARequestInfo.UnparsedParams;
+  Params.StrictDelimiter := True;
+  if ARequestInfo.PostStream <> nil then
+  begin
+    stream := TStringStream.Create('', TEncoding.UTF8);
+    stream.LoadFromStream(ARequestInfo.PostStream);
+    Params.DelimitedText := stream.DataString;
+    // logger.Debug(params.Text);
+    stream.Free;
+  end
+  else
+  begin
+    s := Utf8Decode(ARequestInfo.UnparsedParams);
+    s := DecodeString(s);
+    Params.DelimitedText := s;
+  end;
+
+  if action <> UpperCase('WriteVehicleInfo') then // 太多无意义的日志
+  begin
+    logger.logging('[' + IP + ']' + action + '/' + Params.DelimitedText, 2);
+  end;
+
   for i := Params.Count - 1 downto 0 do
   begin
     if UpperCase(Params.Names[i]) = 'TOKEN' then
     begin
-      tokenStr := TIdURI.URLDecode(Params.ValueFromIndex[i]);
+      tokenStr := Params.ValueFromIndex[i];
       Params.Delete(i);
       continue;
     end;
-    Params[i] := TIdURI.URLDecode(Params[i]);
   end;
 
   if UpperCase(action) = UpperCase('Login') then
