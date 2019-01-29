@@ -856,8 +856,8 @@ begin
   Param := 'BKXH=' + FormatDatetime('yyyymmddhhnnsszzz', now()) + '&BKR=' +
     gUser.YHBH + '&HPHM=' + FObj.VehInfo.hphm + '&HPZL=' + FObj.VehInfo.hpzl +
     '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&Eocode_VioUrl=' +
-    EncodeString(Trim(FObj.VioRecord.FWQDZ) + Trim(FObj.VioRecord.PHOTOFILE1)) +
-    '&ZT=0&BKLX=' + bklx + '&BKZL=黑名单&CJJG=' + gUser.DWDM;
+    Trim(FObj.VioRecord.FWQDZ) + Trim(FObj.VioRecord.PHOTOFILE1) + '&ZT=0&BKLX='
+    + bklx + '&BKZL=黑名单&CJJG=' + gUser.DWDM;
   // TRequestItf.DbQuery('AddT_KK_Alarm', Param);
 
   New(cmd);

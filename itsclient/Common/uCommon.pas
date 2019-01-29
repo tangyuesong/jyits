@@ -8,7 +8,7 @@ uses
   uDictionary, uSetup, uGlobal, ULookUpDataSource, Winapi.Winsock, Windows,
   CxGrid, cxGridExportLink, Variants, ComObj, System.Generics.Collections,
   System.DateUtils, uLogger, uRegisterFrame, System.IOUtils, uUserPower,
-  Vcl.Graphics, IdUri;
+  Vcl.Graphics, IdUri, System.Net.HttpClientComponent, System.NetEncoding;
 
 type
   TCommon = Class
@@ -417,7 +417,7 @@ class function TCommon.Getpic(picSer, picfn, savefn: String): boolean;
 var
   ms: TMemoryStream;
   host, port, user, pw, path, urlcn, url: string;
-  idhttp: TIdHTTP;
+  http: TNetHTTPClient;
   idftp1: TIdFTP;
 begin
   Result := false;
@@ -457,22 +457,16 @@ begin
       try
         ms := TMemoryStream.Create;
         ms.Position := 0;
-        idhttp := TIdHTTP.Create(nil);
-        idhttp.HandleRedirects := True; // 必须支持重定向否则可能出错
-        idhttp.ConnectTimeout := 30000; // 超过这个时间则不再访问
-        idhttp.ReadTimeout := 30000; //
-        if pos('%', url) = 0 then
-          urlcn := TIdUri.URLEncode(url)
-        else
-          urlcn := url;
-        idhttp.Get(urlcn, ms);
+        http := TNetHTTPClient.Create(nil);
+        http.HandleRedirects := True;
+        http.Get(url, ms);
         if ms.Size > 0 then
         begin
           ms.SaveToFile(savefn);
           Result := True;
-        end;
+        end
       finally
-        FreeAndNil(idhttp);
+        FreeAndNil(http);
         FreeAndNil(ms);
       end;
     except
@@ -504,7 +498,7 @@ end;
 class function TCommon.Getpic(picSer, picfn: String): TMemoryStream;
 var
   host, port, user, pw, path, urlcn, url: string;
-  idhttp: TIdHTTP;
+  http: TNetHTTPClient;
   idftp1: TIdFTP;
   savefn: String;
 begin
@@ -544,17 +538,11 @@ begin
   begin
     try
       Result.Position := 0;
-      idhttp := TIdHTTP.Create(nil);
-      idhttp.HandleRedirects := True; // 必须支持重定向否则可能出错
-      idhttp.ConnectTimeout := 3000; // 超过这个时间则不再访问
-      idhttp.ReadTimeout := 3000; //
-      if pos('%', url) = 0 then
-        urlcn := TIdUri.URLEncode(url)
-      else
-        urlcn := url;
-      idhttp.Get(urlcn, Result);
+      http := TNetHTTPClient.Create(nil);
+      http.HandleRedirects := True;
+      http.Get(url, Result);
     finally
-      FreeAndNil(idhttp);
+      FreeAndNil(http);
     end;
   end;
   TThread.Sleep(50);

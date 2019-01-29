@@ -416,7 +416,7 @@ begin
   edtcs.Text := '';
   edtsyr.Text := '';
   edtclpp1.Text := '';
-  edthz.Text := '';
+  edtHZ.Text := '';
   edtclxh.Text := '';
   edtcllx.Text := '';
   edtcsys.Text := '';
@@ -656,28 +656,28 @@ begin
   str := TStringList.Create;
   str.Sort;
   str.Sorted := True;
-  //if TLZDictionary.gDicDept.ContainsKey(gUser.DWDM) and TLZDictionary.gDicDept
-  //  [gUser.DWDM].IsJX then // 机巡中队可以录全大队的，机巡大队可以录全中队的，民警抓拍
-  //begin
-    for s in TLZDictionary.gDicDev[1].Keys do
-    begin
-      if (TLZDictionary.gDicDev[1][s].sblx = '1') or
-        (TLZDictionary.gDicDev[1][s].sblx = '2') then
-        str.Add(TLZDictionary.gDicDev[1][s].SBDDMC);
-    end;
-    {
-  end
-  else
+  // if TLZDictionary.gDicDept.ContainsKey(gUser.DWDM) and TLZDictionary.gDicDept
+  // [gUser.DWDM].IsJX then // 机巡中队可以录全大队的，机巡大队可以录全中队的，民警抓拍
+  // begin
+  for s in TLZDictionary.gDicDev[1].Keys do
   begin
+    if (TLZDictionary.gDicDev[1][s].sblx = '1') or
+      (TLZDictionary.gDicDev[1][s].sblx = '2') then
+      str.Add(TLZDictionary.gDicDev[1][s].SBDDMC);
+  end;
+  {
+    end
+    else
+    begin
     for s in TLZDictionary.gDicDev[1].Keys do
     begin
-      if TLZDictionary.gDicDev[1][s].cjjg <> gUser.DWDM then
-        continue;
-      if (TLZDictionary.gDicDev[1][s].sblx = '1') or
-        (TLZDictionary.gDicDev[1][s].sblx = '2') then
-        str.Add(TLZDictionary.gDicDev[1][s].SBDDMC);
+    if TLZDictionary.gDicDev[1][s].cjjg <> gUser.DWDM then
+    continue;
+    if (TLZDictionary.gDicDev[1][s].sblx = '1') or
+    (TLZDictionary.gDicDev[1][s].sblx = '2') then
+    str.Add(TLZDictionary.gDicDev[1][s].SBDDMC);
     end;
-  end;
+    end;
   }
   cbbwfdd.Properties.Items.Clear;
   cbbwfdd.Properties.Items.AddStrings(str);
@@ -781,7 +781,7 @@ begin
   end;
   edtsyr.Text := veh.syr;
   edtclpp1.Text := veh.clpp1 + veh.clpp2;
-  edthz.Text := veh.hdzzl + veh.hdzk;
+  edtHZ.Text := veh.hdzzl + veh.hdzk;
   edtclxh.Text := veh.clxh;
   if TLZDictionary.gDicMain['CLLX'].ContainsKey(veh.cllx) then
     edtcllx.Text := veh.cllx + ':' + TLZDictionary.gDicMain['CLLX'][veh.cllx]
@@ -873,12 +873,11 @@ begin
     FObj.VioRecord.wfxw + '&WFDD=' + FObj.VioRecord.wfdd + '&WFSJ=' +
     formatDatetime('yyyy/mm/dd hh:nn:ss', FObj.VioRecord.wfsj) + '&XZSD=' +
     IntToStr(FObj.VioRecord.XZSD) + '&SJSD=' + IntToStr(FObj.VioRecord.SJSD) +
-    '&CD=' + FObj.VioRecord.CD + '&Encode_FWQDZ=' +
-    EncodeString(FObj.VioRecord.FWQDZ) + '&PHOTOFILE1=' +
-    FObj.VioRecord.PHOTOFILE1 + '&PHOTOFILE2=' + FObj.VioRecord.PHOTOFILE2 +
-    '&PHOTOFILE3=' + FObj.VioRecord.PHOTOFILE3 + '&VIDEOFILE=' +
-    FObj.VioRecord.VIDEOFILE + '&CSYS=' + FObj.VehInfo.csys + '&CLXH=' +
-    FObj.VehInfo.clxh + '&CLPP1=' + FObj.VehInfo.clpp1 + '&CLPP2=' +
+    '&CD=' + FObj.VioRecord.CD + '&FWQDZ=' + FObj.VioRecord.FWQDZ +
+    '&PHOTOFILE1=' + FObj.VioRecord.PHOTOFILE1 + '&PHOTOFILE2=' +
+    FObj.VioRecord.PHOTOFILE2 + '&PHOTOFILE3=' + FObj.VioRecord.PHOTOFILE3 +
+    '&VIDEOFILE=' + FObj.VioRecord.VIDEOFILE + '&CSYS=' + FObj.VehInfo.csys +
+    '&CLXH=' + FObj.VehInfo.clxh + '&CLPP1=' + FObj.VehInfo.clpp1 + '&CLPP2=' +
     FObj.VehInfo.clpp2 + '&CLLX=' + FObj.VehInfo.cllx + '&CLSBDH=' +
     FObj.VehInfo.clsbdh + '&FDJH=' + FObj.VehInfo.fdjh + '&SYR=' +
     FObj.VehInfo.syr + '&LXDH=' + FObj.VehInfo.lxdh + '&ZZXZQH=' +
@@ -1061,9 +1060,9 @@ begin
 
   Param := 'BKXH=' + formatDatetime('yyyymmddhhnnsszzz', now()) + '&BKR=' +
     gUser.YHBH + '&HPHM=' + FObj.VehInfo.HPHM + '&HPZL=' + FObj.VehInfo.HPZL +
-    '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&Encode_VioUrl=' +
-    EncodeString(Trim(FObj.VioRecord.FWQDZ) + Trim(FObj.VioRecord.PHOTOFILE1)) +
-    '&ZT=0&BKLX=' + bklx + '&BKZL=黑名单&CJJG=' + gUser.DWDM;
+    '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&VioUrl=' +
+    Trim(FObj.VioRecord.FWQDZ) + Trim(FObj.VioRecord.PHOTOFILE1) + '&ZT=0&BKLX='
+    + bklx + '&BKZL=黑名单&CJJG=' + gUser.DWDM;
   // TRequestItf.DbQuery('AddT_KK_ALARM', Param);
 
   New(cmd);

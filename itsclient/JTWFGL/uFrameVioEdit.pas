@@ -642,9 +642,9 @@ begin
 
   Param := 'BKXH=' + FormatDatetime('yyyymmddhhnnsszzz', now()) + '&BKR=' +
     gUser.YHBH + '&HPHM=' + FObj.VioRecord.hphm + '&HPZL=' + FObj.VioRecord.hpzl
-    + '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&Encode_VioUrl=' +
-    EncodeString(Trim(FObj.VioRecord.FWQDZ) + Trim(FObj.VioRecord.PHOTOFILE1)) +
-    '&ZT=0&BKLX=' + bklx + '&BKZL=黑名单&CJJG=' + gUser.DWDM;
+    + '&BKJG=' + gUser.DWDM + '&BZ=' + fBz.cbbBz.Text + '&VioUrl=' +
+    Trim(FObj.VioRecord.FWQDZ) + Trim(FObj.VioRecord.PHOTOFILE1) + '&ZT=0&BKLX='
+    + bklx + '&BKZL=黑名单&CJJG=' + gUser.DWDM;
   TRequestItf.DbQuery('AddT_KK_ALARM', Param);
 
   UpdateDBVioStatus(FObj.VioRecord.systemid, '5', fBz.cbbBz.Text);
@@ -783,12 +783,11 @@ begin
     FObj.VioRecord.wfxw + '&WFDD=' + FObj.VioRecord.WFDD + '&WFSJ=' +
     FormatDatetime('yyyy/mm/dd hh:nn:ss', FObj.VioRecord.WFSJ) + '&XZSD=' +
     IntToStr(FObj.VioRecord.XZSD) + '&SJSD=' + IntToStr(FObj.VioRecord.SJSD) +
-    '&CD=' + FObj.VioRecord.CD + '&Encode_FWQDZ=' +
-    EncodeString(FObj.VioRecord.FWQDZ) + '&PHOTOFILE1=' +
-    FObj.VioRecord.PHOTOFILE1 + '&PHOTOFILE2=' + FObj.VioRecord.PHOTOFILE2 +
-    '&PHOTOFILE3=' + FObj.VioRecord.PHOTOFILE3 + '&VIDEOFILE=' +
-    FObj.VioRecord.VIDEOFILE + '&CSYS=' + FObj.VehInfo.csys + '&CLXH=' +
-    FObj.VehInfo.clxh + '&CLPP1=' + FObj.VehInfo.clpp1 + '&CLPP2=' +
+    '&CD=' + FObj.VioRecord.CD + '&FWQDZ=' + FObj.VioRecord.FWQDZ +
+    '&PHOTOFILE1=' + FObj.VioRecord.PHOTOFILE1 + '&PHOTOFILE2=' +
+    FObj.VioRecord.PHOTOFILE2 + '&PHOTOFILE3=' + FObj.VioRecord.PHOTOFILE3 +
+    '&VIDEOFILE=' + FObj.VioRecord.VIDEOFILE + '&CSYS=' + FObj.VehInfo.csys +
+    '&CLXH=' + FObj.VehInfo.clxh + '&CLPP1=' + FObj.VehInfo.clpp1 + '&CLPP2=' +
     FObj.VehInfo.clpp2 + '&CLLX=' + FObj.VehInfo.cllx + '&CLSBDH=' +
     FObj.VehInfo.clsbdh + '&FDJH=' + FObj.VehInfo.fdjh + '&SYR=' +
     FObj.VehInfo.syr + '&LXDH=' + FObj.VehInfo.lxdh + '&ZZXZQH=' +

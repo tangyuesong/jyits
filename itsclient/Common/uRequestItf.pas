@@ -3,7 +3,9 @@ unit uRequestItf;
 interface
 
 uses
-  IdHttp, SysUtils, HttpApp, Soap.EncdDecd, IdURI, Classes;
+  IdHttp, SysUtils, HttpApp, Soap.EncdDecd, IdURI,
+  Classes, System.Net.URLClient, System.Net.HttpClient,
+  System.Net.HttpClientComponent;
 
 type
   TRmMessage = record
@@ -44,26 +46,25 @@ end;
 
 class function TRequestItf.Query(url, action, param: String): String;
 var
-  http: TIdHttp;
+  http: TNetHTTPClient;
   s: string;
 begin
   Result := '';
   if not gIsLogout then
   begin
-    http := TIdHttp.Create(nil);
+    http := TNetHTTPClient.Create(nil);
     try
-      if UpperCase(action) = 'LOGIN' then
-        param := '?' + ReplaceUnsafeChars(param)
-      else
+      if UpperCase(action) <> 'LOGIN' then
       begin
         if param <> '' then
-          param := '?' + ReplaceUnsafeChars(param) + '&token=' + gToken
+          param := param + '&token=' + gToken
         else
-          param := '?token=' + gToken;
+          param := 'token=' + gToken;
       end;
-      s := url + '/' + action + param;
-      s := TIdURI.URLEncode(s);
-      Result := http.Get(s);
+      param := EncodeString(param);
+      param := param.Replace(#13#10, '');
+      s := url + '/' + action + '?' + param;
+      Result := http.Get(s).ContentAsString;
     except
     end;
     http.Free;
