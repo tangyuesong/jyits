@@ -208,8 +208,8 @@ begin
   fwqdz := gConfig.ImportVioHome + dir;
 
   if b and (pic1Name <> '') and gSQLHelper.ExistsRecord
-    (CDBName + '.dbo.T_VIO_TEMP', 'bj=0 and tpxh=' + pic1Name.QuotedString) then
-    gSQLHelper.ExecuteSql('update ' + CDBName +
+    (gConfig.YJITSDB + '.dbo.T_VIO_TEMP', 'bj=0 and tpxh=' + pic1Name.QuotedString) then
+    gSQLHelper.ExecuteSql('update ' + gConfig.YJITSDB +
       '.dbo.T_VIO_TEMP set bj=''4'' where bj=''0'' and tpxh=' +
       pic1Name.QuotedString);
 
@@ -217,7 +217,7 @@ begin
     gConfig.ImportVioPassword, ExtractFilePath(Paramstr(0)) + compTp,
     '/' + dir + compTp, gConfig.ImportVioPort) then
   begin
-    s := 'insert into ' + CDBName +
+    s := 'insert into ' + gConfig.YJITSDB +
       '.dbo.T_VIO_TEMP(CJJG,WFDD,WFXW,WFSJ,FWQDZ,PHOTOFILE1,tpxh,bj,HPZL,CJR) values '
       + '(' + gTokenManager.GetToken(tokenKey).User.DWDM.QuotedString + ',' +
       wfdd.QuotedString + ',' + wfxw.QuotedString + ',' + wfsj.QuotedString +

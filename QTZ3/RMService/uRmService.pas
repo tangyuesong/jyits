@@ -546,7 +546,7 @@ end;
 
 class function TRmService.GetDwdm(zqmj: String): String;
 begin
-  result := gSQLHelper.GetSinge('select dwdm from ' + cDBName +
+  result := gSQLHelper.GetSinge('select dwdm from ' + gConfig.YJITSDB +
     '.dbo.S_User where yhbh=''' + zqmj + '''');
 end;
 
@@ -734,7 +734,7 @@ class function TRmService.GetZQMJ(oldZqmj: string): string;
 var
   newZqmj: string;
 begin
-  newZqmj := gSQLHelper.GetSinge('select ZQMJ2 from ' + cDBName +
+  newZqmj := gSQLHelper.GetSinge('select ZQMJ2 from ' + gConfig.YJITSDB +
     '.dbo.T_ZQMJ_MAP where ZQMJ1=''' + oldZqmj + '''');
   if newZqmj = '' then
     newZqmj := oldZqmj;
@@ -1350,9 +1350,9 @@ begin
     exit;
 
   if lx = 1 then
-    tb := cDBName + '.dbo.T_Spot_Violation'
+    tb := gConfig.YJITSDB + '.dbo.T_Spot_Violation'
   else
-    tb := cDBName + '.dbo.T_Spot_Force';
+    tb := gConfig.YJITSDB + '.dbo.T_Spot_Force';
 
   result := gSQLHelper.ExistsRecord(tb, s);
 end;

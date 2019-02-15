@@ -66,7 +66,7 @@ begin
   end;
 
   ret := '';
-  with gSQLHelper.Query('select top ' + num.ToString + ' wsbh from ' + cDBName +
+  with gSQLHelper.Query('select top ' + num.ToString + ' wsbh from ' + gConfig.YJITSDB +
     '.dbo.S_WSBH where flag=1 and xzqh=''' + xzqh + ''' and yhbh=''' + yhbh +
     ''' and wsbb=''QWSG''') do
   begin
@@ -82,7 +82,7 @@ begin
   if num > 0 then
   begin
     cs.Enter;
-    wsbh := gSQLHelper.GetSinge('select max(WSBH) from ' + cDBName +
+    wsbh := gSQLHelper.GetSinge('select max(WSBH) from ' + gConfig.YJITSDB +
       '.dbo.S_WSBH where xzqh=''' + xzqh + ''' and wsbb=''QWSG''');
     if wsbh = '' then
     begin
@@ -95,7 +95,7 @@ begin
     if n > 0 then
     begin
       xzqh := wsbh.Substring(0, 6);
-      sql := 'insert into ' + cDBName +
+      sql := 'insert into ' + gConfig.YJITSDB +
         '.dbo.S_WSBH(yhbh,wslb,wsbh,xzqh,wsbb)values';
       for i := 1 to num do
       begin
@@ -145,7 +145,7 @@ begin
   end;
 
   ret := '';
-  with gSQLHelper.Query('select top ' + num.ToString + ' wsbh from ' + cDBName +
+  with gSQLHelper.Query('select top ' + num.ToString + ' wsbh from ' + gConfig.YJITSDB +
     '.dbo.S_WSBH where flag=1 and xzqh=''' + xzqh + ''' and yhbh=''' + yhbh +
     ''' and wsbb=''' + wsbb + '''') do
   begin
@@ -161,7 +161,7 @@ begin
   if num > 0 then
   begin
     cs.Enter;
-    wsbh := gSQLHelper.GetSinge('select max(WSBH) from ' + cDBName +
+    wsbh := gSQLHelper.GetSinge('select max(WSBH) from ' + gConfig.YJITSDB +
       '.dbo.S_WSBH where xzqh=''' + xzqh + ''' and wsbb=''' + wsbb + '''');
     if wsbh = '' then
     begin
@@ -177,7 +177,7 @@ begin
     if n > 0 then
     begin
       xzqh := wsbh.Substring(0, 6);
-      sql := 'insert into ' + cDBName +
+      sql := 'insert into ' + gConfig.YJITSDB +
         '.dbo.S_WSBH(yhbh,wslb,wsbh,xzqh,wsbb)values';
       for i := 1 to num do
       begin
@@ -206,16 +206,16 @@ end;
 
 class function TWSManager.UpdateWSBH(wsbh: string; flag: integer): boolean;
 begin
-  // result := gSQLHelper.GetSinge('select flag from ' + cDBName +
+  // result := gSQLHelper.GetSinge('select flag from ' + gConfig.YJITSDB +
   // '.dbo.S_WSBH where wsbh = ' + wsbh.QuotedString) = '1';
   // result := result and
-  result := gSQLHelper.ExecuteSql('update ' + cDBName + '.dbo.S_WSBH set flag='
+  result := gSQLHelper.ExecuteSql('update ' + gConfig.YJITSDB + '.dbo.S_WSBH set flag='
     + flag.ToString + ', gxsj=getdate() where wsbh = ' + wsbh.QuotedString);
 end;
 
 class function TWSManager.HaveWsbh(wsbh: String): boolean;
 begin
-  result := gSQLHelper.GetSinge('select wsbh from ' + cDBName +
+  result := gSQLHelper.GetSinge('select wsbh from ' + gConfig.YJITSDB +
     '.dbo.S_WSBH where wsbh = ' + wsbh.QuotedString) <> '';
 end;
 

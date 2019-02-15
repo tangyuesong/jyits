@@ -131,10 +131,10 @@ begin
   begin
     if yhbh <> '' then
     begin
-      Result := not gSQLHelper.ExistsRecord(cDBName + '.dbo.S_User',
+      Result := not gSQLHelper.ExistsRecord(gConfig.YJITSDB + '.dbo.S_User',
         'zt=1 and yhbh=' + yhbh.QuotedString);
       if Result then
-        gSQLHelper.ExecuteSql('delete from ' + cDBName +
+        gSQLHelper.ExecuteSql('delete from ' + gConfig.YJITSDB +
           '.dbo.S_User where zt=0 and yhbh = ' + yhbh.QuotedString);
     end;
   end;
@@ -750,7 +750,7 @@ begin
       end;
       if (kssj <> '') and (jssj <> '') and (kdbh <> '') then
       begin
-        s := ' insert into ' + cDBName +
+        s := ' insert into ' + gConfig.YJITSDB +
           '.dbo.T_Analyse_CrashTask_Input (taskid, SBBH, BeginTime, EndTime) values ('
           + taskid.QuotedString + ',' + kdbh.QuotedString + ',' +
           kssj.QuotedString + ',' + jssj.QuotedString + ') ';
