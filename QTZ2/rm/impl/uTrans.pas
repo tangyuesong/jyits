@@ -5,7 +5,7 @@ interface
 uses
   Windows, Dialogs, System.Classes, SysUtils, Variants, InvokeRegistry, Rio,
   SOAPHTTPClient, Httpapp, IdGlobal, IdHTTP, Provider, WinSock2, System.JSON,
-  XMLDoc, XMLIntf, msxml, msxmldom, xmldom, forms, Trans1, uLogger, uJKDefine;
+  XMLDoc, XMLIntf, msxml, msxmldom, xmldom, forms, Trans1, uGlobal, uJKDefine;
 
 type
   TTrans = class
@@ -63,14 +63,17 @@ begin
   try
     result := WSIServer.InitTrans(kkbh, fxlx, cdh, info);
     if result > 0  then
+    begin
       result := WSIServer.WriteVehicleInfo(kkbh,fxlx,cdh,hphm,hpzl,gcsj,clsd,
         clxs,wfdm,cwkc,hpys,cllx,fzhpzl,fzhphm,fzhpys,clpp,clwx,csys,tplj,
-        tp1,tp2,tp3,tztp)
+        tp1,tp2,tp3,tztp);
+      gLogger.Info(Format('%d(KKBH:%s FXLX:%s CDH:%d)', [result,kkbh,fxlx,cdh]));
+    end
     else
-      logger.Warn(Format('WSIServer.InitTrans failed:%d(KKBH:%s FXLX:%s CDH:%d)', [result,kkbh,fxlx,cdh]));
+      glogger.Warn(Format('WSIServer.InitTrans failed:%d(KKBH:%s FXLX:%s CDH:%d)', [result,kkbh,fxlx,cdh]));
   except
     on e: exception do
-      logger.Error('WriteVehicleInfo' + e.Message);
+      glogger.Error('WriteVehicleInfo' + e.Message);
   end;
   Rio := nil;
 end;

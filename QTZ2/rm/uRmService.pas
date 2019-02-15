@@ -82,6 +82,7 @@ var
 begin
   Params := TStringList.Create;
   Params.Delimiter := '&';
+  Params.StrictDelimiter := true;
   Params.DelimitedText := UnparsedParams;
   for i := 0 to Params.Count - 1 do
     Params[i] := HttpDecode(Params[i]);
