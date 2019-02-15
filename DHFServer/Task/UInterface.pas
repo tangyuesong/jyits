@@ -19,8 +19,8 @@ type
     //class procedure SaveToK08(list: Tlist<TPass>); static;
     class function SaveToDFS(passList: TList<TPass>): boolean;
     class procedure FtpUpload(list: Tlist<TPass>; ftp: TFtpConfig); static;
-    class procedure SaveAlarm2PHP(systemid, bkr, bklx, hphm, hpzl, gcsj, sbddmc,
-      bz: String); static;
+    class procedure SaveAlarm2PHP(systemid, bkr, bklx, hphm, hpzl, gcsj,
+      sbddmc, bz, clsd, pic: String); static;
   public
     class function getSpeedtoWFXW(hpzl: string; iclsd, ixzsd: Integer): string;
     class function WriteVehicleInfo(pass: TPass;  device: TDevice): Boolean; overload;
@@ -125,23 +125,20 @@ class procedure Tmypint.DoAlarm(pass: TPass);
       + pass.kdbh.QuotedString  + ','
       + alarm.BKLX.QuotedString + ')';
     sqlhelper.ExecuteSql(SQL);
-    if alarm.SJHM.Length > 5 then
+    //logger.Info('SJHM:' + alarm.SJHM + ' alarm.SJHM.Length:' + alarm.SJHM.Length.ToString + ' alarm.SJHM.Split.Length:' + IntToStr((Length(alarm.SJHM.Split([',']))*7)));
+    if alarm.SJHM<>'' then
     begin
-      //logger.Info('SJHM:' + alarm.SJHM + ' alarm.SJHM.Length:' + alarm.SJHM.Length.ToString + ' alarm.SJHM.Split.Length:' + IntToStr((Length(alarm.SJHM.Split([',']))*7)));
-      if alarm.SJHM.Length > Length(alarm.SJHM.Split([',']))*7 then
-      begin
-        s := '【' + title + '】' + pass.hphm + gDicHPZL[pass.hpzl]
-          + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + alarm.BZ;
+      s := '【' + title + '】' + pass.hphm + gDicHPZL[pass.hpzl]
+        + #13#10 + pass.gcsj + #13#10 + gDicDevice[pass.kdbh].SBDDMC + #13#10 + alarm.BZ;
 
-        logger.Info('SendSMS: ' + s);
-        if SMSUrl = '' then
-          uCommon.AddSMS('【' + title + '】', alarm.SJHM, s)
-        else
-          Tmypint.SendSMS(alarm.SJHM, s);
-      end
+      logger.Info('SendSMS: ' + s);
+      if SMSUrl = '' then
+        uCommon.AddSMS('【' + title + '】', alarm.SJHM, s)
       else
-        SaveAlarm2PHP(id,alarm.SJHM,alarm.BKLX,pass.HPHM,gDicHPZL[pass.hpzl],pass.gcsj,gDicDevice[pass.kdbh].SBDDMC,title + ' ' + alarm.BZ);
+        Tmypint.SendSMS(alarm.SJHM, s);
     end;
+    if alarm.JYBH <> '' then
+      SaveAlarm2PHP(id, alarm.JYBH, alarm.bklx, pass.hphm, gDicHPZL[pass.hpzl], pass.gcsj, gDicDevice[pass.kdbh].SBDDMC, '[布控追踪]' + alarm.BZ, pass.clsd, pass.FWQDZ + pass.tp1);
   end;
   procedure DoJTP;       // 假套牌车辆预警
   var
@@ -196,22 +193,23 @@ class procedure Tmypint.DoAlarm(pass: TPass);
         begin
           Save(alarm, '缉查布控');
         end;
+      end
+      else begin
+        sql := 'insert into T_KK_ALARMRESULT(bz,bkzl,wfcs,gcxh,gcsj,hphm,hpzl,cd,clsd,viourl,kdbh,bklx)values('
+          + BZ.QuotedString + ','
+          + alarm.bkzl.QuotedString + ','
+          + alarm.wfcs.QuotedString + ','
+          + pass.GCXH.QuotedString + ','
+          + pass.GCSJ.QuotedString + ','
+          + pass.hphm.QuotedString+ ','
+          + pass.hpzl.QuotedString + ','
+          + pass.cdbh + ','
+          + pass.CLSD.QuotedString + ','
+          + (pass.FWQDZ + pass.tp1).QuotedString + ','
+          + pass.kdbh.QuotedString  + ','
+          + alarm.BKLX.QuotedString + ')';
+        sqlhelper.ExecuteSql(SQL);
       end;
-
-      sql := 'insert into T_KK_ALARMRESULT(bz,bkzl,wfcs,gcxh,gcsj,hphm,hpzl,cd,clsd,viourl,kdbh,bklx)values('
-        + BZ.QuotedString + ','
-        + alarm.bkzl.QuotedString + ','
-        + alarm.wfcs.QuotedString + ','
-        + pass.GCXH.QuotedString + ','
-        + pass.GCSJ.QuotedString + ','
-        + pass.hphm.QuotedString+ ','
-        + pass.hpzl.QuotedString + ','
-        + pass.cdbh + ','
-        + pass.CLSD.QuotedString + ','
-        + (pass.FWQDZ + pass.tp1).QuotedString + ','
-        + pass.kdbh.QuotedString  + ','
-        + alarm.BKLX.QuotedString + ')';
-      sqlhelper.ExecuteSql(SQL);
     end;
   end;
 begin
@@ -406,7 +404,7 @@ begin
   //  (gOpenedDevice[device.SBBH] and (not pass.HPHM.StartsWith(FZJG))) then  // 该设备只上报本地车
   // exit;
   if pass.HPHM.Length < 6 then exit;
-  if uTrans.TransXLH <> '' then
+  if uTrans. TransXLH <> '' then
   begin
     ret := TTrans.WriteVehicleInfo(
       device.BABH,
@@ -637,27 +635,24 @@ begin
 end;
 
 class procedure Tmypint.SaveAlarm2PHP(systemid, bkr, bklx, hphm, hpzl, gcsj,
-  sbddmc,bz: String);
+  sbddmc, bz, clsd, pic: String);
 var
   http: TIdHttp;
   s: String;
 begin
   if PhpUrl = '' then
-  begin
-    logger.Warn('SaveAlarm2PHP: PhpUrl is empty ' + hphm);
     exit;
-  end;
 
   http := TIdHttp.Create(nil);
   http.Request.UserAgent :=
     'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)';
   s := PhpUrl + 'saveAlarmData?systemid=' + systemid + '&hphm=' + hphm +
     '&hpzl=' + hpzl + '&gcsj=' + gcsj + '&sbddmc=' + sbddmc + '&bkr=' + bkr +
-    '&bklx=' + bklx + '&bz=' + bz;
-  logger.Info('SaveAlarm2PHP: ' + s);
+    '&bklx=' + bklx+'&clsd='+clsd+'&pic='+pic;
   try
     s := TIdURI.URLEncode(s);
     http.Get(s);
+    logger.Info('SaveAlarm2PHP ' + s);
   except
     on e: exception do
     begin
