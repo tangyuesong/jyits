@@ -26,6 +26,7 @@ var
   gDevID: TDictionary<String, String>;
   gSpotWfxw: TDictionary<String, String>;
   gPassDevice: TDictionary<String, String>;
+  ServiceName, DisplayName, Dependency: string;
 
 implementation
 

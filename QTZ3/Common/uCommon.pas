@@ -62,6 +62,7 @@ type
       var ATotal: Integer): String;
     class function RecordListToJSON<T>(list: TList<T>): string; static;
     class function RecordToJSON<T>(rec: Pointer): string; static;
+    class procedure GetServiceInfo; static;
     class procedure ProgramInit;
     class procedure ProgramDestroy;
     class function Login(ip: String; params: TStrings; var valid: String;
@@ -1144,6 +1145,16 @@ begin
   end;
   GetDBActionParams(Result);
   GetDBReturnGroups(Result);
+end;
+
+class procedure TCommon.GetServiceInfo;
+begin
+  with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
+  begin
+    ServiceName := ReadString('sys', 'ServiceName', 'ItsQTZ3Service');
+    DisplayName := ReadString('sys', 'DisplayName', 'ITS QTZ3 Service');
+    Dependency := ReadString('sys', 'Dependency', 'MSSQLSERVER');
+  end;
 end;
 
 class function TCommon.ReadConfig(): Boolean;
