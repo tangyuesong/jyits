@@ -1168,7 +1168,7 @@ begin
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
     gConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
     gConfig.DBPwd := ReadString('DB', 'Pwd', 'lgm1224,./');
-    gConfig.YDJWPT := ReadString('DB', 'Name', 'YDJWPT');
+    gConfig.YDJWPT := ReadString('DB', 'YDJWPT', 'YDJWPT');
     gConfig.YjItsDB := ReadString('DB', 'YJITSDB', 'YjItsDB');
 
     gConfig.SolrHome := ReadString('solr', 'home',
