@@ -283,7 +283,10 @@ begin
     for i := 0 to Params.Count - 1 do
     begin
       if UpperCase(Params.Names[i]) = 'CURRENTPAGE' then
-        page := Params.ValueFromIndex[i]
+      begin
+        page := Params.ValueFromIndex[i];
+        page := IntToStr(StrToIntDef(page, 0) + 1);
+      end
       else if UpperCase(Params.Names[i]) = 'PAGESIZE' then
         pageSize := Params.ValueFromIndex[i]
       else if UpperCase(Params.Names[i]) = 'KSSJ' then
