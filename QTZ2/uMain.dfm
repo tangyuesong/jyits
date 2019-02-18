@@ -15,9 +15,65 @@ object frmMain: TfrmMain
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 24
+    Top = 15
+    Width = 26
+    Height = 13
+    Caption = 'KDBH'
+  end
+  object Label2: TLabel
+    Left = 24
+    Top = 48
+    Width = 23
+    Height = 13
+    Caption = 'FXLX'
+  end
+  object Label3: TLabel
+    Left = 24
+    Top = 79
+    Width = 21
+    Height = 13
+    Caption = 'CDH'
+  end
+  object Label4: TLabel
+    Left = 24
+    Top = 112
+    Width = 28
+    Height = 13
+    Caption = 'HPHM'
+  end
+  object Label5: TLabel
+    Left = 24
+    Top = 143
+    Width = 24
+    Height = 13
+    Caption = 'HPZL'
+  end
+  object Label6: TLabel
+    Left = 24
+    Top = 200
+    Width = 25
+    Height = 13
+    Caption = 'GCSJ'
+  end
+  object Label7: TLabel
+    Left = 24
+    Top = 231
+    Width = 18
+    Height = 13
+    Caption = 'TP1'
+  end
+  object Label8: TLabel
+    Left = 24
+    Top = 173
+    Width = 25
+    Height = 13
+    Caption = 'HPYS'
+  end
   object Button1: TButton
-    Left = 583
-    Top = 7
+    Left = 247
+    Top = 29
     Width = 75
     Height = 32
     Caption = 'Button1'
@@ -25,39 +81,96 @@ object frmMain: TfrmMain
     OnClick = Button1Click
   end
   object Memo1: TMemo
-    Left = 176
-    Top = 45
-    Width = 609
-    Height = 356
+    Left = 616
+    Top = 15
+    Width = 169
+    Height = 386
     Lines.Strings = (
-      'Memo1')
+      'kkbh: string;'
+      '  fxlx: string;'
+      '  cdh: Int64;'
+      '  hphm: string;'
+      '  hpzl: string;'
+      '  gcsj: string;'
+      '  clsd: Int64;'
+      '  clxs: Int64;'
+      '  wfdm: string;'
+      '  cwkc: Int64;'
+      '  hpys: string;'
+      '  cllx: string;'
+      '  fzhpzl: string;'
+      '  fzhphm: string;'
+      '  fzhpys: string;'
+      '  clpp: string;'
+      '  clwx: string;'
+      '  csys: string;'
+      '  tplj: string;'
+      '  tp1: string;'
+      '  tp2: string;'
+      '  tp3: string;'
+      '  tztp: string')
     TabOrder = 1
   end
-  object Button2: TButton
-    Left = 64
-    Top = 240
-    Width = 75
-    Height = 25
-    Caption = 'Button2'
+  object edtKDBH: TEdit
+    Left = 56
+    Top = 12
+    Width = 161
+    Height = 21
     TabOrder = 2
-    OnClick = Button2Click
   end
-  object Button3: TButton
-    Left = 64
-    Top = 304
-    Width = 75
-    Height = 25
-    Caption = 'Button3'
+  object edtFXLX: TEdit
+    Left = 56
+    Top = 49
+    Width = 161
+    Height = 21
     TabOrder = 3
-    OnClick = Button3Click
+    Text = '1'
   end
-  object Edit1: TEdit
-    Left = 32
-    Top = 8
-    Width = 545
+  object edtCDH: TEdit
+    Left = 56
+    Top = 76
+    Width = 161
     Height = 21
     TabOrder = 4
-    Text = 'Edit1'
+    Text = '1'
+  end
+  object edtHPHM: TEdit
+    Left = 56
+    Top = 109
+    Width = 161
+    Height = 21
+    TabOrder = 5
+    Text = #31908
+  end
+  object edtHPZL: TEdit
+    Left = 56
+    Top = 136
+    Width = 161
+    Height = 21
+    TabOrder = 6
+    Text = '02'
+  end
+  object edtGCSJ: TEdit
+    Left = 56
+    Top = 197
+    Width = 161
+    Height = 21
+    TabOrder = 7
+    Text = '1'
+  end
+  object edtTP1: TEdit
+    Left = 56
+    Top = 228
+    Width = 161
+    Height = 21
+    TabOrder = 8
+  end
+  object edtHPYS: TEdit
+    Left = 56
+    Top = 170
+    Width = 161
+    Height = 21
+    TabOrder = 9
   end
   object IdHTTP1: TIdHTTP
     AllowCookies = True
@@ -73,18 +186,17 @@ object frmMain: TfrmMain
     Request.Ranges.Units = 'bytes'
     Request.Ranges = <>
     HTTPOptions = [hoForceEncodeParams]
-    Left = 48
-    Top = 104
+    Left = 528
+    Top = 192
   end
   object IdHTTPServer1: TIdHTTPServer
     Bindings = <>
-    Left = 392
-    Top = 224
+    Left = 520
+    Top = 312
   end
   object Timer1: TTimer
     Enabled = False
-    OnTimer = Timer1Timer
-    Left = 400
-    Top = 232
+    Left = 496
+    Top = 256
   end
 end

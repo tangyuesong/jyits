@@ -155,7 +155,7 @@ end;
 class function TSurveilVio.GetZsxxdz(hphm, hpzl: String): String;
 begin
   Result := '';
-  with gSQLHelper.Query('select ZSXXDZ from ' + cDBName +
+  with gSQLHelper.Query('select ZSXXDZ from ' + gConfig.YJITSDB +
     '.dbo.T_VIO_VEHICLE where HPHM=' + hphm.QuotedString + ' and hpzl=' +
     hpzl.QuotedString) do
   begin
@@ -174,7 +174,7 @@ begin
     FormatDateTime('yyyy/mm/dd', vio.wfsj - 1) + ' 23:50:01'' and wfsj<''' +
     FormatDateTime('yyyy/mm/dd', vio.wfsj + 1) + ' 00:10:59'' and wfxw=' +
     vio.wfxw.QuotedString + ' and wfdz=' + vio.wfdz.QuotedString;
-  Result := gSQLHelper.ExistsRecord(cDBName + '.dbo.T_Spot_Surveil', s);
+  Result := gSQLHelper.ExistsRecord(gConfig.YJITSDB + '.dbo.T_Spot_Surveil', s);
 end;
 
 class function TSurveilVio.IsWhite(vio: TSurveil): Boolean;
@@ -184,19 +184,19 @@ var
 begin
   Result := False;
   wfsj := FormatDateTime('yyyy-mm-dd hh:nn:ss', vio.wfsj);
-  s := ' select 1 from ' + cDBName +
+  s := ' select 1 from ' + gConfig.YJITSDB +
     '.dbo.T_VIO_WHILELIST where ZT=1 and powertype in (1,2) and hphm=' +
     vio.hphm.QuotedString + ' and hpzl=' + vio.hpzl.QuotedString + ' and dwdm='
     + vio.fxjg.QuotedString + ' and YXSJ<' + wfsj.QuotedString + ' and JSSJ>' +
     wfsj.QuotedString;
   s := s + ' union all ';
-  s := s + ' select 1 from ' + cDBName +
+  s := s + ' select 1 from ' + gConfig.YJITSDB +
     '.dbo.T_VIO_WHILELIST where ZT=1 and powertype in (1,2) and hphm=' +
     vio.hphm.QuotedString + ' and hpzl=' + vio.hpzl.QuotedString +
     ' and dwdm=left(''' + vio.fxjg + ''', 6)+''000000'' and YXSJ<' +
     wfsj.QuotedString + ' and JSSJ>' + wfsj.QuotedString;
   s := s + ' union all ';
-  s := s + ' select 1 from ' + cDBName +
+  s := s + ' select 1 from ' + gConfig.YJITSDB +
     '.dbo.T_VIO_WHILELIST where ZT=1 and powertype in (1,2) and hphm=' +
     vio.hphm.QuotedString + ' and hpzl=' + vio.hpzl.QuotedString +
     ' and dwdm=left(''' + vio.fxjg + ''', 4)+''00000000'' and YXSJ<' +
@@ -210,7 +210,7 @@ begin
   qy := TADOQuery.Create(nil);
   qy.ConnectionString :=
     'Provider=SQLOLEDB.1;Password=cagajcajak;Persist Security Info=True;User ID=tp;Initial Catalog=vio;Data Source=10.43.255.5';
-  qy.SQL.Text := ' select 1 from T_BLACKLIST where hphm = ' +
+  qy.SQL.Text := ' select 1 from ' + gConfig.YDJWPT + 'T_BLACKLIST where hphm = ' +
     vio.hphm.QuotedString + ' and hpzl = ' + vio.hpzl.QuotedString +
     ' and jssj > ' + wfsj.QuotedString;
   try
@@ -320,7 +320,7 @@ begin
   if FDicSBBH = nil then
   begin
     FDicSBBH := TDictionary<string, string>.Create;
-    with gSQLHelper.Query('select dwdm, sbbh from ' + cDBName +
+    with gSQLHelper.Query('select dwdm, sbbh from ' + gConfig.YJITSDB +
       '.dbo.T_WT_SBBH') do
     begin
       while not Eof do
@@ -361,7 +361,7 @@ begin
   url1 := TCommon.FtpPic(vio.pic1Str);
   url2 := TCommon.FtpPic(vio.pic2Str);
   url3 := TCommon.FtpPic(vio.pic3Str);
-  s := 'insert into ' + cDBName +
+  s := 'insert into ' + gConfig.YJITSDB +
     '.dbo.T_Spot_Surveil([SXH],[HPHM],[HPZL],[WFSJ],[XZQH],[WFDD],[LDDM],[DDMS],'
     + '[WFDZ],[SBBH],[WFXW],[ZQMJ],[FXJG],[PIC1],[PIC2],[PIC3],[CFZL],[ZT],[BZ],[WSBH]) values ('
     + vio.sxh.QuotedString + ',' + vio.hphm.QuotedString + ',' +

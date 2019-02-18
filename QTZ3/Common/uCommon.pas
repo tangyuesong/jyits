@@ -62,6 +62,7 @@ type
       var ATotal: Integer): String;
     class function RecordListToJSON<T>(list: TList<T>): string; static;
     class function RecordToJSON<T>(rec: Pointer): string; static;
+    class procedure GetServiceInfo; static;
     class procedure ProgramInit;
     class procedure ProgramDestroy;
     class function Login(ip: String; params: TStrings; var valid: String;
@@ -311,7 +312,7 @@ end;
 class function TCommon.GetDevID: TDictionary<String, String>;
 begin
   Result := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select SBBH, ID from ' + cDBName +
+  with gSQLHelper.Query('select SBBH, ID from ' + gConfig.YJITSDB +
     '.dbo.S_Device where QYZT=''1'' ') do
   begin
     while not Eof do
@@ -326,7 +327,7 @@ end;
 class function TCommon.GetK08Clpp(): TDictionary<String, String>;
 begin
   Result := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select * from ' + cDBName + '.dbo.D_K08_CLPP ') do
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB + '.dbo.D_K08_CLPP ') do
   begin
     while not Eof do
     begin
@@ -341,7 +342,7 @@ end;
 class function TCommon.GetHpzl: TDictionary<String, String>;
 begin
   Result := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select * from ' + cDBName +
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB +
     '.dbo.D_K08 where FLBH=''HPZL'' order by MineKey ') do
   begin
     while not Eof do
@@ -356,7 +357,7 @@ end;
 class function TCommon.GetK08Hpzl(): TDictionary<String, TStrings>;
 begin
   Result := TDictionary<String, TStrings>.Create;
-  with gSQLHelper.Query('select * from ' + cDBName +
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB +
     '.dbo.D_K08 where FLBH=''HPZL'' order by MineKey ') do
   begin
     while not Eof do
@@ -380,7 +381,7 @@ begin
   if FDicSpotWfxw = nil then
   begin
     FDicSpotWfxw := TDictionary<string, string>.Create;
-    with gSQLHelper.Query('select CLZT, WFXW from ' + cDBName +
+    with gSQLHelper.Query('select CLZT, WFXW from ' + gConfig.YJITSDB +
       '.dbo.T_Spot_Wfxw') do
     begin
       while not Eof do
@@ -424,9 +425,9 @@ var
 begin
   hhnnss := Formatdatetime('hhnnss', Now);
   msg := '';
-  // with gSQLHelper.Query('select * from ' + cDBName + '.dbo.S_USER where YHBH = '
+  // with gSQLHelper.Query('select * from ' + gConfig.YJITSDB + '.dbo.S_USER where YHBH = '
   // + userid.QuotedString + ' and mm = ' + pwd.QuotedString) do
-  with gSQLHelper.Query('select * from ' + cDBName + '.dbo.S_USER where YHBH = '
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB + '.dbo.S_USER where YHBH = '
     + userid.QuotedString) do
   begin
     if not Eof then
@@ -496,7 +497,7 @@ begin
   if msg = '' then
   begin
     with gSQLHelper.Query
-      ('select top 1 gxsj from S_QTZ_LOG where action = ''/login'' and param=' +
+      ('select top 1 gxsj from ' + gConfig.YDJWPT + 'S_QTZ_LOG where action = ''/login'' and param=' +
       userid.QuotedString + ' and valid = 1 order by gxsj desc') do
     begin
       if not Eof then
@@ -504,7 +505,7 @@ begin
           Fields[0].AsDateTime);
       Free;
     end;
-    with gSQLHelper.Query('select top 1 gxsj from S_QTZ_LOG where yhbh=' +
+    with gSQLHelper.Query('select top 1 gxsj from ' + gConfig.YDJWPT + 'S_QTZ_LOG where yhbh=' +
       userid.QuotedString + ' and valid = 0 order by gxsj desc') do
     begin
       if not Eof then
@@ -520,7 +521,7 @@ begin
   if FDicWfxw = nil then
   begin
     FDicWfxw := TDictionary<string, string>.Create;
-    with gSQLHelper.Query('select WFXWDM, WFXWMC from ' + cDBName +
+    with gSQLHelper.Query('select WFXWDM, WFXWMC from ' + gConfig.YJITSDB +
       '.dbo.T_VIO_ILLECODE') do
     begin
       while not Eof do
@@ -555,7 +556,7 @@ end;
 
 class function TCommon.GetZHPTUserDevice(yhbh: String): TZHPTUserDevice;
 begin
-  with gSQLHelper.Query('select * from S_ZHPT_UserDevice where yhbh = ' +
+  with gSQLHelper.Query('select * from ' + gConfig.YDJWPT + 'S_ZHPT_UserDevice where yhbh = ' +
     yhbh.QuotedString) do
   begin
     if not Eof then
@@ -583,7 +584,7 @@ begin
   gDevKDBH := TDictionary<String, String>.Create;
   gDevID := TDictionary<String, String>.Create;
   gHikID := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select SBBH, ID, HikID from ' + cDBName +
+  with gSQLHelper.Query('select SBBH, ID, HikID from ' + gConfig.YJITSDB +
     '.dbo.S_Device where QYZT=''1''') do
   begin
     while not Eof do
@@ -604,7 +605,7 @@ end;
 class procedure TCommon.InitK08Clpp;
 begin
   gK08Clpp := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select * from ' + cDBName + '.dbo.D_K08_CLPP ') do
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB + '.dbo.D_K08_CLPP ') do
   begin
     while not Eof do
     begin
@@ -621,7 +622,7 @@ end;
 class procedure TCommon.InitK08Csys;
 begin
   gK08Csys := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select * from ' + cDBName +
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB +
     '.dbo.D_K08 where FLBH=''CSYS'' ') do
   begin
     while not Eof do
@@ -638,7 +639,7 @@ class procedure TCommon.InitK08Hpzl;
 begin
   gK08Hpzl := TDictionary<String, TStrings>.Create;
   gHpzl := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select * from ' + cDBName +
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB +
     '.dbo.D_K08 where FLBH=''HPZL'' order by MineKey ') do
   begin
     while not Eof do
@@ -659,7 +660,7 @@ var
   jk: TJK;
 begin
   JKDic := TDictionary<String, TJK>.Create;
-  with gSQLHelper.Query('select * from ' + cDBName +
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB +
     '.dbo.S_JKGL where QYZT = 1') do
   begin
     while not Eof do
@@ -681,7 +682,7 @@ var
   id: String;
 begin
   gPassDevice := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select KDBH, SBDDMC from ' + cDBName +
+  with gSQLHelper.Query('select KDBH, SBDDMC from ' + gConfig.YJITSDB +
     '.dbo.S_Device_Pass where KDBH <> '''' and SBDDMC <> '''' ') do
   begin
     while not Eof do
@@ -702,7 +703,7 @@ begin
   if FDicDevice = nil then
   begin
     FDicDevice := TDictionary<String, TDevice>.Create;
-    with gSQLHelper.Query('select * from ' + cDBName +
+    with gSQLHelper.Query('select * from ' + gConfig.YJITSDB +
       '.dbo.S_Device where QYZT=''1'' ') do
     begin
       while not Eof do
@@ -778,7 +779,7 @@ begin
   if FDicHpzlMC = nil then
   begin
     FDicHpzlMC := TDictionary<String, String>.Create;
-    with gSQLHelper.Query('select DM, MC from ' + cDBName +
+    with gSQLHelper.Query('select DM, MC from ' + gConfig.YJITSDB +
       '.dbo.D_MAIN where FLBH=''hpzl'' ') do
     begin
       while not Eof do
@@ -797,7 +798,7 @@ end;
 class function TCommon.GetK08Csys: TDictionary<String, String>;
 begin
   Result := TDictionary<String, String>.Create;
-  with gSQLHelper.Query('select * from ' + cDBName +
+  with gSQLHelper.Query('select * from ' + gConfig.YJITSDB +
     '.dbo.D_K08 where FLBH=''CSYS'' ') do
   begin
     while not Eof do
@@ -1014,7 +1015,7 @@ begin
   if FColDef = nil then
   begin
     FColDef := TDictionary<string, string>.Create();
-    with gSQLHelper.Query('select dm, mc from ' + cDBName +
+    with gSQLHelper.Query('select dm, mc from ' + gConfig.YJITSDB +
       '.dbo.S_GridColumnDef') do
     begin
       while not Eof do
@@ -1034,7 +1035,7 @@ class procedure TCommon.GetDBActionParams
 var
   param: TDBActionParam;
 begin
-  with gSQLHelper.Query('select * from S_QTZ3_ActionParam') do
+  with gSQLHelper.Query('select * from ' + gConfig.YDJWPT + 'S_QTZ3_ActionParam') do
   begin
     while not Eof do
     begin
@@ -1057,7 +1058,7 @@ class procedure TCommon.GetDBReturnGroups
 var
   action, col: String;
 begin
-  with gSQLHelper.Query('select * from S_QTZ3_ReturnGroup') do
+  with gSQLHelper.Query('select * from ' + gConfig.YDJWPT + 'S_QTZ3_ReturnGroup') do
   begin
     while not Eof do
     begin
@@ -1078,7 +1079,7 @@ begin
   if FDepts = nil then
   begin
     FDepts := TDictionary<string, TDept>.Create;
-    with gSQLHelper.Query('select * from ' + cDBName + '.[dbo].S_DEPT ') do
+    with gSQLHelper.Query('select * from ' + gConfig.YJITSDB + '.[dbo].S_DEPT ') do
     begin
       while not Eof do
       begin
@@ -1125,7 +1126,7 @@ var
   action: TDBAction;
 begin
   Result := TDictionary<String, TDBAction>.Create;
-  with gSQLHelper.Query('select * from S_QTZ3_Action where Activate = 1') do
+  with gSQLHelper.Query('select * from ' + gConfig.YDJWPT + 'S_QTZ3_Action where Activate = 1') do
   begin
     while not Eof do
     begin
@@ -1146,6 +1147,16 @@ begin
   GetDBReturnGroups(Result);
 end;
 
+class procedure TCommon.GetServiceInfo;
+begin
+  with TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'Config.ini') do
+  begin
+    ServiceName := ReadString('sys', 'ServiceName', 'ItsQTZ3Service');
+    DisplayName := ReadString('sys', 'DisplayName', 'ITS QTZ3 Service');
+    Dependency := ReadString('sys', 'Dependency', 'MSSQLSERVER');
+  end;
+end;
+
 class function TCommon.ReadConfig(): Boolean;
 begin
   Result := True;
@@ -1157,7 +1168,8 @@ begin
     gConfig.DBPort := ReadInteger('DB', 'Port', 1433);
     gConfig.DBUser := ReadString('DB', 'User', 'vioadmin');
     gConfig.DBPwd := ReadString('DB', 'Pwd', 'lgm1224,./');
-    gConfig.DBName := ReadString('DB', 'Name', 'YDJWPT');
+    gConfig.YDJWPT := ReadString('DB', 'YDJWPT', 'YDJWPT');
+    gConfig.YjItsDB := ReadString('DB', 'YJITSDB', 'YjItsDB');
 
     gConfig.SolrHome := ReadString('solr', 'home',
       'http://10.43.255.66:8983/solr/traffic/');
@@ -1264,7 +1276,7 @@ begin
   ReadConfig();
   gSQLHelper := TSQLHelper.Create;
   gSQLHelper.DBServer := gConfig.DBServer;
-  gSQLHelper.DBName := gConfig.DBName;
+  gSQLHelper.DBName := gConfig.YDJWPT;
   gSQLHelper.DBUser := gConfig.DBUser;
   gSQLHelper.DBPwd := gConfig.DBPwd;
   gSQLHelper.OnError := SQLError;
@@ -1274,7 +1286,7 @@ begin
   FSaUsers.add('sa');
   FSaUsers.add('su');
 
-  gConfig.dwdm := gSQLHelper.GetSinge('select CJJG from ' + cDBName +
+  gConfig.dwdm := gSQLHelper.GetSinge('select CJJG from ' + gConfig.YJITSDB +
     '.dbo.s_sa_setup');
   InitLHY_JK;
 
@@ -1353,7 +1365,7 @@ begin
   if length(msg) > 8000 then
     msg := copy(msg, 1, 8000);
 
-  s := 'insert into S_QTZ_LOG(token, yhbh, ip, action, param, DeviceId, valid, result) values ('
+  s := 'insert into ' + gConfig.YDJWPT + 'S_QTZ_LOG(token, yhbh, ip, action, param, DeviceId, valid, result) values ('
     + token.QuotedString + ',' + yhbh.QuotedString + ',' + ip.QuotedString + ','
     + action.QuotedString + ',' + param.QuotedString + ',' +
     deviceId.QuotedString + ',' + valid.QuotedString + ',' +
@@ -1363,7 +1375,7 @@ end;
 
 class procedure TCommon.SaveSLWS(yhbh: String);
 begin
-  gSQLHelper.ExecuteSql('update ' + cDBName +
+  gSQLHelper.ExecuteSql('update ' + gConfig.YJITSDB +
     '.dbo.S_USER set YYSLCS = YYSLCS + 1 where yhbh = ' + yhbh.QuotedString);
 end;
 
@@ -1385,15 +1397,15 @@ begin
       sfzmhm := item.value;
     if sfzmhm <> '' then
     begin
-      gxsj := gSQLHelper.GetSinge('select max(gxsj) from ' + cDBName +
+      gxsj := gSQLHelper.GetSinge('select max(gxsj) from ' + gConfig.YJITSDB +
         '.dbo.T_VIO_DRIVINGLICENSE');
       if gxsj = '' then
         gxsj := Formatdatetime('yyyy-MM-dd hh:nn:ss', Now() - 2);
       // 复制库更新是根据gxsj，防止影响复制库更新
-      ts.add('delete from ' + cDBName +
+      ts.add('delete from ' + gConfig.YJITSDB +
         '.dbo.T_VIO_DRIVINGLICENSE where sfzmhm=' + sfzmhm.QuotedString);
 
-      s := 'insert into ' + cDBName +
+      s := 'insert into ' + gConfig.YJITSDB +
         '.dbo.T_VIO_VEHICLE(SFZMHM,ZJCX,FZRQ,XM,XB,CSRQ,DJZSXXDZ,LXZSXXDZ,LXZSYZBM,LXDH,'
         + 'SJHM,ZZZM,YXQS,YXQZ,GXSJ,ZT,CCLZRQ,DABH,ZXBH,FZJG,DJZSXZQH,XZQH,SFZMMC,LXZSXZQH,'
         + 'GJ,SYRQ,HMCD,JZQX,LJJF) values (''' + qj.ItemByName('sfzmhm').value +
@@ -1449,12 +1461,12 @@ begin
     if (hphm <> '') and (hpzl <> '') then
     begin
       hphm := LeftStr(fzjg, 1) + hphm;
-      gxsj := gSQLHelper.GetSinge('select max(gxsj) from ' + cDBName +
+      gxsj := gSQLHelper.GetSinge('select max(gxsj) from ' + gConfig.YJITSDB +
         '.dbo.T_VIO_VEHICLE');
       if gxsj = '' then
         gxsj := Formatdatetime('yyyy-MM-dd hh:nn:ss', Now() - 2);
       // 复制库更新是根据gxsj，防止影响复制库更新
-      ts.add('delete from ' + cDBName + '.dbo.T_VIO_VEHICLE where hphm=' +
+      ts.add('delete from ' + gConfig.YJITSDB + '.dbo.T_VIO_VEHICLE where hphm=' +
         hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString);
 
       if qj.ItemByName('djrq') <> nil then
@@ -1472,7 +1484,7 @@ begin
       else
         bxzzrq := '';
 
-      s := 'insert into ' + cDBName +
+      s := 'insert into ' + gConfig.YJITSDB +
         '.dbo.T_VIO_VEHICLE(hpzl ,hphm ,clpp1 ,clxh ,gcjk ,zzg ,zzcmc ,clsbdh ,fdjh ,cllx ,csys ,syxz ,sfzmhm ,sfzmmc ,syr '
         + ',ccdjrq ,djrq ,yxqz ,qzbfqz ,fzjg  ,bxzzrq ,zt  ,hbdbqk, gxsj) values ('''
         + hpzl + ''',''' + hphm + ''',''' + qj.ItemByName('clpp1').value +
@@ -1557,11 +1569,11 @@ begin
     cols := copy(cols, 1, length(cols) - 1);
     Values := copy(Values, 1, length(Values) - 1);
     sgbh := params.Values['sgbh'];
-    if gSQLHelper.GetSinge('select 1 from ' + cDBName +
+    if gSQLHelper.GetSinge('select 1 from ' + gConfig.YJITSDB +
       '.dbo.T_Spot_DutySimple where sgbh=' + sgbh.QuotedString) <> '' then
-      gSQLHelper.ExecuteSql('delete from ' + cDBName +
+      gSQLHelper.ExecuteSql('delete from ' + gConfig.YJITSDB +
         '.dbo.T_Spot_DutySimple where sgbh=' + sgbh.QuotedString);
-    s := 'insert into ' + cDBName + '.dbo.T_Spot_DutySimple(' + cols +
+    s := 'insert into ' + gConfig.YJITSDB + '.dbo.T_Spot_DutySimple(' + cols +
       ') values (' + Values + ')';
     gSQLHelper.ExecuteSql(s);
   end;
@@ -1575,7 +1587,7 @@ begin
   pzbh := params.Values['pzbh'];
   if pzbh <> '' then
   begin
-    s := 'delete from ' + cDBName + '.dbo.T_Spot_Force where pzbh=' +
+    s := 'delete from ' + gConfig.YJITSDB + '.dbo.T_Spot_Force where pzbh=' +
       pzbh.QuotedString + ' and zt <> ''1'' ';
     gSQLHelper.ExecuteSql(s);
   end;
@@ -1591,7 +1603,7 @@ begin
   begin
     cols := copy(cols, 1, length(cols) - 1);
     Values := copy(Values, 1, length(Values) - 1);
-    s := 'insert into ' + cDBName + '.dbo.T_Spot_Force(' + cols + ') values (' +
+    s := 'insert into ' + gConfig.YJITSDB + '.dbo.T_Spot_Force(' + cols + ') values (' +
       Values + ')';
     gSQLHelper.ExecuteSql(s);
   end;
@@ -1605,7 +1617,7 @@ begin
   jdsbh := params.Values['jdsbh'];
   if jdsbh <> '' then
   begin
-    s := 'delete from ' + cDBName + '.dbo.T_Spot_Violation where jdsbh=' +
+    s := 'delete from ' + gConfig.YJITSDB + '.dbo.T_Spot_Violation where jdsbh=' +
       jdsbh.QuotedString + ' and zt <> ''1'' ';
     gSQLHelper.ExecuteSql(s);
   end;
@@ -1621,7 +1633,7 @@ begin
   begin
     cols := copy(cols, 1, length(cols) - 1);
     Values := copy(Values, 1, length(Values) - 1);
-    s := 'insert into ' + cDBName + '.dbo.T_Spot_Violation(' + cols +
+    s := 'insert into ' + gConfig.YJITSDB + '.dbo.T_Spot_Violation(' + cols +
       ') values (' + Values + ')';
     gLogger.Info(s);
     gSQLHelper.ExecuteSql(s);

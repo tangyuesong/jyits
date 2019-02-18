@@ -89,7 +89,8 @@ type
     DBPort: Integer;
     DBUser: String;
     DBPwd: String;
-    DBName: String;
+    YDJWPT: String;
+    YJITSDB: string;
     SolrHome: string;
     HttpServerPort: Integer;
     //HttpPath: String;

@@ -68,6 +68,7 @@ begin
       item.HPHM := FieldByName('HPHM').AsString;
       item.HPZL := FieldByName('HPZL').AsString;
       item.SJHM := FieldByName('SJHM').AsString;
+      item.JYBH := FieldByName('JSJH').AsString;
       item.BKLX := FieldByName('BKLX').AsString;
       item.BKZL := FieldByName('BKZL').AsString;
       item.WFCS := FieldByName('WFCS').AsString;

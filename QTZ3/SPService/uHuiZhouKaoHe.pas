@@ -151,7 +151,7 @@ begin
     if moved then
     begin
       // DONE： 保存经纬度信息(YHBH,GXSJ,Lat,Lng,OnLine,dis)
-      gSQLHelper.ExecuteSql('insert into YJITSDB.dbo.T_PDA_GPS(YHBH,Latitude,Longitude,Distance,Online)values('''
+      gSQLHelper.ExecuteSql('insert into ' + gConfig.YJITSDB + '.dbo.T_PDA_GPS(YHBH,Latitude,Longitude,Distance,Online)values('''
         + user.yhbh + ''',' + point.lat.ToString + ',' + point.lng.ToString + ',' + dis.ToString + ','
         + OnLine.ToInteger.ToString + ')');
       his.LastPoint := point;

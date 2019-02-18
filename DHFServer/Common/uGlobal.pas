@@ -10,6 +10,7 @@ type
     HPHM: string;
     HPZL: string;
     SJHM: string;
+    JYBH: string;
     BKLX: string;
     BKZL: string;
     WFCS: string;

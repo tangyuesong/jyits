@@ -154,7 +154,7 @@ begin
   end;
   for i := 0 to wfxwList.Count - 1 do
   begin
-    with gSQLHelper.Query('select wfxwmc, je, jf, qzcslx from ' + CDBName +
+    with gSQLHelper.Query('select wfxwmc, je, jf, qzcslx from ' + gConfig.YJITSDB +
       '.dbo.T_VIO_ILLECODE where wfxwdm=' + wfxwList[i].QuotedString) do
     begin
       if not Eof then
@@ -234,7 +234,7 @@ end;
 
 class function TSPService.GetZhptCode(xtlb, dmlb, dmz: String): String;
 begin
-  Result := gSQLHelper.GetSinge('select DMSM1 from ' + CDBName +
+  Result := gSQLHelper.GetSinge('select DMSM1 from ' + gConfig.YJITSDB +
     '.dbo.T_VIO_CODE where xtlb=' + xtlb.QuotedString + ' and dmlb=' +
     dmlb.QuotedString + ' and dmz = ' + dmz.QuotedString);
 end;
@@ -367,7 +367,7 @@ begin
     TRmService.DoRM(action, tokenKey, Params, isExport, AResponseInfo);
     if AResponseInfo.ContentText.Contains('"code":"1"') then
     begin
-      s := 'update yjitsdb.dbo.serv_veh_check set sfd=''' + Params.Values['SFD']
+      s := 'update ' + gConfig.YJITSDB + '.dbo.serv_veh_check set sfd=''' + Params.Values['SFD']
         + '''' + ' where hphm=''' + Params.Values['HPHM'] + ''' and ' +
         ' HPZL=''' + Params.Values['HPZL'] +
         ''' and gxsj>dateadd(mi, -20, getdate())';
