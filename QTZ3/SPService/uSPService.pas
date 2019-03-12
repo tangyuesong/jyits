@@ -154,8 +154,9 @@ begin
   end;
   for i := 0 to wfxwList.Count - 1 do
   begin
-    with gSQLHelper.Query('select wfxwmc, je, jf, qzcslx from ' + gConfig.YJITSDB +
-      '.dbo.T_VIO_ILLECODE where wfxwdm=' + wfxwList[i].QuotedString) do
+    with gSQLHelper.Query('select wfxwmc, je, jf, qzcslx from ' +
+      gConfig.YJITSDB + '.dbo.T_VIO_ILLECODE where wfxwdm=' + wfxwList[i]
+      .QuotedString) do
     begin
       if not Eof then
       begin
@@ -367,9 +368,9 @@ begin
     TRmService.DoRM(action, tokenKey, Params, isExport, AResponseInfo);
     if AResponseInfo.ContentText.Contains('"code":"1"') then
     begin
-      s := 'update ' + gConfig.YJITSDB + '.dbo.serv_veh_check set sfd=''' + Params.Values['SFD']
-        + '''' + ' where hphm=''' + Params.Values['HPHM'] + ''' and ' +
-        ' HPZL=''' + Params.Values['HPZL'] +
+      s := 'update ' + gConfig.YJITSDB + '.dbo.serv_veh_check set sfd=''' +
+        Params.Values['SFD'] + '''' + ' where hphm=''' + Params.Values['HPHM'] +
+        ''' and ' + ' HPZL=''' + Params.Values['HPZL'] +
         ''' and gxsj>dateadd(mi, -20, getdate())';
       gSQLHelper.ExecuteSql(s);
     end;

@@ -210,9 +210,9 @@ begin
   qy := TADOQuery.Create(nil);
   qy.ConnectionString :=
     'Provider=SQLOLEDB.1;Password=cagajcajak;Persist Security Info=True;User ID=tp;Initial Catalog=vio;Data Source=10.43.255.5';
-  qy.SQL.Text := ' select 1 from ' + gConfig.YDJWPT + 'T_BLACKLIST where hphm = ' +
-    vio.hphm.QuotedString + ' and hpzl = ' + vio.hpzl.QuotedString +
-    ' and jssj > ' + wfsj.QuotedString;
+  qy.SQL.Text := ' select 1 from ' + gConfig.YDJWPT +
+    '.dbo.T_BLACKLIST where hphm = ' + vio.hphm.QuotedString + ' and hpzl = ' +
+    vio.hpzl.QuotedString + ' and jssj > ' + wfsj.QuotedString;
   try
     qy.Open;
     Result := qy.RecordCount > 0;

@@ -1041,7 +1041,7 @@ end;
 class procedure TRmService.SaveSimpleVio(token: TToken; params: TStrings;
   AResponseInfo: TIdHTTPResponseInfo);
 var
-  json, code, wfsj, jdsbh, zqmj2, pic, msg: String;
+  json, code, wfsj, jdsbh, zqmj2, pic, msg, oldMj, newMj: String;
   n: Integer;
 begin
   if IsReVio(params, 1) then
@@ -1054,6 +1054,14 @@ begin
   n := params.IndexOfName('zqmj2');
   if n >= 0 then
     params.Delete(n);
+
+  oldMj := params.Values['zqmj'];
+  newMj := GetZQMJ(oldMj);
+  if oldMj <> newMj then
+  begin
+    params.Values['zqmj'] := newMj;
+    params.Values['fxjg'] := GetDwdm(newMj);
+  end;
 
   pic := params.Values['pic'];
   n := params.IndexOfName('pic');
@@ -1341,11 +1349,12 @@ begin
     s := s + ' and jszh=' + jszh.QuotedString;
   end
   else if (not hphm.Contains('无')) and (not hpzl.Contains('无')) then
-    s := s + ' and hphm = ' + hphm.QuotedString + ' and hpzl=' + hpzl.QuotedString
-  else if (not clsbdh.Contains('无'))and(clsbdh <> '') then
-      s := s + ' and clsbdh = ' + clsbdh.QuotedString
-  else if (not fdjh.Contains('无'))and(fdjh <> '') then
-      s := s + ' and fdjh = ' + fdjh.QuotedString
+    s := s + ' and hphm = ' + hphm.QuotedString + ' and hpzl=' +
+      hpzl.QuotedString
+  else if (not clsbdh.Contains('无')) and (clsbdh <> '') then
+    s := s + ' and clsbdh = ' + clsbdh.QuotedString
+  else if (not fdjh.Contains('无')) and (fdjh <> '') then
+    s := s + ' and fdjh = ' + fdjh.QuotedString
   else
     exit;
 
