@@ -29,11 +29,10 @@ type
   TUploadVioThread = class(TThread)
   private
     FWhiteList: TStrings;
-    function GetCjjgList(isAuto: Boolean): TStrings;
-    procedure UploadVio(cjjg: String; dd: String = '');
+    function GetCjjgList: TStrings;
+    procedure UploadVio(cjjg: String);
     procedure LoadWhiteList(cjjg: String);
     procedure UploadVioDateDiff();
-    procedure UploadVioAutoCjjg();
   protected
     procedure Execute; override;
   public
@@ -85,7 +84,6 @@ begin
   TUploadVioThread.RunnTime := Now;
   gLogger.Info('Upload Vio Thread Start');
   FWhiteList := TStringList.Create;
-  // UploadVioAutoCjjg();
   UploadVioDateDiff();
   FWhiteList.Free;
   gLogger.Info('Upload Vio Thread End');
@@ -93,17 +91,12 @@ begin
   ActiveX.CoUninitialize;
 end;
 
-function TUploadVioThread.GetCjjgList(isAuto: Boolean): TStrings;
+function TUploadVioThread.GetCjjgList: TStrings;
 var
   s: String;
 begin
   Result := TStringList.Create;
-  if isAuto then
-    s := ' select DWDM from S_DEPT where SCMS=''3'' '
-  else
-    s := 'select distinct CJJG from T_VIO_HIS where ZT=''2'' and ' +
-      ' DATEDIFF(dd, WFSJ, getdate())>' + gUploadHisCfg.DAY +
-      ' and DATEDIFF(dd, WFSJ, getdate())<=15 ';
+  s := 'select distinct CJJG from T_VIO_HIS where ZT=''2'' and DATEDIFF(dd, WFSJ, getdate())<=15 ';
   with gSQLHelper.Query(s) do
   begin
     while not Eof do
@@ -134,7 +127,7 @@ begin
   end;
 end;
 
-procedure TUploadVioThread.UploadVio(cjjg: String; dd: String = '');
+procedure TUploadVioThread.UploadVio(cjjg: String);
 var
   s, Param: string;
   lvio: TDealLockVio;
@@ -143,8 +136,6 @@ begin
   tb := TFDMemTable.Create(nil);
   Param := 'Count=30&IP=' + gAppIP;
   Param := Param + '&CJJG=' + cjjg;
-  if dd <> '' then
-    Param := Param + '&dd=' + dd;
   while True do
   begin
     s := TRequestItf.DbQuery('GetLockVioList', Param);
@@ -165,42 +156,20 @@ begin
   tb.Free;
 end;
 
-procedure TUploadVioThread.UploadVioAutoCjjg;
-var
-  s, cjjg: String;
-  cjjgs: TStrings;
-begin
-  gLogger.Info('[UploadVio]上传自动上传的违法 Start');
-  FWhiteList := TStringList.Create;
-  cjjgs := GetCjjgList(True);
-  if cjjgs.Count = 0 then
-    gLogger.Info('[UploadVio] 上传自动上传的违法');
-  for cjjg in cjjgs do
-  begin
-    gLogger.Info('[UploadVio] Upload CJJG: ' + cjjg);
-    LoadWhiteList(cjjg);
-    UploadVio(cjjg);
-  end;
-  cjjgs.Free;
-  gLogger.Info('[UploadVio]上传自动上传的违法 End');
-
-end;
-
 procedure TUploadVioThread.UploadVioDateDiff;
 var
   s, cjjg: String;
   cjjgs: TStrings;
 begin
   gLogger.Info('[UploadVio]Start');
-  FWhiteList := TStringList.Create;
-  cjjgs := GetCjjgList(False);
+  cjjgs := GetCjjgList;
   if cjjgs.Count = 0 then
     gLogger.Info('[UploadVio] 不存在未上传的违法');
   for cjjg in cjjgs do
   begin
     gLogger.Info('[UploadVio] Upload CJJG: ' + cjjg);
     LoadWhiteList(cjjg);
-    UploadVio(cjjg, gUploadHisCfg.DAY);
+    UploadVio(cjjg);
   end;
   cjjgs.Free;
   gLogger.Info('[UploadVio]上传一周前的违法 End');

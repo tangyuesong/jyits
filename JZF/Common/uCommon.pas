@@ -52,17 +52,17 @@ class function TCommon.GetJsonNode(ANode, AJSON: String): String;
 var
   item, JSON: TQJson;
 begin
-  result := '';
+  Result := '';
   JSON := TQJson.Create;
   try
     JSON.Parse(AJSON);
     item := FindJson(ANode, JSON);
     if item <> nil then
-      result := item.ToString;
+      Result := item.ToString;
   except
     on e: Exception do
     begin
-      result := AJSON;
+      Result := AJSON;
       gLogger.Error('[TCommon.GetJsonNode]' + e.Message + AJSON);
     end;
   end;
@@ -73,14 +73,14 @@ class function TCommon.FindJson(AItemName: String; AJSON: TQJson): TQJson;
 var
   i: Integer;
 begin
-  result := nil;
+  Result := nil;
   for i := 0 to AJSON.Count - 1 do
   begin
     if UpperCase(AJSON.Items[i].Name) = UpperCase(AItemName) then
-      result := AJSON.Items[i]
+      Result := AJSON.Items[i]
     else
-      result := FindJson(AItemName, AJSON.Items[i]);
-    if result <> nil then
+      Result := FindJson(AItemName, AJSON.Items[i]);
+    if Result <> nil then
       break;
   end;
 end;
@@ -137,10 +137,10 @@ begin
     if Copy(gHeartbeatUrl, Length(gHeartbeatUrl), 1) <> '/' then
       gHeartbeatUrl := gHeartbeatUrl + '/';
 
-    gUploadHisCfg.ACTIVATE:= ReadString('UPLOADHIS', 'ACTIVATE', '0') = '1';
-    gUploadHisCfg.DAY:= ReadString('UPLOADHIS', 'DAY', '0');
-    gUploadHisCfg.TIME:= ReadString('UPLOADHIS', 'TIME', '');
-    gUploadHisCfg.WFXW:= ReadString('UPLOADHIS', 'WFXW', '');
+    gUploadHisCfg.ACTIVATE := ReadString('UPLOADHIS', 'ACTIVATE', '0') = '1';
+    gUploadHisCfg.DAY := ReadInteger('UPLOADHIS', 'DAY', 0);
+    gUploadHisCfg.TIME := ReadInteger('UPLOADHIS', 'TIME', 0);
+    gUploadHisCfg.WFXW := ReadString('UPLOADHIS', 'WFXW', '');
 
     // gDeviceMonitorSJHM := ReadString('DeviceMonitor', 'SJHM', '');
 

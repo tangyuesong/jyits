@@ -34,8 +34,8 @@ type
 
   TUploadHisCfg = Record
     ACTIVATE: Boolean;
-    DAY: String;
-    TIME: String;
+    DAY: Integer;
+    TIME: Integer;
     WFXW: String;
   End;
 

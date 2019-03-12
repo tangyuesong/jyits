@@ -64,7 +64,6 @@ type
   TDealLockVio = Class
   private
     vio: TLockVioClass;
-    function IsWhite(hphm, hpzl, wfsj: String): Boolean;
     procedure UpdateVioState(id, zt, bz: String; sxh: String = '');
     function IsReVio(hphm, hpzl, cjjg, wfsj: String): Boolean;
     procedure DecodeRmResultHead(json: String; var code: String;
@@ -84,12 +83,6 @@ begin
   if vio <> nil then
     vio.Free;
   inherited;
-end;
-
-function TDealLockVio.IsWhite(hphm, hpzl, wfsj: String): Boolean;
-begin
-  Result := TRequestItf.DbQuery('GetT_VIO_WHILELIST', 'zt=1&end_lrsj=' + wfsj +
-    '&hphm=' + hphm + '&hpzl=' + hpzl) <> '';
 end;
 
 function TDealLockVio.IsXCCF(hphm, hpzl, wfxw, wfsj: String): Boolean;
@@ -192,15 +185,14 @@ begin
 
   vio := TJsonUtils.JsonToObject<TLockVioClass>(s);
 
+  if (pos(',' + vio.wfxw + ',', ',' + gUploadHisCfg.wfxw + ',') > 0) and
+    (now - TCommon.StringToDT(vio.wfsj) < gUploadHisCfg.DAY) then
+  begin
+    Result := '该记录未到上传时间';
+    exit;
+  end;
+
   try
-    {
-      if IsWhite(vio.hphm, vio.hpzl, vio.sj) then
-      begin
-      UpdateVioState(id, 'B', '');
-      Result := '上传成功B';
-      exit;
-      end;
-    }
     if UpperCase(Copy(Trim(vio.hphm), 1, 2)) = '粤O' then
     begin
       UpdateVioState(id, 'B', '');
