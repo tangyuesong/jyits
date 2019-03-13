@@ -1023,14 +1023,19 @@ begin
     begin
       code := '1';
       params.Add('zt=1');
+      params.Add('bz=已存在该强制措施凭证编号的强制措施记录');
     end
     else
+    begin
       params.Add('zt=' + code);
+      params.Add('bz=' + msg);
+    end;
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg, code);
   end
   else
   begin
     params.Add('zt=2');
+    params.Add('bz=六合一网络故障');
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('六合一网络故障');
   end;
   if params.Values['wslb'] = '6' then
@@ -1108,15 +1113,20 @@ begin
     if msg = '已存在该决定书编号的违法记录' then
     begin
       params.Add('zt=1');
+      params.Add('bz=已存在该决定书编号的违法记录');
       code := '1';
     end
     else
+    begin
       params.Add('zt=' + code);
+      params.Add('bz=' + msg);
+    end;
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(msg, code);
   end
   else
   begin
     params.Add('zt=2');
+    params.Add('bz=六合一网络故障');
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult('六合一网络故障');
   end;
   TCommon.WriteSimpleVio(params);
@@ -1253,20 +1263,23 @@ begin
   end
   else if code = '0' then
   begin
-    params.Add('zt=0');
     gLogger.Info(json);
     code := TCommon.GetJsonNode('message', json);
+    params.Add('zt=0');
+    params.Add('bz='+code);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
   end
   else if code = '' then // 6合1问题,不能暂时缓存到数据库，因为要返回事故编号，用来开单
   begin
     params.Add('zt=2');
+    params.Add('bz='+copy(json, 1, 100));
     gLogger.Info(json);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(json);
   end
   else
   begin
     params.Add('zt=' + code);
+    params.Add('bz=' + code);
     AResponseInfo.ContentText := TCommon.AssembleFailedHttpResult(code);
   end;
 
