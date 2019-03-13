@@ -31,8 +31,7 @@ type
       AResponseInfo: TIdHTTPResponseInfo): String;
     procedure DoWrite(token: TToken; Params: TStrings;
       AResponseInfo: TIdHTTPResponseInfo);
-    function ParamsToJson(UnparsedParams: string;
-      exceptName: string = ''): string;
+    function ParamsToJson(Params: TStrings; exceptName: string = ''): string;
     function GetTmriParam(jkid: string; token: TToken): TTmriParam;
   public
     constructor Create;
@@ -73,19 +72,11 @@ begin
   logger.Free;
 end;
 
-function TRmService.ParamsToJson(UnparsedParams: string;
-  exceptName: string = ''): string;
+function TRmService.ParamsToJson(Params: TStrings; exceptName: string = ''): string;
 var
-  Params: TStrings;
   first: boolean;
   i: integer;
 begin
-  Params := TStringList.Create;
-  Params.Delimiter := '&';
-  Params.StrictDelimiter := true;
-  Params.DelimitedText := UnparsedParams;
-  for i := 0 to Params.Count - 1 do
-    Params[i] := HttpDecode(Params[i]);
   first := True;
   result := '{';
   exceptName := exceptName.ToLower;
@@ -106,7 +97,6 @@ begin
     end;
   end;
   result := result + '}';
-  Params.Free;
 end;
 
 procedure TRmService.DoGetVehInfo(token: TToken; Params: TStrings;
@@ -236,7 +226,7 @@ var
   json: string;
 begin
   action := LowerCase(action);
-  json := ParamsToJson(Params.DelimitedText);
+  json := ParamsToJson(Params);
 
   if action = 'qvehbus' then
     json := TRmweb.qvehbus(json)
@@ -261,7 +251,7 @@ var
   json: string;
 begin
   action := LowerCase(action);
-  json := ParamsToJson(Params.DelimitedText);
+  json := ParamsToJson(Params);
 
   if action = 'surscreen' then
     json := TRminf.surscreen(json)
@@ -291,7 +281,7 @@ var
   tmriParam: TTmriParam;
 begin
   tmriParam := GetTmriParam(Params.Values['JKID'], token);
-  json := ParamsToJson(Params.DelimitedText, ',JKID,');
+  json := ParamsToJson(Params, ',JKID,');
   json := TTmri.Query(tmriParam, json);
   AResponseInfo.ContentText := json;
   result := json;
@@ -304,7 +294,7 @@ var
   tmriParam: TTmriParam;
 begin
   tmriParam := GetTmriParam(Params.Values['JKID'], token);
-  json := ParamsToJson(Params.DelimitedText, ',JKID,');
+  json := ParamsToJson(Params, ',JKID,');
   json := TTmri.Write(tmriParam, json);
   AResponseInfo.ContentText := json;
 end;
