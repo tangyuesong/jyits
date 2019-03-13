@@ -81,6 +81,8 @@ begin
       else begin
         if tmp[key].SJHM <> '' then
           item.SJHM := tmp[key].SJHM + ',' + item.SJHM;
+        if tmp[key].JYBH <> '' then
+          item.JYBH := tmp[key].JYBH + ',' + item.JYBH;
         if item.smsBeginTime > tmp[key].smsBeginTime then
           item.smsBeginTime := tmp[key].smsBeginTime;
         if item.smsEndTime < tmp[key].smsEndTime then
@@ -490,14 +492,22 @@ begin
   gDicHPZL := TDictionary<string, string>.Create;
   gPicturePathMap := TDictionary<string, TKKPictureConfig>.Create;
   PassList := TPassList.Create;
+  logger.Info('LoadDevice');
   LoadDevice;
+  logger.Info('LoadMainDic');
   LoadMainDic;
+  logger.Info('LoadAlarm');
   LoadAlarm;
+  logger.Info('LoadAlarmJTP');
   LoadAlarmJTP;
+  logger.Info('LoadAlarmSDCL');
   LoadAlarmSDCL;
+  logger.Info('loadHBC');
   loadHBC;
+  logger.Info('LoadOpenedDevice');
   LoadOpenedDevice;
   //LoadVeh;
+  logger.Info('LoadPicturePathMap');
   LoadPicturePathMap;
 end;
 

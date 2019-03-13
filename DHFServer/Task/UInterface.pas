@@ -187,9 +187,10 @@ class procedure Tmypint.DoAlarm(pass: TPass);
     if gDicAlarm.ContainsKey(pass.hphm + pass.hpzl) then
     begin
       alarm := gDicAlarm[pass.hphm + pass.hpzl];
-      if (alarm.SJHM <> '') and (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm) then
+      if (alarm.JYBH <> '')
+        or ((alarm.SJHM <> '') and (alarm.smsBeginTime < hhmm) and (alarm.smsEndTime > hhmm)) then
       begin
-        if now - vartodatetime(pass.gcsj) < OneMinute * 3 then
+        if now - vartodatetime(pass.gcsj) < OneMinute * 10 then
         begin
           Save(alarm, '¼©²é²¼¿Ø');
         end;
