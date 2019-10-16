@@ -129,31 +129,24 @@ end;
 
 procedure TUploadVioThread.UploadVio(cjjg: String);
 var
-  s, Param: string;
+  s: string;
   lvio: TDealLockVio;
-  tb: TFDMemTable;
 begin
-  tb := TFDMemTable.Create(nil);
-  Param := 'Count=30&IP=' + gAppIP;
-  Param := Param + '&CJJG=' + cjjg;
-  while True do
+  with gSQLHelper.Query
+    ('select systemid from T_VIO_HIS where zt=''2'' and cjjg=' +
+    cjjg.QuotedString) do
   begin
-    s := TRequestItf.DbQuery('GetLockVioList', Param);
-    if s = '' then
-      break;
-    TJsonUtils.JSONToDataSet(s, tb, '');
-    tb.First;
-    while not tb.Eof do
+    while not Eof do
     begin
       lvio := TDealLockVio.Create;
-      s := lvio.UploadVio(tb.FieldByName('systemid').AsString, FWhiteList);
-      gLogger.Info('[UploadVio] ' + tb.FieldByName('systemid').AsString +
+      s := lvio.UploadVio(FieldByName('systemid').AsString, FWhiteList);
+      gLogger.Info('[UploadVio] ' + FieldByName('systemid').AsString +
         ',上传结果:' + s);
       lvio.Free;
-      tb.Next;
+      Next;
     end;
+    Free;
   end;
-  tb.Free;
 end;
 
 procedure TUploadVioThread.UploadVioDateDiff;
@@ -161,7 +154,6 @@ var
   s, cjjg: String;
   cjjgs: TStrings;
 begin
-  gLogger.Info('[UploadVio]Start');
   cjjgs := GetCjjgList;
   if cjjgs.Count = 0 then
     gLogger.Info('[UploadVio] 不存在未上传的违法');
@@ -172,7 +164,6 @@ begin
     UploadVio(cjjg);
   end;
   cjjgs.Free;
-  gLogger.Info('[UploadVio]上传一周前的违法 End');
 end;
 
 end.

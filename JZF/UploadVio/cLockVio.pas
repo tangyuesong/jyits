@@ -3,7 +3,7 @@ unit cLockVio;
 interface
 
 uses SysUtils, Classes, uRequestItf, uJsonUtils, uCommon, Soap.EncdDecd,
-  uGlobal;
+  uGlobal, DateUtils;
 
 type
 
@@ -164,6 +164,9 @@ begin
       msg := TCommon.GetJsonNode('value', json)
     else if code = '0' then
       msg := TCommon.GetJsonNode('message', json);
+
+    if msg = '' then
+      msg := TCommon.GetJsonNode('msg1', json);
   except
     on e: exception do
       gLogger.Error('[UploadVio]' + e.Message);
@@ -185,8 +188,9 @@ begin
 
   vio := TJsonUtils.JsonToObject<TLockVioClass>(s);
 
-  if (pos(',' + vio.wfxw + ',', ',' + gUploadHisCfg.wfxw + ',') > 0) and
-    (now - TCommon.StringToDT(vio.wfsj) < gUploadHisCfg.DAY) then
+  if gUploadHisCfg.wfxw.Contains(vio.wfxw) and
+    (DateUtils.DaysBetween(now, TCommon.StringToDT(vio.sj)) < gUploadHisCfg.DAY)
+  then
   begin
     Result := '该记录未到上传时间';
     exit;
