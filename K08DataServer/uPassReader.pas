@@ -72,7 +72,7 @@ begin
         + ' inner join S_Device b on a.KDBH = b.SBBH and b.XYSB = 1 and b.QYZT = 1 '
         + ' and a.GXSJ>=' + gStartTime.QuotedString + ' and a.GXSJ < ' +
         jssj.QuotedString +
-        ' and a.hpzl<>''07'' and a.hpzl>'''' and left(FWQDZ, 4) = ''http'' ';
+        ' and a.hpzl<>''07'' and a.hpzl>'''' and (left(FWQDZ, 4) = ''http'' or left(TP1, 4) = ''http'')  ';
       FQy := gSQLHelper.Query(s);
       gLogger.Info('StartTime: ' + gStartTime + ', PassCount:' + FQy.RecordCount.ToString);
       gStartTime := jssj;
