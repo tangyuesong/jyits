@@ -32,7 +32,7 @@ uses
   cxGridDBTableView, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, uEntity, IOUtils, idHTTP,
-  dxBarBuiltInMenu, cxPC, ievect;
+  dxBarBuiltInMenu, cxPC, ievect, Vcl.ExtDlgs;
 
 type
   TdxFramePicData = class(TdxFrame)
@@ -108,6 +108,9 @@ type
     dxLayoutItem25: TdxLayoutItem;
     btnGj: TcxButton;
     dxLayoutItem26: TdxLayoutItem;
+    btnDownPic: TcxButton;
+    dxLayoutItem27: TdxLayoutItem;
+    saveDialog: TSavePictureDialog;
     procedure cxButton1Click(Sender: TObject);
     procedure GridViewFocusedRecordChanged(Sender: TcxCustomGridTableView;
       APrevFocusedRecord, AFocusedRecord: TcxCustomGridRecord;
@@ -123,6 +126,7 @@ type
     procedure btnNextClick(Sender: TObject);
     procedure btnSearchPicClick(Sender: TObject);
     procedure btnGjClick(Sender: TObject);
+    procedure btnDownPicClick(Sender: TObject);
   private
     fdbool: Boolean;
     FPicFile: String;
@@ -216,7 +220,7 @@ var
   veh: TVehinfo;
 begin
   veh := TCommon.GetVehinfo(tb.FieldByName('HPHM').AsString,
-    tb.FieldByName('HPZL').AsString,'');
+    tb.FieldByName('HPZL').AsString, '');
   edtkdbh.Text := tb.FieldByName('KDBH').AsString;
   if TLZDictionary.gDicDev[2].ContainsKey(edtkdbh.Text) then
     edtkdbh.Text := TLZDictionary.gDicDev[2][edtkdbh.Text].SBDDMC;
@@ -261,6 +265,18 @@ begin
 
   edtsyr.Text := veh.syr;
   edtzsxxdz.Text := veh.ZSXXDZ;
+end;
+
+procedure TdxFramePicData.btnDownPicClick(Sender: TObject);
+begin
+  inherited;
+  if not FileExists(FPicFile) then
+    Application.MessageBox('图片不存在', '提示', MB_ICONINFORMATION + MB_OK)
+  else
+  begin
+    if saveDialog.Execute then
+      CopyFile(PChar(FPicFile), PChar(saveDialog.FileName), True);
+  end;
 end;
 
 procedure TdxFramePicData.btnGjClick(Sender: TObject);
