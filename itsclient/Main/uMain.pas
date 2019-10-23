@@ -1,5 +1,5 @@
 unit uMain;
-{//$I ItsClient.inc }
+//{$I ItsClient.inc }
 
 interface
 

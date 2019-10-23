@@ -1,53 +1,54 @@
 inherited ToolYJQSFK: TToolYJQSFK
-  Width = 885
+  Width = 723
+  Height = 446
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 885
-    Height = 305
+    Width = 723
+    Height = 446
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 77
       Width = 909
-      Height = 142
+      Height = 283
       TabOrder = 10
       ExplicitTop = 77
       ExplicitWidth = 909
-      ExplicitHeight = 142
+      ExplicitHeight = 283
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 226
+      Top = 367
       TabOrder = 11
-      ExplicitTop = 226
+      ExplicitTop = 367
     end
     inherited btnFirstPage: TcxButton
-      Top = 226
+      Top = 367
       TabOrder = 12
-      ExplicitTop = 226
+      ExplicitTop = 367
     end
     inherited btnPriorPage: TcxButton
-      Top = 226
+      Top = 367
       TabOrder = 13
-      ExplicitTop = 226
+      ExplicitTop = 367
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 226
+      Top = 367
       TabOrder = 14
-      ExplicitTop = 226
+      ExplicitTop = 367
     end
     inherited btnnextPage: TcxButton
-      Top = 226
+      Top = 367
       TabOrder = 15
-      ExplicitTop = 226
+      ExplicitTop = 367
     end
     inherited btnLastPage: TcxButton
-      Top = 226
+      Top = 367
       TabOrder = 16
-      ExplicitTop = 226
+      ExplicitTop = 367
     end
     inherited lbCount: TcxLabel
-      Top = 254
-      ExplicitTop = 254
+      Top = 395
+      ExplicitTop = 395
     end
     object dtBegin: TcxDateEdit [8]
       Left = 67

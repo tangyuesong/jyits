@@ -1,5 +1,5 @@
 program ItsClient;
-{//$I ItsClient.inc }
+//{$I ItsClient.inc }
 
 uses
   Vcl.Forms,
@@ -196,7 +196,8 @@ uses
   uFrameZHPTDeviceRoleUser in 'ZHPTGL\uFrameZHPTDeviceRoleUser.pas' {FrameZHPTDeviceRoleUser: TFrame},
   uFrameZHPTFunctionRoleEdit in 'ZHPTGL\uFrameZHPTFunctionRoleEdit.pas' {FrameZHPTFunctionRoleEdit: TFrame},
   uFrameZHPTFunctionRoleUser in 'ZHPTGL\uFrameZHPTFunctionRoleUser.pas' {FrameZHPTFunctionRoleUser: TFrame},
-  uZHPTFunctionRole in 'ZHPTGL\uZHPTFunctionRole.pas' {ZHPTFunctionRole: TFrame};
+  uZHPTFunctionRole in 'ZHPTGL\uZHPTFunctionRole.pas' {ZHPTFunctionRole: TFrame},
+  uZhiFaQuZheng in 'ZHXXCX\uZhiFaQuZheng.pas' {ZhiFaQuZheng: TFrame};
 
 {$R *.res}
 

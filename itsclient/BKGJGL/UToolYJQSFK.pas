@@ -161,6 +161,16 @@ begin
   FDetail.HPZL := FDMemTable1.FieldByName('HPZL').AsString;
   FDetail.LoadPassList;
   FDetail.Show;
+
+  FDetail.dxLayoutItem3.Visible := False;
+  FDetail.dxLayoutGroup7.Visible := True;
+  FDetail.cxPageControl1.ActivePageIndex := 0;
+  FDetail.dxLayoutItem21.Visible := False;
+  FDetail.dxLayoutItem22.Visible := False;
+  FDetail.btnSearchPic.Visible := false;
+  FDetail.btnGj.Visible := false;
+  FDetail.btnPrior.Visible := False;
+  FDetail.btnNext.Visible := False;
 end;
 
 procedure TToolYJQSFK.AfterConstruction;
