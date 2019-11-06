@@ -127,7 +127,7 @@ begin
   end;
   kssj := FormatDateTime('yyyy-mm-dd', dtBegin.Date);
   jssj := FormatDateTime('yyyy-mm-dd', dtEnd.Date);
-  Param := Format('begin_GCSJ=%s&end_GCSJ=%s&like_hpzl=%s&like_hphm=%s', [kssj, jssj, hpzl, hphm]);
+  Param := Format('begin_gxsj=%s&end_gxsj=%s&like_hpzl=%s&like_hphm=%s', [kssj, jssj, hpzl, hphm]);
   ShowFrameWait;
   s := TRequestItf.pDbQuery('GetT_ZhiFaQuZheng_Pic', Param);
   TJSONUtils.JSONToDataSet(s, FDMemTable1, '', True);
