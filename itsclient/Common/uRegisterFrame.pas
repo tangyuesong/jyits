@@ -30,7 +30,8 @@ uses
   uFrameYXQZFeedback, uFrameJianYiFeedback, UDcwfSearch, uFrameWFCSJETJ,
   uFramZBGL, uFrameFeedbackResult, uFrameYJLKPH, uFrameDrvLog, uPicSearch,
   UdxGridQDZ, uFrameNtzlist, uFrameGCPD, uFrameFirstEnterManager, uVideoSearch,
-  uFrameTjWfcl, UFrameSDCLList, uFrameVioShaiXuan;
+  uFrameTjWfcl, UFrameSDCLList, uFrameVioShaiXuan,
+  uTaskConfig, uZBConfig, uYcydConfig, uFrameZHPTDeviceRole, uZHPTFunctionRole;
 
 class procedure TRegisterFrame.RegisterFrames();
 begin
@@ -49,7 +50,8 @@ begin
     TDcwfSearch, TFrameFeedbackResult, TFrameYJLKPH, TFrameDrvLog,
     TFramePicSearch, TFToolJSRYQZ, TFrameFineFeedback, TFrameQDZ, TFrameSendSms,
     TFrameZBGL, TFrameNtzlist, TFrameGCPD, TFrameWFTJ, TFrameVideoSearch,
-    TFrameTjWfcl, TFrameSDCLList, TFrameVioShaiXuan]);
+    TFrameTjWfcl, TFrameSDCLList, TFrameVioShaiXuan, TFrameTaskConfig,
+    TFrameZBConfig, TFrameYcydConfig, TFrameZHPTDeviceRole, TZHPTFunctionRole]);
 end;
 
 end.
