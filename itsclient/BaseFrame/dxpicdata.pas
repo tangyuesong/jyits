@@ -268,14 +268,33 @@ begin
 end;
 
 procedure TdxFramePicData.btnDownPicClick(Sender: TObject);
+var
+  fName, hphm, hpzl, gcsj, tp: string;
+  tmpTable: TFDMemTable;
 begin
   inherited;
   if not FileExists(FPicFile) then
     Application.MessageBox('图片不存在', '提示', MB_ICONINFORMATION + MB_OK)
   else
   begin
-    if saveDialog.Execute then
-      CopyFile(PChar(FPicFile), PChar(saveDialog.FileName), True);
+    tmpTable := self.FDMemTable1;
+    if FGCTable <> nil then
+      tmpTable := FGCTable;
+    hphm := tmpTable.FieldByName('HPHM').AsString;
+    hpzl := tmpTable.FieldByName('HPZL').AsString;
+    gcsj := tmpTable.FieldByName('GCSJ').AsString;
+    fName := 'ZhiFaQuZheng/' + hphm + '_' + TPath.GetFileName(FPicFile);
+    if TCommon.FtpPutFile(gSetup.ftphost, gSetup.ftpuser, gSetup.FtpPwd, FPicFile,
+      fName, gSetup.ftpport) then
+    begin
+      tp := 'http://' + gSetup.ftphost + ':8090/' + fName;
+      if TRequestItf.DbQuery('AddT_ZhiFaQuZheng_Pic', 'hphm='+hphm+'&hpzl='+hpzl+'&yhbh='+gUser.yhbh+'&gcsj='+gcsj+'&tp='+tp) = '1' then
+        Application.MessageBox('图片保存成功', '提示', MB_ICONINFORMATION + MB_OK)
+      else
+        Application.MessageBox('图片保存失败', '提示', MB_ICONINFORMATION + MB_OK)
+    end
+    else
+      Application.MessageBox('图片上传失败', '提示', MB_ICONINFORMATION + MB_OK);
   end;
 end;
 

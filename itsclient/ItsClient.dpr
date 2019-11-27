@@ -207,7 +207,8 @@ uses
   uYcydConfig in 'QWPZGL\uYcydConfig.pas' {FrameYcydConfig: TFrame},
   uZBBCManage in 'QWPZGL\uZBBCManage.pas' {FrameZBBCManage: TFrame},
   uZBConfig in 'QWPZGL\uZBConfig.pas' {FrameZBConfig: TFrame},
-  uFrameDeptTreeList in 'BaseFrame\uFrameDeptTreeList.pas' {FrameDeptTreeList: TFrame};
+  uFrameDeptTreeList in 'BaseFrame\uFrameDeptTreeList.pas' {FrameDeptTreeList: TFrame},
+  uZhiFaQuZheng in 'ZHXXCX\uZhiFaQuZheng.pas' {ZhiFaQuZheng: TFrame};
 
 {$R *.res}
 

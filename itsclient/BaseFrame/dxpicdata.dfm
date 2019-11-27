@@ -1,15 +1,11 @@
 inherited dxFramePicData: TdxFramePicData
-  Width = 821
-  Height = 472
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 821
-    Height = 472
     OptionsImage.Images = DM.ilBarSmall
     object cxgrd1: TcxGrid [0]
-      Left = 415
+      Left = 95
       Top = 36
       Width = 378
-      Height = 58
+      Height = 20
       TabOrder = 4
       object GridView: TcxGridDBTableView
         Navigator.Buttons.CustomButtons = <>
@@ -25,8 +21,8 @@ inherited dxFramePicData: TdxFramePicData
       end
     end
     object edtkdbh: TcxTextEdit [1]
-      Left = 484
-      Top = 124
+      Left = 164
+      Top = 86
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -35,8 +31,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 294
     end
     object edtCD: TcxTextEdit [2]
-      Left = 678
-      Top = 152
+      Left = 358
+      Top = 114
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -45,8 +41,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 100
     end
     object edtsyr: TcxTextEdit [3]
-      Left = 484
-      Top = 348
+      Left = 164
+      Top = 310
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -55,8 +51,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 294
     end
     object edtzsxxdz: TcxTextEdit [4]
-      Left = 484
-      Top = 376
+      Left = 164
+      Top = 338
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -89,8 +85,8 @@ inherited dxFramePicData: TdxFramePicData
       OnClick = btnMapClick
     end
     object edtgcsj: TcxTextEdit [7]
-      Left = 484
-      Top = 152
+      Left = 164
+      Top = 114
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -99,8 +95,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 125
     end
     object edthpzl: TcxTextEdit [8]
-      Left = 484
-      Top = 180
+      Left = 164
+      Top = 142
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -109,8 +105,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 125
     end
     object edthphm: TcxTextEdit [9]
-      Left = 678
-      Top = 180
+      Left = 358
+      Top = 142
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -119,8 +115,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 100
     end
     object edtclpp: TcxTextEdit [10]
-      Left = 484
-      Top = 208
+      Left = 164
+      Top = 170
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -129,8 +125,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 125
     end
     object edtclxh: TcxTextEdit [11]
-      Left = 678
-      Top = 208
+      Left = 358
+      Top = 170
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -139,8 +135,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 100
     end
     object edtcsys: TcxTextEdit [12]
-      Left = 484
-      Top = 236
+      Left = 164
+      Top = 198
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -149,8 +145,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 125
     end
     object edtCLSD: TcxTextEdit [13]
-      Left = 678
-      Top = 236
+      Left = 358
+      Top = 198
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -159,8 +155,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 100
     end
     object edtcjh: TcxTextEdit [14]
-      Left = 484
-      Top = 264
+      Left = 164
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -169,8 +165,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 125
     end
     object edtfdjh: TcxTextEdit [15]
-      Left = 678
-      Top = 264
+      Left = 358
+      Top = 226
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -179,8 +175,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 100
     end
     object edtccdjrq: TcxTextEdit [16]
-      Left = 484
-      Top = 292
+      Left = 164
+      Top = 254
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -189,8 +185,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 125
     end
     object edtsyxz: TcxTextEdit [17]
-      Left = 678
-      Top = 292
+      Left = 358
+      Top = 254
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -199,8 +195,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 100
     end
     object edtyxqx: TcxTextEdit [18]
-      Left = 484
-      Top = 320
+      Left = 164
+      Top = 282
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -209,8 +205,8 @@ inherited dxFramePicData: TdxFramePicData
       Width = 125
     end
     object edtqzbfqz: TcxTextEdit [19]
-      Left = 678
-      Top = 320
+      Left = 358
+      Top = 282
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
@@ -221,25 +217,25 @@ inherited dxFramePicData: TdxFramePicData
     object cxPageControl1: TcxPageControl [20]
       Left = 45
       Top = 13
-      Width = 340
-      Height = 446
+      Width = 20
+      Height = 408
       TabOrder = 3
       Properties.ActivePage = cxTabSheet1
       Properties.CustomButtons.Buttons = <>
       Properties.HideTabs = True
-      ClientRectBottom = 446
-      ClientRectRight = 340
+      ClientRectBottom = 408
+      ClientRectRight = 20
       ClientRectTop = 0
       object cxTabSheet1: TcxTabSheet
         Caption = 'cxTabSheet1'
         ImageIndex = 0
-        ExplicitWidth = 20
-        ExplicitHeight = 408
+        ExplicitWidth = 208
+        ExplicitHeight = 652
         object imgviopic: TImageEnVect
           Left = 0
           Top = 0
-          Width = 340
-          Height = 446
+          Width = 20
+          Height = 408
           Background = clWhite
           Ctl3D = False
           ParentCtl3D = False
@@ -252,18 +248,20 @@ inherited dxFramePicData: TdxFramePicData
           TabOrder = 0
           OnMouseMove = imgviopicMouseMove
           OnMouseUp = imgviopicMouseUp
-          ExplicitWidth = 20
-          ExplicitHeight = 408
+          ExplicitWidth = 208
+          ExplicitHeight = 652
         end
       end
       object cxTabSheet2: TcxTabSheet
         Caption = 'cxTabSheet2'
         ImageIndex = 1
+        ExplicitWidth = 208
+        ExplicitHeight = 652
         object Chromium1: TChromium
           Left = 0
           Top = 0
-          Width = 340
-          Height = 446
+          Width = 208
+          Height = 652
           Align = alClient
           TabOrder = 0
           Options.AcceleratedPaintingDisabled = False
@@ -286,8 +284,8 @@ inherited dxFramePicData: TdxFramePicData
     end
     object btnPrior: TcxButton [22]
       Tag = 3
-      Left = 415
-      Top = 419
+      Left = 95
+      Top = 381
       Width = 30
       Height = 21
       Cursor = crHandPoint
@@ -333,8 +331,8 @@ inherited dxFramePicData: TdxFramePicData
     end
     object btnNext: TcxButton [23]
       Tag = 2
-      Left = 452
-      Top = 419
+      Left = 132
+      Top = 381
       Width = 30
       Height = 21
       Cursor = crHandPoint
@@ -379,8 +377,8 @@ inherited dxFramePicData: TdxFramePicData
       OnClick = btnNextClick
     end
     object btnGj: TcxButton [24]
-      Left = 718
-      Top = 419
+      Left = 398
+      Top = 381
       Width = 75
       Height = 25
       Caption = #36712#36857
@@ -388,8 +386,8 @@ inherited dxFramePicData: TdxFramePicData
       OnClick = btnGjClick
     end
     object btnSearchPic: TcxButton [25]
-      Left = 636
-      Top = 419
+      Left = 316
+      Top = 381
       Width = 75
       Height = 25
       Caption = #20197#22270#25628#36710
@@ -397,8 +395,8 @@ inherited dxFramePicData: TdxFramePicData
       OnClick = btnSearchPicClick
     end
     object btnDownPic: TcxButton [26]
-      Left = 554
-      Top = 419
+      Left = 234
+      Top = 381
       Width = 75
       Height = 25
       Caption = #19979#36733#22270#29255

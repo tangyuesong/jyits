@@ -1,20 +1,27 @@
 inherited FrameNtzEdit: TFrameNtzEdit
+  Width = 830
   Height = 518
   AutoSize = False
+  ExplicitWidth = 830
   ExplicitHeight = 518
   inherited dxLayoutControl2: TdxLayoutControl
+    Width = 830
     Height = 518
     Align = alClient
     ExplicitHeight = 518
     inherited btnSave: TcxButton
+      Left = 333
       Top = 465
       TabOrder = 8
       OnClick = btnSaveClick
+      ExplicitLeft = 333
       ExplicitTop = 465
     end
     inherited btnExit: TcxButton
+      Left = 421
       Top = 465
       TabOrder = 9
+      ExplicitLeft = 421
       ExplicitTop = 465
     end
     object edtHphm: TcxTextEdit [2]
@@ -35,40 +42,20 @@ inherited FrameNtzEdit: TFrameNtzEdit
       Height = 21
       Width = 121
     end
-    object cxDateEdit1: TcxDateEdit [4]
+    object edtBz: TcxTextEdit [4]
       Left = 82
-      Top = 64
-      AutoSize = False
-      Properties.View = cavClassic
-      Style.HotTrack = False
-      TabOrder = 2
-      Height = 21
-      Width = 121
-    end
-    object cxDateEdit2: TcxDateEdit [5]
-      Left = 264
-      Top = 64
-      AutoSize = False
-      Properties.View = cavClassic
-      Style.HotTrack = False
-      TabOrder = 3
-      Height = 21
-      Width = 121
-    end
-    object edtBz: TcxTextEdit [6]
-      Left = 82
-      Top = 92
+      Top = 76
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 4
       Height = 21
-      Width = 500
+      Width = 720
     end
-    object Panel1: TPanel [7]
-      Left = 290
-      Top = 120
+    object Panel1: TPanel [5]
+      Left = 400
+      Top = 104
       Width = 30
-      Height = 325
+      Height = 341
       BevelOuter = bvNone
       TabOrder = 6
       object cxButton1: TcxButton
@@ -108,24 +95,44 @@ inherited FrameNtzEdit: TFrameNtzEdit
         OnClick = cxButton4Click
       end
     end
-    object lsAllDev: TcxListBox [8]
+    object lsAllDev: TcxListBox [6]
       Left = 43
-      Top = 143
-      Width = 225
-      Height = 287
+      Top = 127
+      Width = 335
+      Height = 303
       ItemHeight = 17
       MultiSelect = True
       TabOrder = 5
       OnDblClick = lsAllDevDblClick
     end
-    object lsSelectedDev: TcxListBox [9]
-      Left = 342
-      Top = 143
-      Width = 225
-      Height = 287
+    object lsSelectedDev: TcxListBox [7]
+      Left = 452
+      Top = 127
+      Width = 335
+      Height = 303
       ItemHeight = 17
       MultiSelect = True
       TabOrder = 7
+    end
+    object cxDateEdit1: TcxDateEdit [8]
+      Left = 446
+      Top = 36
+      AutoSize = False
+      Properties.View = cavClassic
+      Style.HotTrack = False
+      TabOrder = 2
+      Height = 21
+      Width = 147
+    end
+    object cxDateEdit2: TcxDateEdit [9]
+      Left = 654
+      Top = 36
+      AutoSize = False
+      Properties.View = cavClassic
+      Style.HotTrack = False
+      TabOrder = 3
+      Height = 21
+      Width = 147
     end
     inherited dxLayoutGroup1: TdxLayoutGroup
       CaptionOptions.Text = #29305#25209#20449#24687
@@ -162,24 +169,6 @@ inherited FrameNtzEdit: TFrameNtzEdit
       ButtonOptions.Buttons = <>
       LayoutDirection = ldHorizontal
       ShowBorder = False
-      Index = 1
-    end
-    object dxLayoutItem5: TdxLayoutItem
-      Parent = dxLayoutGroup6
-      CaptionOptions.Text = #24320#22987#26085#26399
-      Control = cxDateEdit1
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem6: TdxLayoutItem
-      Parent = dxLayoutGroup6
-      CaptionOptions.Text = #32467#26463#26085#26399
-      Control = cxDateEdit2
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
       Index = 1
     end
     object dxLayoutItem7: TdxLayoutItem
@@ -248,6 +237,26 @@ inherited FrameNtzEdit: TFrameNtzEdit
       ControlOptions.OriginalWidth = 121
       ControlOptions.ShowBorder = False
       Index = 0
+    end
+    object dxLayoutItem5: TdxLayoutItem
+      Parent = dxLayoutGroup5
+      AlignVert = avClient
+      CaptionOptions.Text = #24320#22987#26085#26399
+      Control = cxDateEdit1
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 147
+      ControlOptions.ShowBorder = False
+      Index = 2
+    end
+    object dxLayoutItem6: TdxLayoutItem
+      Parent = dxLayoutGroup5
+      AlignVert = avClient
+      CaptionOptions.Text = #32467#26463#26085#26399
+      Control = cxDateEdit2
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 147
+      ControlOptions.ShowBorder = False
+      Index = 3
     end
   end
 end

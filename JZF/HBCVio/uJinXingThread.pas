@@ -191,9 +191,9 @@ begin
     cd.QuotedString + ',' + tp1.QuotedString + ',' + tp2.QuotedString +
     ',''0'')';
   if gSQLHelper.ExecuteSql(s) then
-    gLogger.Info('save WNJ vio successed [' + hphm + ']')
+    gLogger.Info('save ' + FConfig.FName + ' vio successed [' + hphm + ']')
   else
-    gLogger.Error('save WNJ vio failed [' + hphm + ']');
+    gLogger.Error('save ' + FConfig.FName + ' vio failed [' + hphm + ']');
 end;
 
 end.

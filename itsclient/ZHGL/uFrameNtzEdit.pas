@@ -104,8 +104,7 @@ begin
   for dev in TLZDictionary.gDicDev[2].Values do
   begin
     if dev.DCXXZB then
-      // lsAllDev.Items.Add(dev.SBDDMC);
-      ts.Add(dev.SBDDMC);
+      ts.Add(dev.SBBH + ':' + dev.SBDDMC);
   end;
   lsAllDev.Items.AddStrings(ts);
   ts.Free;
@@ -129,7 +128,9 @@ begin
     ntz.bz := edtBz.Text;
     ntz.sbbh := '';
     for s in lsSelectedDev.Items do
-      ntz.sbbh := ntz.sbbh + s + ',';
+    begin
+      ntz.sbbh := ntz.sbbh + s.Substring(0, s.IndexOf(':')) + ',';
+    end;
     if ntz.sbbh <> '' then
       ntz.sbbh := copy(ntz.sbbh, 1, length(ntz.sbbh) - 1);
     OnOK(ntz);
