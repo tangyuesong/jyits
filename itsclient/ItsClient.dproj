@@ -869,9 +869,8 @@
             <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-		<DCCReference Include="ZHXXCX\uZhiFaQuZheng.pas">
+        <DCCReference Include="ZHXXCX\uZhiFaQuZheng.pas">
             <Form>ZhiFaQuZheng</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Debug">

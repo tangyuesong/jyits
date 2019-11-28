@@ -8,8 +8,8 @@ inherited DialogTaskEdit: TDialogTaskEdit
     Width = 408
     Height = 454
     Align = alClient
-    ExplicitWidth = 354
-    ExplicitHeight = 199
+    ExplicitWidth = 408
+    ExplicitHeight = 454
     object cmbMonth: TcxComboBox [0]
       Left = 82
       Top = 36
