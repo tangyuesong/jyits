@@ -34,7 +34,9 @@ uses
   qrbtree in 'Common\qrbtree.pas',
   QString in 'Common\QString.pas',
   uJinXingThread in 'HBCVio\uJinXingThread.pas',
-  uUploadTempVio in 'UploadTempVio\uUploadTempVio.pas';
+  uUploadTempVio in 'UploadTempVio\uUploadTempVio.pas',
+  uJGThread in 'JG\uJGThread.pas',
+  uZDWFThread in 'JG\uZDWFThread.pas';
 
 {$R *.RES}
 
