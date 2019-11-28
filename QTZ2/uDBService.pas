@@ -210,7 +210,8 @@ begin
       else if gActionDic.ContainsKey(action) then
       begin
         if (gActionDic[action].ActionType = 'Q') or
-          (gActionDic[action].ActionType = 'P') then
+          (gActionDic[action].ActionType = 'P') or
+          (gActionDic[action].ActionType = 'F') then
           AResponseInfo.ContentText := TDBO.Select(gActionDic[action], params)
         else if gActionDic[action].ActionType = 'A' then
           AResponseInfo.ContentText := TDBO.Insert(gActionDic[action], params)
