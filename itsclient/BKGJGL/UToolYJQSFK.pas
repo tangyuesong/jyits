@@ -159,6 +159,8 @@ begin
   end;
   FDetail.HPHM := FDMemTable1.FieldByName('HPHM').AsString;
   FDetail.HPZL := FDMemTable1.FieldByName('HPZL').AsString;
+  FDetail.BeginTime := FDMemTable1.FieldByName('GCSJ').AsDateTime - 0.0001;
+  FDetail.EndTime := FDMemTable1.FieldByName('GCSJ').AsDateTime + 0.0001;
   FDetail.LoadPassList;
   FDetail.Show;
 

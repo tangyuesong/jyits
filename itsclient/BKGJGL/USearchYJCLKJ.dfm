@@ -10,7 +10,7 @@ inherited SearchYJCLKJ: TSearchYJCLKJ
       ExplicitHeight = 202
     end
     object DTKSSJ: TcxDateEdit [1]
-      Left = 67
+      Left = -477
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -20,7 +20,7 @@ inherited SearchYJCLKJ: TSearchYJCLKJ
       Width = 103
     end
     object DTJSSJ: TcxDateEdit [2]
-      Left = 195
+      Left = -349
       Top = 13
       AutoSize = False
       Properties.View = cavClassic
@@ -30,7 +30,7 @@ inherited SearchYJCLKJ: TSearchYJCLKJ
       Width = 103
     end
     object cbbJC: TcxComboBox [3]
-      Left = 359
+      Left = -185
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -39,7 +39,7 @@ inherited SearchYJCLKJ: TSearchYJCLKJ
       Width = 71
     end
     object edthphm: TcxTextEdit [4]
-      Left = 437
+      Left = -107
       Top = 13
       AutoSize = False
       Properties.CharCase = ecUpperCase
@@ -49,7 +49,7 @@ inherited SearchYJCLKJ: TSearchYJCLKJ
       Width = 77
     end
     object cbbHPZL: TcxComboBox [5]
-      Left = 521
+      Left = -23
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -58,7 +58,7 @@ inherited SearchYJCLKJ: TSearchYJCLKJ
       Width = 113
     end
     object cxButton1: TcxButton [6]
-      Left = 825
+      Left = 281
       Top = 13
       Width = 75
       Height = 25
@@ -69,7 +69,7 @@ inherited SearchYJCLKJ: TSearchYJCLKJ
       OnClick = cxButton1Click
     end
     object cbbYJLX: TcxComboBox [7]
-      Left = 695
+      Left = 151
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -108,7 +108,7 @@ inherited SearchYJCLKJ: TSearchYJCLKJ
       ExplicitTop = 254
     end
     object btnExport: TcxButton [14]
-      Left = 907
+      Left = 363
       Top = 13
       Width = 75
       Height = 25
