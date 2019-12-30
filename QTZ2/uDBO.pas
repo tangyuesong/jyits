@@ -239,7 +239,8 @@ var
 begin
   start := 0;
   rows := -1;
-  if (action.ActionType = 'P') and (action.SQL <> '') then
+  if ((action.ActionType = 'P') or (action.ActionType = 'F')) and
+    (action.SQL <> '') then
   begin
     s := action.SQL;
     if params.Count > 0 then
@@ -248,7 +249,15 @@ begin
         s := s + ' ' + params.ValueFromIndex[i].QuotedString + ',';
       s := copy(s, 1, Length(s) - 1);
     end;
-    Result := TCommon.QueryToJsonString(s);
+    if action.ActionType = 'P' then
+      Result := TCommon.QueryToJsonString(s)
+    else
+    begin
+      if gSQLHelper.ExecuteSql(s) then
+        Result := '1'
+      else
+        Result := '0';
+    end;
   end
   else if action.ActionType = 'Q' then
   begin

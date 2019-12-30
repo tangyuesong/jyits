@@ -56,6 +56,9 @@ var
   gJinXing: Boolean; // 禁行
   JTPRunning: Boolean;
   gUploadTempVio: Boolean;
+  gSumSpot: Boolean; // 现场违法预处理
+  gSumZdwf: Boolean; // 现场违法预处理
+
   // gHpzlList: TDictionary<string, String>;
   gK08Hpzl: TDictionary<String, String>;
   gK08Clpp: TDictionary<String, String>;

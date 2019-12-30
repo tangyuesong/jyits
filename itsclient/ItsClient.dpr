@@ -197,6 +197,17 @@ uses
   uFrameZHPTFunctionRoleEdit in 'ZHPTGL\uFrameZHPTFunctionRoleEdit.pas' {FrameZHPTFunctionRoleEdit: TFrame},
   uFrameZHPTFunctionRoleUser in 'ZHPTGL\uFrameZHPTFunctionRoleUser.pas' {FrameZHPTFunctionRoleUser: TFrame},
   uZHPTFunctionRole in 'ZHPTGL\uZHPTFunctionRole.pas' {ZHPTFunctionRole: TFrame},
+  uDialogTaskEdit in 'QWPZGL\uDialogTaskEdit.pas' {DialogTaskEdit: TFrame},
+  uDialogYcydEdit in 'QWPZGL\uDialogYcydEdit.pas' {DialogYcydEdit: TFrame},
+  uDialogZBEdit in 'QWPZGL\uDialogZBEdit.pas' {DialogZBEdit: TFrame},
+  uDialogZBImport in 'QWPZGL\uDialogZBImport.pas' {DialogZBImport: TFrame},
+  uFrameBanCi in 'QWPZGL\uFrameBanCi.pas' {FrameBanCi: TFrame},
+  uPaiBan in 'QWPZGL\uPaiBan.pas' {FramePaiBan: TFrame},
+  uTaskConfig in 'QWPZGL\uTaskConfig.pas' {FrameTaskConfig: TFrame},
+  uYcydConfig in 'QWPZGL\uYcydConfig.pas' {FrameYcydConfig: TFrame},
+  uZBBCManage in 'QWPZGL\uZBBCManage.pas' {FrameZBBCManage: TFrame},
+  uZBConfig in 'QWPZGL\uZBConfig.pas' {FrameZBConfig: TFrame},
+  uFrameDeptTreeList in 'BaseFrame\uFrameDeptTreeList.pas' {FrameDeptTreeList: TFrame},
   uZhiFaQuZheng in 'ZHXXCX\uZhiFaQuZheng.pas' {ZhiFaQuZheng: TFrame};
 
 {$R *.res}

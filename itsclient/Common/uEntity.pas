@@ -731,7 +731,7 @@ type
       JCQKMS: string;
     CZ, CY, JCSJ, JCMJ, CJR, CJJG, CJSJ, gxsj, ZJSZH, FJSZH, ZJSLXDH, FJSLXDH,
       Message: string;
-    HDZKL, HDZZL, ZKS, SJZZL, flag: Integer;
+    HDZKL, hdzzl, ZKS, SJZZL, flag: Integer;
   end;
 
   TViolationWrite = record
@@ -794,6 +794,16 @@ type
     DM: String;
     MC: String;
     MineKey: String;
+  end;
+
+  TBanCi = record
+    DWDM, BCType, BCName, FZR, FZRSJ, yhbh, YHXM, SJHM, Address: string;
+    BCTime, SwitchTime, Order: Integer;
+  end;
+
+  TPaiBan = record
+    BanCi: TBanCi;
+    Date, StartTime, DateEnd, EndTime: String;
   end;
 
 implementation
