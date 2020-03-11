@@ -16,7 +16,7 @@ object FrameFeedbackBase: TFrameFeedbackBase
     object ImageEnVect1: TImageEnVect
       Left = 11
       Top = 11
-      Width = 454
+      Width = 407
       Height = 656
       Background = clWhite
       Ctl3D = False
@@ -29,7 +29,27 @@ object FrameFeedbackBase: TFrameFeedbackBase
       TabOrder = 0
     end
     object edtHPHM: TcxTextEdit
-      Left = 556
+      Left = 509
+      Top = 37
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 2
+      Height = 21
+      Width = 100
+    end
+    object edtHPZL: TcxTextEdit
+      Left = 675
+      Top = 37
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 9
+      Height = 21
+      Width = 120
+    end
+    object edtCLPP: TcxTextEdit
+      Left = 509
       Top = 64
       AutoSize = False
       Properties.ReadOnly = True
@@ -38,18 +58,18 @@ object FrameFeedbackBase: TFrameFeedbackBase
       Height = 21
       Width = 100
     end
-    object edtHPZL: TcxTextEdit
-      Left = 722
+    object edtCLXH: TcxTextEdit
+      Left = 675
       Top = 64
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 9
+      TabOrder = 10
       Height = 21
-      Width = 73
+      Width = 120
     end
-    object edtCLPP: TcxTextEdit
-      Left = 556
+    object edtCSYS: TcxTextEdit
+      Left = 509
       Top = 91
       AutoSize = False
       Properties.ReadOnly = True
@@ -58,58 +78,28 @@ object FrameFeedbackBase: TFrameFeedbackBase
       Height = 21
       Width = 100
     end
-    object edtCLXH: TcxTextEdit
-      Left = 722
-      Top = 91
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 10
-      Height = 21
-      Width = 73
-    end
-    object edtCSYS: TcxTextEdit
-      Left = 556
-      Top = 118
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 5
-      Height = 21
-      Width = 100
-    end
     object edtSYXZ: TcxTextEdit
-      Left = 722
-      Top = 118
+      Left = 675
+      Top = 91
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 11
       Height = 21
-      Width = 73
+      Width = 120
     end
     object edtBFQX: TcxTextEdit
-      Left = 722
-      Top = 172
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 13
-      Height = 21
-      Width = 73
-    end
-    object edtCLSBDH: TcxTextEdit
-      Left = 556
+      Left = 675
       Top = 199
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 8
+      TabOrder = 15
       Height = 21
-      Width = 100
+      Width = 120
     end
-    object edtSYR: TcxTextEdit
-      Left = 556
+    object edtCLSBDH: TcxTextEdit
+      Left = 509
       Top = 145
       AutoSize = False
       Properties.ReadOnly = True
@@ -118,123 +108,93 @@ object FrameFeedbackBase: TFrameFeedbackBase
       Height = 21
       Width = 100
     end
-    object edtCCDJRQ: TcxTextEdit
-      Left = 722
-      Top = 145
+    object edtSYR: TcxTextEdit
+      Left = 509
+      Top = 118
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 12
-      Height = 21
-      Width = 73
-    end
-    object edtYXQX: TcxTextEdit
-      Left = 556
-      Top = 172
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 7
+      TabOrder = 5
       Height = 21
       Width = 100
     end
-    object edtFDJH: TcxTextEdit
-      Left = 722
-      Top = 199
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 14
-      Height = 21
-      Width = 73
-    end
     object edtCZDW: TcxComboBox
-      Left = 556
+      Left = 509
       Top = 562
       AutoSize = False
       Properties.OnChange = edtCZDWPropertiesChange
       Style.HotTrack = False
-      TabOrder = 27
+      TabOrder = 28
       Height = 21
-      Width = 239
+      Width = 286
     end
     object btnFeedback: TcxButton
-      Left = 559
+      Left = 535
       Top = 643
       Width = 75
       Height = 25
       Caption = #21453#39304
-      TabOrder = 30
+      TabOrder = 31
       OnClick = btnFeedbackClick
     end
     object btnBack: TcxButton
-      Left = 640
+      Left = 616
       Top = 643
       Width = 75
       Height = 25
       Caption = #36820#22238
-      TabOrder = 31
+      TabOrder = 32
       OnClick = btnBackClick
     end
     object edtCZMJ: TcxComboBox
-      Left = 556
+      Left = 509
       Top = 589
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 28
-      Height = 21
-      Width = 239
-    end
-    object edtCZSJ: TcxTextEdit
-      Left = 556
-      Top = 616
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 29
       Height = 21
-      Width = 239
+      Width = 286
     end
-    object edtGCSJ: TcxTextEdit
-      Left = 556
-      Top = 37
+    object edtCZSJ: TcxTextEdit
+      Left = 509
+      Top = 616
       AutoSize = False
-      Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 2
+      TabOrder = 30
       Height = 21
-      Width = 239
+      Width = 286
     end
     object edtSBDDMC: TcxTextEdit
-      Left = 556
+      Left = 509
       Top = 10
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 1
       Height = 21
-      Width = 239
+      Width = 286
     end
     object edtYJBM: TcxTextEdit
-      Left = 556
+      Left = 509
       Top = 481
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 24
+      TabOrder = 25
       Height = 21
-      Width = 239
+      Width = 286
     end
     object edtWSBH: TcxTextEdit
-      Left = 556
+      Left = 509
       Top = 427
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 22
+      TabOrder = 23
       OnExit = edtWSBHExit
       Height = 21
-      Width = 239
+      Width = 286
     end
     object cboLJYY: TcxComboBox
-      Left = 556
+      Left = 509
       Top = 292
       AutoSize = False
       Properties.DropDownListStyle = lsFixedList
@@ -244,12 +204,12 @@ object FrameFeedbackBase: TFrameFeedbackBase
         '03 '#36710#36742#25481#22836#25110#32469#34892
         '09 '#20854#20182)
       Style.HotTrack = False
-      TabOrder = 17
+      TabOrder = 18
       Height = 21
-      Width = 239
+      Width = 286
     end
     object cboXYC: TcxComboBox
-      Left = 556
+      Left = 509
       Top = 319
       AutoSize = False
       Properties.DropDownListStyle = lsFixedList
@@ -258,23 +218,23 @@ object FrameFeedbackBase: TFrameFeedbackBase
         '1 '#26159)
       Properties.OnChange = cboLJJGPropertiesChange
       Style.HotTrack = False
-      TabOrder = 18
+      TabOrder = 19
       Height = 21
-      Width = 239
+      Width = 286
     end
     object cboCZJG: TcxCheckComboBox
-      Left = 556
+      Left = 509
       Top = 373
       AutoSize = False
       Properties.Items = <>
       Properties.OnChange = cboLJJGPropertiesChange
       Style.HotTrack = False
-      TabOrder = 20
+      TabOrder = 21
       Height = 21
-      Width = 239
+      Width = 286
     end
     object cboLJJG: TcxComboBox
-      Left = 556
+      Left = 509
       Top = 265
       AutoSize = False
       Properties.DropDownListStyle = lsFixedList
@@ -283,12 +243,12 @@ object FrameFeedbackBase: TFrameFeedbackBase
         '1 '#24050#25318#25130#21040)
       Properties.OnChange = cboLJJGPropertiesChange
       Style.HotTrack = False
-      TabOrder = 16
+      TabOrder = 17
       Height = 21
-      Width = 239
+      Width = 286
     end
     object cboWCHYY: TcxComboBox
-      Left = 556
+      Left = 509
       Top = 346
       AutoSize = False
       Properties.DropDownListStyle = lsFixedList
@@ -304,55 +264,55 @@ object FrameFeedbackBase: TFrameFeedbackBase
         '09 '#36710#36742#21697#29260#35782#21035#38169#35823
         '10 '#35782#21035#19982#30331#35760#21697#29260#26410#23545#24212
         '11 '#25509#39539#36710#36742
-        '12 '#21345#21475#26410#26657#26102
+        '12 '#21345#21475#26410#28657#26102
         '13 '#39550#39542#20154#39550#39542#35777#27491#24120
         '14 '#38750#36710#20027#26412#20154#39550#39542
         '15 '#26816#26597#26080#24322#24120
         '99 '#20854#20182)
       Style.HotTrack = False
-      TabOrder = 19
+      TabOrder = 20
       Height = 21
-      Width = 239
+      Width = 286
     end
     object edtBKLX: TcxTextEdit
-      Left = 556
+      Left = 509
       Top = 238
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 15
+      TabOrder = 16
       Height = 21
-      Width = 239
+      Width = 286
     end
     object edtJYW: TcxTextEdit
-      Left = 556
+      Left = 509
       Top = 454
       AutoSize = False
       Style.HotTrack = False
-      TabOrder = 23
+      TabOrder = 24
       Height = 21
-      Width = 239
+      Width = 286
     end
     object edtLXR: TcxTextEdit
-      Left = 556
+      Left = 509
       Top = 508
-      AutoSize = False
-      Style.HotTrack = False
-      TabOrder = 25
-      Height = 21
-      Width = 239
-    end
-    object edtLXDH: TcxTextEdit
-      Left = 556
-      Top = 535
       AutoSize = False
       Style.HotTrack = False
       TabOrder = 26
       Height = 21
-      Width = 239
+      Width = 286
+    end
+    object edtLXDH: TcxTextEdit
+      Left = 509
+      Top = 535
+      AutoSize = False
+      Style.HotTrack = False
+      TabOrder = 27
+      Height = 21
+      Width = 286
     end
     object cboWSLB: TcxComboBox
-      Left = 556
+      Left = 509
       Top = 400
       AutoSize = False
       Properties.DropDownListStyle = lsFixedList
@@ -361,9 +321,59 @@ object FrameFeedbackBase: TFrameFeedbackBase
         '3 '#24378#21046#25514#26045#20973#35777
         '6 '#36829#27861#22788#29702#36890#30693#20070)
       Style.HotTrack = False
-      TabOrder = 21
+      TabOrder = 22
       Height = 21
-      Width = 239
+      Width = 286
+    end
+    object edtSFZMHM: TcxTextEdit
+      Left = 675
+      Top = 118
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 12
+      Height = 21
+      Width = 120
+    end
+    object edtYXQX: TcxTextEdit
+      Left = 675
+      Top = 172
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 14
+      Height = 21
+      Width = 120
+    end
+    object edtFDJH: TcxTextEdit
+      Left = 675
+      Top = 145
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 13
+      Height = 21
+      Width = 120
+    end
+    object edtCCDJRQ: TcxTextEdit
+      Left = 509
+      Top = 172
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 7
+      Height = 21
+      Width = 100
+    end
+    object edtGCSJ: TcxTextEdit
+      Left = 509
+      Top = 199
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 8
+      Height = 21
+      Width = 100
     end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       AlignHorz = ahClient
@@ -412,11 +422,10 @@ object FrameFeedbackBase: TFrameFeedbackBase
       ButtonOptions.Buttons = <>
       LayoutDirection = ldHorizontal
       ShowBorder = False
-      Index = 2
+      Index = 1
     end
     object dxLayoutItem14: TdxLayoutItem
       Parent = dxLayoutGroup2
-      AlignHorz = ahClient
       CaptionOptions.Text = #21495#29260#21495#30721
       Control = edtHPHM
       ControlOptions.OriginalHeight = 21
@@ -444,7 +453,6 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object dxLayoutItem15: TdxLayoutItem
       Parent = dxLayoutGroup3
-      AlignHorz = ahClient
       CaptionOptions.Text = #21495#29260#31181#31867
       Control = edtHPZL
       ControlOptions.OriginalHeight = 21
@@ -454,7 +462,6 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxLayoutGroup2
-      AlignHorz = ahClient
       CaptionOptions.Text = #36710#36742#21697#29260
       Control = edtCLPP
       ControlOptions.OriginalHeight = 21
@@ -464,7 +471,6 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object dxLayoutItem9: TdxLayoutItem
       Parent = dxLayoutGroup3
-      AlignHorz = ahClient
       CaptionOptions.Text = #36710#36742#22411#21495
       Control = edtCLXH
       ControlOptions.OriginalHeight = 21
@@ -474,7 +480,6 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object dxLayoutItem10: TdxLayoutItem
       Parent = dxLayoutGroup2
-      AlignHorz = ahClient
       CaptionOptions.Text = #36710#36523#39068#33394
       Control = edtCSYS
       ControlOptions.OriginalHeight = 21
@@ -484,7 +489,6 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object dxLayoutItem19: TdxLayoutItem
       Parent = dxLayoutGroup3
-      AlignHorz = ahClient
       CaptionOptions.Text = #20351#29992#24615#36136
       Control = edtSYXZ
       ControlOptions.OriginalHeight = 21
@@ -494,63 +498,30 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object dxLayoutItem2: TdxLayoutItem
       Parent = dxLayoutGroup3
-      AlignHorz = ahClient
       CaptionOptions.Text = #25253#24223#26399#38480
       Control = edtBFQX
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 73
       ControlOptions.ShowBorder = False
-      Index = 4
+      Index = 6
     end
     object dxLayoutItem8: TdxLayoutItem
       Parent = dxLayoutGroup2
-      AlignHorz = ahClient
       CaptionOptions.Text = #36710#26550#21495#30721
       Control = edtCLSBDH
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 73
       ControlOptions.ShowBorder = False
-      Index = 5
+      Index = 4
     end
     object dxLayoutItem18: TdxLayoutItem
       Parent = dxLayoutGroup2
-      AlignHorz = ahClient
       CaptionOptions.Text = #25152#26377#20154
       Control = edtSYR
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 100
       ControlOptions.ShowBorder = False
       Index = 3
-    end
-    object dxLayoutItem4: TdxLayoutItem
-      Parent = dxLayoutGroup3
-      AlignHorz = ahClient
-      CaptionOptions.Text = #30331#35760#26085#26399
-      Control = edtCCDJRQ
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 73
-      ControlOptions.ShowBorder = False
-      Index = 3
-    end
-    object dxLayoutItem20: TdxLayoutItem
-      Parent = dxLayoutGroup2
-      AlignHorz = ahClient
-      CaptionOptions.Text = #26377#25928#26399#38480
-      Control = edtYXQX
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 69
-      ControlOptions.ShowBorder = False
-      Index = 4
-    end
-    object dxLayoutItem12: TdxLayoutItem
-      Parent = dxLayoutGroup3
-      AlignHorz = ahClient
-      CaptionOptions.Text = #21457#21160#26426#21495
-      Control = edtFDJH
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 69
-      ControlOptions.ShowBorder = False
-      Index = 5
     end
     object dxLayoutSplitterItem3: TdxLayoutSplitterItem
       Parent = dxLayoutGroup1
@@ -562,13 +533,12 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object dxLayoutItem22: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #22788#32622#37096#38376
       Control = edtCZDW
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 12
+      Index = 11
     end
     object dxLayoutItem6: TdxLayoutItem
       Parent = dxLayoutGroup7
@@ -587,7 +557,7 @@ object FrameFeedbackBase: TFrameFeedbackBase
       CaptionOptions.Text = 'New Group'
       ButtonOptions.Buttons = <>
       ShowBorder = False
-      Index = 15
+      Index = 14
     end
     object dxLayoutGroup7: TdxLayoutGroup
       Parent = dxLayoutGroup6
@@ -611,52 +581,38 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object dxLayoutItem23: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #22788#32622#20154#21592
       Control = edtCZMJ
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 13
+      Index = 12
     end
     object dxLayoutItem24: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #22788#32622#26102#38388
       Control = edtCZSJ
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 14
-    end
-    object dxLayoutItem13: TdxLayoutItem
-      Parent = lgRight
-      AlignHorz = ahClient
-      CaptionOptions.Text = #36807#36710#26102#38388
-      Control = edtGCSJ
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 73
-      ControlOptions.ShowBorder = False
-      Index = 1
+      Index = 13
     end
     object dxLayoutItem16: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #36807#36710#22320#28857
       Control = edtSBDDMC
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 100
+      ControlOptions.OriginalWidth = 120
       ControlOptions.ShowBorder = False
       Index = 0
     end
     object dxLayoutSeparatorItem1: TdxLayoutSeparatorItem
       Parent = lgRight
       CaptionOptions.Text = 'Separator'
-      Index = 3
+      Index = 2
     end
     object liYJBM: TdxLayoutItem
       Parent = lgYJ
-      AlignHorz = ahClient
       CaptionOptions.Text = #31227#20132#37096#38376
       Control = edtYJBM
       ControlOptions.OriginalHeight = 21
@@ -666,7 +622,6 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object liWSBH: TdxLayoutItem
       Parent = lgWS
-      AlignHorz = ahClient
       CaptionOptions.Text = #25991#20070#32534#21495
       Control = edtWSBH
       ControlOptions.OriginalHeight = 21
@@ -676,75 +631,68 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object liLJYY: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #26410#25318#25130#21040#21407#22240
       Control = cboLJYY
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 6
+      Index = 5
     end
     object liXYC: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #26159#21542#23244#30097#36710
       Control = cboXYC
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 7
+      Index = 6
     end
     object liCZJG: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #22788#32622#32467#26524
       Control = cboCZJG
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 9
+      Index = 8
     end
     object dxLayoutItem17: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #25318#25130#32467#26524
       Control = cboLJJG
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 5
+      Index = 4
     end
     object liWCHYY: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #38750#23244#30097#36710#21407#22240
       Control = cboWCHYY
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 8
+      Index = 7
     end
     object dxLayoutItem3: TdxLayoutItem
       Parent = lgRight
-      AlignHorz = ahClient
       CaptionOptions.Text = #24067#25511#31867#22411'        '
       Control = edtBKLX
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
-      Index = 4
+      Index = 3
     end
     object lgWS: TdxLayoutGroup
       Parent = lgRight
       CaptionOptions.Text = 'New Group'
       ButtonOptions.Buttons = <>
       ShowBorder = False
-      Index = 10
+      Index = 9
     end
     object liJYW: TdxLayoutItem
       Parent = lgWS
-      AlignHorz = ahClient
-      CaptionOptions.Text = #26657#39564#20301
+      CaptionOptions.Text = #28657#39564#20301
       Control = edtJYW
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
@@ -756,11 +704,10 @@ object FrameFeedbackBase: TFrameFeedbackBase
       CaptionOptions.Text = 'New Group'
       ButtonOptions.Buttons = <>
       ShowBorder = False
-      Index = 11
+      Index = 10
     end
     object liLXR: TdxLayoutItem
       Parent = lgYJ
-      AlignHorz = ahClient
       CaptionOptions.Text = #32852#31995#20154
       Control = edtLXR
       ControlOptions.OriginalHeight = 21
@@ -770,7 +717,6 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object liLXDH: TdxLayoutItem
       Parent = lgYJ
-      AlignHorz = ahClient
       CaptionOptions.Text = #32852#31995#30005#35805
       Control = edtLXDH
       ControlOptions.OriginalHeight = 21
@@ -788,13 +734,57 @@ object FrameFeedbackBase: TFrameFeedbackBase
     end
     object liWSLB: TdxLayoutItem
       Parent = lgWS
-      AlignHorz = ahClient
       CaptionOptions.Text = #25991#20070#31867#21035
       Control = cboWSLB
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 200
       ControlOptions.ShowBorder = False
       Index = 0
+    end
+    object dxLayoutItem1: TdxLayoutItem
+      Parent = dxLayoutGroup3
+      CaptionOptions.Text = #36523#20221#35777#21495
+      Control = edtSFZMHM
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 120
+      ControlOptions.ShowBorder = False
+      Index = 3
+    end
+    object dxLayoutItem20: TdxLayoutItem
+      Parent = dxLayoutGroup3
+      CaptionOptions.Text = #26377#25928#26399#38480
+      Control = edtYXQX
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 69
+      ControlOptions.ShowBorder = False
+      Index = 5
+    end
+    object dxLayoutItem12: TdxLayoutItem
+      Parent = dxLayoutGroup3
+      CaptionOptions.Text = #21457#21160#26426#21495
+      Control = edtFDJH
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 69
+      ControlOptions.ShowBorder = False
+      Index = 4
+    end
+    object dxLayoutItem4: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #30331#35760#26085#26399
+      Control = edtCCDJRQ
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 73
+      ControlOptions.ShowBorder = False
+      Index = 5
+    end
+    object dxLayoutItem13: TdxLayoutItem
+      Parent = dxLayoutGroup2
+      CaptionOptions.Text = #36807#36710#26102#38388
+      Control = edtGCSJ
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 73
+      ControlOptions.ShowBorder = False
+      Index = 6
     end
   end
 end

@@ -208,7 +208,8 @@ uses
   uZBBCManage in 'QWPZGL\uZBBCManage.pas' {FrameZBBCManage: TFrame},
   uZBConfig in 'QWPZGL\uZBConfig.pas' {FrameZBConfig: TFrame},
   uFrameDeptTreeList in 'BaseFrame\uFrameDeptTreeList.pas' {FrameDeptTreeList: TFrame},
-  uZhiFaQuZheng in 'ZHXXCX\uZhiFaQuZheng.pas' {ZhiFaQuZheng: TFrame};
+  uZhiFaQuZheng in 'ZHXXCX\uZhiFaQuZheng.pas' {ZhiFaQuZheng: TFrame},
+  uFrameWeiFaLuKouTongji in 'SJTJFX\uFrameWeiFaLuKouTongji.pas' {FrameWeiFaLuKouTongji: TFrame};
 
 {$R *.res}
 

@@ -396,6 +396,7 @@ type
     zt: string; // 状态
     hdzzl: string; // 核定载重量
     hdzk: string; // 核定载客数
+    hxnbcd,hxnbkd,hxnbgd: string; // 货箱内部长、宽、高
   end;
 
   TJSRYQZ = record
@@ -728,9 +729,8 @@ type
       JCCLLX: string;
     SFD, MDD, GPS, AQSB, CLLTHW, WFYY, JAQD, PLJS, FFGZ, ZTFGBS: string;
     AZFHZZ, XGJSBZ, AZDSJ, AZDLX, SFWZJS, SFYFJSY, QDYSTXZ, JCJG,
-      JCQKMS: string;
-    CZ, CY, JCSJ, JCMJ, CJR, CJJG, CJSJ, gxsj, ZJSZH, FJSZH, ZJSLXDH, FJSLXDH,
-      Message: string;
+      JCQKMS, YJBM: string;
+    CZ, CY, JCSJ, JCMJ, CJR, CJJG, CJSJ, gxsj, ZJSZH, FJSZH, ZJSLXDH, FJSLXDH: string;
     HDZKL, hdzzl, ZKS, SJZZL, flag: Integer;
   end;
 

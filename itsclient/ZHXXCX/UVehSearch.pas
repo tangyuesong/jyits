@@ -72,7 +72,6 @@ type
     edtfdjh: TcxTextEdit;
     dxLayoutItem18: TdxLayoutItem;
     dxlytcrtdgrp1: TdxLayoutAutoCreatedGroup;
-    dxlytcrtdgrp2: TdxLayoutAutoCreatedGroup;
     dxlytcrtdgrp3: TdxLayoutAutoCreatedGroup;
     edtzt: TcxTextEdit;
     dxLayoutItem19: TdxLayoutItem;
@@ -88,8 +87,6 @@ type
     dxlytcrtdgrp6: TdxLayoutAutoCreatedGroup;
     edtqzbfqx: TcxTextEdit;
     dxLayoutItem24: TdxLayoutItem;
-    dxlytcrtdgrp8: TdxLayoutAutoCreatedGroup;
-    dxlytcrtdgrp7: TdxLayoutAutoCreatedGroup;
     dxlytcrtdgrp4: TdxLayoutAutoCreatedGroup;
     dxLayoutGroup5: TdxLayoutGroup;
     cxButton1: TcxButton;
@@ -99,6 +96,11 @@ type
     cxGroupBox1: TcxGroupBox;
     cxImage1: TcxImage;
     cxButton3: TcxButton;
+    dxLayoutItem26: TdxLayoutItem;
+    edtHXNB: TcxTextEdit;
+    dxLayoutItem27: TdxLayoutItem;
+    edtHZ: TcxTextEdit;
+    dxLayoutAutoCreatedGroup1: TdxLayoutAutoCreatedGroup;
     procedure btnSearchClick(Sender: TObject);
     procedure cxButton2Click(Sender: TObject);
     procedure cxButton1Click(Sender: TObject);
@@ -225,7 +227,7 @@ begin
     edthpzl.Text := TLZDictionary.gDicMain['HPZL'][Value.hpzl];
   edtjdcsyr.Text := Value.syr;
   edtsfzhm.Text := Value.sfzmhm;
-  edtzt.Text := Value.zt;
+  edtzt.Text :=  TLZDictionary.DM2MC('CLZT', Value.zt);
   edtsjhm.Text := Value.sjhm;
   edtclpp.Text := Value.clpp1;
   edtclxh.Text := Value.clxh;
@@ -234,13 +236,18 @@ begin
     edtcllx.Text := TLZDictionary.gDicMain['CLLX'][Value.cllx];
   if TLZDictionary.gDicMain['SYXZ'].ContainsKey(Value.syxz) then
     edtsyxz.Text := TLZDictionary.gDicMain['SYXZ'][Value.syxz];
-  edtccdjrq.Text := Value.ccdjrq;
+  edtccdjrq.Text := Value.ccdjrq.SubString(0, 10);
   edtcjh.Text := Value.clsbdh;
+  edthz.Text := value.hdzzl + value.hdzk;
+  if value.hxnbcd <> '' then
+    edthxnb.Text := value.hxnbcd + '*' + value.hxnbkd + '*' + value.hxnbgd + '(³¤*¿í*¸ß)'
+  else
+    edthxnb.Text := '';
 
   edtfdjh.Text := Value.fdjh;
   edtczdz.Text := Value.zsxxdz;
-  edtyxqx.Text := Value.yxqz;
-  edtqzbfqx.Text := Value.qzbfqz;
+  edtyxqx.Text := Value.yxqz.SubString(0, 10);
+  edtqzbfqx.Text := Value.qzbfqz.SubString(0, 10);
 end;
 
 end.

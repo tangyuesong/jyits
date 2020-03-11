@@ -30,7 +30,7 @@ uses
   cxGridLevel, cxGridCustomView, cxGridCustomTableView, cxGridTableView,
   cxGridDBTableView, cxGrid, dxLayoutControl, dxLayoutcxEditAdapters,
   dxLayoutControlAdapters, cxContainer, Vcl.ComCtrls, dxCore, cxDateUtils,
-  Vcl.Menus,
+  Vcl.Menus, uColumnGenerator, ULookUpDataSource,
   Vcl.StdCtrls, cxButtons, cxTextEdit, cxDropDownEdit, cxMaskEdit, cxCalendar,
   cxEditRepositoryItems, sDialogs, uFrameSignBase, uEntity,
   uFrameZFZ, System.Actions, Vcl.ActnList, cxLabel;
@@ -89,29 +89,18 @@ begin
 end;
 
 procedure TFrameZFZList.AfterConstruction;
-var
-  json: string;
-  list: TList<TFwzInfo>;
-  item: TFwzInfo;
 begin
   inherited;
-  json := TRequestItf.DbQuery('GetFwzInfo', 'CJR='+gUser.YHXM);
-  list := TJsonUtils.JsonToRecordList<TFwzInfo>(json);
-  cboFWZ.Properties.Items.Clear;
-  for item in list do
-  begin
-    cboFWZ.Properties.Items.Add(item.FWZMC);
-  end;
-  list.Free;
-
   dtBegin.Date := now - 1;
-  dtEnd.Date := now + 1;
-  GridColumns := 'FWZMC,HPZL,HPHM,GCSJ,JCCLLX,SFD,MDD,Message,操作';
-
-  GridView.Columns[8].RepositoryItem := cxdtrpstry1ButtonItem1;
+  dtEnd.Date := now;
+  TLZDictionary.BindComboboxDEPT(self.cboFWZ, true);
+  GridColumns := 'DWDM,HPHM,HPZL,JCSJ,JCCLLX,SFD,MDD,操作';
+  GridView.Columns[7].RepositoryItem := cxdtrpstry1ButtonItem1;
+  GridView.Columns[0].Caption := '部门';
   cxdtrpstry1ButtonItem1.Properties.Buttons.Items[0].Visible := false;
-  cxdtrpstry1ButtonItem1.Properties.Buttons.Items[1].Hint := '登记';
-  cxdtrpstry1ButtonItem1.Properties.Buttons.Items[2].Visible := false;
+  cxdtrpstry1ButtonItem1.Properties.Buttons.Items[1].Visible := false;
+  cxdtrpstry1ButtonItem1.Properties.Buttons.Items[0].Hint := '查看';
+  cxdtrpstry1ButtonItem1.Properties.Buttons.Items[2].Visible := true;
 end;
 
 procedure TFrameZFZList.LoadData;
@@ -128,7 +117,7 @@ begin
   Param := Format('yhbh=%s&begin_GCSJ=%s&end_GCSJ=%s',
     [gUser.YHBH, FormatDateTime('yyyy/mm/dd hh:mm:ss', beginTime),
     FormatDateTime('yyyy/mm/dd hh:mm:ss', dtEnd.Date)]);
-  Param := Param + '&FWZMC=' + cboFWZ.Text;
+  Param := Param + '&dwdm=' + Copy(cboFWZ.Text, 0, 12);
   pageSize := StrToIntDef(cbbPagesize.Text, 30);
   pageIndex := StrToIntDef(edtPageIndex.Text, 0);
   Param := Param + Format('&rows=%s&start=%s', [pageSize.ToString, pageIndex.ToString]);

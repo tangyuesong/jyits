@@ -1,14 +1,12 @@
 inherited FrameDevSearch: TFrameDevSearch
-  Width = 719
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 719
     inherited cxGrid1: TcxGrid
       Top = 290
-      Width = 676
+      Width = 527
       Height = 20
       TabOrder = 23
       ExplicitTop = 290
-      ExplicitWidth = 676
+      ExplicitWidth = 527
       ExplicitHeight = 20
     end
     object edtsfzhm: TcxTextEdit [1]
@@ -1637,27 +1635,27 @@ inherited FrameDevSearch: TFrameDevSearch
       Style.HotTrack = False
       TabOrder = 4
       Height = 21
-      Width = 100
+      Width = 20
     end
     object edtgj: TcxTextEdit [6]
-      Left = 433
+      Left = 323
       Top = 68
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 6
       Height = 21
-      Width = 59
+      Width = 20
     end
     object edtxb: TcxTextEdit [7]
-      Left = 346
+      Left = 266
       Top = 68
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 5
       Height = 21
-      Width = 50
+      Width = 20
     end
     object edtlxdz: TcxTextEdit [8]
       Left = 209
@@ -1667,7 +1665,7 @@ inherited FrameDevSearch: TFrameDevSearch
       Style.HotTrack = False
       TabOrder = 8
       Height = 21
-      Width = 465
+      Width = 316
     end
     object edtdjdz: TcxTextEdit [9]
       Left = 209
@@ -1677,17 +1675,17 @@ inherited FrameDevSearch: TFrameDevSearch
       Style.HotTrack = False
       TabOrder = 9
       Height = 21
-      Width = 465
+      Width = 316
     end
     object edtsjhm: TcxTextEdit [10]
-      Left = 393
+      Left = 319
       Top = 152
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 11
       Height = 21
-      Width = 123
+      Width = 48
     end
     object edtlxdh: TcxTextEdit [11]
       Left = 209
@@ -1697,7 +1695,7 @@ inherited FrameDevSearch: TFrameDevSearch
       Style.HotTrack = False
       TabOrder = 10
       Height = 21
-      Width = 123
+      Width = 49
     end
     object edtqssj: TcxTextEdit [12]
       Left = 209
@@ -1707,20 +1705,20 @@ inherited FrameDevSearch: TFrameDevSearch
       Style.HotTrack = False
       TabOrder = 13
       Height = 21
-      Width = 231
+      Width = 148
     end
     object edtjssj: TcxTextEdit [13]
-      Left = 465
+      Left = 382
       Top = 180
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 14
       Height = 21
-      Width = 209
+      Width = 143
     end
     object edtzjcx: TcxTextEdit [14]
-      Left = 553
+      Left = 404
       Top = 68
       AutoSize = False
       Properties.ReadOnly = True
@@ -1730,7 +1728,7 @@ inherited FrameDevSearch: TFrameDevSearch
       Width = 121
     end
     object edtzt: TcxTextEdit [15]
-      Left = 553
+      Left = 404
       Top = 152
       AutoSize = False
       Properties.ReadOnly = True
@@ -1740,7 +1738,7 @@ inherited FrameDevSearch: TFrameDevSearch
       Width = 121
     end
     object cxButton2: TcxButton [16]
-      Left = 633
+      Left = 484
       Top = 258
       Width = 56
       Height = 25
@@ -1751,7 +1749,7 @@ inherited FrameDevSearch: TFrameDevSearch
       OnClick = cxButton2Click
     end
     object cxButton3: TcxButton [17]
-      Left = 568
+      Left = 419
       Top = 258
       Width = 58
       Height = 25

@@ -479,6 +479,7 @@ var
   rField: TRttiField;
   f: TField;
   v: TValue;
+  bExists: boolean;
 begin
   if (ATable = nil) or (not ATable.Active) then
     exit;
@@ -505,6 +506,31 @@ begin
       v := TValue.From<string>(f.AsString);
     end;
     rField.SetValue(@Result, v);
+  end;
+  for rField in rrt.GetFields do
+  begin
+    bExists := false;
+    for f in ATable.Fields do
+    begin
+      if (not f.IsNull) and (f.AsString <> '') and (f.FieldName.ToUpper = rField.Name.ToUpper) then
+        bExists := true;
+    end;
+    if not bExists then
+    begin
+      case rField.FieldType.TypeKind of
+        tkInteger:
+          v := TValue.From<integer>(0);
+        tkInt64:
+          v := TValue.From<Int64>(0);
+        tkFloat:
+          v := TValue.From<double>(0);
+        tkEnumeration:
+          v := TValue.From<Boolean>(false);
+        else
+          v := TValue.From<string>('');
+      end;
+      rField.SetValue(@Result, v);
+    end;
   end;
 end;
 

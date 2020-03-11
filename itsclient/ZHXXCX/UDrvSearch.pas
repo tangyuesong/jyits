@@ -31,7 +31,7 @@ uses
   cxContainer, Vcl.Menus, Vcl.StdCtrls, cxButtons, cxTextEdit, cxImage, uGlobal,
   uEntity, uRequestItf, uJsonUtils, uCommon, System.Generics.Collections,
   cxEditRepositoryItems, sDialogs, System.Actions, Vcl.ActnList, acPNG,
-  cxMaskEdit, cxDropDownEdit, cxGroupBox;
+  cxMaskEdit, cxDropDownEdit, cxGroupBox, uDictionary;
 
 type
   TFrameDevSearch = class(TdxGridFrame)
@@ -218,7 +218,7 @@ begin
   edtdjdz.Text := Value.djzsxxdz;
   edtlxdh.Text := Value.lxdh;
   edtsjhm.Text := Value.sjhm;
-  edtzt.Text := Value.zt;
+  edtzt.Text :=  TLZDictionary.DM2MC('JSRZT', Value.zt);
   edtqssj.Text := Value.yxqs;
   edtjssj.Text := Value.yxqz;
 end;

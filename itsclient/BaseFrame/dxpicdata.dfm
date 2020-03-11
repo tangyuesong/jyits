@@ -255,13 +255,11 @@ inherited dxFramePicData: TdxFramePicData
       object cxTabSheet2: TcxTabSheet
         Caption = 'cxTabSheet2'
         ImageIndex = 1
-        ExplicitWidth = 208
-        ExplicitHeight = 652
         object Chromium1: TChromium
           Left = 0
           Top = 0
-          Width = 208
-          Height = 652
+          Width = 20
+          Height = 408
           Align = alClient
           TabOrder = 0
           Options.AcceleratedPaintingDisabled = False

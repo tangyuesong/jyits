@@ -32,7 +32,7 @@ uses
   UdxGridQDZ, uFrameNtzlist, uFrameGCPD, uFrameFirstEnterManager, uVideoSearch,
   uFrameTjWfcl, UFrameSDCLList, uFrameVioShaiXuan, uZhiFaQuZheng, uFrameLogView,
   uTaskConfig, uZBConfig, uYcydConfig, uFrameZHPTDeviceRole, uZHPTFunctionRole,
-  uFrameLogTotal;
+  uFrameLogTotal,uFrameWeiFaLuKouTongji;
 
 class procedure TRegisterFrame.RegisterFrames();
 begin
@@ -53,7 +53,7 @@ begin
     TFrameZBGL, TFrameNtzlist, TFrameGCPD, TFrameWFTJ, TFrameVideoSearch,
     TFrameLogView, TFrameTjWfcl, TFrameSDCLList, TFrameVioShaiXuan,
     TFrameTaskConfig, TZhiFaQuZheng, TFrameZBConfig, TFrameYcydConfig,
-    TFrameZHPTDeviceRole, TZHPTFunctionRole, TFrameLogTotal]);
+    TFrameZHPTDeviceRole, TZHPTFunctionRole, TFrameLogTotal,TFrameWeiFaLuKouTongji]);
 end;
 
 end.

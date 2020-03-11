@@ -170,7 +170,7 @@ procedure TdxFramePicData.AfterConstruction;
 begin
   inherited;
   TColumnGenerator.Instance.GenerateField('HPHM,KDBH,GCSJ', self.GridView);
-  TColumnGenerator.LookupColumn(GridView.Columns[1], TLookUpDataSource.DSDev);
+  TColumnGenerator.LookupColumn(GridView.Columns[1], TLookUpDataSource.DataSource['KDBH']);
   self.cxPageControl1.ActivePageIndex := 0;
   FBeginTime := now - 30;
   FEndTime := now;

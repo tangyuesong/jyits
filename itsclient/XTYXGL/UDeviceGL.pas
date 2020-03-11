@@ -36,7 +36,7 @@ uses
   cxGridCustomLayoutView, uJsonUtils, uCommon, uEntity, uRequestItf, uGlobal,
   cxCheckBox, cxGridCardView, cxGridDBCardView, cxDBEditRepository, Udictionary,
   ULookUpDataSource, uColumnGenerator, System.Actions, Vcl.ActnList, sDialogs,
-  Vcl.ExtCtrls;
+  Vcl.ExtCtrls, cxLabel;
 
 type
   TFDeviceList = class(TToolGridFrame)
@@ -171,9 +171,9 @@ procedure TFDeviceList.AfterConstruction;
 begin
   inherited;
   TColumnGenerator.Instance.LookupRow(cxgrdbcrdvwrwCardView1Row3,
-    TLookUpDataSource.DSCJJG);
+    TLookUpDataSource.DataSource['CJJG']);
   TColumnGenerator.Instance.LookupRow(cxgrdbcrdvwrwCardView1Row4,
-    TLookUpDataSource.DSSBLX);
+    TLookUpDataSource.DataSource['SBLX']);
   NoLookupColumns := 'SBBH';
   GridColumns := 'SBBH,SBDDMC,SBJD,SBWD,SBLX,CJJG,²Ù×÷';
   GridView.Columns[6].RepositoryItem := cxdtrpstry1ButtonItem1;

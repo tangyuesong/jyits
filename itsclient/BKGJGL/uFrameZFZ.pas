@@ -48,8 +48,6 @@ type
     dxLayoutItem14: TdxLayoutItem;
     dxLayoutItem29: TdxLayoutItem;
     edtCLLX: TcxTextEdit;
-    dxLayoutItem1: TdxLayoutItem;
-    cboJC: TcxComboBox;
     dxLayoutItem2: TdxLayoutItem;
     edthphm: TcxTextEdit;
     dxLayoutItem3: TdxLayoutItem;
@@ -71,22 +69,22 @@ type
     dxLayoutItem10: TdxLayoutItem;
     cbWFWCL: TcxCheckBox;
     dxLayoutItem11: TdxLayoutItem;
-    edtSFD: TcxComboBox;
+    edtSFD: TcxTextEdit;
     dxLayoutItem12: TdxLayoutItem;
     lgBaseInfo: TdxLayoutGroup;
     dxLayoutGroup9: TdxLayoutGroup;
-    edtMDD: TcxComboBox;
+    edtMDD: TcxTextEdit;
     dxLayoutItem16: TdxLayoutItem;
     dxLayoutItem17: TdxLayoutItem;
-    edtZFZMC: TcxComboBox;
+    edtZFZMC: TcxTextEdit;
     dxLayoutItem18: TdxLayoutItem;
     cbSFYFJ: TcxCheckBox;
     dxLayoutItem19: TdxLayoutItem;
-    cboGPS: TcxComboBox;
+    cboGPS: TcxTextEdit;
     dxLayoutItem20: TdxLayoutItem;
-    cboJCR: TcxComboBox;
+    cboJCR: TcxTextEdit;
     dxLayoutItem22: TdxLayoutItem;
-    edtJCSJ: TcxDateEdit;
+    edtJCSJ: TcxTextEdit;
     dxLayoutGroup11: TdxLayoutGroup;
     dxLayoutItem23: TdxLayoutItem;
     edtMS: TcxMemo;
@@ -106,7 +104,7 @@ type
     liDriver13: TdxLayoutItem;
     liDriver12: TdxLayoutItem;
     liDriver8: TdxLayoutItem;
-    txtDriverJSZH: TcxComboBox;
+    txtDriverJSZH: TcxTextEdit;
     txtDriverXM: TcxTextEdit;
     txtDriverLXDH: TcxTextEdit;
     txtDriverFZJG: TcxTextEdit;
@@ -134,7 +132,7 @@ type
     liFJS13: TdxLayoutItem;
     liFJS12: TdxLayoutItem;
     liFJS8: TdxLayoutItem;
-    txtFJSJSZH: TcxComboBox;
+    txtFJSJSZH: TcxTextEdit;
     txtFJSXM: TcxTextEdit;
     txtFJSLXDH: TcxTextEdit;
     txtFJSFZJG: TcxTextEdit;
@@ -152,10 +150,6 @@ type
     lgFJS: TdxLayoutGroup;
     lgDriver: TdxLayoutGroup;
     dxLayoutSeparatorItem4: TdxLayoutSeparatorItem;
-    cxButton1: TcxButton;
-    dxLayoutItem15: TdxLayoutItem;
-    dxLayoutItem24: TdxLayoutItem;
-    cxButton2: TcxButton;
     liHZ: TdxLayoutItem;
     liSZ: TdxLayoutItem;
     edtHZ: TcxTextEdit;
@@ -164,39 +158,24 @@ type
     dxLayoutGroup12: TdxLayoutGroup;
     dxLayoutGroup13: TdxLayoutGroup;
     dxLayoutGroup14: TdxLayoutGroup;
-    dxLayoutItem25: TdxLayoutItem;
-    clbJCNR: TcxCheckListBox;
     liBack: TdxLayoutItem;
     cxButton3: TcxButton;
     liMessage: TdxLayoutItem;
-    procedure edthphmKeyPress(Sender: TObject; var Key: Char);
-    procedure cboHPZLPropertiesCloseUp(Sender: TObject);
-    procedure cxButton1Click(Sender: TObject);
-    procedure txtDriverJSZHKeyPress(Sender: TObject; var Key: Char);
-    procedure txtFJSJSZHKeyPress(Sender: TObject; var Key: Char);
-    procedure cboJCCLLXPropertiesChange(Sender: TObject);
-    procedure cbSFYFJPropertiesChange(Sender: TObject);
-    procedure txtDriverJSZHPropertiesCloseUp(Sender: TObject);
-    procedure txtFJSJSZHPropertiesCloseUp(Sender: TObject);
-    procedure cxButton2Click(Sender: TObject);
+    dxLayoutItem1: TdxLayoutItem;
+    edtYJBM: TcxTextEdit;
     procedure cxButton3Click(Sender: TObject);
-    procedure edtZFZMCPropertiesChange(Sender: TObject);
   private
     FItem: TVehCheck;
     FOnBack: TBack;
     procedure ShowItem(item: TVehCheck);
-    function CheckInput: boolean;
     function GetColor(hpzl: string): TColor;
     procedure LoadVehInfo;
     procedure LoadDrvInfo;
     procedure LoadFJInfo;
-    function Submit: boolean;
     procedure ChangeCheckBoxColor(cb: TcxCheckBox);
     procedure SetCboValue(cbo: TcxComboBox; subValue: string);
-    procedure BindHistory;
-    procedure ClearInputs;
-    function GetFWZInfo: TFwzInfo;
     procedure SetVehCheckItem(const Value: TVehCheck);
+    function GetJCNR(item: TVehCheck): string;
   public
     procedure BeforeDestruction; override;
     procedure AfterConstruction; override;
@@ -211,24 +190,9 @@ uses
 {$R *.dfm}
 
 procedure TFrameZFZ.AfterConstruction;
-var
-  json: string;
-  list: TList<TFwzInfo>;
-  item: TFwzInfo;
 begin
   inherited;
-  TLZDictionary.BindCombobox(cboJC, TLZDictionary.gDicMain['JC'], True);
   TLZDictionary.BindCombobox(cboHPZL, TLZDictionary.gDicMain['HPZL'], True);
-  TLZDictionary.BindCombobox(cboJCCLLX, TLZDictionary.gDicMain['JCCLLX'], True);
-
-  json := TRequestItf.DbQuery('GetFwzInfo', 'CJR=' + gUser.YHXM);
-  list := TJsonUtils.JsonToRecordList<TFwzInfo>(json);
-  edtZFZMC.Properties.Items.Clear;
-  for item in list do
-  begin
-    edtZFZMC.Properties.Items.AddPair(item.FWZMC, item.FWZBH);
-  end;
-  list.Free;
 end;
 
 procedure TFrameZFZ.BeforeDestruction;
@@ -236,359 +200,32 @@ begin
   inherited;
 end;
 
-procedure TFrameZFZ.cboHPZLPropertiesCloseUp(Sender: TObject);
-begin
-  LoadVehInfo;
-  BindHistory;
-end;
-
-procedure TFrameZFZ.cboJCCLLXPropertiesChange(Sender: TObject);
+function TFrameZFZ.GetJCNR(item: TVehCheck): string;
 var
-  jccllx: string;
+  s: string;
 begin
-  clbJCNR.Items.Clear;
-  clbJCNR.Items.Add.Text := '疲劳驾驶';
-  clbJCNR.Items.Add.Text := '安全设备不合格';
-  clbJCNR.Items.Add.Text := '轮胎花纹不合格';
-  clbJCNR.Items.Add.Text := '未系安全带';
-  liHZ.Enabled := false;
-  liSZ.Enabled := false;
-  jccllx := Copy(cboJCCLLX.Text, 1, 2);
-  if (jccllx = '01') or (jccllx = '03') then
-  begin
-    clbJCNR.Items.Add.Text := '违法营运';
-    clbJCNR.Items.Add.Text := '车辆超员';
-    liHZ.Enabled := True;
-    liSZ.Enabled := True;
-    liHZ.CaptionOptions.Text := '核载(人)';
-    liSZ.CaptionOptions.Text := '实载(人)';
-  end
-  else if jccllx = '02' then
-  begin
-    clbJCNR.Items.Add.Text := '未悬挂或喷涂警示标志';
-    clbJCNR.Items.Add.Text := '未按指定时间行驶';
-    clbJCNR.Items.Add.Text := '未按指定路线行驶';
-    clbJCNR.Items.Add.Text := '未取得道路运输通行证';
-  end
-  else if jccllx = '04' then
-  begin
-    clbJCNR.Items.Add.Text := '未按规定粘贴反光标识';
-    clbJCNR.Items.Add.Text := '未安装侧后防护装置';
-    clbJCNR.Items.Add.Text := '非法改装';
-    clbJCNR.Items.Add.Text := '超载';
-    liHZ.Enabled := True;
-    liSZ.Enabled := True;
-    liHZ.CaptionOptions.Text := '核载(吨)';
-    liSZ.CaptionOptions.Text := '实载(吨)';
-  end;
-end;
-
-procedure TFrameZFZ.cbSFYFJPropertiesChange(Sender: TObject);
-begin
-  lgFJS.Visible := cbSFYFJ.Checked;
-end;
-
-function TFrameZFZ.CheckInput: boolean;
-begin
-  result := false;
-  if edtZFZMC.SelectedItem = -1 then
-  begin
-    Application.MessageBox('未选择服务站', '提示');
-    exit;
-  end;
-  if self.edtSFD.Text = '' then
-  begin
-    Application.MessageBox('请输入始发地', '提示');
-    self.edtSFD.SetFocus;
-    exit;
-  end;
-  if self.edtMDD.Text = '' then
-  begin
-    Application.MessageBox('请输入目的地', '提示');
-    self.edtMDD.SetFocus;
-    exit;
-  end;
-  if self.txtDriverJSZH.Text = '' then
-  begin
-    Application.MessageBox('请输入主驾驶证号', '提示');
-    self.txtDriverJSZH.SetFocus;
-    exit;
-  end;
-  if self.cbSFYFJ.Checked and (self.txtFJSJSZH.Text = '') then
-  begin
-    Application.MessageBox('请输入副驾驶证号', '提示');
-    self.txtFJSJSZH.SetFocus;
-    exit;
-  end;
-  result := True;
-end;
-
-function TFrameZFZ.Submit: boolean;
-var
-  params, r, jccllx: string;
-  item: TcxCheckListBoxItem;
-  i: Integer;
-begin
-  jccllx := Copy(cboJCCLLX.Text, 1, 2);
-  if FItem.FWZBH = '' then
-  begin
-    FItem.FWZBH := edtZFZMC.Properties.Items.ValueFromIndex
-      [edtZFZMC.SelectedItem];
-    FItem.FWZMC := edtZFZMC.Properties.Items.Names[edtZFZMC.SelectedItem];
-  end;
-  params := 'fwzbh=' + FItem.FWZBH;
-  params := params + '&fwzmc=' + FItem.FWZMC;
-  params := params + '&flag=1';
-  if FItem.systemid <> '' then
-    params := params + '&systemid=' + FItem.systemid;
-  params := params + '&clzt=1';
-  params := params + '&hpzl=' + Copy(cboHPZL.Text, 1, 2);
-  params := params + '&hphm=' + TLZDictionary.StrtoDicInfo(cboJC.Text).mc +
-    edthphm.Text;
-  params := params + '&jccllx=' + jccllx;
-  params := params + '&sfd=' + edtSFD.Text;
-  params := params + '&mdd=' + edtMDD.Text;
-  if (jccllx = '01') or (jccllx = '03') then
-    params := params + '&zks=' + edtSZ.Text;
-  if jccllx = '04' then
-    params := params + '&sjzzl=' + edtSZ.Text;
-  if cboGPS.Text = '正常' then
-    params := params + '&gps=1'
-  else if cboGPS.Text = '未开启' then // TODO: 与文档不符
-    params := params + '&gps=0'
-  else if cboGPS.Text = '未配备' then
-    params := params + '&gps=9';
-  for i := 0 to clbJCNR.Items.Count - 1 do
-  begin
-    item := clbJCNR.Items[i];
-    if item.Text = '疲劳驾驶' then
-    begin
-      if item.Checked then
-        params := params + '&pljs=1'
-      else
-        params := params + '&pljs=0';
-    end
-    else if item.Text = '安全设备不合格' then
-    begin
-      if item.Checked then
-        params := params + '&aqsb=0'
-      else
-        params := params + '&aqsb=1';
-    end
-    else if item.Text = '轮胎花纹不合格' then
-    begin
-      if item.Checked then
-        params := params + '&cllthw=0'
-      else
-        params := params + '&cllthw=1';
-    end
-    else if item.Text = '未系安全带' then
-    begin
-      if item.Checked then
-        params := params + '&jaqd=0'
-      else
-        params := params + '&jaqd=1';
-    end
-    else if item.Text = '违法营运' then
-    begin
-      if item.Checked then
-        params := params + '&wfyy=1'
-      else
-        params := params + '&wfyy=0';
-    end
-    else if item.Text = '车辆超员' then
-    begin
-      if item.Checked then
-        params := params + '&cy=1'
-      else
-        params := params + '&cy=0';
-    end
-    else if item.Text = '未悬挂或喷涂警示标志' then
-    begin
-      if item.Checked then
-        params := params + '&XGJSBZ=0'
-      else
-        params := params + '&XGJSBZ=1';
-    end
-    else if item.Text = '未按指定时间行驶' then
-    begin
-      if item.Checked then
-        params := params + '&AZDSJ=0'
-      else
-        params := params + '&AZDSJ=1';
-    end
-    else if item.Text = '未按指定路线行驶' then
-    begin
-      if item.Checked then
-        params := params + '&AZDLX=0'
-      else
-        params := params + '&AZDLX=1';
-    end
-    else if item.Text = '未取得道路运输通行证' then
-    begin
-      if item.Checked then
-        params := params + '&QDYSTXZ=0'
-      else
-        params := params + '&QDYSTXZ=1';
-    end
-    else if item.Text = '未按规定粘贴反光标识' then
-    begin
-      if item.Checked then
-        params := params + '&ZTFGBS=0'
-      else
-        params := params + '&ZTFGBS=1';
-    end
-    else if item.Text = '未安装侧后防护装置' then
-    begin
-      if item.Checked then
-        params := params + '&AZFHZZ=0'
-      else
-        params := params + '&AZFHZZ=1';
-    end
-    else if item.Text = '非法改装' then
-    begin
-      if item.Checked then
-        params := params + '&FFGZ=1'
-      else
-        params := params + '&FFGZ=0';
-    end
-    else if item.Text = '超载' then
-    begin
-      if item.Checked then
-        params := params + '&CZ=1'
-      else
-        params := params + '&CZ=0';
-    end;
-  end;
-  // params := params + '&sfwzjs=' + FItem.sfwzjs;      // 无证驾驶
-  if cbSFYFJ.Checked then
-    params := params + '&sfyfjsy=1';
-  if self.cbYQWNJ.Checked then
-    params := params + '&sfyqwjy=1';
-  if self.cbYQWBF.Checked then
-    params := params + '&sfyqwbf=1';
-  if self.cbWFWCL.Checked then
-    params := params + '&sfwfwcl=1';
-  params := params + '&jcjg=00'; // 重大按情
-  if edtMS.Text <> '' then
-    params := params + '&jcqkms=' + edtMS.Text;
-  params := params + '&jcsj=' + FormatDateTime('yyyy-mm-dd hh:mm:ss',
-    edtJCSJ.Date);
-  params := params + '&gcsj=' + FormatDateTime('yyyy-mm-dd hh:mm:ss',
-    edtJCSJ.Date);
-  params := params + '&jcmj=' + cboJCR.Text;
-  params := params + '&zjszh=' + self.txtDriverJSZH.Text;
-  if self.txtDriverLXDH.Text = '' then
-    self.txtDriverLXDH.Text := '无';
-  params := params + '&zjslxdh=' + self.txtDriverLXDH.Text;
-  { params := params + '&zlxdh=' + self.txtDriverLXDH.Text;
-    if self.cbDriverCF.Checked then
-    params := params + '&zjssfcf=1';
-    if self.cbDriverYQWSY.Checked then
-    params := params + '&zjssfyqwsy=1';
-    if self.cbDriverYQWHZ.Checked then
-    params := params + '&zjssfyqwhz=1'; }
-  // params := params + '&zjszjbf=';     // 主驾驶准驾不符
-  if self.lgFJS.Visible then
-  begin
-    params := params + '&fjszh=' + self.txtFJSJSZH.Text;
-    if self.txtFJSLXDH.Text = '' then
-      self.txtFJSLXDH.Text := '无';
-    params := params + '&fjslxdh=' + self.txtFJSLXDH.Text;
-
-    { params := params + '&flxdh=' + self.txtFJSLXDH.Text;
-      if self.cbFJSCF.Checked then
-      params := params + '&fjssfcf=1';
-      if self.cbFJSYQWSY.Checked then
-      params := params + '&fjssfyqwsy=1';
-      if self.cbFJSYQWHZ.Checked then
-      params := params + '&fjssfyqwhz=1'; }
-  end;
-  if FItem.systemid = '' then
-    r := TRequestItf.DbQuery('vehcheckNew', params)
-  else
-    r := TRequestItf.DbQuery('vehcheckUpdate', params);
-  // result := r.Contains('"code":"1"');
-  result := r = '1';
-  if not result then
-  begin
-    r := r.Substring(r.IndexOf('"message":') + 11);
-    r := r.Substring(0, r.IndexOf('"'));
-    Application.MessageBox(PWideChar('保存失败！' + r), '提示');
-  end
-  else
-  begin
-    Application.MessageBox(PWideChar('保存成功！' + r), '提示');
-    cxButton3Click(nil);
-  end;
-end;
-
-procedure TFrameZFZ.ClearInputs;
-var
-  item: TVehCheck;
-begin
-  item.HDZKL := 0;
-  item.HDZZL := 0;
-  item.ZKS := 0;
-  item.SJZZL := 0;
-  ShowItem(item);
-end;
-
-procedure TFrameZFZ.cxButton1Click(Sender: TObject);
-begin
-  if CheckInput then
-  begin
-    Submit;
-  end;
-end;
-
-procedure TFrameZFZ.cxButton2Click(Sender: TObject);
-begin
-  ClearInputs;
+  s := '';
+  if item.pljs = '1' then s := s + '疲劳驾驶 ';
+  if item.AQSB = '0' then s := s + '安全设备不合格 ';
+  if item.CLLTHW = '0' then s := s + '轮胎花纹不合格 ';
+  if item.jaqd = '0' then s := s + '未系安全带 ';
+  if item.wfyy = '1' then s := s + '违法营运 ';
+  if item.CY = '1' then s := s + '车辆超员 ';
+  if item.XGJSBZ = '0' then s := s + '未悬挂或喷涂警示标志 ';
+  if item.AZDSJ = '0' then s := s + '未按指定时间行驶 ';
+  if item.AZDLX = '0' then s := s + '未按指定路线行驶 ';
+  if item.QDYSTXZ = '0' then s := s + '未取得道路运输通行证 ';
+  if item.ZTFGBS = '0' then s := s + '未按规定粘贴反光标识 ';
+  if item.AZFHZZ = '0' then s := s + '未安装侧后防护装置 ';
+  if item.FFGZ = '1' then s := s + '非法改装 ';
+  if item.CZ = '1' then s := s + '超载 ';
+  result := s;
 end;
 
 procedure TFrameZFZ.cxButton3Click(Sender: TObject);
 begin
   if Assigned(OnBack) then
     OnBack;
-end;
-
-function TFrameZFZ.GetFWZInfo: TFwzInfo;
-var
-  json: string;
-begin
-  json := TRequestItf.DbQuery('GetFWZInfo', 'CJR=' + gUser.YHXM);
-  result := TJsonUtils.JsonToRecord<TFwzInfo>(json);
-end;
-
-procedure TFrameZFZ.edthphmKeyPress(Sender: TObject; var Key: Char);
-begin
-  if Key = #13 then
-  begin
-    LoadVehInfo;
-    BindHistory;
-  end;
-end;
-
-procedure TFrameZFZ.edtZFZMCPropertiesChange(Sender: TObject);
-var
-  json: string;
-  list: TList<TQDZRY>;
-  item: TQDZRY;
-begin
-  if edtZFZMC.SelectedItem >= 0 then
-  begin
-    json := TRequestItf.DbQuery('VehCheckGetPerson',
-      'FWZBH=' + edtZFZMC.Properties.Items.ValueFromIndex
-      [edtZFZMC.SelectedItem]);
-    list := TJsonUtils.JsonToRecordList<TQDZRY>(json);
-    cboJCR.Properties.Items.Clear;
-    for item in list do
-    begin
-      cboJCR.Properties.Items.Add(item.XM);
-    end;
-    list.Free;
-  end;
 end;
 
 function TFrameZFZ.GetColor(hpzl: string): TColor;
@@ -626,20 +263,13 @@ end;
 
 procedure TFrameZFZ.ShowItem(item: TVehCheck);
 begin
-  SetCboValue(cboJC, item.HPHM.Substring(0, 1));
-  edthphm.Text := item.HPHM.Substring(1);
+  edthphm.Text := item.HPHM;
   SetCboValue(cboHPZL, item.hpzl);
-  SetCboValue(cboJCCLLX, item.jccllx);
-  liMessage.CaptionOptions.Text := item.Message;
-  txtDriverJSZH.Text := '';
+  cboJCCLLX.Text := item.jccllx;
   LoadVehInfo;
-  if item.SFD = '' then
-    BindHistory;
   edtSFD.Text := item.SFD;
   edtMDD.Text := item.MDD;
-  edtZFZMC.Properties.ReadOnly := false;
-  SetCboValue(edtZFZMC, item.FWZMC);
-  edtZFZMC.Properties.ReadOnly := item.FWZBH <> '';
+  edtZFZMC.Text := item.FWZMC;
   cbSFYFJ.Checked := item.SFYFJSY = '1';
   lgFJS.Visible := cbSFYFJ.Checked;
   if item.GPS = '1' then
@@ -651,43 +281,38 @@ begin
   else
     cboGPS.Text := '';
   edtHZ.Text := IntToStr(item.HDZKL + item.HDZZL);
-  edtSZ.Text := '0'; // IntToStr(item.ZKS + item.SJZZL);
-  cboJCR.Text := gUser.YHXM;
-  if item.JCSJ = '' then
-    edtJCSJ.Text := FormatDateTime('yyyy/mm/dd hh:mm:ss', now - OneMinute * 5)
-  else
-    edtJCSJ.Text := item.JCSJ;
-  edtMS.Text := item.JCQKMS;
-  if item.SFD = '' then
-    LoadDrvInfo
-  else
-  begin
-    txtDriverJSZH.Text := item.ZJSZH;
-    txtFJSJSZH.Text := item.FJSZH;
-  end;
-  dxLayoutItem15.Visible := (item.SFD = '') or (item.flag = 3);
-  dxLayoutItem24.Visible := dxLayoutItem15.Visible;
+  edtSZ.Text := IntToStr(item.ZKS + item.SJZZL);
+  cboJCR.Text := item.JCMJ;
+  edtJCSJ.Text := item.JCSJ;
+  edtMS.Text := GetJCNR(item) + #13#10 + #13#10 + item.JCQKMS;
+  edtYJBM.Text := item.YJBM;
+  txtDriverJSZH.Text := item.ZJSZH;
+  if item.ZJSZH <> '' then
+    LoadDrvInfo;
+  txtFJSJSZH.Text := item.FJSZH;
+  if item.FJSZH <> '' then
+    LoadFJInfo;
 end;
 
 procedure TFrameZFZ.LoadVehInfo;
 var
   veh: TVehInfo;
 begin
-  veh := TCommon.GetVehinfo(TLZDictionary.StrtoDicInfo(cboJC.Text).mc +
-    edthphm.Text, TLZDictionary.StrtoDicInfo(cboHPZL.Text).dm, '');
+  veh := TCommon.GetVehinfo(edthphm.Text, TLZDictionary.StrtoDicInfo(cboHPZL.Text).dm, '');
 
   if TLZDictionary.gDicMain['CLLX'].ContainsKey(veh.cllx) then
     edtCLLX.Text := TLZDictionary.gDicMain['CLLX'][veh.cllx];
-  if TLZDictionary.gDicMain['SYXZ'].ContainsKey(veh.cllx) then
+  if TLZDictionary.gDicMain['SYXZ'].ContainsKey(veh.syxz) then
     edtSYXZ.Text := TLZDictionary.gDicMain['SYXZ'][veh.syxz];
   edtCLPP.Text := veh.clpp1;
   edtDJRQ.Text := veh.ccdjrq;
   edtCLZT.Text := TLZDictionary.DM2MC('CLZT', veh.zt);
+
   if veh.yxqz <> '' then
   begin
-    cbYQWNJ.Caption := '是' + veh.yxqz.Substring(0, 10);
+    cbYQWNJ.Caption := veh.yxqz.Substring(0, 10);
     cbYQWNJ.Checked := veh.yxqz < FormatDateTime('yyyy-mm-dd', now);
-    cbYQWBF.Caption := '是' + veh.qzbfqz.Substring(0, 10);
+    cbYQWBF.Caption := veh.qzbfqz.Substring(0, 10);
     cbYQWBF.Checked := veh.qzbfqz < FormatDateTime('yyyy-mm-dd', now);
   end;
   cbWFWCL.Checked := veh.zt.Contains('G');
@@ -736,74 +361,12 @@ begin
   ChangeCheckBoxColor(cbFJSYQWHZ);
 end;
 
-procedure TFrameZFZ.txtDriverJSZHKeyPress(Sender: TObject; var Key: Char);
-begin
-  if Key = #13 then
-  begin
-    LoadDrvInfo;
-  end;
-end;
-
-procedure TFrameZFZ.txtDriverJSZHPropertiesCloseUp(Sender: TObject);
-begin
-  LoadDrvInfo;
-end;
-
-procedure TFrameZFZ.txtFJSJSZHKeyPress(Sender: TObject; var Key: Char);
-begin
-  if Key = #13 then
-  begin
-    LoadFJInfo;
-  end;
-end;
-
-procedure TFrameZFZ.txtFJSJSZHPropertiesCloseUp(Sender: TObject);
-begin
-  LoadFJInfo;
-end;
-
 procedure TFrameZFZ.ChangeCheckBoxColor(cb: TcxCheckBox);
 begin
   if cb.Checked then
     cb.Style.Color := clRed
   else
     cb.Style.Color := clBtnFace;
-end;
-
-procedure TFrameZFZ.BindHistory;
-var
-  json: string;
-  list: TList<TVehCheckHis>;
-  item: TVehCheckHis;
-  HPHM, hpzl: string;
-begin
-  HPHM := TLZDictionary.StrtoDicInfo(cboJC.Text).mc + edthphm.Text;
-  hpzl := TLZDictionary.StrtoDicInfo(cboHPZL.Text).dm;
-  edtSFD.Properties.Items.Clear;
-  edtMDD.Properties.Items.Clear;
-  txtDriverJSZH.Properties.Items.Clear;
-  txtFJSJSZH.Properties.Items.Clear;
-  json := TRequestItf.DbQuery('VehCheckHis', 'hphm=' + HPHM + '&hpzl=' + hpzl);
-  list := TJsonUtils.JsonToRecordList<TVehCheckHis>(json);
-  for item in list do
-  begin
-    if edtSFD.Properties.Items.IndexOf(item.SFD) = -1 then
-      edtSFD.Properties.Items.Add(item.SFD);
-    if edtMDD.Properties.Items.IndexOf(item.MDD) = -1 then
-      edtMDD.Properties.Items.Add(item.MDD);
-    if (item.ZJSZH <> '') and
-      (txtDriverJSZH.Properties.Items.IndexOf(item.ZJSZH) = -1) then
-    begin
-      txtDriverJSZH.Properties.Items.Add(item.ZJSZH);
-      txtFJSJSZH.Properties.Items.Add(item.ZJSZH);
-    end;
-    if (item.FJSZH <> '') and
-      (txtDriverJSZH.Properties.Items.IndexOf(item.FJSZH) = -1) then
-    begin
-      txtDriverJSZH.Properties.Items.Add(item.FJSZH);
-      txtFJSJSZH.Properties.Items.Add(item.FJSZH);
-    end;
-  end;
 end;
 
 end.

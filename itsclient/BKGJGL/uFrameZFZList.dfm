@@ -1,20 +1,20 @@
 inherited FrameZFZList: TFrameZFZList
-  Width = 870
-  Height = 495
+  Width = 837
+  Height = 451
   inherited dxLayoutControl2: TdxLayoutControl
     Top = 0
-    Width = 870
-    Height = 495
+    Width = 837
+    Height = 451
     ExplicitTop = 0
     ExplicitHeight = 305
     inherited cxGrid1: TcxGrid
       Top = 45
-      Width = 844
-      Height = 381
+      Width = 830
+      Height = 320
       TabOrder = 5
       ExplicitTop = 45
-      ExplicitWidth = 844
-      ExplicitHeight = 381
+      ExplicitWidth = 830
+      ExplicitHeight = 320
     end
     object dtBegin: TcxDateEdit [1]
       Left = 67
@@ -39,7 +39,7 @@ inherited FrameZFZList: TFrameZFZList
       Width = 166
     end
     object btnSearch: TcxButton [3]
-      Left = 744
+      Left = 732
       Top = 13
       Width = 75
       Height = 25
@@ -50,7 +50,7 @@ inherited FrameZFZList: TFrameZFZList
       OnClick = btnSearchClick
     end
     object cboFWZ: TcxComboBox [4]
-      Left = 474
+      Left = 462
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -59,37 +59,37 @@ inherited FrameZFZList: TFrameZFZList
       Width = 263
     end
     inherited cbbPagesize: TcxComboBox
-      Top = 433
+      Top = 372
       TabOrder = 6
-      ExplicitTop = 433
+      ExplicitTop = 372
     end
     inherited btnFirstPage: TcxButton
-      Top = 433
+      Top = 372
       TabOrder = 7
-      ExplicitTop = 433
+      ExplicitTop = 372
     end
     inherited btnPriorPage: TcxButton
-      Top = 433
+      Top = 372
       TabOrder = 8
-      ExplicitTop = 433
+      ExplicitTop = 372
     end
     inherited edtPageIndex: TcxTextEdit
-      Top = 433
+      Top = 372
       TabOrder = 9
-      ExplicitTop = 433
+      ExplicitTop = 372
     end
     inherited btnnextPage: TcxButton
-      Top = 433
+      Top = 372
       TabOrder = 10
-      ExplicitTop = 433
+      ExplicitTop = 372
     end
     inherited btnLastPage: TcxButton
-      Top = 433
+      Top = 372
       TabOrder = 11
-      ExplicitTop = 433
+      ExplicitTop = 372
     end
     object BtnAdd: TcxButton [11]
-      Left = 828
+      Left = 814
       Top = 13
       Width = 29
       Height = 25
@@ -102,8 +102,8 @@ inherited FrameZFZList: TFrameZFZList
       OnClick = btnNewClick
     end
     inherited lbCount: TcxLabel
-      Top = 461
-      ExplicitTop = 461
+      Top = 400
+      ExplicitTop = 400
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
       LayoutDirection = ldHorizontal
@@ -138,7 +138,7 @@ inherited FrameZFZList: TFrameZFZList
     end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxLayoutGroup2
-      CaptionOptions.Text = #25191#27861#31449
+      CaptionOptions.Text = #37096#38376
       Control = cboFWZ
       ControlOptions.OriginalHeight = 21
       ControlOptions.OriginalWidth = 263
@@ -149,6 +149,7 @@ inherited FrameZFZList: TFrameZFZList
       Parent = dxLayoutGroup2
       AlignHorz = ahRight
       CaptionOptions.Visible = False
+      Visible = False
       Control = BtnAdd
       ControlOptions.OriginalHeight = 25
       ControlOptions.OriginalWidth = 29
@@ -282,6 +283,9 @@ inherited FrameZFZList: TFrameZFZList
   end
   inherited actlst1: TActionList
     inherited actedit: TAction
+      OnExecute = acteditExecute
+    end
+    inherited actView: TAction
       OnExecute = acteditExecute
     end
   end

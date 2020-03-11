@@ -1,17 +1,18 @@
 inherited FrameVehSearch: TFrameVehSearch
-  Width = 732
-  Height = 542
+  Width = 991
+  Height = 583
   inherited dxLayoutControl2: TdxLayoutControl
-    Width = 732
-    Height = 542
+    Width = 991
+    Height = 583
+    CustomizeFormTabbedView = True
     inherited cxGrid1: TcxGrid
-      Top = 405
-      Width = 706
-      Height = 124
-      TabOrder = 30
-      ExplicitTop = 405
-      ExplicitWidth = 706
-      ExplicitHeight = 124
+      Top = 379
+      Width = 985
+      Height = 174
+      TabOrder = 32
+      ExplicitTop = 379
+      ExplicitWidth = 985
+      ExplicitHeight = 174
     end
     object ImageVeh: TcxImage [1]
       Left = 28
@@ -6925,7 +6926,7 @@ inherited FrameVehSearch: TFrameVehSearch
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 4
-      Height = 251
+      Height = 229
       Width = 292
     end
     object cbbJC: TcxComboBox [2]
@@ -6935,10 +6936,10 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 0
       Height = 21
-      Width = 64
+      Width = 78
     end
     object edthphm6: TcxTextEdit [3]
-      Left = 138
+      Left = 152
       Top = 13
       AutoSize = False
       Properties.CharCase = ecUpperCase
@@ -6946,10 +6947,10 @@ inherited FrameVehSearch: TFrameVehSearch
       TabOrder = 1
       OnKeyPress = edthphm6KeyPress
       Height = 21
-      Width = 88
+      Width = 150
     end
     object cbbhpzl: TcxComboBox [4]
-      Left = 287
+      Left = 363
       Top = 13
       AutoSize = False
       Style.HotTrack = False
@@ -6958,7 +6959,7 @@ inherited FrameVehSearch: TFrameVehSearch
       Width = 121
     end
     object btnSearch: TcxButton [5]
-      Left = 415
+      Left = 491
       Top = 13
       Width = 75
       Height = 25
@@ -6976,119 +6977,128 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 5
       Height = 21
-      Width = 57
+      Width = 150
     end
     object edtcsys: TcxTextEdit [7]
-      Left = 573
-      Top = 175
+      Left = 818
+      Top = 119
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 13
+      TabOrder = 10
       Height = 21
-      Width = 116
+      Width = 150
     end
     object edtccdjrq: TcxTextEdit [8]
       Left = 396
-      Top = 203
+      Top = 147
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 14
+      TabOrder = 11
       Height = 21
-      Width = 116
+      Width = 150
     end
     object edthpzl: TcxTextEdit [9]
-      Left = 514
+      Left = 607
       Top = 91
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 6
       Height = 21
-      Width = 57
+      Width = 150
     end
     object edtclpp: TcxTextEdit [10]
-      Left = 632
+      Left = 818
       Top = 91
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 7
       Height = 21
-      Width = 57
+      Width = 150
     end
-    object edtsyxz: TcxTextEdit [11]
+    object edtcjh: TcxTextEdit [11]
       Left = 396
       Top = 175
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 12
+      TabOrder = 14
       Height = 21
-      Width = 116
+      Width = 150
     end
-    object edtcjh: TcxTextEdit [12]
-      Left = 396
-      Top = 231
+    object edtfdjh: TcxTextEdit [12]
+      Left = 607
+      Top = 175
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 16
+      TabOrder = 15
       Height = 21
-      Width = 116
+      Width = 150
     end
-    object edtczdz: TcxTextEdit [13]
-      Left = 396
-      Top = 259
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 18
-      Height = 21
-      Width = 116
+    object cxButton1: TcxButton [13]
+      Left = 923
+      Top = 347
+      Width = 75
+      Height = 25
+      Caption = #24050#32564#27454
+      Enabled = False
+      SpeedButtonOptions.CanBeFocused = False
+      SpeedButtonOptions.Transparent = True
+      TabOrder = 31
+      OnClick = cxButton1Click
     end
-    object edtfdjh: TcxTextEdit [14]
-      Left = 573
-      Top = 231
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 17
-      Height = 21
-      Width = 116
+    object cxButton2: TcxButton [14]
+      Left = 841
+      Top = 347
+      Width = 75
+      Height = 25
+      Caption = #26410#32564#27454
+      SpeedButtonOptions.CanBeFocused = False
+      SpeedButtonOptions.Transparent = True
+      TabOrder = 30
+      OnClick = cxButton2Click
     end
-    object edtyxqx: TcxTextEdit [15]
-      Left = 396
-      Top = 287
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 20
-      Height = 21
-      Width = 116
+    inherited cbbPagesize: TcxComboBox
+      Top = 319
+      TabOrder = 24
+      ExplicitTop = 319
     end
-    object edtsjhm: TcxTextEdit [16]
-      Left = 573
-      Top = 259
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 19
-      Height = 21
-      Width = 116
+    inherited btnFirstPage: TcxButton
+      Top = 319
+      TabOrder = 25
+      ExplicitTop = 319
     end
-    object edtqzbfqx: TcxTextEdit [17]
-      Left = 573
-      Top = 287
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 21
-      Height = 21
-      Width = 116
+    inherited btnPriorPage: TcxButton
+      Top = 319
+      TabOrder = 26
+      ExplicitTop = 319
     end
-    object edtjdcsyr: TcxTextEdit [18]
+    inherited edtPageIndex: TcxTextEdit
+      Top = 319
+      TabOrder = 27
+      ExplicitTop = 319
+      ExplicitWidth = 150
+      Width = 150
+    end
+    inherited btnnextPage: TcxButton
+      Left = 357
+      Top = 319
+      TabOrder = 28
+      ExplicitLeft = 357
+      ExplicitTop = 319
+    end
+    inherited btnLastPage: TcxButton
+      Left = 394
+      Top = 319
+      TabOrder = 29
+      ExplicitLeft = 394
+      ExplicitTop = 319
+    end
+    object edtcllx: TcxTextEdit [21]
       Left = 396
       Top = 119
       AutoSize = False
@@ -7096,109 +7106,131 @@ inherited FrameVehSearch: TFrameVehSearch
       Style.HotTrack = False
       TabOrder = 8
       Height = 21
-      Width = 59
+      Width = 150
     end
-    object edtsfzhm: TcxTextEdit [19]
-      Left = 504
+    object edtclxh: TcxTextEdit [22]
+      Left = 607
       Top = 119
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
       TabOrder = 9
       Height = 21
-      Width = 185
+      Width = 150
     end
-    object edtclxh: TcxTextEdit [20]
+    object edtyxqx: TcxTextEdit [23]
+      Left = 607
+      Top = 147
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 12
+      Height = 21
+      Width = 150
+    end
+    object edtqzbfqx: TcxTextEdit [24]
+      Left = 818
+      Top = 147
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 13
+      Height = 21
+      Width = 150
+    end
+    object edtsyxz: TcxTextEdit [25]
       Left = 396
-      Top = 147
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 10
-      Height = 21
-      Width = 116
-    end
-    object edtcllx: TcxTextEdit [21]
-      Left = 573
-      Top = 147
-      AutoSize = False
-      Properties.ReadOnly = True
-      Style.HotTrack = False
-      TabOrder = 11
-      Height = 21
-      Width = 116
-    end
-    object edtzt: TcxTextEdit [22]
-      Left = 573
       Top = 203
       AutoSize = False
       Properties.ReadOnly = True
       Style.HotTrack = False
-      TabOrder = 15
+      TabOrder = 17
       Height = 21
-      Width = 116
+      Width = 150
     end
-    object cxButton1: TcxButton [23]
-      Left = 644
-      Top = 373
-      Width = 75
-      Height = 25
-      Caption = #24050#32564#27454
-      Enabled = False
-      SpeedButtonOptions.CanBeFocused = False
-      SpeedButtonOptions.Transparent = True
-      TabOrder = 29
-      OnClick = cxButton1Click
+    object edtzt: TcxTextEdit [26]
+      Left = 818
+      Top = 175
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 16
+      Height = 21
+      Width = 150
     end
-    object cxButton2: TcxButton [24]
-      Left = 562
-      Top = 373
-      Width = 75
-      Height = 25
-      Caption = #26410#32564#27454
-      SpeedButtonOptions.CanBeFocused = False
-      SpeedButtonOptions.Transparent = True
-      TabOrder = 28
-      OnClick = cxButton2Click
-    end
-    inherited cbbPagesize: TcxComboBox
-      Top = 345
+    object edtsjhm: TcxTextEdit [27]
+      Left = 818
+      Top = 231
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
       TabOrder = 22
-      ExplicitTop = 345
+      Height = 21
+      Width = 150
     end
-    inherited btnFirstPage: TcxButton
-      Top = 345
+    object edtHZ: TcxTextEdit [28]
+      Left = 607
+      Top = 203
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 18
+      Height = 21
+      Width = 150
+    end
+    object edtHXNB: TcxTextEdit [29]
+      Left = 818
+      Top = 203
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 19
+      Height = 21
+      Width = 150
+    end
+    object edtjdcsyr: TcxTextEdit [30]
+      Left = 396
+      Top = 231
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 20
+      Height = 21
+      Width = 150
+    end
+    object edtsfzhm: TcxTextEdit [31]
+      Left = 607
+      Top = 231
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
+      TabOrder = 21
+      Height = 21
+      Width = 150
+    end
+    object edtczdz: TcxTextEdit [32]
+      Left = 396
+      Top = 259
+      AutoSize = False
+      Properties.ReadOnly = True
+      Style.HotTrack = False
       TabOrder = 23
-      ExplicitTop = 345
-    end
-    inherited btnPriorPage: TcxButton
-      Top = 345
-      TabOrder = 24
-      ExplicitTop = 345
-    end
-    inherited edtPageIndex: TcxTextEdit
-      Top = 345
-      TabOrder = 25
-      ExplicitTop = 345
-    end
-    inherited btnnextPage: TcxButton
-      Top = 345
-      TabOrder = 26
-      ExplicitTop = 345
-    end
-    inherited btnLastPage: TcxButton
-      Top = 345
-      TabOrder = 27
-      ExplicitTop = 345
+      Height = 21
+      Width = 572
     end
     inherited dxLayoutGroup2: TdxLayoutGroup
+      CaptionOptions.Visible = False
       LayoutDirection = ldHorizontal
     end
     inherited dxLayoutItem3: TdxLayoutItem
       Index = 4
     end
     inherited dxLayoutGroupPage: TdxLayoutGroup
+      CaptionOptions.Visible = False
       Visible = False
+    end
+    inherited dxLayoutItemIndex: TdxLayoutItem
+      ControlOptions.OriginalWidth = 150
     end
     object dxLayoutGroup1: TdxLayoutGroup
       Parent = dxLayoutControl2Group_Root
@@ -7229,7 +7261,7 @@ inherited FrameVehSearch: TFrameVehSearch
       Parent = dxLayoutGroup3
       AlignHorz = ahLeft
       Control = ImageVeh
-      ControlOptions.OriginalHeight = 251
+      ControlOptions.OriginalHeight = 229
       ControlOptions.OriginalWidth = 292
       ControlOptions.ShowBorder = False
       Index = 0
@@ -7239,7 +7271,7 @@ inherited FrameVehSearch: TFrameVehSearch
       CaptionOptions.Text = #21495#29260#21495#30721
       Control = cbbJC
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 64
+      ControlOptions.OriginalWidth = 78
       ControlOptions.ShowBorder = False
       Index = 0
     end
@@ -7247,7 +7279,7 @@ inherited FrameVehSearch: TFrameVehSearch
       Parent = dxLayoutGroup2
       Control = edthphm6
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 88
+      ControlOptions.OriginalWidth = 150
       ControlOptions.ShowBorder = False
       Index = 1
     end
@@ -7272,42 +7304,37 @@ inherited FrameVehSearch: TFrameVehSearch
     end
     object dxLayoutItem7: TdxLayoutItem
       Parent = dxlytcrtdgrp1
-      AlignHorz = ahClient
       CaptionOptions.Text = #21495#29260#21495#30721
       Control = edthphm
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
+      ControlOptions.OriginalWidth = 150
       ControlOptions.ShowBorder = False
       Index = 0
     end
     object dxLayoutItem14: TdxLayoutItem
       Parent = dxlytcrtdgrp3
-      AlignHorz = ahClient
       CaptionOptions.Text = #36710#36523#39068#33394
       Control = edtcsys
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
+      ControlOptions.OriginalWidth = 150
       ControlOptions.ShowBorder = False
-      Index = 1
+      Index = 2
     end
     object dxLayoutItem17: TdxLayoutItem
       Parent = dxlytcrtdgrp4
-      AlignHorz = ahClient
-      AlignVert = avTop
       CaptionOptions.Text = #21021#27425#30331#35760
       Control = edtccdjrq
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
+      ControlOptions.OriginalWidth = 150
       ControlOptions.ShowBorder = False
       Index = 0
     end
     object dxLayoutItem8: TdxLayoutItem
       Parent = dxlytcrtdgrp1
-      AlignHorz = ahClient
       CaptionOptions.Text = #21495#30721#31181#31867
       Control = edthpzl
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
+      ControlOptions.OriginalWidth = 150
       ControlOptions.ShowBorder = False
       Index = 1
     end
@@ -7319,184 +7346,61 @@ inherited FrameVehSearch: TFrameVehSearch
     end
     object dxLayoutItem9: TdxLayoutItem
       Parent = dxlytcrtdgrp1
-      AlignHorz = ahClient
       CaptionOptions.Text = #36710#36742#21697#29260
       Control = edtclpp
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
+      ControlOptions.OriginalWidth = 150
       ControlOptions.ShowBorder = False
       Index = 2
     end
     object dxlytcrtdgrp3: TdxLayoutAutoCreatedGroup
       Parent = dxLayoutGroup4
       LayoutDirection = ldHorizontal
-      Index = 3
+      Index = 1
       AutoCreated = True
-    end
-    object dxLayoutItem16: TdxLayoutItem
-      Parent = dxlytcrtdgrp3
-      AlignHorz = ahClient
-      CaptionOptions.Text = #20351#29992#24615#36136
-      Control = edtsyxz
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 0
     end
     object dxLayoutItem20: TdxLayoutItem
       Parent = dxlytcrtdgrp5
-      AlignHorz = ahClient
       CaptionOptions.Text = #36710#26550#21495#30721
       Control = edtcjh
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem21: TdxLayoutItem
-      Parent = dxlytcrtdgrp6
-      AlignHorz = ahClient
-      CaptionOptions.Text = #24120#20303#22320#22336
-      Control = edtczdz
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
+      ControlOptions.OriginalWidth = 150
       ControlOptions.ShowBorder = False
       Index = 0
     end
     object dxLayoutItem18: TdxLayoutItem
       Parent = dxlytcrtdgrp5
-      AlignHorz = ahClient
       CaptionOptions.Text = #21457#21160#26426#21495
       Control = edtfdjh
       ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
+      ControlOptions.OriginalWidth = 150
       ControlOptions.ShowBorder = False
       Index = 1
     end
     object dxlytcrtdgrp5: TdxLayoutAutoCreatedGroup
       Parent = dxLayoutGroup4
       LayoutDirection = ldHorizontal
-      Index = 5
+      Index = 3
       AutoCreated = True
-    end
-    object dxLayoutItem23: TdxLayoutItem
-      Parent = dxlytcrtdgrp8
-      AlignHorz = ahClient
-      CaptionOptions.Text = #26377#25928#26399#38480
-      Control = edtyxqx
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem22: TdxLayoutItem
-      Parent = dxlytcrtdgrp6
-      AlignHorz = ahClient
-      CaptionOptions.Text = #32852#31995#26041#24335
-      Control = edtsjhm
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 1
     end
     object dxlytcrtdgrp6: TdxLayoutAutoCreatedGroup
       Parent = dxLayoutGroup4
       LayoutDirection = ldHorizontal
-      Index = 6
-      AutoCreated = True
-    end
-    object dxLayoutItem24: TdxLayoutItem
-      Parent = dxlytcrtdgrp8
-      AlignHorz = ahClient
-      CaptionOptions.Text = #25253#24223#26399#38480
-      Control = edtqzbfqx
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
-    object dxlytcrtdgrp8: TdxLayoutAutoCreatedGroup
-      Parent = dxLayoutGroup4
-      LayoutDirection = ldHorizontal
-      Index = 7
-      AutoCreated = True
-    end
-    object dxlytcrtdgrp2: TdxLayoutAutoCreatedGroup
-      Parent = dxLayoutGroup4
-      AlignHorz = ahClient
-      AlignVert = avTop
-      LayoutDirection = ldHorizontal
-      Index = 1
-      AutoCreated = True
-    end
-    object dxLayoutItem11: TdxLayoutItem
-      Parent = dxlytcrtdgrp2
-      AlignHorz = ahClient
-      CaptionOptions.Text = #25152#26377#20154
-      Control = edtjdcsyr
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem12: TdxLayoutItem
-      Parent = dxlytcrtdgrp2
-      CaptionOptions.Text = #36523#20221#35777
-      Control = edtsfzhm
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 185
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
-    object dxLayoutItem10: TdxLayoutItem
-      Parent = dxlytcrtdgrp7
-      AlignHorz = ahClient
-      CaptionOptions.Text = #36710#36742#22411#21495
-      Control = edtclxh
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 0
-    end
-    object dxLayoutItem15: TdxLayoutItem
-      Parent = dxlytcrtdgrp7
-      AlignHorz = ahClient
-      CaptionOptions.Text = #36710#36742#31867#22411
-      Control = edtcllx
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 1
-    end
-    object dxlytcrtdgrp7: TdxLayoutAutoCreatedGroup
-      Parent = dxLayoutGroup4
-      AlignVert = avTop
-      LayoutDirection = ldHorizontal
-      Index = 2
+      Index = 4
       AutoCreated = True
     end
     object dxlytcrtdgrp4: TdxLayoutAutoCreatedGroup
       Parent = dxLayoutGroup4
       AlignVert = avTop
       LayoutDirection = ldHorizontal
-      Index = 4
+      Index = 2
       AutoCreated = True
-    end
-    object dxLayoutItem19: TdxLayoutItem
-      Parent = dxlytcrtdgrp4
-      AlignHorz = ahClient
-      AlignVert = avClient
-      CaptionOptions.Text = #36710#36742#29366#24577
-      Control = edtzt
-      ControlOptions.OriginalHeight = 21
-      ControlOptions.OriginalWidth = 121
-      ControlOptions.ShowBorder = False
-      Index = 1
     end
     object dxLayoutGroup5: TdxLayoutGroup
       Parent = dxLayoutControl2Group_Root
       AlignHorz = ahRight
       CaptionOptions.Text = 'New Group'
+      CaptionOptions.Visible = False
       ButtonOptions.Buttons = <>
       LayoutDirection = ldHorizontal
       ShowBorder = False
@@ -7522,6 +7426,138 @@ inherited FrameVehSearch: TFrameVehSearch
       ControlOptions.OriginalWidth = 75
       ControlOptions.ShowBorder = False
       Index = 0
+    end
+    object dxLayoutItem15: TdxLayoutItem
+      Parent = dxlytcrtdgrp3
+      AlignHorz = ahLeft
+      AlignVert = avClient
+      CaptionOptions.Text = #36710#36742#31867#22411
+      Control = edtcllx
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 0
+    end
+    object dxLayoutItem10: TdxLayoutItem
+      Parent = dxlytcrtdgrp3
+      AlignVert = avClient
+      CaptionOptions.Text = #36710#36742#22411#21495
+      Control = edtclxh
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 1
+    end
+    object dxLayoutItem23: TdxLayoutItem
+      Parent = dxlytcrtdgrp4
+      AlignVert = avClient
+      CaptionOptions.Text = #26377#25928#26399#38480
+      Control = edtyxqx
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 1
+    end
+    object dxLayoutItem24: TdxLayoutItem
+      Parent = dxlytcrtdgrp4
+      AlignVert = avClient
+      CaptionOptions.Text = #25253#24223#26399#38480
+      Control = edtqzbfqx
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 2
+    end
+    object dxLayoutItem16: TdxLayoutItem
+      Parent = dxlytcrtdgrp6
+      AlignHorz = ahLeft
+      AlignVert = avClient
+      CaptionOptions.Text = #20351#29992#24615#36136
+      Control = edtsyxz
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 0
+    end
+    object dxLayoutItem19: TdxLayoutItem
+      Parent = dxlytcrtdgrp5
+      AlignVert = avClient
+      CaptionOptions.Text = #36710#36742#29366#24577
+      Control = edtzt
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 2
+    end
+    object dxLayoutAutoCreatedGroup1: TdxLayoutAutoCreatedGroup
+      Parent = dxLayoutGroup4
+      AlignVert = avTop
+      LayoutDirection = ldHorizontal
+      Index = 5
+      AutoCreated = True
+    end
+    object dxLayoutItem22: TdxLayoutItem
+      Parent = dxLayoutAutoCreatedGroup1
+      AlignVert = avBottom
+      CaptionOptions.Text = #32852#31995#26041#24335
+      Control = edtsjhm
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 2
+    end
+    object dxLayoutItem27: TdxLayoutItem
+      Parent = dxlytcrtdgrp6
+      AlignHorz = ahLeft
+      AlignVert = avClient
+      CaptionOptions.Text = #26680#36733
+      Control = edtHZ
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 1
+    end
+    object dxLayoutItem26: TdxLayoutItem
+      Parent = dxlytcrtdgrp6
+      AlignHorz = ahLeft
+      AlignVert = avClient
+      CaptionOptions.Text = #36135#31665#20869#37096
+      Control = edtHXNB
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 2
+    end
+    object dxLayoutItem11: TdxLayoutItem
+      Parent = dxLayoutAutoCreatedGroup1
+      AlignVert = avClient
+      CaptionOptions.Text = #25152#26377#20154
+      Control = edtjdcsyr
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 0
+    end
+    object dxLayoutItem12: TdxLayoutItem
+      Parent = dxLayoutAutoCreatedGroup1
+      AlignVert = avClient
+      CaptionOptions.Text = #36523#20221#35777
+      Control = edtsfzhm
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 150
+      ControlOptions.ShowBorder = False
+      Index = 1
+    end
+    object dxLayoutItem21: TdxLayoutItem
+      Parent = dxLayoutGroup4
+      AlignHorz = ahLeft
+      AlignVert = avTop
+      CaptionOptions.Text = #24120#20303#22320#22336
+      Control = edtczdz
+      ControlOptions.OriginalHeight = 21
+      ControlOptions.OriginalWidth = 572
+      ControlOptions.ShowBorder = False
+      Index = 6
     end
   end
   object cxGroupBox1: TcxGroupBox [1]

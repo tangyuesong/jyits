@@ -123,6 +123,8 @@ type
     liYJBM: TdxLayoutItem;
     lgWS: TdxLayoutGroup;
     lgYJ: TdxLayoutGroup;
+    dxLayoutItem1: TdxLayoutItem;
+    edtSFZMHM: TcxTextEdit;
     procedure btnFeedbackClick(Sender: TObject);
     procedure btnBackClick(Sender: TObject);
     procedure edtCZDWPropertiesChange(Sender: TObject);
@@ -219,7 +221,7 @@ begin
   edtGCSJ.Text := Alarm.GCSJ;
   veh := TCommon.GetVehInfo(Alarm.HPHM, Alarm.HPZL, '');
   edtCLPP.Text := veh.clpp1;
-  edtCLXH.Text := veh.clxh;
+  edtCLXH.Text := veh.cllx + ':' + TLZDictionary.DM2MC('CLLX',veh.cllx);
   if TLZDictionary.gDicMain.ContainsKey('CSYS') and TLZDictionary.gDicMain
     ['CSYS'].ContainsKey(veh.csys) then
     edtCSYS.Text := TLZDictionary.gDicMain['CSYS'][veh.csys]
@@ -239,7 +241,7 @@ begin
   else
     edtSYXZ.Text := '';
   edtSYR.Text := veh.syr;
-
+  edtSFZMHM.Text := veh.sfzmhm;
   edtCZDW.Properties.Items.Clear;
   if TLZDictionary.gDicDev[2].ContainsKey(Alarm.KDBH) then
   begin
